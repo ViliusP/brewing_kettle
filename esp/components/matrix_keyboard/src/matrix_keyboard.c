@@ -14,6 +14,8 @@
 #include "esp_private/gpio.h"
 #include "matrix_keyboard.h"
 
+#define DEBOUNCE_MS 50 // Debounce time in milliseconds
+
 static const char *TAG = "mkbd";
 static QueueHandle_t gpio_evt_queue = NULL;
 
@@ -89,44 +91,9 @@ esp_err_t enable_bundle_interrupt(int gpio_array[], size_t nr_gpio, gpio_int_typ
     return ESP_OK;
 }
 
-static void gpio_task_example(void *arg)
+
+static void matrix_kbd_callback(matrix_kbd_t* mkbd)
 {
-    ESP_LOGI(TAG, "PAPAPPAPAPAPAPAP");
-    uint32_t io_num;
-    for (;;)
-    {
-        if (xQueueReceive(gpio_evt_queue, &io_num, portMAX_DELAY))
-        {
-            printf("GPIO[%" PRIu32 "] intr, val: %d\n", io_num, gpio_get_level(io_num));
-        }
-    }
-}
-
-// static void IRAM_ATTR matrix_kbd_row_isr_callback(void *arg)
-// {
-//     ESP_LOGI(TAG,"ISR callback -> HELLO");
-//     uint32_t gpio_num = (uint32_t) arg;
-//     xQueueSendFromISR(gpio_evt_queue, &gpio_num, NULL);
-//     // BaseType_t high_task_wakeup = pdFALSE;
-//     // isr_callback_args_t *isr_args = (isr_callback_args_t *)args;
-//     // matrix_kbd_t *mkbd = isr_args->mkbd;
-
-//     // ESP_LOGI(TAG,"ISR callback -> nr_row_gpios %lu", mkbd->nr_row_gpios);
-//     // disable_bundle_interrupt(mkbd->row_gpios, mkbd->nr_row_gpios);
-
-//     // // get row id, start to check the col id
-//     // dedic_gpio_bundle_write(isr_args->row_bundle, 1 << isr_args->row_index, 0);
-//     // dedic_gpio_bundle_write(mkbd->col_bundle, (1 << mkbd->nr_col_gpios) - 1, (1 << mkbd->nr_col_gpios) - 1);
-//     // xTimerStartFromISR(mkbd->debounce_timer, &high_task_wakeup);
-//     return;
-// }
-
-static void matrix_kbd_debounce_timer_callback(TimerHandle_t xTimer)
-{
-    ESP_LOGI(TAG, "HELLO THERE");
-
-    matrix_kbd_t *mkbd = (matrix_kbd_t *)pvTimerGetTimerID(xTimer);
-
     uint32_t row_out = dedic_gpio_bundle_read_out(mkbd->row_bundle);
     uint32_t col_in = dedic_gpio_bundle_read_in(mkbd->col_bundle);
     row_out = (~row_out) & ((1 << mkbd->nr_row_gpios) - 1);
@@ -134,30 +101,51 @@ static void matrix_kbd_debounce_timer_callback(TimerHandle_t xTimer)
     int row = -1;
     int col = -1;
     uint32_t key_code = 0;
-    // while (row_out) {
-    //     row = __builtin_ffs(row_out) - 1;
-    //     uint32_t changed_col_bits = mkbd->row_state[row] ^ col_in;
-    //     while (changed_col_bits) {
-    //         col = __builtin_ffs(changed_col_bits) - 1;
-    //         ESP_LOGD(TAG, "row=%d, col=%d", row, col);
-    //         key_code = MAKE_KEY_CODE(row, col);
-    //         if (col_in & (1 << col)) {
-    //             mkbd->event_handler(mkbd, MATRIX_KBD_EVENT_UP, (void *)key_code, mkbd->event_handler_args);
-    //         } else {
-    //             mkbd->event_handler(mkbd, MATRIX_KBD_EVENT_DOWN, (void *)key_code, mkbd->event_handler_args);
-    //         }
-    //         changed_col_bits = changed_col_bits & (changed_col_bits - 1);
-    //     }
-    //     mkbd->row_state[row] = col_in;
-    //     row_out = row_out & (row_out - 1);
-    // }
+    while (row_out) {
+        row = __builtin_ffs(row_out) - 1;
+        uint32_t changed_col_bits = mkbd->row_state[row] ^ col_in;
+        while (changed_col_bits) {
+            col = __builtin_ffs(changed_col_bits) - 1;
+            ESP_LOGD(TAG, "row=%d, col=%d", row, col);
+            key_code = MAKE_KEY_CODE(row, col);
+            if (col_in & (1 << col)) {
+                mkbd->event_handler(mkbd, MATRIX_KBD_EVENT_UP, (void *)key_code, mkbd->event_handler_args);
+            } else {
+                mkbd->event_handler(mkbd, MATRIX_KBD_EVENT_DOWN, (void *)key_code, mkbd->event_handler_args);
+            }
+            changed_col_bits = changed_col_bits & (changed_col_bits - 1);
+        }
+        mkbd->row_state[row] = col_in;
+        row_out = row_out & (row_out - 1);
+    }
 
-    // // row lines set to high level
-    // dedic_gpio_bundle_write(mkbd->row_bundle, (1 << mkbd->nr_row_gpios) - 1, (1 << mkbd->nr_row_gpios) - 1);
-    // // col lines set to low level
-    // dedic_gpio_bundle_write(mkbd->col_bundle, (1 << mkbd->nr_col_gpios) - 1, 0);
-    // dedic_gpio_bundle_set_interrupt_and_callback(mkbd->row_bundle, (1 << mkbd->nr_row_gpios) - 1,
-    //  DEDIC_GPIO_INTR_BOTH_EDGE, matrix_kbd_row_isr_callback, mkbd);
+    // row lines set to high level
+    dedic_gpio_bundle_write(mkbd->row_bundle, (1 << mkbd->nr_row_gpios) - 1, (1 << mkbd->nr_row_gpios) - 1);
+    // col lines set to low level
+    dedic_gpio_bundle_write(mkbd->col_bundle, (1 << mkbd->nr_col_gpios) - 1, 0);
+}
+
+static void gpio_queue_handler(void *pvParameters)
+{
+    matrix_kbd_t* mkbd = (matrix_kbd_t*) pvParameters;
+    
+    uint32_t io_num;
+    uint32_t last_interrupt_time = 0; 
+    TickType_t xTicksToWait = pdMS_TO_TICKS(DEBOUNCE_MS); 
+    for (;;)
+    {
+        if (xQueueReceive(gpio_evt_queue, &io_num, portMAX_DELAY))
+        {
+            if (xTaskGetTickCount() - last_interrupt_time > xTicksToWait) {
+                ESP_LOGI(TAG,  "GPOIO interrupt on GPIO[%" PRIu32 "], val: %d", io_num, gpio_get_level(io_num));
+                matrix_kbd_callback(mkbd);
+                last_interrupt_time = xTaskGetTickCount(); 
+            } 
+            else {
+                ESP_LOGI(TAG, "Debounce time not passed");
+            }
+        }
+    }
 }
 
 esp_err_t matrix_kbd_install(const matrix_kbd_config_t *config, matrix_kbd_handle_t *mkbd_handle)
@@ -177,10 +165,6 @@ esp_err_t matrix_kbd_install(const matrix_kbd_config_t *config, matrix_kbd_handl
 
     mkbd->nr_col_gpios = config->nr_col_gpios;
     mkbd->nr_row_gpios = config->nr_row_gpios;
-
-    // Create a one-shot os timer, used for key debounce
-    // mkbd->debounce_timer = xTimerCreate("kb_debounce", pdMS_TO_TICKS(config->debounce_ms), pdFALSE, mkbd, matrix_kbd_debounce_timer_callback);
-    // ESP_GOTO_ON_FALSE(mkbd->debounce_timer, ESP_FAIL, err, TAG, "create debounce timer failed");
 
     dedic_gpio_bundle_config_t bundle_row_config = {
         .gpio_array = config->row_gpios,
@@ -280,7 +264,7 @@ esp_err_t matrix_kbd_start(matrix_kbd_handle_t mkbd_handle)
 
     dedic_gpio_bundle_write(mkbd_handle->row_bundle, (1 << mkbd_handle->nr_row_gpios) - 1, (1 << mkbd_handle->nr_row_gpios) - 1);
     // col lines set to low level
-    // dedic_gpio_bundle_write(mkbd_handle->col_bundle, (1 << mkbd_handle->nr_col_gpios) - 1, 0);
+    dedic_gpio_bundle_write(mkbd_handle->col_bundle, (1 << mkbd_handle->nr_col_gpios) - 1, 0);
 
     for (int i = 0; i < mkbd_handle->nr_row_gpios; i++)
     {
@@ -290,8 +274,8 @@ esp_err_t matrix_kbd_start(matrix_kbd_handle_t mkbd_handle)
 
     // // // only enable row line interrupt
     enable_bundle_interrupt(mkbd_handle->row_gpios, mkbd_handle->nr_row_gpios, GPIO_INTR_ANYEDGE, NULL, NULL);
-    xTaskCreate(gpio_task_example, "gpio_task_example", 2048, NULL, 10, NULL);
-    ESP_LOGI(TAG, "gpio_task_example created ");
+    xTaskCreate(gpio_queue_handler, "gpio_queue_handler", 2048, (void*)mkbd_handle, 10, NULL);
+    ESP_LOGI(TAG, "gpio_queue_handler created ");
     return ESP_OK;
 }
 
