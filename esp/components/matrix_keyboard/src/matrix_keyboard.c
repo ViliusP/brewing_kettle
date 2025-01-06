@@ -48,15 +48,6 @@ struct matrix_kbd_t
     uint32_t row_state[0];
 };
 
-// Define a struct to hold multiple arguments
-typedef struct
-{
-    dedic_gpio_bundle_handle_t row_bundle;
-    uint32_t row_index;
-    matrix_kbd_t *mkbd;
-} isr_callback_args_t;
-
-
 static void IRAM_ATTR gpio_isr_handler(void* arg)
 {
     uint32_t gpio_num = (uint32_t)arg;
@@ -155,7 +146,7 @@ static void gpio_queue_handler(void *pvParameters)
                 disable_bundle_interrupt(mkbd->row_gpios, mkbd->nr_row_gpios);
                 ESP_LOGD(TAG,  "GPOIO interrupt on GPIO[%" PRIu32 "], val: %d", io_num, gpio_get_level(io_num));
                 matrix_kbd_callback(mkbd, io_num);
-                enable_bundle_interrupt(mkbd->row_gpios, mkbd->nr_row_gpios, GPIO_INTR_ANYEDGE, NULL, NULL);
+                enable_bundle_interrupt(mkbd->row_gpios, mkbd->nr_row_gpios, GPIO_INTR_ANYEDGE);
 
 
                 last_interrupt_time = xTaskGetTickCount(); 
@@ -304,8 +295,8 @@ esp_err_t matrix_kbd_stop(matrix_kbd_handle_t mkbd_handle)
     xTimerStop(mkbd_handle->debounce_timer, 0);
 
     // Disable interrupt
-    ESP_RETURN_ON_FALSE(disable_bundle_interrupt(config->col_gpios, config->nr_col_gpios), ESP_FAIL, TAG, "Failed to disable interrupts on row GPIOs");
-    ESP_RETURN_ON_FALSE(disable_bundle_interrupt(config->row_gpios, config->nr_row_gpios), ESP_FAIL, TAG, "Failed to disable interrupts on col GPIOs");
+    ESP_RETURN_ON_FALSE(disable_bundle_interrupt(mkbd_handle->col_gpios, mkbd_handle->nr_col_gpios), ESP_FAIL, TAG, "Failed to disable interrupts on row GPIOs");
+    ESP_RETURN_ON_FALSE(disable_bundle_interrupt(mkbd_handle->row_gpios, mkbd_handle->nr_row_gpios), ESP_FAIL, TAG, "Failed to disable interrupts on col GPIOs");
 
     return ESP_OK;
 }

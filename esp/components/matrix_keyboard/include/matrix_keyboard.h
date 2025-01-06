@@ -140,6 +140,15 @@ esp_err_t matrix_kbd_stop(matrix_kbd_handle_t mkbd_handle);
  */
 esp_err_t matrix_kbd_register_event_handler(matrix_kbd_handle_t mkbd_handle, matrix_kbd_event_handler handler, void *args);
 
+/**
+ * @brief read all current events from matrix keyboard
+ *
+ * @param[in] mkbd_handle Handle of matrix keyboard that return from `matrix_kbd_install`
+ * @param[in] events_ptr Pointer to the pointer of key_event_t
+ * @return Number of events. If no events, return 0, otherwise return the number of events, if error occured, return negative value.
+ */ 
+int matrix_kbd_get_all_events(matrix_kbd_handle_t mkbd_handle, key_event_t** events_ptr);
+
 #ifdef __cplusplus
 }
 #endif
