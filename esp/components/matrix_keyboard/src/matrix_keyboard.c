@@ -60,9 +60,9 @@ esp_err_t disable_bundle_interrupt(int gpio_array[], size_t nr_gpio)
 {
     for (int i = 0; i < nr_gpio; i++)
     {
+        ESP_LOGD(TAG, "Disabling interrupt on %d", gpio_array[i]);
         ESP_RETURN_ON_ERROR(gpio_intr_disable(gpio_array[i]), TAG, "Failed to disable interrupt on GPIO %d", gpio_array[i]);
         ESP_RETURN_ON_ERROR(gpio_set_intr_type(gpio_array[i], GPIO_INTR_DISABLE), TAG, "Failed to set GPIO_INTR_DISABLE on GPIO %d", gpio_array[i]);
-        // ESP_RETURN_ON_ERROR(gpio_isr_handler_remove(gpio_array[i]), TAG, "Failed to disable isr hander %d", gpio_array[i]);
     }
     return ESP_OK;
 }
@@ -82,53 +82,99 @@ esp_err_t enable_bundle_interrupt(int gpio_array[], size_t nr_gpio, gpio_int_typ
     return ESP_OK;
 }
 
-
-static void matrix_kbd_callback(matrix_kbd_t* mkbd, uint32_t row_num)
-{    
-
-    ESP_LOGI(TAG, "row num %lu", row_num);
-
-    dedic_gpio_bundle_write(mkbd->row_bundle, 1 << row_num, 0);
+static int matrix_kbd_get_row_events(matrix_kbd_t* mkbd, uint32_t row_num, key_event_t** events_ptr) {
+    dedic_gpio_bundle_write(mkbd->row_bundle, 1 << row_num, 0); // Activate current row
     dedic_gpio_bundle_write(mkbd->col_bundle, (1 << mkbd->nr_col_gpios) - 1, (1 << mkbd->nr_col_gpios) - 1);
 
-    uint32_t row_out = dedic_gpio_bundle_read_out(mkbd->row_bundle);
-    uint32_t row_in = dedic_gpio_bundle_read_in(mkbd->row_bundle);
+    uint32_t col_in = dedic_gpio_bundle_read_in(mkbd->col_bundle); // Read columns for this row
 
-    uint32_t col_out = dedic_gpio_bundle_read_out(mkbd->col_bundle);
-    uint32_t col_in = dedic_gpio_bundle_read_in(mkbd->col_bundle);
-    
-    ESP_LOGI(TAG, "row_out=%" PRIx32 ", col_in=%" PRIx32, row_out, col_in);
-    ESP_LOGI(TAG, "row_in=%" PRIx32 ", col_out=%" PRIx32, row_in, col_out);
-    // ---------------------------------------------------
+    uint32_t changed_col_bits = mkbd->row_state[row_num] ^ col_in; // Compare with previous state
 
-    row_out = (~row_out) & ((1 << mkbd->nr_row_gpios) - 1);
-    int row = -1;
     int col = -1;
-    uint32_t key_code = 0;
+    uint32_t key_code;
+    int event_count = 0;
+    *events_ptr = NULL;
 
-    while (row_out) {
-        row = __builtin_ffs(row_out) - 1;
-        uint32_t changed_col_bits = mkbd->row_state[row] ^ col_in;
+    while (changed_col_bits) {
+        col = __builtin_ffs(changed_col_bits) - 1;
+        key_code = MAKE_KEY_CODE(row_num, col);
 
-        while (changed_col_bits) {
-            col = __builtin_ffs(changed_col_bits) - 1;
-            ESP_LOGI(TAG, "row=%d, col=%d", row, col);
-            key_code = MAKE_KEY_CODE(row, col);
-            if (col_in & (1 << col)) {
-                mkbd->event_handler(mkbd, MATRIX_KBD_EVENT_UP, (void *)key_code, mkbd->event_handler_args);
-            } else {
-                mkbd->event_handler(mkbd, MATRIX_KBD_EVENT_DOWN, (void *)key_code, mkbd->event_handler_args);
-            }
-            changed_col_bits = changed_col_bits & (changed_col_bits - 1);
+        // Allocate memory for the event
+        *events_ptr = realloc(*events_ptr, (event_count + 1) * sizeof(key_event_t));
+        if (*events_ptr == NULL) {
+            ESP_LOGE(TAG, "Memory allocation failed!");
+            free(*events_ptr); // Free allocated memory on error
+            return -1;
         }
-        mkbd->row_state[row] = col_in;
-        row_out = row_out & (row_out - 1);
+
+        (*events_ptr)[event_count].row = row_num;
+        (*events_ptr)[event_count].col = col;
+        (*events_ptr)[event_count].key_code = key_code;
+        (*events_ptr)[event_count].event = (col_in & (1 << col)) ? MATRIX_KBD_EVENT_UP : MATRIX_KBD_EVENT_DOWN;
+        event_count++;
+
+        changed_col_bits &= (changed_col_bits - 1); // Clear the processed bit
     }
 
-    // row lines set to high level
+    mkbd->row_state[row_num] = col_in; // Update row state
+
     dedic_gpio_bundle_write(mkbd->row_bundle, (1 << mkbd->nr_row_gpios) - 1, (1 << mkbd->nr_row_gpios) - 1);
-    // col lines set to low level
     dedic_gpio_bundle_write(mkbd->col_bundle, (1 << mkbd->nr_col_gpios) - 1, 0);
+
+    return event_count;
+}
+
+int matrix_kbd_get_all_events(matrix_kbd_t* mkbd, key_event_t** events_ptr) {
+    int total_events = 0;
+    *events_ptr = NULL;
+
+    for (uint32_t row_num = 0; row_num < mkbd->nr_row_gpios; row_num++) {
+        key_event_t* row_events = NULL;
+        int num_row_events = matrix_kbd_get_row_events(mkbd, row_num, &row_events);
+
+        if (num_row_events == -1) {
+            // Handle error from matrix_kbd_get_row_events
+            ESP_LOGE(TAG, "Error getting events for row %lu. Cleaning up.", row_num);
+            if (*events_ptr) {
+                free(*events_ptr);
+                *events_ptr = NULL; // Important: set to NULL after freeing
+            }
+            return -1; // Return error code
+        }
+
+        if (num_row_events > 0) {
+            *events_ptr = realloc(*events_ptr, (total_events + num_row_events) * sizeof(key_event_t));
+            if (*events_ptr == NULL) {
+                ESP_LOGE(TAG, "Memory allocation failed!");
+                if (row_events) free(row_events);
+                if (*events_ptr) free(*events_ptr);
+                *events_ptr = NULL; // Important: set to NULL after freeing
+                return -1;
+            }
+
+            for (int i = 0; i < num_row_events; i++) {
+                (*events_ptr)[total_events + i] = row_events[i];
+            }
+
+            total_events += num_row_events;
+        }
+        if (row_events) free(row_events); // Free even if num_row_events is 0
+    }
+
+    return total_events; // Return total events (can be 0)
+}
+
+static void matrix_kbd_callback(matrix_kbd_t* mkbd, uint32_t row_num) {
+    key_event_t* events = NULL; // Important: Initialize to NULL
+    int num_events = matrix_kbd_get_row_events(mkbd, row_num, &events);
+    ESP_LOGI(TAG, "GAGASGFASDASD: row=%lu", row_num);
+    for (int i = 0; i < num_events; i++) {
+        ESP_LOGI(TAG, "Event: row=%d, col=%d, key_code=%" PRIx32 ", event=%d",
+                    events[i].row, events[i].col, events[i].key_code, events[i].event);
+        mkbd->event_handler(mkbd, events[i].event, (void*)events[i].key_code, mkbd->event_handler_args); // Call Event handler here
+    }
+
+    free(events); // Free the allocated memory
 }
 
 static void gpio_queue_handler(void *pvParameters)

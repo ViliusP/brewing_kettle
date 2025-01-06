@@ -14,16 +14,30 @@
 static const char *TAG = "MAIN";
 
 // Mapping of your key codes to LVGL key codes
-static uint32_t key_mapping[] = {
-    [0] = LV_KEY_NEXT,     // Example: Key code 0 maps to LV_KEY_NEXT
-    [1] = LV_KEY_PREV,     // Example: Key code 1 maps to LV_KEY_PREV
-    [2] = LV_KEY_ENTER,    // Example: Key code 2 maps to LV_KEY_ENTER
-    [3] = LV_KEY_UP,       // Example: Key code 3 maps to LV_KEY_UP
-    [4] = LV_KEY_DOWN,     // Example: Key code 4 maps to LV_KEY_DOWN
-    [5] = LV_KEY_LEFT,     // Example: Key code 5 maps to LV_KEY_LEFT
-    [6] = LV_KEY_RIGHT,    // Example: Key code 6 maps to LV_KEY_RIGHT
-    // ... map other keys as needed
+typedef struct {
+    uint16_t key_code;
+    lv_key_t lvgl_key;
+    // ... other properties
+} key_map_t;
+
+static key_map_t key_mappings[] = {
+    {MAKE_KEY_CODE(0, 0), LV_KEY_DOWN},
+    {MAKE_KEY_CODE(0, 1), LV_KEY_PREV},
+    {MAKE_KEY_CODE(1, 1), LV_KEY_UP},
+    {MAKE_KEY_CODE(1, 0), LV_KEY_NEXT},
+    // ... other mappings
 };
+
+// Lookup utility function
+static lv_key_t map_key_code(uint16_t key_code) {
+    for (size_t i = 0; i < sizeof(key_mappings) / sizeof(key_mappings[0]); i++) {
+        if (key_code == key_mappings[i].key_code) {
+            return key_mappings[i].lvgl_key;
+        }
+    }
+    return 0; // Return 0 if no mapping is found
+}
+
 
 /**
  * @brief Matrix keyboard event handler
@@ -62,15 +76,18 @@ static void keypad_read(lv_indev_t * indev_drv, lv_indev_data_t* data) {
     if (total_events == 0) {
         data->state = LV_INDEV_STATE_REL;
     }
-    // Process events and set data->btn_id accordingly.
-    // Example (adapt to your key mapping):
+
+    data->state = LV_INDEV_STATE_REL; // Default state: RELEASED
+
     for (int i = 0; i < total_events; i++) {
-        ESP_LOGI(TAG, "Event: row=%d, col=%d, key_code=%" PRIx32 ", event=%d",
-                    all_events[i].row, all_events[i].col, all_events[i].key_code, all_events[i].event);
-        if(all_events[i].event == MATRIX_KBD_EVENT_DOWN){
-            data->btn_id = all_events[i].key_code;
-            data->state = LV_INDEV_STATE_PR;
-            break;
+        lv_key_t mapped_key = map_key_code(all_events[i].key_code);
+        if (mapped_key != 0) { // Check if a mapping was found
+            ESP_LOGI(TAG, "Sending LVGL key code %d", mapped_key);
+            data->key = mapped_key;
+            data->state = (all_events[i].event == MATRIX_KBD_EVENT_DOWN) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;
+            break; // Process only one event per call
+        } else {
+            ESP_LOGW(TAG, "No mapping found for key code %04"PRIx32, all_events[i].key_code);
         }
     }
     free(all_events);
@@ -97,16 +114,36 @@ void app_main(void)
     // Install matrix keyboard driver
     matrix_kbd_install(&config, &kbd);
     // Register keyboard input event handler
-    matrix_kbd_register_event_handler(kbd, example_matrix_kbd_event_handler, NULL);
-    // // Keyboard start to work
-    matrix_kbd_start(kbd);
+    // matrix_kbd_register_event_handler(kbd, example_matrix_kbd_event_handler, NULL);
+    // // // Keyboard start to work
+    // matrix_kbd_start(kbd);
 
+
+    // =======================================
     initialize_screen();
 
+    lv_indev_t * indev = lv_indev_create();
+    
+
+    lv_indev_set_type(indev, LV_INDEV_TYPE_KEYPAD);
+
+    lv_indev_set_user_data(indev, kbd); // Pass kbd to the input device
+    lv_indev_set_read_cb(indev, keypad_read);
+
+    lv_group_t * g = lv_group_create();
+    lv_indev_set_group(indev, g);
+
+
+
     // =======================================
-    // lv_indev_t * indev = lv_indev_create();
-    // lv_indev_set_type(indev, LV_INDEV_TYPE_KEYPAD);
-    // lv_indev_set_user_data(indev, kbd); // Pass kbd to the input device
-    // lv_indev_set_read_cb(indev, keypad_read);
-    // =======================================
+
+
+    /// DO NOT DELETE
+    for (int i = 240; i >= 0; i--) {
+        printf("Restarting in %d seconds...\n", i);
+        vTaskDelay(1000 / portTICK_PERIOD_MS * 2);
+    }
+    printf("Restarting now.\n");
+    fflush(stdout);
+    esp_restart();
 }
