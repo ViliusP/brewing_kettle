@@ -58,6 +58,17 @@ typedef struct {
 } matrix_kbd_config_t;
 
 /**
+ * @brief Structure defined for key event
+ *
+ */
+typedef struct {
+    int row; /*!< Row number */
+    int col; /*!< Column number */
+    uint32_t key_code; /*!< Key code, refer to `MAKE_KEY_CODE` to see how to make a key code */
+    matrix_kbd_event_id_t event; /*!< Event ID, refer to `matrix_kbd_event_id_t` to see all supported events */
+} key_event_t;
+
+/**
  * @brief Default configuration for matrix keyboard driver
  *
  */
