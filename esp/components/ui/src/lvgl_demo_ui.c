@@ -5,6 +5,7 @@
  */
 
 #include "lvgl.h"
+#include "esp_log.h"
 
 void lv_example_anim_2(lv_display_t *disp);
 

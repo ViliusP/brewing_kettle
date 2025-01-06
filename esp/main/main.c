@@ -3,41 +3,15 @@
  *
  * SPDX-License-Identifier: CC0-1.0
  */
-
 #include <stdio.h>
 #include "esp_log.h"
 #include "matrix_keyboard.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "lvgl.h"
+#include "screen.h"
 
 static const char *TAG = "MAIN";
-
-// Mapping of your key codes to LVGL key codes
-typedef struct {
-    uint16_t key_code;
-    lv_key_t lvgl_key;
-    // ... other properties
-} key_map_t;
-
-static key_map_t key_mappings[] = {
-    {MAKE_KEY_CODE(0, 0), LV_KEY_DOWN},
-    {MAKE_KEY_CODE(0, 1), LV_KEY_PREV},
-    {MAKE_KEY_CODE(1, 1), LV_KEY_UP},
-    {MAKE_KEY_CODE(1, 0), LV_KEY_NEXT},
-    // ... other mappings
-};
-
-// Lookup utility function
-static lv_key_t map_key_code(uint16_t key_code) {
-    for (size_t i = 0; i < sizeof(key_mappings) / sizeof(key_mappings[0]); i++) {
-        if (key_code == key_mappings[i].key_code) {
-            return key_mappings[i].lvgl_key;
-        }
-    }
-    return 0; // Return 0 if no mapping is found
-}
-
 
 /**
  * @brief Matrix keyboard event handler
@@ -58,6 +32,31 @@ esp_err_t example_matrix_kbd_event_handler(matrix_kbd_handle_t mkbd_handle, matr
     return ESP_OK;
 }
 
+
+// Mapping of your key codes to LVGL key codes
+typedef struct {
+    uint16_t key_code;
+    lv_key_t lvgl_key;
+    // ... other properties
+} key_map_t;
+
+static key_map_t key_mappings[] = {
+    {MAKE_KEY_CODE(0, 0), LV_KEY_DOWN},
+    {MAKE_KEY_CODE(0, 1), LV_KEY_LEFT},
+    {MAKE_KEY_CODE(1, 1), LV_KEY_UP},
+    {MAKE_KEY_CODE(1, 0), LV_KEY_RIGHT},
+    // ... other mappings
+};
+
+// Lookup utility function
+static lv_key_t map_key_code(uint16_t key_code) {
+    for (size_t i = 0; i < sizeof(key_mappings) / sizeof(key_mappings[0]); i++) {
+        if (key_code == key_mappings[i].key_code) {
+            return key_mappings[i].lvgl_key;
+        }
+    }
+    return 0; // Return 0 if no mapping is found
+}
 static void keypad_read(lv_indev_t * indev_drv, lv_indev_data_t* data) {
     matrix_kbd_handle_t kbd = (matrix_kbd_handle_t)lv_indev_get_user_data(indev_drv); // Get kbd
 
@@ -82,7 +81,7 @@ static void keypad_read(lv_indev_t * indev_drv, lv_indev_data_t* data) {
     for (int i = 0; i < total_events; i++) {
         lv_key_t mapped_key = map_key_code(all_events[i].key_code);
         if (mapped_key != 0) { // Check if a mapping was found
-            ESP_LOGI(TAG, "Sending LVGL key code %d", mapped_key);
+            ESP_LOGD(TAG, "Sending LVGL key code %d", mapped_key);
             data->key = mapped_key;
             data->state = (all_events[i].event == MATRIX_KBD_EVENT_DOWN) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;
             break; // Process only one event per call
@@ -94,7 +93,6 @@ static void keypad_read(lv_indev_t * indev_drv, lv_indev_data_t* data) {
     
 }
 
-extern void initialize_screen();
 
 void app_main(void)
 {
@@ -120,20 +118,9 @@ void app_main(void)
 
 
     // =======================================
-    initialize_screen();
-
-    lv_indev_t * indev = lv_indev_create();
-    
-
-    lv_indev_set_type(indev, LV_INDEV_TYPE_KEYPAD);
-
-    lv_indev_set_user_data(indev, kbd); // Pass kbd to the input device
-    lv_indev_set_read_cb(indev, keypad_read);
-
-    lv_group_t * g = lv_group_create();
-    lv_indev_set_group(indev, g);
-
-
+    initialize_display();
+    add_keypad_input(keypad_read, kbd);
+    start_rendering();
 
     // =======================================
 
