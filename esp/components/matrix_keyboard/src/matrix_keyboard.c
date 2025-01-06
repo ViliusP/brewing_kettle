@@ -82,31 +82,46 @@ esp_err_t enable_bundle_interrupt(int gpio_array[], size_t nr_gpio, gpio_int_typ
 {
     for (int i = 0; i < nr_gpio; i++)
     {
-        ESP_LOGI(TAG, "Enabling interrupt on %d", gpio_array[i]);
+        ESP_LOGD(TAG, "Enabling interrupt on %d", gpio_array[i]);
         ESP_RETURN_ON_ERROR(gpio_intr_enable(gpio_array[i]), TAG, "Failed to enable interrupt on GPIO %d", gpio_array[i]);
         ESP_RETURN_ON_ERROR(gpio_set_intr_type(gpio_array[i], interrupt_type), TAG, "Failed to set interrupt type on GPIO %d", gpio_array[i]);
-        ESP_RETURN_ON_ERROR(gpio_isr_handler_add(gpio_array[i], gpio_isr_handler, (void *)gpio_array[i]), TAG, "Failed to disable isr hander %d", gpio_array[i]);
+        ESP_RETURN_ON_ERROR(gpio_isr_handler_add(gpio_array[i], gpio_isr_handler, (void *)i), TAG, "Failed to disable isr hander %d", gpio_array[i]);
     }
     ESP_LOGI(TAG, "Interrupts enabled successfully");
     return ESP_OK;
 }
 
 
-static void matrix_kbd_callback(matrix_kbd_t* mkbd)
-{
+static void matrix_kbd_callback(matrix_kbd_t* mkbd, uint32_t row_num)
+{    
+
+    ESP_LOGI(TAG, "row num %lu", row_num);
+
+    dedic_gpio_bundle_write(mkbd->row_bundle, 1 << row_num, 0);
+    dedic_gpio_bundle_write(mkbd->col_bundle, (1 << mkbd->nr_col_gpios) - 1, (1 << mkbd->nr_col_gpios) - 1);
+
     uint32_t row_out = dedic_gpio_bundle_read_out(mkbd->row_bundle);
+    uint32_t row_in = dedic_gpio_bundle_read_in(mkbd->row_bundle);
+
+    uint32_t col_out = dedic_gpio_bundle_read_out(mkbd->col_bundle);
     uint32_t col_in = dedic_gpio_bundle_read_in(mkbd->col_bundle);
+    
+    ESP_LOGI(TAG, "row_out=%" PRIx32 ", col_in=%" PRIx32, row_out, col_in);
+    ESP_LOGI(TAG, "row_in=%" PRIx32 ", col_out=%" PRIx32, row_in, col_out);
+    // ---------------------------------------------------
+
     row_out = (~row_out) & ((1 << mkbd->nr_row_gpios) - 1);
-    ESP_LOGD(TAG, "row_out=%" PRIx32 ", col_in=%" PRIx32, row_out, col_in);
     int row = -1;
     int col = -1;
     uint32_t key_code = 0;
+
     while (row_out) {
         row = __builtin_ffs(row_out) - 1;
         uint32_t changed_col_bits = mkbd->row_state[row] ^ col_in;
+
         while (changed_col_bits) {
             col = __builtin_ffs(changed_col_bits) - 1;
-            ESP_LOGD(TAG, "row=%d, col=%d", row, col);
+            ESP_LOGI(TAG, "row=%d, col=%d", row, col);
             key_code = MAKE_KEY_CODE(row, col);
             if (col_in & (1 << col)) {
                 mkbd->event_handler(mkbd, MATRIX_KBD_EVENT_UP, (void *)key_code, mkbd->event_handler_args);
@@ -137,12 +152,16 @@ static void gpio_queue_handler(void *pvParameters)
         if (xQueueReceive(gpio_evt_queue, &io_num, portMAX_DELAY))
         {
             if (xTaskGetTickCount() - last_interrupt_time > xTicksToWait) {
-                ESP_LOGI(TAG,  "GPOIO interrupt on GPIO[%" PRIu32 "], val: %d", io_num, gpio_get_level(io_num));
-                matrix_kbd_callback(mkbd);
+                disable_bundle_interrupt(mkbd->row_gpios, mkbd->nr_row_gpios);
+                ESP_LOGD(TAG,  "GPOIO interrupt on GPIO[%" PRIu32 "], val: %d", io_num, gpio_get_level(io_num));
+                matrix_kbd_callback(mkbd, io_num);
+                enable_bundle_interrupt(mkbd->row_gpios, mkbd->nr_row_gpios, GPIO_INTR_ANYEDGE, NULL, NULL);
+
+
                 last_interrupt_time = xTaskGetTickCount(); 
             } 
             else {
-                ESP_LOGI(TAG, "Debounce time not passed");
+                ESP_LOGD(TAG, "Debounce time not passed");
             }
         }
     }
@@ -199,7 +218,15 @@ esp_err_t matrix_kbd_install(const matrix_kbd_config_t *config, matrix_kbd_handl
     {
         ESP_LOGI(TAG, "Configuring row pin: %d", config->row_gpios[i]);
         gpio_pullup_en(config->row_gpios[i]);
-        gpio_od_enable(config->row_gpios[i]);
+        gpio_od_disable(config->row_gpios[i]);
+    }
+
+
+    for (int i = 0; i < config->nr_col_gpios; i++)
+    {
+        ESP_LOGI(TAG, "Configuring col pin: %d", config->col_gpios[i]);
+        gpio_pullup_dis(config->col_gpios[i]);
+        gpio_pulldown_dis(config->col_gpios[i]);
     }
 
     dedic_gpio_bundle_config_t bundle_col_config = {
@@ -212,12 +239,6 @@ esp_err_t matrix_kbd_install(const matrix_kbd_config_t *config, matrix_kbd_handl
     };
     ESP_GOTO_ON_ERROR(dedic_gpio_new_bundle(&bundle_col_config, &mkbd->col_bundle), err, TAG, "create col bundle failed");
 
-    for (int i = 0; i < config->nr_col_gpios; i++)
-    {
-        ESP_LOGI(TAG, "Configuring col pin: %d", config->col_gpios[i]);
-        gpio_pullup_en(config->col_gpios[i]);
-        gpio_od_enable(config->col_gpios[i]);
-    }
 
     ESP_GOTO_ON_ERROR(gpio_install_isr_service(0), err, TAG, "Failed to install isr service");
     ESP_GOTO_ON_ERROR(disable_bundle_interrupt(config->col_gpios, config->nr_col_gpios), err, TAG, "Failed to disable interrupts on row GPIOs");
@@ -265,7 +286,6 @@ esp_err_t matrix_kbd_start(matrix_kbd_handle_t mkbd_handle)
     dedic_gpio_bundle_write(mkbd_handle->row_bundle, (1 << mkbd_handle->nr_row_gpios) - 1, (1 << mkbd_handle->nr_row_gpios) - 1);
     // col lines set to low level
     dedic_gpio_bundle_write(mkbd_handle->col_bundle, (1 << mkbd_handle->nr_col_gpios) - 1, 0);
-
     for (int i = 0; i < mkbd_handle->nr_row_gpios; i++)
     {
         mkbd_handle->row_state[i] = (1 << mkbd_handle->nr_col_gpios) - 1;
