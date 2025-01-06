@@ -87,7 +87,7 @@ esp_err_t enable_bundle_interrupt(int gpio_array[], size_t nr_gpio, gpio_int_typ
         ESP_RETURN_ON_ERROR(gpio_set_intr_type(gpio_array[i], interrupt_type), TAG, "Failed to set interrupt type on GPIO %d", gpio_array[i]);
         ESP_RETURN_ON_ERROR(gpio_isr_handler_add(gpio_array[i], gpio_isr_handler, (void *)i), TAG, "Failed to disable isr hander %d", gpio_array[i]);
     }
-    ESP_LOGI(TAG, "Interrupts enabled successfully");
+    ESP_LOGD(TAG, "Interrupts enabled successfully");
     return ESP_OK;
 }
 
@@ -239,15 +239,25 @@ esp_err_t matrix_kbd_install(const matrix_kbd_config_t *config, matrix_kbd_handl
     };
     ESP_GOTO_ON_ERROR(dedic_gpio_new_bundle(&bundle_col_config, &mkbd->col_bundle), err, TAG, "create col bundle failed");
 
-
     ESP_GOTO_ON_ERROR(gpio_install_isr_service(0), err, TAG, "Failed to install isr service");
+
     ESP_GOTO_ON_ERROR(disable_bundle_interrupt(config->col_gpios, config->nr_col_gpios), err, TAG, "Failed to disable interrupts on row GPIOs");
     ESP_GOTO_ON_ERROR(disable_bundle_interrupt(config->row_gpios, config->nr_row_gpios), err, TAG, "Failed to disable interrupts on col GPIOs");
     ESP_GOTO_ON_ERROR(disable_bundle_interrupt(mkbd->led_gpios, mkbd->led_count), err, TAG, "Failed to disable interrupts on col GPIOs");
 
-    gpio_evt_queue = xQueueCreate(10, sizeof(uint32_t));
+    dedic_gpio_bundle_write(mkbd->row_bundle, (1 << mkbd->nr_row_gpios) - 1, (1 << mkbd->nr_row_gpios) - 1);
+    // col lines set to low level
+    dedic_gpio_bundle_write(mkbd->col_bundle, (1 << mkbd->nr_col_gpios) - 1, 0);
+    for (int i = 0; i < mkbd->nr_row_gpios; i++)
+    {
+        mkbd->row_state[i] = (1 << mkbd->nr_col_gpios) - 1;
+    }
+
+    // LED DEBUG
+    dedic_gpio_bundle_write(mkbd->led_bundle, 0x04, 0x04); // Assuming all three GPIOs are in the bundle
 
     *mkbd_handle = mkbd;
+    
     return ESP_OK;
 err:
     if (mkbd->debounce_timer)
@@ -280,19 +290,8 @@ esp_err_t matrix_kbd_start(matrix_kbd_handle_t mkbd_handle)
 {
     ESP_RETURN_ON_FALSE(mkbd_handle, ESP_ERR_INVALID_ARG, TAG, "invalid argument");
 
-    // dedic_gpio_bundle_write(mkbd_handle->led_bundle, 0x07, 0x00);
-    dedic_gpio_bundle_write(mkbd_handle->led_bundle, 0x04, 0x04); // Assuming all three GPIOs are in the bundle
+    gpio_evt_queue = xQueueCreate(10, sizeof(uint32_t));
 
-    dedic_gpio_bundle_write(mkbd_handle->row_bundle, (1 << mkbd_handle->nr_row_gpios) - 1, (1 << mkbd_handle->nr_row_gpios) - 1);
-    // col lines set to low level
-    dedic_gpio_bundle_write(mkbd_handle->col_bundle, (1 << mkbd_handle->nr_col_gpios) - 1, 0);
-    for (int i = 0; i < mkbd_handle->nr_row_gpios; i++)
-    {
-        mkbd_handle->row_state[i] = (1 << mkbd_handle->nr_col_gpios) - 1;
-    }
-
-
-    // // // only enable row line interrupt
     enable_bundle_interrupt(mkbd_handle->row_gpios, mkbd_handle->nr_row_gpios, GPIO_INTR_ANYEDGE, NULL, NULL);
     xTaskCreate(gpio_queue_handler, "gpio_queue_handler", 2048, (void*)mkbd_handle, 10, NULL);
     ESP_LOGI(TAG, "gpio_queue_handler created ");
@@ -305,10 +304,8 @@ esp_err_t matrix_kbd_stop(matrix_kbd_handle_t mkbd_handle)
     xTimerStop(mkbd_handle->debounce_timer, 0);
 
     // Disable interrupt
-    // dedic_gpio_bundle_set_interrupt_and_callback(mkbd_handle->row_bundle, (1 << mkbd_handle->nr_row_gpios) - 1,
-    //                                              DEDIC_GPIO_INTR_NONE, NULL, NULL);
-    // dedic_gpio_bundle_set_interrupt_and_callback(mkbd_handle->col_bundle, (1 << mkbd_handle->nr_col_gpios) - 1,
-    //                                              DEDIC_GPIO_INTR_NONE, NULL, NULL);
+    ESP_RETURN_ON_FALSE(disable_bundle_interrupt(config->col_gpios, config->nr_col_gpios), ESP_FAIL, TAG, "Failed to disable interrupts on row GPIOs");
+    ESP_RETURN_ON_FALSE(disable_bundle_interrupt(config->row_gpios, config->nr_row_gpios), ESP_FAIL, TAG, "Failed to disable interrupts on col GPIOs");
 
     return ESP_OK;
 }
