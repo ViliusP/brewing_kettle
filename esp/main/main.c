@@ -77,8 +77,6 @@ static void keypad_read(lv_indev_t * indev_drv, lv_indev_data_t* data) {
     
 }
 
-
-
 extern void initialize_screen();
 
 void app_main(void)
@@ -105,11 +103,10 @@ void app_main(void)
 
     initialize_screen();
 
-    for (int i = 240; i >= 0; i--) {
-        printf("Restarting in %d seconds...\n", i);
-        vTaskDelay(1000 / portTICK_PERIOD_MS * 2);
-    }
-    printf("Restarting now.\n");
-    fflush(stdout);
-    esp_restart();
+    // =======================================
+    // lv_indev_t * indev = lv_indev_create();
+    // lv_indev_set_type(indev, LV_INDEV_TYPE_KEYPAD);
+    // lv_indev_set_user_data(indev, kbd); // Pass kbd to the input device
+    // lv_indev_set_read_cb(indev, keypad_read);
+    // =======================================
 }

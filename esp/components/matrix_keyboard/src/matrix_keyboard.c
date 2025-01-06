@@ -67,9 +67,9 @@ esp_err_t disable_bundle_interrupt(int gpio_array[], size_t nr_gpio)
     return ESP_OK;
 }
 
-esp_err_t enable_bundle_interrupt(int gpio_array[], size_t nr_gpio, gpio_int_type_t interrupt_type, gpio_isr_t cb_isr, void *cb_args);
+esp_err_t enable_bundle_interrupt(int gpio_array[], size_t nr_gpio, gpio_int_type_t interrupt_type);
 
-esp_err_t enable_bundle_interrupt(int gpio_array[], size_t nr_gpio, gpio_int_type_t interrupt_type, gpio_isr_t cb_isr, void *cb_args)
+esp_err_t enable_bundle_interrupt(int gpio_array[], size_t nr_gpio, gpio_int_type_t interrupt_type)
 {
     for (int i = 0; i < nr_gpio; i++)
     {
@@ -283,7 +283,7 @@ esp_err_t matrix_kbd_start(matrix_kbd_handle_t mkbd_handle)
 
     gpio_evt_queue = xQueueCreate(10, sizeof(uint32_t));
 
-    enable_bundle_interrupt(mkbd_handle->row_gpios, mkbd_handle->nr_row_gpios, GPIO_INTR_ANYEDGE, NULL, NULL);
+    enable_bundle_interrupt(mkbd_handle->row_gpios, mkbd_handle->nr_row_gpios, GPIO_INTR_ANYEDGE);
     xTaskCreate(gpio_queue_handler, "gpio_queue_handler", 2048, (void*)mkbd_handle, 10, NULL);
     ESP_LOGI(TAG, "gpio_queue_handler created ");
     return ESP_OK;

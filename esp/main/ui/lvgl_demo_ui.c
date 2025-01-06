@@ -13,7 +13,7 @@ void example_lvgl_demo_ui(lv_display_t *disp)
     lv_example_anim_2(disp);
     lv_obj_t *scr = lv_display_get_screen_active(disp);
     lv_obj_t *label = lv_label_create(scr);
-    lv_label_set_text(label, "AAABC");
+    lv_label_set_text(label, "ZZDAVB");
     lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
 }
 
