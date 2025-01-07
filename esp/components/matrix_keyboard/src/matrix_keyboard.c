@@ -235,18 +235,18 @@ esp_err_t matrix_kbd_install(const matrix_kbd_config_t *config, matrix_kbd_handl
     ESP_GOTO_ON_ERROR(dedic_gpio_new_bundle(&bundle_row_config, &mkbd->row_bundle), err, TAG, "create row bundle failed");
 
     // -------------
-    // 4, 10, 11, 8  works
-    dedic_gpio_bundle_config_t bundle_led_config = {
-        .gpio_array = (int[]){10, 11, 8},
-        .array_size = 3,
-        // Each GPIO used in matrix key board should be able to input and output
-        .flags = {
-            // .in_en = 1,
-            .out_en = 1,
-        },
-    };
+    // // 4, 10, 11, 8  works
+    // dedic_gpio_bundle_config_t bundle_led_config = {
+    //     .gpio_array = (int[]){10, 11, 8},
+    //     .array_size = 3,
+    //     // Each GPIO used in matrix key board should be able to input and output
+    //     .flags = {
+    //         // .in_en = 1,
+    //         .out_en = 1,
+    //     },
+    // };
 
-    ESP_GOTO_ON_ERROR(dedic_gpio_new_bundle(&bundle_led_config, &mkbd->led_bundle), err, TAG, "create LED bundle failed");
+    // ESP_GOTO_ON_ERROR(dedic_gpio_new_bundle(&bundle_led_config, &mkbd->led_bundle), err, TAG, "create LED bundle failed");
     //-------------
 
     // In case the keyboard doesn't design a resister to pull up row/col line
@@ -291,7 +291,7 @@ esp_err_t matrix_kbd_install(const matrix_kbd_config_t *config, matrix_kbd_handl
     }
 
     // LED DEBUG
-    dedic_gpio_bundle_write(mkbd->led_bundle, 0x04, 0x04); // Assuming all three GPIOs are in the bundle
+    // dedic_gpio_bundle_write(mkbd->led_bundle, 0x04, 0x04); // Assuming all three GPIOs are in the bundle
 
     *mkbd_handle = mkbd;
     

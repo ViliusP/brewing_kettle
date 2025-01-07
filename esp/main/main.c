@@ -41,10 +41,12 @@ typedef struct {
 } key_map_t;
 
 static key_map_t key_mappings[] = {
-    {MAKE_KEY_CODE(0, 0), LV_KEY_DOWN},
-    {MAKE_KEY_CODE(0, 1), LV_KEY_LEFT},
-    {MAKE_KEY_CODE(1, 1), LV_KEY_UP},
-    {MAKE_KEY_CODE(1, 0), LV_KEY_RIGHT},
+    {MAKE_KEY_CODE(1, 2), LV_KEY_UP},
+    {MAKE_KEY_CODE(2, 0), LV_KEY_DOWN},
+    {MAKE_KEY_CODE(2, 1), LV_KEY_RIGHT},
+    {MAKE_KEY_CODE(1, 1), LV_KEY_LEFT},
+    {MAKE_KEY_CODE(2, 2), LV_KEY_ENTER},
+
     // ... other mappings
 };
 
@@ -80,6 +82,7 @@ static void keypad_read(lv_indev_t * indev_drv, lv_indev_data_t* data) {
 
     for (int i = 0; i < total_events; i++) {
         lv_key_t mapped_key = map_key_code(all_events[i].key_code);
+        ESP_LOGD(TAG, "Handling raw key code %04" PRIx32 " | row %d, col %d", all_events[i].key_code, all_events[i].row, all_events[i].col);
         if (mapped_key != 0) { // Check if a mapping was found
             ESP_LOGD(TAG, "Sending LVGL key code %d", mapped_key);
             data->key = mapped_key;
@@ -96,17 +99,19 @@ static void keypad_read(lv_indev_t * indev_drv, lv_indev_data_t* data) {
 
 void app_main(void)
 {
+    // esp_log_level_set(TAG, ESP_LOG_DEBUG);
+
     matrix_kbd_handle_t kbd = NULL;
     // Apply default matrix keyboard configuration
     matrix_kbd_config_t config = MATRIX_KEYBOARD_DEFAULT_CONFIG();
     // Set GPIOs used by row and column line
-    config.nr_col_gpios = 2;
+    config.nr_col_gpios = 3;
     config.col_gpios = (int[]) {
-        20, 21
+        4, 10, 11
     };
-    config.nr_row_gpios = 2;
+    config.nr_row_gpios = 3;
     config.row_gpios = (int[]) {
-        18, 19
+        18, 19, 20
     };  
 
     // Install matrix keyboard driver
@@ -126,9 +131,11 @@ void app_main(void)
 
 
     /// DO NOT DELETE
-    for (int i = 240; i >= 0; i--) {
-        printf("Restarting in %d seconds...\n", i);
-        vTaskDelay(1000 / portTICK_PERIOD_MS * 2);
+    for (int i = 720; i >= 0; i--) {
+        if(i % 60 == 0) {
+            printf("Restarting in %d seconds...\n", i);
+        }
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
     printf("Restarting now.\n");
     fflush(stdout);

@@ -34,7 +34,6 @@ static void create_external_input_debug_layer(lv_display_t *disp) {
 
 
 
-static lv_obj_t* list1;
 static lv_obj_t* currentButton = NULL;
 
 static void event_handler(lv_event_t* e)
@@ -43,7 +42,7 @@ static void event_handler(lv_event_t* e)
     lv_obj_t* obj = lv_event_get_target(e);
     if (code == LV_EVENT_CLICKED)
     {
-        ESP_LOGI(TAG, "Clicked: %s", lv_list_get_btn_text(list1, obj));
+        // ESP_LOGI(TAG, "Clicked: %s", lv_list_get_btn_text(list1, obj));
 
         if (currentButton == obj)
         {
@@ -63,7 +62,7 @@ static void go_up(lv_obj_t* list)
     if (currentButton == NULL) return;
     uint32_t index = lv_obj_get_index(currentButton);
     if (index <= 0) return;
-    lv_obj_move_to_index(currentButton, index - 1);
+    currentButton = lv_obj_get_child(list, index - 1);
     lv_obj_scroll_to_view(currentButton, LV_ANIM_ON);
     uint32_t i;
     for (i = 0; i < lv_obj_get_child_cnt(list); i++)
@@ -79,10 +78,12 @@ static void go_up(lv_obj_t* list)
 
 
 static void go_down(lv_obj_t* list)
-{
+{   
+    uint32_t child_count = lv_obj_get_child_cnt(list);
     if (currentButton == NULL) return;
     const uint32_t index = lv_obj_get_index(currentButton);
-    lv_obj_move_to_index(currentButton, index + 1);
+    if (child_count-1 <= index) return;
+    currentButton = lv_obj_get_child(list, index + 1);
     lv_obj_scroll_to_view(currentButton, LV_ANIM_ON);
 
     uint32_t i;
@@ -103,6 +104,8 @@ static void list_event_handler(lv_event_t* e)
 {
     lv_event_code_t code = lv_event_get_code(e);
     lv_obj_t* obj = lv_event_get_target(e);
+    const uint32_t before = lv_obj_get_index(currentButton);
+    ESP_LOGI(TAG, "Button index before event: %lu", before);
     if (code == LV_EVENT_KEY)
     {
         switch (lv_indev_get_key(lv_indev_active()))
@@ -132,14 +135,9 @@ static void list_event_handler(lv_event_t* e)
                 break;
         }
     }
+    const uint32_t after = lv_obj_get_index(currentButton);
+    ESP_LOGI(TAG, "Button  index after event: %lu", after);
 }
-
-const lv_style_const_prop_t style_btn_label_props[] = {
-   LV_STYLE_CONST_BG_COLOR({0x00}),
-};
-
-LV_STYLE_CONST_INIT(style_btn_label, style_btn_label_props);
-
 
 void lv_example_list_2(void)
 {
@@ -150,49 +148,91 @@ void lv_example_list_2(void)
     lv_style_init(&style_btn_default);
     lv_style_set_bg_color(&style_btn_default, lv_color_white());
     lv_style_set_text_color(&style_btn_default, lv_color_black());
-
     lv_style_set_outline_color(&style_btn_default, lv_color_black());
     lv_style_set_outline_width(&style_btn_default, 1);
+    lv_style_set_radius(&style_btn_default, 16);
+    lv_style_set_pad_ver(&style_btn_default, 2);
+    lv_style_set_min_width(&style_btn_default, lv_pct(100));
+    lv_style_set_height(&style_btn_default, 15);
 
     static lv_style_t style_btn_focused;
-    lv_style_init(&style_btn_focused);
-    lv_style_set_bg_color(&style_btn_focused, lv_color_black());
-    lv_style_set_text_color(&style_btn_focused, lv_color_white());
-    lv_style_set_outline_color(&style_btn_focused, lv_color_white());
-    lv_style_set_outline_width(&style_btn_focused, 1);
+    lv_style_set_border_color(&style_btn_focused, lv_color_black());
+    lv_style_set_border_width(&style_btn_focused, 2);
+    lv_style_set_height(&style_btn_default, 25);
+
     // =======================
 
     /*Create a list*/
-    list1 = lv_list_create(lv_scr_act());
-    lv_obj_set_size(list1, lv_pct(100), lv_pct(100));
-    lv_obj_set_style_pad_row(list1, 2, 0);
-
-    lv_obj_add_event_cb(list1, list_event_handler, LV_EVENT_KEY, NULL);
-    lv_group_add_obj(lv_group_get_default(), list1);
+    lv_obj_t* container = lv_list_create(lv_scr_act());
+    lv_obj_set_size(container, 128, 64);
+    lv_obj_set_flex_flow(container, LV_FLEX_FLOW_COLUMN);
+    // lv_obj_add_event_cb(container, list_event_handler, LV_EVENT_KEY, NULL);
+    lv_group_add_obj(lv_group_get_default(), container);
 
     /*Add buttons to the list*/
     lv_obj_t* btn;
     int i;
     for (i = 0; i < 15; i++) {
-        btn = lv_btn_create(list1);
-        lv_obj_set_width(btn, lv_pct(100));
+        btn = lv_btn_create(container);
         lv_obj_add_style(btn, &style_btn_default, LV_STATE_DEFAULT);
-        lv_obj_add_style(btn, &style_btn_focused, LV_STATE_CHECKED );
+        lv_obj_add_style(btn, &style_btn_default, LV_STATE_CHECKED | LV_STATE_FOCUSED);
+        lv_obj_add_style(btn, &style_btn_focused, LV_STATE_CHECKED | LV_STATE_FOCUSED);
         lv_obj_add_event_cb(btn, event_handler, LV_EVENT_CLICKED, NULL);
+        lv_group_remove_obj(btn);
 
         lv_obj_t* label = lv_label_create(btn);
-        lv_obj_add_style(label, &style_btn_label, LV_STATE_DEFAULT);
         lv_label_set_text_fmt(label, "Item %d", i);
+        lv_obj_center(label);
     }
 
     // /*Select the first button by default*/
-    currentButton = lv_obj_get_child(list1, 0);
-    lv_obj_add_state(currentButton, LV_STATE_CHECKED);
+    currentButton = lv_obj_get_child(container, 0);
+    lv_obj_add_state(currentButton, LV_STATE_FOCUSED);
 }
 
+void lv_example_flex_4(void)
+{
+    // -----------------------
+    // STYLES
+    // -----------------------
+    static lv_style_t style_btn_default;
+    lv_style_init(&style_btn_default);
+    lv_style_set_bg_color(&style_btn_default, lv_color_white());
+    lv_style_set_text_color(&style_btn_default, lv_color_black());
+    lv_style_set_radius(&style_btn_default, 16);
+    lv_style_set_pad_ver(&style_btn_default, 2);
+    lv_style_set_width(&style_btn_default, lv_pct(100));
+    lv_style_set_height(&style_btn_default, 28);
+    
+
+    static lv_style_t style_btn_focused;
+    lv_style_set_border_color(&style_btn_focused, lv_color_black());
+    lv_style_set_border_width(&style_btn_focused, 2);
+    // =======================
+
+    lv_obj_t * container = lv_obj_create(lv_screen_active());
+    lv_gridnav_add(container, LV_GRIDNAV_CTRL_NONE);
+    lv_obj_set_size(container, 128, lv_pct(100));
+    lv_obj_center(container);
+    lv_obj_set_flex_flow(container, LV_FLEX_FLOW_COLUMN);
+    lv_group_add_obj(lv_group_get_default(), container);
+
+    uint32_t i;
+    for(i = 0; i < 6; i++) {
+        lv_obj_t * btn = lv_obj_create(container);
+        lv_obj_add_style(btn, &style_btn_default, LV_STATE_DEFAULT);
+        lv_obj_add_style(btn, &style_btn_default, LV_STATE_FOCUSED);
+        lv_obj_add_style(btn, &style_btn_focused, LV_STATE_FOCUSED);
+        lv_group_remove_obj(btn);   /*Not needed, we use the gridnav instead*/
+
+        lv_obj_t * label = lv_label_create(btn);
+        lv_label_set_text_fmt(label, "Item: %"LV_PRIu32, i);
+        lv_obj_center(label);
+    }
+}
 
 void create_ui(lv_display_t *disp) {
     // create_external_input_debug_layer(disp);
     // lv_example_menu_1(disp);
-    lv_example_list_2();
+    lv_example_flex_4();
 }
