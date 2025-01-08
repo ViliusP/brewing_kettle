@@ -13,10 +13,24 @@ class WebSocketConnectionStore = _WebSocketConnectionStore
     with _$WebSocketConnectionStore;
 
 abstract class _WebSocketConnectionStore with Store {
+  WebSocketChannel? _channel;
+
   _WebSocketConnectionStore() {
     // _timer = Timer.periodic(const Duration(seconds: 1),
     //     (_) => _streamController.add(_random.nextInt(100)));
   }
+
+  @computed
+  List<WebSocketMessage> get messages => _messages.toList();
+
+  @observable
+  ObservableList<WebSocketMessage> _messages = ObservableList.of([]);
+
+  @computed
+  List<WebSocketMessage> get archive => _archive.toList();
+
+  @observable
+  ObservableList<WebSocketMessage> _archive = ObservableList.of([]);
 
   @computed
   WebSocketConnectionStatus get status => _status;
@@ -24,16 +38,19 @@ abstract class _WebSocketConnectionStore with Store {
   @observable
   WebSocketConnectionStatus _status = WebSocketConnectionStatus.idle;
 
-  WebSocketChannel? _channel;
-
   @computed
-  String? get connectedTo => _connectedTo;
+  String? get connectedTo => _connectedTo?.toString();
 
   @observable
-  String? _connectedTo;
+  Uri? _connectedTo;
 
   @action
   Future connect(String address) async {
+    if (_channel != null) {
+      log("Connecting failed. There is active connection to server, please close it first");
+      return;
+    }
+
     final Uri uri;
 
     try {
@@ -67,7 +84,7 @@ abstract class _WebSocketConnectionStore with Store {
 
     _status = WebSocketConnectionStatus.connected;
     _channel!.stream.listen(_onData, onError: _onError, onDone: _onDone);
-    _connectedTo = address;
+    _connectedTo = uri;
   }
 
   @action
@@ -78,8 +95,19 @@ abstract class _WebSocketConnectionStore with Store {
     _status = WebSocketConnectionStatus.fromCloseCode(code);
   }
 
+  @action
   void _onData(dynamic data) {
-    log("Got data from $_connectedTo: ${data.toString()}");
+    log("Got data from $connectedTo: ${data.toString()}");
+
+    if (_connectedTo == null || _channel == null) {
+      log("Unexpected: got message when connection is null");
+      _status = WebSocketConnectionStatus.finishedNoStatus;
+      _clean();
+      return;
+    }
+    WebSocketMessage message = WebSocketMessage.create(data, _connectedTo!);
+    _messages.add(message);
+    _archive.add(message);
   }
 
   void _onError(dynamic maybeError) {
@@ -99,6 +127,7 @@ abstract class _WebSocketConnectionStore with Store {
   void _clean() {
     _channel = null;
     _connectedTo = null;
+    _messages.clear();
   }
 
   // ignore: avoid_void_async
@@ -159,16 +188,17 @@ enum WebSocketConnectionStatus {
 
 class WebSocketMessage {
   final String data;
+  final Uri sender;
   final DateTime time;
 
-  WebSocketMessage._(this.data, this.time);
+  WebSocketMessage._(this.data, this.sender, this.time);
 
-  factory WebSocketMessage.create(String data) {
+  factory WebSocketMessage.create(String data, Uri sender) {
     try {
       var decodedJSON = json.decode(data) as Map<String, dynamic>;
-      return WebSocketMessageJson._(decodedJSON, data, DateTime.now());
+      return WebSocketMessageJson._(decodedJSON, data, sender, DateTime.now());
     } catch (e) {
-      return WebSocketMessage._(data, DateTime.now());
+      return WebSocketMessage._(data, sender, DateTime.now());
     }
   }
 }
@@ -180,6 +210,7 @@ class WebSocketMessageJson extends WebSocketMessage {
   WebSocketMessageJson._(
     this._json,
     String data,
+    Uri sender,
     DateTime time,
-  ) : super._(data, time);
+  ) : super._(data, sender, time);
 }
