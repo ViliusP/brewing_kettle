@@ -1,4 +1,8 @@
+import 'package:brew_kettle_dashboard/core/service_locator.dart';
+import 'package:brew_kettle_dashboard/stores/network_scanner/network_scanner_store.dart';
+import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class StartScreen extends StatelessWidget {
@@ -23,10 +27,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // ------- STORES -------
+  final NetworkScannerStore _networkScannerStore = getIt<NetworkScannerStore>();
+  final WebSocketConnectionStore _wsConnectionStore =
+      getIt<WebSocketConnectionStore>();
+
   final TextEditingController _controller = TextEditingController();
-  final _channel = WebSocketChannel.connect(
-    Uri.parse('wss://echo.websocket.events'),
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -34,44 +40,83 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Form(
-              child: TextFormField(
-                controller: _controller,
-                decoration: const InputDecoration(labelText: 'Send a message'),
+      body: Column(
+        children: [
+          Observer(builder: (context) {
+            return Text(
+              "Scan state: ${_networkScannerStore.state}",
+            );
+          }),
+          Observer(builder: (context) {
+            final maybeFirstRecord = _networkScannerStore.records.firstOrNull;
+            if (maybeFirstRecord == null) {
+              return Text("No records found");
+            }
+            return Text(
+              "${maybeFirstRecord.hostname}:${maybeFirstRecord.port}\n${maybeFirstRecord.ip}:${maybeFirstRecord.port}",
+            );
+          }),
+          ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                (Set<WidgetState> states) {
+                  if (states.contains(WidgetState.pressed)) {
+                    return Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.5);
+                  }
+                  return null; // Use the component's default.
+                },
               ),
             ),
-            const SizedBox(height: 24),
-            StreamBuilder(
-              stream: _channel.stream,
-              builder: (context, snapshot) {
-                return Text(snapshot.hasData ? '${snapshot.data}' : '');
-              },
-            )
-          ],
-        ),
+            child: const Text('Connect'),
+            onPressed: () {
+              final maybeFirstRecord = _networkScannerStore.records.firstOrNull;
+              if (maybeFirstRecord == null) {
+                return;
+              }
+              String address =
+                  "ws://${maybeFirstRecord.hostname}:${maybeFirstRecord.port}/ws";
+              _wsConnectionStore.connect(address);
+            },
+          ),
+          ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                (Set<WidgetState> states) {
+                  if (states.contains(WidgetState.pressed)) {
+                    return Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.5);
+                  }
+                  return null; // Use the component's default.
+                },
+              ),
+            ),
+            child: const Text('Send'),
+            onPressed: () {
+              _wsConnectionStore.message("Hello There");
+            },
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _sendMessage,
+        onPressed: _startScan,
         tooltip: 'Send message',
-        child: const Icon(Icons.send),
+        child: const Icon(Icons.refresh),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
-  void _sendMessage() {
-    if (_controller.text.isNotEmpty) {
-      _channel.sink.add(_controller.text);
-    }
+  void _startScan() {
+    _networkScannerStore.start();
   }
 
   @override
   void dispose() {
-    _channel.sink.close();
+    _wsConnectionStore.close();
     _controller.dispose();
     super.dispose();
   }

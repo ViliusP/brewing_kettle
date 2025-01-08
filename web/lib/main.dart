@@ -7,6 +7,6 @@ import 'package:flutter/widgets.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await ServiceLocator.configureDependencies();
+  await ServiceLocator.configure();
   runApp(BrewKettleDashboard());
 }

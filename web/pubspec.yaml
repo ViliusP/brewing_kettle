@@ -34,23 +34,28 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  # Flutter integration for MobX. It provides a set of Observer widgets that automatically rebuild when the tracked observables change.
-  flutter_mobx: ^2.3.0
 
   # MobX is a library for reactively managing the state of your applications. Use the power of observables, actions, and reactions to supercharge your Dart and Flutter apps.
   mobx: ^2.5.0
 
+  # Flutter integration for MobX. It provides a set of Observer widgets that automatically rebuild when the tracked observables change.
+  flutter_mobx: ^2.3.0
+
   # A powerful HTTP networking package, supports Interceptors, Aborting and canceling a request, Custom adapters, Transformers, etc. 
   dio: ^5.7.0
 
-  # Simple direct Service Locator that allows to decouple the interface from a concrete implementation and to access the concrete implementation from everywhere in your App"
-  get_it: ^8.0.0
   # StreamChannel wrappers for WebSockets. Provides a cross-platform WebSocketChannel API, a cross-platform implementation of that API that communicates over an underlying StreamChannel.
   web_socket_channel: ^3.0.0
+
+  # Simple direct Service Locator that allows to decouple the interface from a concrete implementation and to access the concrete implementation from everywhere in your App"
+  get_it: ^8.0.0
 
   # Contains code to deal with internationalized/localized messages, date and number formatting and parsing, bi-directional text, and other internationalization issues.
   intl: ^0.19.0
 
+  # Dart package for performing mDNS queries (e.g. Bonjour, Avahi).
+  multicast_dns: ^0.3.2+7
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -70,6 +75,8 @@ dev_dependencies:
 
   # This package provides a library that performs static analysis of Dart code.
   analyzer: ^6.11.0
+
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
