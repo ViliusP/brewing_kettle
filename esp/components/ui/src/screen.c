@@ -49,7 +49,6 @@ static uint8_t oled_buffer[LCD_H_RES * LCD_V_RES / 8];
 // LVGL library is not thread-safe, LVGL APIs will be called from different tasks, so use a mutex to protect it
 static _lock_t lvgl_api_lock;
 
-extern void example_lvgl_demo_ui(lv_disp_t *disp);
 extern void create_ui(lv_disp_t *disp);
 
 static bool notify_lvgl_flush_ready(esp_lcd_panel_io_handle_t io_panel, esp_lcd_panel_io_event_data_t *edata, void *user_ctx)
@@ -257,7 +256,6 @@ esp_err_t start_rendering() {
         _lock_release(&lvgl_api_lock);
         return ESP_FAIL; // Return an error code
     }
-    // example_lvgl_demo_ui(display); // This might also return an error in some cases. If it does, you should handle it here.
     create_ui(display);
     _lock_release(&lvgl_api_lock);
     return ESP_OK; // Return success
