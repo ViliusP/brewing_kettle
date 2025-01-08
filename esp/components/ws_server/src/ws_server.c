@@ -6,6 +6,7 @@
 #include <sys/param.h>
 #include "esp_netif.h"
 #include "keep_alive.h"
+#include "mdns_service.h"
 #include "wifi_connect.h"
 
 #include <esp_http_server.h>
@@ -231,9 +232,14 @@ void initialize_ws_server(httpd_handle_t* server)
     ESP_LOGI(TAG, "Connecting to WIFI");
     ESP_ERROR_CHECK(wifi_connect());
 
+    ESP_LOGI(TAG, "Start MDNS service");
+    start_mdns_service();
+
+
+
     /* Register event handlers to stop the server when Wi-Fi is disconnected,
      * and re-start it upon connection.
-     */
+    */
 
     ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &connect_handler, &server));
     ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, WIFI_EVENT_STA_DISCONNECTED, &disconnect_handler, &server));
