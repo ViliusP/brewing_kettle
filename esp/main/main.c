@@ -10,6 +10,7 @@
 #include "freertos/task.h"
 #include "lvgl.h"
 #include "screen.h"
+#include "ws_server.h"
 
 static const char *TAG = "MAIN";
 
@@ -40,7 +41,7 @@ typedef struct {
     // ... other properties
 } key_map_t;
 
-static key_map_t key_mappings[] = {
+static const key_map_t key_mappings[] = {
     {MAKE_KEY_CODE(1, 2), LV_KEY_UP},
     {MAKE_KEY_CODE(2, 0), LV_KEY_DOWN},
     {MAKE_KEY_CODE(2, 1), LV_KEY_RIGHT},
@@ -126,8 +127,10 @@ void app_main(void)
     initialize_display();
     add_keypad_input(keypad_read, kbd);
     start_rendering();
-
     // =======================================
+
+    static httpd_handle_t server = NULL;
+    initialize_ws_server(&server);
 
 
     /// DO NOT DELETE
