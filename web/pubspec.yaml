@@ -1,4 +1,4 @@
-name: brewerykettle
+name: brew_kettle_dashboard
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 0.0.1+1
 
 environment:
   sdk: ^3.6.0
@@ -31,12 +31,25 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # StreamChannel wrappers for WebSockets. Provides a cross-platform WebSocketChannel API, a cross-platform implementation of that API that communicates over an underlying StreamChannel.
-  web_socket_channel: ^3.0.1
+  flutter_localizations:
+    sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
+  # Flutter integration for MobX. It provides a set of Observer widgets that automatically rebuild when the tracked observables change.
+  flutter_mobx: ^2.3.0
+
+  # MobX is a library for reactively managing the state of your applications. Use the power of observables, actions, and reactions to supercharge your Dart and Flutter apps.
+  mobx: ^2.5.0
+
+  # A powerful HTTP networking package, supports Interceptors, Aborting and canceling a request, Custom adapters, Transformers, etc. 
+  dio: ^5.7.0
+
+  # Simple direct Service Locator that allows to decouple the interface from a concrete implementation and to access the concrete implementation from everywhere in your App"
+  get_it: ^8.0.0
+  # StreamChannel wrappers for WebSockets. Provides a cross-platform WebSocketChannel API, a cross-platform implementation of that API that communicates over an underlying StreamChannel.
+  web_socket_channel: ^3.0.0
+
+  # Contains code to deal with internationalized/localized messages, date and number formatting and parsing, bi-directional text, and other internationalization issues.
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +61,15 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+
+  # Code generator for MobX that adds support for annotating your code with @observable, @computed, @action and also creating Store classes.
+  mobx_codegen: ^2.7.0
+
+  # A build system for Dart code generation and modular compilation.
+  build_runner: ^2.4.0
+
+  # This package provides a library that performs static analysis of Dart code.
+  analyzer: ^6.11.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -1,6 +1,6 @@
 {
-    "name": "brewerykettle",
-    "short_name": "brewerykettle",
+    "name": "brew_kettle_dashboard",
+    "short_name": "brew_kettle_dashboard",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
