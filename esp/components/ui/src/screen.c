@@ -246,8 +246,6 @@ esp_err_t add_keypad_input(lv_indev_read_cb_t read_cb, void* args) {
 
 
 esp_err_t start_rendering() {
-    ESP_LOGI(TAG, "Composing LVGL UI");
-
     ESP_LOGI(TAG, "Starting LVGL Rendering");
     _lock_acquire(&lvgl_api_lock);
     lv_display_t *display = lv_display_get_default();
@@ -256,6 +254,7 @@ esp_err_t start_rendering() {
         _lock_release(&lvgl_api_lock);
         return ESP_FAIL; // Return an error code
     }
+    ESP_LOGI(TAG, "Composing LVGL UI");
     create_ui(display);
     _lock_release(&lvgl_api_lock);
     return ESP_OK; // Return success
