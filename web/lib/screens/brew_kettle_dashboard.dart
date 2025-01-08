@@ -1,8 +1,7 @@
 import 'package:brew_kettle_dashboard/constants/app.dart';
+import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/screens/start/start_screen.dart';
-import 'package:brew_kettle_dashboard/utils/app_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 class BrewKettleDashboard extends StatelessWidget {
@@ -30,16 +29,9 @@ class BrewKettleDashboard extends StatelessWidget {
           // supportedLocales: _languageStore.supportedLanguages
           //     .map((language) => Locale(language.locale, language.code))
           //     .toList(),
-          localizationsDelegates: [
-            // A class which loads the translations from JSON files
-            AppLocalizations.delegate,
-            // Built-in localization of basic text for Material widgets
-            GlobalMaterialLocalizations.delegate,
-            // Built-in localization for text direction LTR/RTL
-            GlobalWidgetsLocalizations.delegate,
-            // Built-in localization of basic text for Cupertino widgets
-            GlobalCupertinoLocalizations.delegate,
-          ],
+          locale: const Locale('en'),
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
           home: StartScreen(),
         );
       },
