@@ -30,20 +30,11 @@ extern "C" {
 
 #endif
 
+esp_err_t wifi_sta_do_disconnect(void);
 
 #if CONFIG_EXAMPLE_CONNECT_IPV6
 extern const char *example_ipv6_addr_types_to_str[6];
 #endif
-
-void example_wifi_start(void);
-void example_wifi_stop(void);
-esp_err_t example_wifi_sta_do_connect(wifi_config_t wifi_config, bool wait);
-esp_err_t example_wifi_sta_do_disconnect(void);
-bool example_is_our_netif(const char *prefix, esp_netif_t *netif);
-void example_print_all_netif_ips(const char *prefix);
-void example_wifi_shutdown(void);
-esp_err_t example_wifi_connect(void);
-
 
 #ifdef __cplusplus
 }

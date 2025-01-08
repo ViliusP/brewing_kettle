@@ -14,7 +14,7 @@
 /* 
 * A simple example that demonstrates using websocket echo server
 */
-static const char *TAG = "ws_server";
+static const char *TAG = "WS_SERVER";
 static const size_t max_clients = 4;
 
 /*
@@ -173,15 +173,12 @@ static httpd_handle_t start_ws_server(void)
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     httpd_handle_t server = NULL;
 
-    ESP_LOGI(TAG, "Starting server");
-
     if (httpd_start(&server, &config) != ESP_OK) {
-        ESP_LOGI(TAG, "Error starting server!");
+        ESP_LOGE(TAG, "Error starting WebSocket server!");
         return NULL;
     }
 
     // Set URI handlers
-    ESP_LOGI(TAG, "Registering URI handlers");
     httpd_register_uri_handler(server, &ws);
     wss_keep_alive_set_user_ctx(keep_alive, server);
 
@@ -210,10 +207,11 @@ static void disconnect_handler(void* arg, esp_event_base_t event_base,
 
 static void connect_handler(void* arg, esp_event_base_t event_base,
                             int32_t event_id, void* event_data)
-{
+{       
+    ESP_LOGI(TAG, "Succesfully connected to AP");
     httpd_handle_t* server = (httpd_handle_t*) arg;
     if (*server == NULL) {
-        ESP_LOGI(TAG, "Starting webserver");
+        ESP_LOGI(TAG, "Starting WebSocket server");
         *server = start_ws_server();
     }
 }
@@ -221,7 +219,7 @@ static void connect_handler(void* arg, esp_event_base_t event_base,
 
 void initialize_ws_server(httpd_handle_t* server)
 {
-    ESP_LOGI(TAG, "Initializing nvs and network stack");
+    ESP_LOGI(TAG, "Initializing NVC and TCP/IP stack");
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
@@ -230,6 +228,7 @@ void initialize_ws_server(httpd_handle_t* server)
      * Read "Establishing Wi-Fi or Ethernet Connection" section in
      * examples/protocols/README.md for more information about this function.
      */
+    ESP_LOGI(TAG, "Connecting to WIFI");
     ESP_ERROR_CHECK(wifi_connect());
 
     /* Register event handlers to stop the server when Wi-Fi is disconnected,
