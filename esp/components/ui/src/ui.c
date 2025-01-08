@@ -139,57 +139,6 @@ static void list_event_handler(lv_event_t* e)
     ESP_LOGI(TAG, "Button  index after event: %lu", after);
 }
 
-void lv_example_list_2(void)
-{
-    // -----------------------
-    // STYLES
-    // -----------------------
-    static lv_style_t style_btn_default;
-    lv_style_init(&style_btn_default);
-    lv_style_set_bg_color(&style_btn_default, lv_color_white());
-    lv_style_set_text_color(&style_btn_default, lv_color_black());
-    lv_style_set_outline_color(&style_btn_default, lv_color_black());
-    lv_style_set_outline_width(&style_btn_default, 1);
-    lv_style_set_radius(&style_btn_default, 16);
-    lv_style_set_pad_ver(&style_btn_default, 2);
-    lv_style_set_min_width(&style_btn_default, lv_pct(100));
-    lv_style_set_height(&style_btn_default, 15);
-
-    static lv_style_t style_btn_focused;
-    lv_style_set_border_color(&style_btn_focused, lv_color_black());
-    lv_style_set_border_width(&style_btn_focused, 2);
-    lv_style_set_height(&style_btn_default, 25);
-
-    // =======================
-
-    /*Create a list*/
-    lv_obj_t* container = lv_list_create(lv_scr_act());
-    lv_obj_set_size(container, 128, 64);
-    lv_obj_set_flex_flow(container, LV_FLEX_FLOW_COLUMN);
-    // lv_obj_add_event_cb(container, list_event_handler, LV_EVENT_KEY, NULL);
-    lv_group_add_obj(lv_group_get_default(), container);
-
-    /*Add buttons to the list*/
-    lv_obj_t* btn;
-    int i;
-    for (i = 0; i < 15; i++) {
-        btn = lv_btn_create(container);
-        lv_obj_add_style(btn, &style_btn_default, LV_STATE_DEFAULT);
-        lv_obj_add_style(btn, &style_btn_default, LV_STATE_CHECKED | LV_STATE_FOCUSED);
-        lv_obj_add_style(btn, &style_btn_focused, LV_STATE_CHECKED | LV_STATE_FOCUSED);
-        lv_obj_add_event_cb(btn, event_handler, LV_EVENT_CLICKED, NULL);
-        lv_group_remove_obj(btn);
-
-        lv_obj_t* label = lv_label_create(btn);
-        lv_label_set_text_fmt(label, "Item %d", i);
-        lv_obj_center(label);
-    }
-
-    // /*Select the first button by default*/
-    currentButton = lv_obj_get_child(container, 0);
-    lv_obj_add_state(currentButton, LV_STATE_FOCUSED);
-}
-
 void lv_example_flex_4(void)
 {
     // -----------------------
@@ -216,6 +165,9 @@ void lv_example_flex_4(void)
     lv_obj_center(container);
     lv_obj_set_flex_flow(container, LV_FLEX_FLOW_COLUMN);
     lv_group_add_obj(lv_group_get_default(), container);
+    lv_obj_set_style_pad_row(container, 0, 0);
+    lv_obj_set_style_pad_ver(container, 2, 0);
+    lv_obj_set_style_pad_hor(container, 0, 0);
 
     uint32_t i;
     for(i = 0; i < 6; i++) {
