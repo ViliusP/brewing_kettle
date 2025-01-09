@@ -2,3 +2,4 @@ arb-dir: assets/lang
 template-arb-file: en.arb
 output-localization-file: localization.dart
 output-dir: lib/localizations
+synthetic-package: false
