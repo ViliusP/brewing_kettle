@@ -184,7 +184,7 @@ static esp_err_t get_snapshot_response(cJSON *root, char **data)
   }
 
   *data = cJSON_Print(response_root);
-  ESP_LOGD(TAG, "Composed get_snapshot response message:\n(%.*s)...", 150, *data);
+  ESP_LOGD(TAG, "Composed get_snapshot response message:\n%.*s...", 150, *data);
 
   cJSON_Delete(response_root);
 
