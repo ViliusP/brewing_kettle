@@ -1,10 +1,14 @@
 #include "lvgl.h"
 
 #include "esp_log.h"
+#include "symbols.h"
+
+LV_FONT_DECLARE(mdi)
+
 
 static const char *TAG = "SCREEN.UI";
 
-const char* menu_labels[] = { "status", "control", "connections", "messages", "something" };
+const char* menu_labels[] = { CONNECTION_SYMBOL " status", "control", "connections", "messages", "something" };
 
 void create_ui(lv_display_t *disp);
 
@@ -153,7 +157,9 @@ void lv_example_flex_4(void)
     lv_style_set_pad_ver(&style_btn_default, 2);
     lv_style_set_width(&style_btn_default, lv_pct(100));
     lv_style_set_height(&style_btn_default, 28);
+    lv_style_set_text_font(&style_btn_default, &mdi);
     
+
 
     static lv_style_t style_btn_focused;
     lv_style_set_border_color(&style_btn_focused, lv_color_black());

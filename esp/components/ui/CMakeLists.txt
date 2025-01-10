@@ -1,5 +1,5 @@
-set(component_srcs "src/screen.c" "src/lvgl_demo_ui.c" "src/ui.c")
+set(component_srcs "src/screen.c" "src/lvgl_demo_ui.c" "src/ui.c" "font/font_14_mdi.c" "font/symbols.h")
 
 idf_component_register(SRCS "${component_srcs}"
-                       INCLUDE_DIRS "include"
+                       INCLUDE_DIRS "include" "font"
                        REQUIRES driver lvgl esp_lcd)
