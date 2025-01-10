@@ -1,9 +1,11 @@
+import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
+import 'package:brew_kettle_dashboard/stores/device_configuration/device_configuration_store.dart';
+import 'package:brew_kettle_dashboard/stores/device_snapshot/device_snapshot_store.dart';
 import 'package:brew_kettle_dashboard/stores/network_scanner/network_scanner_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class StartScreen extends StatelessWidget {
   const StartScreen({super.key});
@@ -32,6 +34,11 @@ class _MyHomePageState extends State<MyHomePage> {
   final WebSocketConnectionStore _wsConnectionStore =
       getIt<WebSocketConnectionStore>();
 
+  final DeviceConfigurationStore _deviceConfigurationStore =
+      getIt<DeviceConfigurationStore>();
+
+  final DeviceSnapshotStore _deviceSnapshotStore = getIt<DeviceSnapshotStore>();
+
   final TextEditingController _controller = TextEditingController();
 
   @override
@@ -40,67 +47,110 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Column(
-        children: [
-          Observer(builder: (context) {
-            return Text(
-              "Scan state: ${_networkScannerStore.state}",
-            );
-          }),
-          Observer(builder: (context) {
-            final maybeFirstRecord = _networkScannerStore.records.firstOrNull;
-            if (maybeFirstRecord == null) {
-              return Text("No records found");
-            }
-            return Text(
-              "${maybeFirstRecord.hostname}:${maybeFirstRecord.port}\n${maybeFirstRecord.ip}:${maybeFirstRecord.port}",
-            );
-          }),
-          ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                (Set<WidgetState> states) {
-                  if (states.contains(WidgetState.pressed)) {
-                    return Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: 0.5);
-                  }
-                  return null; // Use the component's default.
-                },
-              ),
-            ),
-            child: const Text('Connect'),
-            onPressed: () {
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Observer(builder: (context) {
+              return Text(
+                "Scan state: ${_networkScannerStore.state}",
+              );
+            }),
+            Observer(builder: (context) {
               final maybeFirstRecord = _networkScannerStore.records.firstOrNull;
               if (maybeFirstRecord == null) {
-                return;
+                return Text("No records found");
               }
-              String address =
-                  "ws://${maybeFirstRecord.hostname}:${maybeFirstRecord.port}/ws";
-              _wsConnectionStore.connect(address);
-            },
-          ),
-          ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                (Set<WidgetState> states) {
-                  if (states.contains(WidgetState.pressed)) {
-                    return Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: 0.5);
-                  }
-                  return null; // Use the component's default.
-                },
+              return Text(
+                "${maybeFirstRecord.hostname}:${maybeFirstRecord.port}\n${maybeFirstRecord.ip}:${maybeFirstRecord.port}",
+              );
+            }),
+            ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                  (Set<WidgetState> states) {
+                    if (states.contains(WidgetState.pressed)) {
+                      return Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withValues(alpha: 0.5);
+                    }
+                    return null; // Use the component's default.
+                  },
+                ),
               ),
+              child: const Text('Connect'),
+              onPressed: () {
+                final maybeFirstRecord =
+                    _networkScannerStore.records.firstOrNull;
+                if (maybeFirstRecord == null) {
+                  return;
+                }
+                String address =
+                    "ws://${maybeFirstRecord.hostname}:${maybeFirstRecord.port}/ws";
+                _wsConnectionStore.connect(address);
+              },
             ),
-            child: const Text('Send'),
-            onPressed: () {
-              _wsConnectionStore.message("Hello There");
-            },
-          ),
-        ],
+            ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                  (Set<WidgetState> states) {
+                    if (states.contains(WidgetState.pressed)) {
+                      return Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withValues(alpha: 0.5);
+                    }
+                    return null; // Use the component's default.
+                  },
+                ),
+              ),
+              child: const Text('Send'),
+              onPressed: () {
+                _wsConnectionStore.message("Hello There");
+              },
+            ),
+            ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                  (Set<WidgetState> states) {
+                    if (states.contains(WidgetState.pressed)) {
+                      return Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withValues(alpha: 0.5);
+                    }
+                    return null; // Use the component's default.
+                  },
+                ),
+              ),
+              child: const Text('Send'),
+              onPressed: () {
+                _deviceConfigurationStore.request();
+              },
+            ),
+            ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                  (Set<WidgetState> states) {
+                    if (states.contains(WidgetState.pressed)) {
+                      return Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withValues(alpha: 0.5);
+                    }
+                    return null; // Use the component's default.
+                  },
+                ),
+              ),
+              child: const Text('Send'),
+              onPressed: () {
+                _deviceSnapshotStore.request();
+              },
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _startScan,

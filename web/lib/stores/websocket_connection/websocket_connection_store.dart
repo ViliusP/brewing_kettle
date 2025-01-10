@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'dart:collection';
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:brew_kettle_dashboard/core/data/models/store/ws_listener.dart';
+import 'package:brew_kettle_dashboard/core/data/models/websocket/connection_status.dart';
+import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:mobx/mobx.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -13,24 +14,23 @@ class WebSocketConnectionStore = _WebSocketConnectionStore
     with _$WebSocketConnectionStore;
 
 abstract class _WebSocketConnectionStore with Store {
+  final List<StoreWebSocketListener> _listeners = [];
+
   WebSocketChannel? _channel;
 
-  _WebSocketConnectionStore() {
-    // _timer = Timer.periodic(const Duration(seconds: 1),
-    //     (_) => _streamController.add(_random.nextInt(100)));
-  }
+  _WebSocketConnectionStore();
 
   @computed
-  List<WebSocketMessage> get messages => _messages.toList();
+  List<WsInboundMessageSimple> get messages => _messages.toList();
 
   @observable
-  ObservableList<WebSocketMessage> _messages = ObservableList.of([]);
+  ObservableList<WsInboundMessageSimple> _messages = ObservableList.of([]);
 
   @computed
-  List<WebSocketMessage> get archive => _archive.toList();
+  List<WsInboundMessageSimple> get archive => _archive.toList();
 
   @observable
-  ObservableList<WebSocketMessage> _archive = ObservableList.of([]);
+  ObservableList<WsInboundMessageSimple> _archive = ObservableList.of([]);
 
   @computed
   WebSocketConnectionStatus get status => _status;
@@ -83,6 +83,8 @@ abstract class _WebSocketConnectionStore with Store {
     }
 
     _status = WebSocketConnectionStatus.connected;
+    log("Connection successful");
+
     _channel!.stream.listen(_onData, onError: _onError, onDone: _onDone);
     _connectedTo = uri;
   }
@@ -97,7 +99,7 @@ abstract class _WebSocketConnectionStore with Store {
 
   @action
   void _onData(dynamic data) {
-    log("Got data from $connectedTo: ${data.toString()}");
+    log("Got data from [$connectedTo]: ${data.toString()}");
 
     if (_connectedTo == null || _channel == null) {
       log("Unexpected: got message when connection is null");
@@ -105,19 +107,33 @@ abstract class _WebSocketConnectionStore with Store {
       _clean();
       return;
     }
-    WebSocketMessage message = WebSocketMessage.create(data, _connectedTo!);
+    WsInboundMessageSimple message = WsInboundMessageSimple.create(
+      data,
+      _connectedTo!,
+    );
+
+    if (message is WsInboundMessage) {
+      for (var listener in _listeners) {
+        listener.onData(message);
+      }
+    }
+
     _messages.add(message);
     _archive.add(message);
   }
 
   void _onError(dynamic maybeError) {
     log("Error in stream with $_connectedTo: ${maybeError.toString()}");
+
+    for (var listener in _listeners) {
+      listener.onError?.call(maybeError);
+    }
   }
 
   void _onDone() {
     log("Stream with $_connectedTo done");
     _status = WebSocketConnectionStatus.finished;
-    _clean();
+    close(WebSocketStatus.normalClosure);
   }
 
   void message(String value) {
@@ -130,87 +146,7 @@ abstract class _WebSocketConnectionStore with Store {
     _messages.clear();
   }
 
-  // ignore: avoid_void_async
-  void dispose() async {
-    close();
+  void subscribe(StoreWebSocketListener listener) {
+    _listeners.add(listener);
   }
-}
-
-enum WebSocketConnectionStatus {
-  // Waiting for connection.
-  idle,
-
-  /// Connecting.
-  connecting,
-
-  // Ready for communication.
-  connected,
-
-  /// Error while connecting and now idling.
-  error,
-
-  /// Connection closed succesfully and now idling.
-  finished,
-
-  /// Connection with error and now idling.
-  finishedWithError,
-
-  /// Connection ended with no status and now idling.
-  finishedNoStatus,
-
-  undefined;
-
-  static const _errorCloseCodes = [
-    WebSocketStatus.protocolError,
-    WebSocketStatus.goingAway,
-    WebSocketStatus.unsupportedData,
-    WebSocketStatus.abnormalClosure,
-    WebSocketStatus.invalidFramePayloadData,
-    WebSocketStatus.policyViolation,
-    WebSocketStatus.messageTooBig,
-    WebSocketStatus.missingMandatoryExtension,
-    WebSocketStatus.internalServerError,
-  ];
-
-  static WebSocketConnectionStatus fromCloseCode(int value) {
-    if (_errorCloseCodes.contains(value)) {
-      return finishedWithError;
-    }
-
-    return switch (value) {
-      WebSocketStatus.normalClosure || WebSocketStatus.goingAway => finished,
-      WebSocketStatus.noStatusReceived => finishedNoStatus,
-      WebSocketStatus.reserved1004 || WebSocketStatus.reserved1015 => undefined,
-      _ => undefined
-    };
-  }
-}
-
-class WebSocketMessage {
-  final String data;
-  final Uri sender;
-  final DateTime time;
-
-  WebSocketMessage._(this.data, this.sender, this.time);
-
-  factory WebSocketMessage.create(String data, Uri sender) {
-    try {
-      var decodedJSON = json.decode(data) as Map<String, dynamic>;
-      return WebSocketMessageJson._(decodedJSON, data, sender, DateTime.now());
-    } catch (e) {
-      return WebSocketMessage._(data, sender, DateTime.now());
-    }
-  }
-}
-
-class WebSocketMessageJson extends WebSocketMessage {
-  UnmodifiableMapView<String, dynamic> get json => UnmodifiableMapView(_json);
-  final Map<String, dynamic> _json;
-
-  WebSocketMessageJson._(
-    this._json,
-    String data,
-    Uri sender,
-    DateTime time,
-  ) : super._(data, sender, time);
 }

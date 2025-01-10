@@ -9,18 +9,18 @@ part of 'websocket_connection_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$WebSocketConnectionStore on _WebSocketConnectionStore, Store {
-  Computed<List<WebSocketMessage>>? _$messagesComputed;
+  Computed<List<WsInboundMessageSimple>>? _$messagesComputed;
 
   @override
-  List<WebSocketMessage> get messages => (_$messagesComputed ??=
-          Computed<List<WebSocketMessage>>(() => super.messages,
+  List<WsInboundMessageSimple> get messages => (_$messagesComputed ??=
+          Computed<List<WsInboundMessageSimple>>(() => super.messages,
               name: '_WebSocketConnectionStore.messages'))
       .value;
-  Computed<List<WebSocketMessage>>? _$archiveComputed;
+  Computed<List<WsInboundMessageSimple>>? _$archiveComputed;
 
   @override
-  List<WebSocketMessage> get archive => (_$archiveComputed ??=
-          Computed<List<WebSocketMessage>>(() => super.archive,
+  List<WsInboundMessageSimple> get archive => (_$archiveComputed ??=
+          Computed<List<WsInboundMessageSimple>>(() => super.archive,
               name: '_WebSocketConnectionStore.archive'))
       .value;
   Computed<WebSocketConnectionStatus>? _$statusComputed;
@@ -42,13 +42,13 @@ mixin _$WebSocketConnectionStore on _WebSocketConnectionStore, Store {
       Atom(name: '_WebSocketConnectionStore._messages', context: context);
 
   @override
-  ObservableList<WebSocketMessage> get _messages {
+  ObservableList<WsInboundMessageSimple> get _messages {
     _$_messagesAtom.reportRead();
     return super._messages;
   }
 
   @override
-  set _messages(ObservableList<WebSocketMessage> value) {
+  set _messages(ObservableList<WsInboundMessageSimple> value) {
     _$_messagesAtom.reportWrite(value, super._messages, () {
       super._messages = value;
     });
@@ -58,13 +58,13 @@ mixin _$WebSocketConnectionStore on _WebSocketConnectionStore, Store {
       Atom(name: '_WebSocketConnectionStore._archive', context: context);
 
   @override
-  ObservableList<WebSocketMessage> get _archive {
+  ObservableList<WsInboundMessageSimple> get _archive {
     _$_archiveAtom.reportRead();
     return super._archive;
   }
 
   @override
-  set _archive(ObservableList<WebSocketMessage> value) {
+  set _archive(ObservableList<WsInboundMessageSimple> value) {
     _$_archiveAtom.reportWrite(value, super._archive, () {
       super._archive = value;
     });
