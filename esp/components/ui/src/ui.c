@@ -4,6 +4,7 @@
 
 static const char *TAG = "SCREEN.UI";
 
+const char* menu_labels[] = { "status", "control", "connections", "messages", "something" };
 
 void create_ui(lv_display_t *disp);
 
@@ -170,7 +171,10 @@ void lv_example_flex_4(void)
     lv_obj_set_style_pad_hor(container, 0, 0);
 
     uint32_t i;
-    for(i = 0; i < 6; i++) {
+
+    size_t num_labels = sizeof(menu_labels) / sizeof(menu_labels[0]); 
+
+    for(i = 0; i < num_labels; i++) {
         lv_obj_t * btn = lv_obj_create(container);
         lv_obj_add_style(btn, &style_btn_default, LV_STATE_DEFAULT);
         lv_obj_add_style(btn, &style_btn_default, LV_STATE_FOCUSED);
@@ -178,7 +182,7 @@ void lv_example_flex_4(void)
         lv_group_remove_obj(btn);   /*Not needed, we use the gridnav instead*/
 
         lv_obj_t * label = lv_label_create(btn);
-        lv_label_set_text_fmt(label, "Item: %"LV_PRIu32, i);
+        lv_label_set_text_fmt(label, menu_labels[i]);
         lv_obj_center(label);
     }
 }
