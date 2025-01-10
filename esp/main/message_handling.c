@@ -4,6 +4,9 @@
 #include "ws_types.h"
 #include "lvgl.h"
 #include <mbedtls/base64.h>
+#include "esp_chip_info.h"
+#include "esp_flash.h"
+#include "utilities.h"
 
 #define COMMON_FIELD_ID "id"
 #define COMMON_FIELD_TYPE "type"
@@ -111,10 +114,9 @@ static lv_draw_buf_t *get_snapshot_buffer()
 
 static int32_t calcBase64EncodedSize(int input_length)
 {
-	int32_t output_length = 4 * ((input_length + 2) / 3);
-	return output_length;
+  int32_t output_length = 4 * ((input_length + 2) / 3);
+  return output_length;
 }
-
 
 static esp_err_t get_snapshot_response(cJSON *root, char **data)
 {
@@ -139,7 +141,6 @@ static esp_err_t get_snapshot_response(cJSON *root, char **data)
   {
     cJSON_AddNumberToObject(payload, "width", snapshot->header.w);
     cJSON_AddNumberToObject(payload, "height", snapshot->header.h);
-
 
     // Get the raw data and size from the snapshot buffer
     unsigned char *raw_data = snapshot->data;
@@ -191,6 +192,56 @@ static esp_err_t get_snapshot_response(cJSON *root, char **data)
   return ESP_OK;
 }
 
+static cJSON * device_configuration_json()
+{
+  cJSON *payload = cJSON_CreateObject();
+  
+  esp_chip_info_t chip_info;
+  uint32_t flash_size;
+  esp_chip_info(&chip_info);
+
+  cJSON_AddStringToObject(payload, "chip", CONFIG_IDF_TARGET);
+  cJSON_AddNumberToObject(payload, "cores", chip_info.cores);
+
+  // Create an array to hold the features
+  cJSON *features_array = cJSON_CreateArray();
+
+  // Add features to the array
+  if (chip_info.features & CHIP_FEATURE_WIFI_BGN)
+  {
+    cJSON_AddItemToArray(features_array, cJSON_CreateString("wifi"));
+  }
+  if (chip_info.features & CHIP_FEATURE_BT)
+  {
+    cJSON_AddItemToArray(features_array, cJSON_CreateString("bt"));
+  }
+  if (chip_info.features & CHIP_FEATURE_BLE)
+  {
+    cJSON_AddItemToArray(features_array, cJSON_CreateString("ble"));
+  }
+  if (chip_info.features & CHIP_FEATURE_IEEE802154)
+  {
+    cJSON_AddItemToArray(features_array, cJSON_CreateString("ieee802154"));
+  }
+
+  cJSON_AddItemToObject(payload, "features", features_array);
+
+  unsigned major_rev = chip_info.revision / 100;
+  unsigned minor_rev = chip_info.revision % 100;
+  cJSON_AddItemToObject(payload, "silicon_revision", cJSON_create_formatted_string("%d.%d", major_rev, minor_rev));
+
+  if (esp_flash_get_size(NULL, &flash_size) != ESP_OK)
+  {
+    ESP_LOGW(TAG, "Get flash size failed");
+  }
+
+  cJSON_AddNumberToObject(payload, "flash_size", flash_size);
+  cJSON_AddStringToObject(payload, "flash_type", (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
+
+  cJSON_AddNumberToObject(payload, "heap_size", esp_get_minimum_free_heap_size());
+
+  return payload;
+}
 
 static esp_err_t get_configuration_response(cJSON *root, char **data)
 {
@@ -205,6 +256,8 @@ static esp_err_t get_configuration_response(cJSON *root, char **data)
   }
 
   cJSON_AddStringToObject(response_root, COMMON_FIELD_TYPE, MESSAGE_OUT_CONFIGURATION);
+
+  cJSON_AddItemToObject(response_root, COMMON_FIELD_PAYLOAD, device_configuration_json());
 
   *data = cJSON_Print(response_root);
   ESP_LOGD(TAG, "Composed get_configuration response message:\n%s", *data);
