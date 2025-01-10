@@ -163,7 +163,9 @@ void app_main(void)
     start_rendering();
     // =======================================
 
-    initialize_ws_server(handle_message);
+
+    ws_message_handler_t message_handler = create_handler();
+    initialize_ws_server(message_handler);
 
 
     /// DO NOT DELETE

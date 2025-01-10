@@ -1,3 +1,5 @@
 #include <esp_http_server.h>
+#include "ws_types.h"
+#include "lvgl.h"
 
-esp_err_t handle_message(httpd_ws_frame_t *frame, char **data);
+ws_message_handler_t create_handler();
