@@ -99,7 +99,12 @@ abstract class _WebSocketConnectionStore with Store {
 
   @action
   void _onData(dynamic data) {
-    log("Got data from [$connectedTo]: ${data.toString()}");
+    String msg = "Got data from [$connectedTo]: ${data.toString()}";
+    if (msg.length > 200) {
+      log("${msg.substring(0, 200)}...");
+    } else {
+      log(msg);
+    }
 
     if (_connectedTo == null || _channel == null) {
       log("Unexpected: got message when connection is null");

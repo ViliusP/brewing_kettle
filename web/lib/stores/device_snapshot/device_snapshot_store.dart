@@ -48,7 +48,7 @@ abstract class _DeviceSnapshotStore with Store {
   @action
   void _onData(WsInboundMessage message) {
     if (message.payload is DeviceSnapshot) {
-      log("DEVICE_CONFIGURATION_STORE got message");
+      log("DEVICE_SNAPSHOT_STORE got message");
       snapshot = (message.payload as DeviceSnapshot);
     }
   }
