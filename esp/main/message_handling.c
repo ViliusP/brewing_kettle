@@ -65,7 +65,7 @@ const char* http_status(http_status_code_t code) {
     case HTTP_STATUS_GATEWAY_TIMEOUT:
       return "504 Gateway Timeout";
     default:
-      return "Unknown Status Code";
+      return "-000 Unknown Status Code";
   }
 }
 

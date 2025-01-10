@@ -8,13 +8,10 @@
 #include "keep_alive.h"
 #include "mdns_service.h"
 #include "wifi_connect.h"
-#include "handlers.h"
+#include <ws_types.h>
 
 #include <esp_http_server.h>
 
-/*
- * A simple example that demonstrates using websocket echo server
- */
 static const char *TAG = "WS_SERVER";
 static const size_t max_clients = 4;
 
@@ -28,6 +25,12 @@ struct async_resp_arg
     httpd_handle_t hd;
     int fd;
 };
+
+typedef struct
+{
+    httpd_handle_t server;
+    ws_message_handler_t message_handler;
+} esp_connect_event_args_t;
 
 /*
  * async send function, which we put into the httpd work queue
@@ -86,6 +89,8 @@ static esp_err_t create_ws_frame(const char *data, httpd_ws_frame_t *frame)
  */
 static esp_err_t ws_handler(httpd_req_t *req)
 {
+    ws_message_handler_t message_handler = (ws_message_handler_t)req->user_ctx;
+
     if (req->method == HTTP_GET)
     {
         ESP_LOGI(TAG, "Handshake done, the new connection was opened");
@@ -130,9 +135,15 @@ static esp_err_t ws_handler(httpd_req_t *req)
         free(buf);
         return trigger_async_send(req->handle, req);
     }
+    if (message_handler == NULL)
+    {
+        ESP_LOGW(TAG, "No message handler passed to WS server, no response will be sent");
+        free(buf);
+        return ret;
+    }
     char *data = NULL;
-    ret = handle_message(&ws_pkt, &data);
-    if (data == NULL)
+    ret = message_handler(&ws_pkt, &data);
+    if (data == NULL && ret == ESP_OK)
     {
         ESP_LOGI(TAG, "No message to be sent back");
         free(buf);
@@ -164,13 +175,6 @@ static esp_err_t ws_handler(httpd_req_t *req)
     free(buf);
     return ret;
 }
-
-static const httpd_uri_t ws = {
-    .uri = "/ws",
-    .method = HTTP_GET,
-    .handler = ws_handler,
-    .user_ctx = NULL,
-    .is_websocket = true};
 
 static void send_ping(void *arg)
 {
@@ -209,7 +213,7 @@ bool check_client_alive_cb(wss_keep_alive_t h, int fd)
     return false;
 }
 
-static httpd_handle_t start_ws_server(void)
+static httpd_handle_t start_ws_server(ws_message_handler_t message_handler)
 {
     // Prepare keep-alive engine
     wss_keep_alive_config_t keep_alive_config = KEEP_ALIVE_CONFIG_DEFAULT();
@@ -227,6 +231,13 @@ static httpd_handle_t start_ws_server(void)
         ESP_LOGE(TAG, "Error starting WebSocket server!");
         return NULL;
     }
+
+    httpd_uri_t ws = {
+        .uri = "/ws",
+        .method = HTTP_GET,
+        .handler = ws_handler,
+        .user_ctx = message_handler,
+        .is_websocket = true};
 
     // Set URI handlers
     httpd_register_uri_handler(server, &ws);
@@ -259,20 +270,24 @@ static void disconnect_handler(void *arg, esp_event_base_t event_base,
     }
 }
 
+
 static void connect_handler(void *arg, esp_event_base_t event_base,
                             int32_t event_id, void *event_data)
 {
     ESP_LOGI(TAG, "Succesfully connected to AP");
-    httpd_handle_t *server = (httpd_handle_t *)arg;
-    if (*server == NULL)
+    esp_connect_event_args_t *args = (esp_connect_event_args_t *)arg; 
+
+    if (args->server == NULL)
     {
         ESP_LOGI(TAG, "Starting WebSocket server");
-        *server = start_ws_server();
+        args->server = start_ws_server(args->message_handler); 
     }
 }
 
-void initialize_ws_server(httpd_handle_t *server)
+void initialize_ws_server(ws_message_handler_t message_handler)
 {
+    static httpd_handle_t server = NULL;
+
     ESP_LOGI(TAG, "Initializing NVC and TCP/IP stack");
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_netif_init());
@@ -291,10 +306,13 @@ void initialize_ws_server(httpd_handle_t *server)
     /* Register event handlers to stop the server when Wi-Fi is disconnected,
      * and re-start it upon connection.
      */
+    esp_connect_event_args_t connect_event_args;
+    connect_event_args.server = server;
+    connect_event_args.message_handler = message_handler;
 
-    ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &connect_handler, &server));
+    ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &connect_handler, &connect_event_args));
     ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, WIFI_EVENT_STA_DISCONNECTED, &disconnect_handler, &server));
 
     /* Start the server for the first time */
-    server = start_ws_server();
+    server = start_ws_server(message_handler);
 }

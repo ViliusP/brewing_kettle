@@ -1,4 +1,4 @@
-set(component_srcs "src/ws_server.c" "src/wifi_connect.c" "src/keep_alive.c" "src/mdns_service.c" "src/handlers.c")
+set(component_srcs "src/ws_server.c" "src/wifi_connect.c" "src/keep_alive.c" "src/mdns_service.c")
 
 idf_component_register(SRCS "${component_srcs}"
                        INCLUDE_DIRS "include"
