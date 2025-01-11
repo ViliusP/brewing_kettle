@@ -7,7 +7,7 @@ LV_FONT_DECLARE(mdi)
 
 static const char *TAG = "SCREEN.UI";
 
-const char *menu_labels[] = { CONNECTION_SYMBOL " status", "control", "connections", "messages", "something"};
+const char *menu_labels[] = {CONNECTION_SYMBOL " status", "control", "connections", "messages", "something"};
 
 typedef enum
 {
@@ -123,23 +123,16 @@ static lv_obj_t *container = NULL;
 
 static void menu_button_cb(lv_event_t *e)
 {
-    ESP_LOGW(TAG, "menu_button_cb: HELLO");
     if (e == NULL)
     {
         ESP_LOGW(TAG, "menu_button_cb: Invalid event pointer");
         return;
     }
 
-    lv_obj_t *next_page = lv_event_get_user_data(e);
-    if (next_page == NULL)
-    {
-        ESP_LOGW(TAG, "menu_button_cb: Invalid user data (page) in event");
-        return;
-    }
-
     push_page_args_t *args = (push_page_args_t *)lv_event_get_user_data(e);
     if (args == NULL || args->manager == NULL)
     {
+        ESP_LOGW(TAG, "Invalid user data in event callback (menu_button_cb)");
         return;
     }
     push_page(args->manager, args->page_id);
@@ -163,8 +156,6 @@ static void page_press_cb(lv_event_t *e)
 
 static lv_obj_t *compose_status_page(lv_obj_t *parent, lv_fragment_manager_t *manager)
 {
-    ESP_LOGW(TAG, "compose_status_page: START");
-
     if (parent == NULL)
     {
         parent = lv_obj_create(NULL);
@@ -176,14 +167,12 @@ static lv_obj_t *compose_status_page(lv_obj_t *parent, lv_fragment_manager_t *ma
 
     if (manager != NULL)
     {
-        ESP_LOGW(TAG, "compose_status_page: ADDING event to status page");
         lv_obj_add_event_cb(status_page, page_press_cb, LV_EVENT_PRESSED, manager);
     }
 
     lv_obj_t *label = lv_label_create(status_page);
     lv_label_set_text(label, "Hello, I am hiding here");
     lv_obj_center(label);
-    ESP_LOGW(TAG, "compose_status_page: END");
 
     return status_page;
 }
@@ -257,7 +246,6 @@ lv_obj_t *compose_main_menu(lv_obj_t *parent, lv_fragment_manager_t *manager)
 
     uint32_t i;
     size_t num_labels = sizeof(menu_labels) / sizeof(menu_labels[0]);
-    ESP_LOGE(TAG, "COMPOSING %d buttons", num_labels);
     for (i = 0; i < num_labels; i++)
     {
         lv_obj_t *btn = lv_obj_create(menu_container);
@@ -307,7 +295,7 @@ static void pop_page(lv_fragment_manager_t *manager)
 
     if (lv_fragment_manager_get_stack_size(manager) > 1)
     {
-        ESP_LOGW(TAG, "POPPING FRAGMENT");
+        ESP_LOGD(TAG, "Popping fragment");
         lv_fragment_manager_pop(manager);
     }
 }
@@ -323,7 +311,7 @@ static lv_obj_t *nav_fragment_create(lv_fragment_t *self, lv_obj_t *parent)
     case PAGE_MAIN_MENU:
         return compose_main_menu(parent, manager);
     case PAGE_STATUS:
-        ESP_LOGI(TAG, "COMPOSING and GOING into status page");
+        ESP_LOGD(TAG, "Creating status_page fragment");
         return compose_status_page(parent, manager);
     default:
         return compose_unknown_page(parent, manager);
