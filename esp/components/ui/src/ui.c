@@ -5,149 +5,223 @@
 
 LV_FONT_DECLARE(mdi)
 
-
 static const char *TAG = "SCREEN.UI";
 
-const char* menu_labels[] = { CONNECTION_SYMBOL " status", "control", "connections", "messages", "something" };
+const char *menu_labels[] = { CONNECTION_SYMBOL " status", "control", "connections", "messages", "something"};
+
+typedef enum
+{
+    PAGE_MAIN_MENU = 0,
+    PAGE_STATUS = 1,
+} page_id_t;
+
+typedef struct push_page_args_t
+{
+    lv_fragment_manager_t *manager;
+    page_id_t page_id;
+} push_page_args_t;
+
+typedef struct nav_fragment_t
+{
+    lv_fragment_t base;
+    lv_obj_t *label;
+    page_id_t page_id;
+} nav_fragment_t;
 
 void create_ui(lv_display_t *disp);
 
+static void set_first_page(lv_fragment_manager_t *manager, page_id_t page_id);
+static lv_obj_t *nav_fragment_create(lv_fragment_t *self, lv_obj_t *parent);
+static void pop_page(lv_fragment_manager_t *manager);
+static void push_page(lv_fragment_manager_t *manager, page_id_t page_id);
+
 static lv_obj_t *keypad_label;
+static lv_obj_t *container = NULL;
 
+// static void go_up(lv_obj_t *list)
+// {
+//     if (currentButton == NULL)
+//         return;
+//     uint32_t index = lv_obj_get_index(currentButton);
+//     if (index <= 0)
+//         return;
+//     currentButton = lv_obj_get_child(list, index - 1);
+//     lv_obj_scroll_to_view(currentButton, LV_ANIM_ON);
+//     uint32_t i;
+//     for (i = 0; i < lv_obj_get_child_cnt(list); i++)
+//     {
+//         lv_obj_t *child = lv_obj_get_child(list, i);
+//         lv_obj_clear_state(child, LV_STATE_CHECKED);
+//         if (child == currentButton)
+//         {
+//             lv_obj_add_state(child, LV_STATE_CHECKED);
+//         }
+//     }
+// }
 
-static void my_event_cb(lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-    lv_obj_t * label = lv_event_get_target(e);
+// static void go_down(lv_obj_t *list)
+// {
+//     uint32_t child_count = lv_obj_get_child_cnt(list);
+//     if (currentButton == NULL)
+//         return;
+//     const uint32_t index = lv_obj_get_index(currentButton);
+//     if (child_count - 1 <= index)
+//         return;
+//     currentButton = lv_obj_get_child(list, index + 1);
+//     lv_obj_scroll_to_view(currentButton, LV_ANIM_ON);
 
-    static uint32_t cnt = 1;
-    ESP_LOGI(TAG, "my_event_cb %d", lv_event_get_code(e));
-    lv_label_set_text_fmt(label, "%lu", cnt);
-    cnt++;
-}
+//     uint32_t i;
+//     for (i = 0; i < lv_obj_get_child_cnt(list); i++)
+//     {
+//         lv_obj_t *child = lv_obj_get_child(list, i);
+//         lv_obj_clear_state(child, LV_STATE_CHECKED);
+//         if (child == currentButton)
+//         {
+//             lv_obj_add_state(child, LV_STATE_CHECKED);
+//         }
+//     }
+// }
 
+// static void list_event_handler(lv_event_t *e)
+// {
+//     lv_event_code_t code = lv_event_get_code(e);
+//     lv_obj_t *obj = lv_event_get_target(e);
+//     const uint32_t before = lv_obj_get_index(currentButton);
+//     ESP_LOGI(TAG, "Button index before event: %lu", before);
+//     if (code == LV_EVENT_KEY)
+//     {
+//         switch (lv_indev_get_key(lv_indev_active()))
+//         {
+//         case LV_KEY_UP:
+//             ESP_LOGI(TAG, "List LV_KEY_UP event");
+//             LV_LOG_USER("List LV_KEY_UP event");
+//             go_up(obj);
+//             break;
+//         case LV_KEY_DOWN:
+//             ESP_LOGI(TAG, "List LV_KEY_DOWN event");
+//             LV_LOG_USER("List LV_KEY_DOWN event");
+//             go_down(obj);
+//             break;
+//         case LV_KEY_LEFT:
+//             ESP_LOGI(TAG, "List LV_KEY_LEFT event");
+//             LV_LOG_USER("List LV_KEY_LEFT event");
+//             break;
 
-static void create_external_input_debug_layer(lv_display_t *disp) {
-    lv_obj_t *scr = lv_display_get_screen_active(disp);
-    lv_obj_t *label = lv_label_create(scr);
+//         case LV_KEY_RIGHT:
+//             ESP_LOGI(TAG, "List LV_KEY_RIGHT event");
+//             LV_LOG_USER("List LV_KEY_RIGHT event");
+//             break;
+//         default:
+//             ESP_LOGI(TAG, "List OTHER event");
+//             LV_LOG_USER("List OTHER event");
+//             break;
+//         }
+//     }
+//     const uint32_t after = lv_obj_get_index(currentButton);
+//     ESP_LOGI(TAG, "Button  index after event: %lu", after);
+// }
 
-    lv_label_set_text(label, "External Input");
-    lv_obj_align(label, LV_ALIGN_TOP_MID, 0, 50);
-    lv_group_add_obj(lv_group_get_default(), label);
-    lv_obj_add_event_cb(label, my_event_cb, LV_EVENT_KEY, NULL);
-}
-
-
-
-
-static lv_obj_t* currentButton = NULL;
-
-static void event_handler(lv_event_t* e)
+static void menu_button_cb(lv_event_t *e)
 {
-    lv_event_code_t code = lv_event_get_code(e);
-    lv_obj_t* obj = lv_event_get_target(e);
-    if (code == LV_EVENT_CLICKED)
+    ESP_LOGW(TAG, "menu_button_cb: HELLO");
+    if (e == NULL)
     {
-        // ESP_LOGI(TAG, "Clicked: %s", lv_list_get_btn_text(list1, obj));
-
-        if (currentButton == obj)
-        {
-            currentButton = NULL;
-        }
-        else
-        {
-            currentButton = obj;
-        }
-        lv_obj_t* parent = lv_obj_get_parent(obj);
-        uint32_t i;
+        ESP_LOGW(TAG, "menu_button_cb: Invalid event pointer");
+        return;
     }
+
+    lv_obj_t *next_page = lv_event_get_user_data(e);
+    if (next_page == NULL)
+    {
+        ESP_LOGW(TAG, "menu_button_cb: Invalid user data (page) in event");
+        return;
+    }
+
+    push_page_args_t *args = (push_page_args_t *)lv_event_get_user_data(e);
+    if (args == NULL || args->manager == NULL)
+    {
+        return;
+    }
+    push_page(args->manager, args->page_id);
 }
 
-static void go_up(lv_obj_t* list)
+static void page_press_cb(lv_event_t *e)
 {
-    if (currentButton == NULL) return;
-    uint32_t index = lv_obj_get_index(currentButton);
-    if (index <= 0) return;
-    currentButton = lv_obj_get_child(list, index - 1);
-    lv_obj_scroll_to_view(currentButton, LV_ANIM_ON);
-    uint32_t i;
-    for (i = 0; i < lv_obj_get_child_cnt(list); i++)
+    if (e == NULL)
     {
-        lv_obj_t* child = lv_obj_get_child(list, i);
-        lv_obj_clear_state(child, LV_STATE_CHECKED);
-        if (child == currentButton)
-        {
-            lv_obj_add_state(child, LV_STATE_CHECKED);
-        }
+        ESP_LOGD(TAG, "page_press_cb: Invalid event pointer");
+        return;
     }
+    lv_fragment_manager_t *manager = (lv_fragment_manager_t *)lv_event_get_user_data(e);
+    if (manager == NULL)
+    {
+        ESP_LOGD(TAG, "page_press_cb: Invalid manager in event data");
+        return;
+    }
+    pop_page(manager);
 }
 
-
-static void go_down(lv_obj_t* list)
-{   
-    uint32_t child_count = lv_obj_get_child_cnt(list);
-    if (currentButton == NULL) return;
-    const uint32_t index = lv_obj_get_index(currentButton);
-    if (child_count-1 <= index) return;
-    currentButton = lv_obj_get_child(list, index + 1);
-    lv_obj_scroll_to_view(currentButton, LV_ANIM_ON);
-
-    uint32_t i;
-    for (i = 0; i < lv_obj_get_child_cnt(list); i++)
-    {
-        lv_obj_t* child = lv_obj_get_child(list, i);
-        lv_obj_clear_state(child, LV_STATE_CHECKED);
-        if (child == currentButton)
-        {
-            lv_obj_add_state(child, LV_STATE_CHECKED);
-        }
-     
-    }
-}
-
-
-static void list_event_handler(lv_event_t* e)
+static lv_obj_t *compose_status_page(lv_obj_t *parent, lv_fragment_manager_t *manager)
 {
-    lv_event_code_t code = lv_event_get_code(e);
-    lv_obj_t* obj = lv_event_get_target(e);
-    const uint32_t before = lv_obj_get_index(currentButton);
-    ESP_LOGI(TAG, "Button index before event: %lu", before);
-    if (code == LV_EVENT_KEY)
-    {
-        switch (lv_indev_get_key(lv_indev_active()))
-        {
-            case LV_KEY_UP:
-                ESP_LOGI(TAG, "List LV_KEY_UP event");
-                LV_LOG_USER("List LV_KEY_UP event");
-                go_up(obj);
-                break;
-            case LV_KEY_DOWN:
-                ESP_LOGI(TAG, "List LV_KEY_DOWN event");
-                LV_LOG_USER("List LV_KEY_DOWN event");
-                go_down(obj);
-                break;
-            case LV_KEY_LEFT:
-                ESP_LOGI(TAG, "List LV_KEY_LEFT event");
-                LV_LOG_USER("List LV_KEY_LEFT event");
-                break;
+    ESP_LOGW(TAG, "compose_status_page: START");
 
-            case LV_KEY_RIGHT:
-                ESP_LOGI(TAG, "List LV_KEY_RIGHT event");
-                LV_LOG_USER("List LV_KEY_RIGHT event");
-                break;
-            default:
-                ESP_LOGI(TAG, "List OTHER event");
-                LV_LOG_USER("List OTHER event");
-                break;
-        }
+    if (parent == NULL)
+    {
+        parent = lv_obj_create(NULL);
     }
-    const uint32_t after = lv_obj_get_index(currentButton);
-    ESP_LOGI(TAG, "Button  index after event: %lu", after);
+    lv_obj_t *status_page = lv_obj_create(parent);
+    lv_obj_set_size(status_page, 128, lv_pct(100));
+    lv_obj_center(status_page);
+    lv_group_add_obj(lv_group_get_default(), status_page);
+
+    if (manager != NULL)
+    {
+        ESP_LOGW(TAG, "compose_status_page: ADDING event to status page");
+        lv_obj_add_event_cb(status_page, page_press_cb, LV_EVENT_PRESSED, manager);
+    }
+
+    lv_obj_t *label = lv_label_create(status_page);
+    lv_label_set_text(label, "Hello, I am hiding here");
+    lv_obj_center(label);
+    ESP_LOGW(TAG, "compose_status_page: END");
+
+    return status_page;
 }
 
-void lv_example_flex_4(void)
+static lv_obj_t *compose_unknown_page(lv_obj_t *parent, lv_fragment_manager_t *manager)
 {
+    if (parent == NULL)
+    {
+        parent = lv_obj_create(NULL);
+    }
+    lv_obj_t *unknown_page = lv_obj_create(parent);
+    lv_obj_set_size(unknown_page, 128, lv_pct(100));
+    lv_obj_center(unknown_page);
+    lv_group_add_obj(lv_group_get_default(), unknown_page);
+
+    if (manager == NULL)
+    {
+        ESP_LOGW(TAG, "ADDING event to unknown page ");
+        lv_obj_add_event_cb(unknown_page, page_press_cb, LV_EVENT_PRESSED, NULL);
+    }
+
+    lv_obj_t *label = lv_label_create(unknown_page);
+    lv_label_set_text(label, "Hello, I am hiding here");
+    lv_obj_center(label);
+
+    return unknown_page;
+}
+
+lv_obj_t *compose_main_menu(lv_obj_t *parent, lv_fragment_manager_t *manager)
+{
+    if (parent == NULL)
+    {
+        ESP_LOGW(TAG, "CREATING PARENT IN COMPOSE MENU");
+        parent = lv_screen_active();
+    }
+
     // -----------------------
-    // STYLES
+    // BUTTON STYLE
     // -----------------------
     static lv_style_t style_btn_default;
     lv_style_init(&style_btn_default);
@@ -158,43 +232,126 @@ void lv_example_flex_4(void)
     lv_style_set_width(&style_btn_default, lv_pct(100));
     lv_style_set_height(&style_btn_default, 28);
     lv_style_set_text_font(&style_btn_default, &mdi);
-    
-
 
     static lv_style_t style_btn_focused;
     lv_style_set_border_color(&style_btn_focused, lv_color_black());
     lv_style_set_border_width(&style_btn_focused, 2);
     // =======================
 
-    lv_obj_t * container = lv_obj_create(lv_screen_active());
-    lv_gridnav_add(container, LV_GRIDNAV_CTRL_NONE);
-    lv_obj_set_size(container, 128, lv_pct(100));
-    lv_obj_center(container);
-    lv_obj_set_flex_flow(container, LV_FLEX_FLOW_COLUMN);
-    lv_group_add_obj(lv_group_get_default(), container);
-    lv_obj_set_style_pad_row(container, 0, 0);
-    lv_obj_set_style_pad_ver(container, 2, 0);
-    lv_obj_set_style_pad_hor(container, 0, 0);
+    // -----------------------
+    // MENU LIST
+    // -----------------------
+    lv_obj_t *menu_container = lv_obj_create(parent);
+    lv_gridnav_add(menu_container, LV_GRIDNAV_CTRL_NONE);
+    lv_obj_set_size(menu_container, lv_pct(100), lv_pct(100));
+    lv_obj_set_flex_flow(menu_container, LV_FLEX_FLOW_COLUMN);
+    lv_group_add_obj(lv_group_get_default(), menu_container);
+
+    lv_obj_set_style_pad_row(menu_container, 0, 0);
+    lv_obj_set_style_pad_ver(menu_container, 2, 0);
+    lv_obj_set_style_pad_hor(menu_container, 0, 0);
+
+    // ------------------------
+    // PAGES
+    // ------------------------
 
     uint32_t i;
-
-    size_t num_labels = sizeof(menu_labels) / sizeof(menu_labels[0]); 
-
-    for(i = 0; i < num_labels; i++) {
-        lv_obj_t * btn = lv_obj_create(container);
+    size_t num_labels = sizeof(menu_labels) / sizeof(menu_labels[0]);
+    ESP_LOGE(TAG, "COMPOSING %d buttons", num_labels);
+    for (i = 0; i < num_labels; i++)
+    {
+        lv_obj_t *btn = lv_obj_create(menu_container);
         lv_obj_add_style(btn, &style_btn_default, LV_STATE_DEFAULT);
         lv_obj_add_style(btn, &style_btn_default, LV_STATE_FOCUSED);
         lv_obj_add_style(btn, &style_btn_focused, LV_STATE_FOCUSED);
-        lv_group_remove_obj(btn);   /*Not needed, we use the gridnav instead*/
+        switch (i)
+        {
+        case 0:
+            static push_page_args_t args;
+            args.manager = manager;
+            args.page_id = PAGE_STATUS;
+            lv_obj_add_event_cb(btn, menu_button_cb, LV_EVENT_CLICKED, &args);
+            break;
+        default:
+            break;
+        }
+        lv_group_remove_obj(btn); /*Not needed, we use the gridnav instead*/
 
-        lv_obj_t * label = lv_label_create(btn);
+        lv_obj_t *label = lv_label_create(btn);
         lv_label_set_text_fmt(label, menu_labels[i]);
         lv_obj_center(label);
     }
+    return menu_container;
 }
 
-void create_ui(lv_display_t *disp) {
-    // create_external_input_debug_layer(disp);
-    // lv_example_menu_1(disp);
-    lv_example_flex_4();
+static void nav_fragment_constructor(lv_fragment_t *self, void *args)
+{
+    LV_UNUSED(args);
+    ((nav_fragment_t *)self)->page_id = *((int *)args);
+}
+
+static const lv_fragment_class_t nav_fragment_class = {
+    .constructor_cb = nav_fragment_constructor,
+    .create_obj_cb = nav_fragment_create,
+    .instance_size = sizeof(nav_fragment_t),
+};
+
+static void push_page(lv_fragment_manager_t *manager, page_id_t page_id)
+{
+    lv_fragment_t *fragment = lv_fragment_create(&nav_fragment_class, &page_id);
+    lv_fragment_manager_push(manager, fragment, &container);
+}
+
+static void pop_page(lv_fragment_manager_t *manager)
+{
+
+    if (lv_fragment_manager_get_stack_size(manager) > 1)
+    {
+        ESP_LOGW(TAG, "POPPING FRAGMENT");
+        lv_fragment_manager_pop(manager);
+    }
+}
+
+static lv_obj_t *nav_fragment_create(lv_fragment_t *self, lv_obj_t *parent)
+{
+    nav_fragment_t *fragment = (nav_fragment_t *)self;
+
+    lv_fragment_manager_t *manager = lv_fragment_get_manager(self);
+
+    switch (fragment->page_id)
+    {
+    case PAGE_MAIN_MENU:
+        return compose_main_menu(parent, manager);
+    case PAGE_STATUS:
+        ESP_LOGI(TAG, "COMPOSING and GOING into status page");
+        return compose_status_page(parent, manager);
+    default:
+        return compose_unknown_page(parent, manager);
+    }
+}
+
+void set_first_page(lv_fragment_manager_t *manager, page_id_t page_id)
+{
+    if (manager == NULL)
+    {
+        manager = lv_fragment_manager_create(NULL);
+    }
+    container = lv_obj_create(lv_screen_active());
+    lv_obj_remove_style_all(container);
+    lv_group_remove_obj(container);
+    lv_obj_set_size(container, lv_pct(100), lv_pct(100));
+
+    lv_fragment_t *fragment = lv_fragment_create(&nav_fragment_class, &page_id);
+    lv_fragment_manager_push(manager, fragment, &container);
+}
+
+void create_ui(lv_display_t *disp)
+{
+    // lv_obj_t *p = lv_obj_create(lv_screen_active());
+    // lv_obj_remove_style_all(p);
+    // lv_group_remove_obj(p);
+    // compose_main_menu(p, NULL);
+
+    lv_fragment_manager_t *manager = lv_fragment_manager_create(NULL);
+    set_first_page(manager, PAGE_MAIN_MENU);
 }

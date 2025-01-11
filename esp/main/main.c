@@ -49,6 +49,7 @@ static const key_map_t key_mappings[] = {
     {MAKE_KEY_CODE(2, 1), LV_KEY_RIGHT},
     {MAKE_KEY_CODE(1, 1), LV_KEY_LEFT},
     {MAKE_KEY_CODE(2, 2), LV_KEY_ENTER},
+    {MAKE_KEY_CODE(0, 2), LV_KEY_NEXT},
 
     // ... other mappings
 };
@@ -101,7 +102,6 @@ static void keypad_read(lv_indev_t * indev_drv, lv_indev_data_t* data) {
 
 void app_main(void)
 {
-    esp_log_level_set("WS_SERVER_HANDLER", ESP_LOG_DEBUG);  
     // esp_log_level_set(TAG, ESP_LOG_DEBUG);
 
     matrix_kbd_handle_t kbd = NULL;
