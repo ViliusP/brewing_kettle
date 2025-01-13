@@ -1,7 +1,6 @@
 import 'package:brew_kettle_dashboard/constants/app.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/ui/routing.dart';
-import 'package:brew_kettle_dashboard/ui/screens/start/start_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
