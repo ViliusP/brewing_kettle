@@ -59,23 +59,19 @@ lv_obj_t *compose_status_page(lv_obj_t *parent, lv_fragment_manager_t *manager, 
     lv_obj_t *connection_label = lv_label_create(status_page);
     lv_obj_set_style_text_font(connection_label, &font_mdi_14, 0);
     lv_label_set_text(connection_label, CONNECTION_SYMBOL " connected: -1");
-
     lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, connection_label, NULL);
 
     // -- Current temperature label -- //
     lv_obj_t *current_temp_label = lv_label_create(status_page);
     lv_obj_set_style_text_font(current_temp_label, &font_mdi_14, 0);
-    lv_label_set_text(current_temp_label, THERMOMETER_SYMBOL " current T: 0");
-
-    // lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, label, NULL);
+    lv_label_set_text(current_temp_label, THERMOMETER_SYMBOL " current T: -1 " TEMPERATURE_CELSIUS_SYMBOL);
+    lv_label_bind_text(current_temp_label, &state_subjects->current_temp, THERMOMETER_SYMBOL " current T: %d " TEMPERATURE_CELSIUS_SYMBOL);
 
     // -- Target temperature        -- //
     lv_obj_t *target_temp_label = lv_label_create(status_page);
     lv_obj_set_style_text_font(target_temp_label, &font_mdi_14, 0);
-    lv_label_set_text(target_temp_label, THERMOMETER_CHEVRON_UP_SYMBOL " target T: 100 ");
-
-    // lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, label, NULL);
-
+    lv_label_set_text(target_temp_label, THERMOMETER_CHEVRON_UP_SYMBOL " target T: -1 " TEMPERATURE_CELSIUS_SYMBOL);
+    lv_label_bind_text(target_temp_label, &state_subjects->target_temp, THERMOMETER_CHEVRON_UP_SYMBOL " target T: %d " TEMPERATURE_CELSIUS_SYMBOL);
 
 
     return status_page;
