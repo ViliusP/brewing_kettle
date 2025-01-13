@@ -1,6 +1,7 @@
 #include "lvgl.h"
 #include "ws_server.h"
 #include "esp_log.h"
+#include "screen.h"
 
 static const char *TAG = "STATE";
 
@@ -11,19 +12,12 @@ typedef enum
     HEATER_STATE_HEATING,
 } heater_state_t;
 
-static lv_subject_t current_temp_subject;
-static lv_subject_t target_temp_subject;
-static lv_subject_t heater_state_subject;
+state_subjects_t state_subjects;
 
-static lv_subject_t connected_clients_subject;
-
-void init_state()
+static void test_observer_cb(lv_observer_t *observer, lv_subject_t *subject)
 {
-    lv_subject_init_int(&current_temp_subject, 0);
-    lv_subject_init_int(&target_temp_subject, 0);
-    lv_subject_init_int(&heater_state_subject, HEATER_STATE_HEATING);
-
-    lv_subject_init_pointer(&connected_clients_subject, NULL);
+    int32_t v = lv_subject_get_int(subject);
+    ESP_LOGI(TAG, "value %lu", v);
 }
 
 void connected_client_data_notify(client_info_data_t client_data)
@@ -44,5 +38,16 @@ void connected_client_data_notify(client_info_data_t client_data)
         printf("  Bytes Received: %zu\n", client_data.clients_info[i].bytes_received);
         printf("\n");
     }
-    // lv_subject_set_pointer(&connected_clients_subject, &client_data);
+    lv_subject_set_pointer(&state_subjects.connected_clients, &client_data);
+}
+
+state_subjects_t* init_state()
+{
+    lv_subject_init_int(&state_subjects.current_temp, 0);
+    lv_subject_init_int(&state_subjects.target_temp, 0);
+    lv_subject_init_int(&state_subjects.heater_state, HEATER_STATE_HEATING);
+
+    lv_subject_init_pointer(&state_subjects.connected_clients, NULL);
+
+    return &state_subjects;
 }

@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/lock.h>
@@ -11,6 +10,7 @@
 #include "esp_log.h"
 #include "driver/i2c_master.h"
 #include "lvgl.h"
+#include "ui.h"
 
 #if CONFIG_LCD_CONTROLLER_SH1107
 #include "esp_lcd_sh1107.h"
@@ -48,8 +48,6 @@ static const char *TAG = "SCREEN";
 static uint8_t oled_buffer[LCD_H_RES * LCD_V_RES / 8];
 // LVGL library is not thread-safe, LVGL APIs will be called from different tasks, so use a mutex to protect it
 static _lock_t lvgl_api_lock;
-
-extern void create_ui(lv_disp_t *disp);
 
 static bool notify_lvgl_flush_ready(esp_lcd_panel_io_handle_t io_panel, esp_lcd_panel_io_event_data_t *edata, void *user_ctx)
 {
@@ -245,7 +243,7 @@ esp_err_t add_keypad_input(lv_indev_read_cb_t read_cb, void* args) {
 }
 
 
-esp_err_t start_rendering() {
+esp_err_t start_rendering(state_subjects_t* state_subjects) {
     ESP_LOGI(TAG, "Starting LVGL Rendering");
     _lock_acquire(&lvgl_api_lock);
     lv_display_t *display = lv_display_get_default();
@@ -255,7 +253,8 @@ esp_err_t start_rendering() {
         return ESP_FAIL; // Return an error code
     }
     ESP_LOGI(TAG, "Composing LVGL UI");
-    create_ui(display);
+    
+    compose_ui(display, state_subjects);
     _lock_release(&lvgl_api_lock);
     return ESP_OK; // Return success
 }

@@ -2,6 +2,7 @@
 
 #include "esp_log.h"
 #include "symbols.h"
+#include "screen.h"
 
 LV_FONT_DECLARE(mdi)
 
@@ -28,7 +29,9 @@ typedef struct nav_fragment_t
     page_id_t page_id;
 } nav_fragment_t;
 
-void create_ui(lv_display_t *disp);
+static state_subjects_t state_subjects;
+
+void create_ui(lv_display_t *disp, state_subjects_t* arg_state_subjects);
 
 static void set_first_page(lv_fragment_manager_t *manager, page_id_t page_id);
 static lv_obj_t *nav_fragment_create(lv_fragment_t *self, lv_obj_t *parent);
@@ -171,7 +174,8 @@ static lv_obj_t *compose_status_page(lv_obj_t *parent, lv_fragment_manager_t *ma
     }
 
     lv_obj_t *label = lv_label_create(status_page);
-    lv_label_set_text(label, "Hello, I am hiding here");
+    lv_label_set_text(label, "Conntected: ");
+    // lv_obj_bind_flag_if_eq(label, &subject, LV_OBJ_FLAG_*, ref_value);
     lv_obj_center(label);
 
     return status_page;
@@ -333,8 +337,18 @@ void set_first_page(lv_fragment_manager_t *manager, page_id_t page_id)
     lv_fragment_manager_push(manager, fragment, &container);
 }
 
-void create_ui(lv_display_t *disp)
+
+void connected_clients_cb(lv_observer_t * observer, lv_subject_t * subject) {
+    int32_t v = lv_subject_get_int(subject);
+    ESP_LOGI(TAG, "FROM UI value %lu", v);
+}
+
+void compose_ui(lv_display_t *disp, state_subjects_t* arg_state_subjects)
 {
+    // state_subjects = *arg_state_subjects;
+    // ESP_LOGW(TAG, "Pointer of state subjects %p", &state_subjects);
+
+    lv_subject_add_observer(&arg_state_subjects->connected_clients, connected_clients_cb, NULL);
     // lv_obj_t *p = lv_obj_create(lv_screen_active());
     // lv_obj_remove_style_all(p);
     // lv_group_remove_obj(p);

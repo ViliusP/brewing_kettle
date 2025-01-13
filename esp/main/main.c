@@ -112,6 +112,9 @@ static void keypad_read(lv_indev_t *indev_drv, lv_indev_data_t *data)
     free(all_events);
 }
 
+lv_subject_t test_main;
+
+
 void app_main(void)
 {
     // esp_log_level_set(TAG, ESP_LOG_DEBUG);
@@ -134,19 +137,25 @@ void app_main(void)
     // // // Keyboard start to work
     // matrix_kbd_start(kbd);
 
-    // =======================================
     initialize_display();
-    add_keypad_input(keypad_read, kbd);
-    start_rendering();
-    // =======================================
 
-    // ============ state ====================
-    init_state();
+    // ================ state ===================
+    state_subjects_t* state_subjects = init_state();
     ws_client_changed_cb_t ws_client_change_cb = (ws_client_changed_cb_t)&connected_client_data_notify;
-    // =======================================
+    ESP_LOGW(TAG, "Pointer of state subjects %p", state_subjects);
+    // ==========================================
 
+
+    // ================= UI =====================
+    add_keypad_input(keypad_read, kbd);
+    start_rendering(state_subjects);
+    // ==========================================
+
+    // ============== WS_SERVER =================
     ws_message_handler_t message_handler = create_handler();
     initialize_ws_server(message_handler, ws_client_change_cb);
+    // ==========================================
+
 
     /// DO NOT DELETE
     for (int i = 720 * 10; i >= 0; i--)
