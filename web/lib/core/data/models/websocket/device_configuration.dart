@@ -8,6 +8,7 @@ class DeviceConfiguration extends WsInboundMessagePayload {
 
   // In bytes
   final int? flashSize;
+  final FlashType? flashType;
 
   // In bytes
   final int? minimumHeapSize;
@@ -18,12 +19,14 @@ class DeviceConfiguration extends WsInboundMessagePayload {
     required this.features,
     required this.siliconRevision,
     required this.flashSize,
+    required this.flashType,
     required this.minimumHeapSize,
   });
 
   factory DeviceConfiguration.fromJson(Map<String, dynamic> json) {
     final String? chip = json["chip"];
     final int? cores = json["cores"];
+    final String? siliconRevision = json["silicon_revision"];
 
     final Set<ChipFeatures> features = {};
     try {
@@ -34,8 +37,14 @@ class DeviceConfiguration extends WsInboundMessagePayload {
       // ignore: empty_catches
     } catch (e) {}
 
-    final String? siliconRevision = json["silicon_revision"];
     final int? flashSize = json["flash_size"];
+
+    FlashType? flashType;
+    try {
+      flashType = FlashType.values.byName(json["flash_type"].toString());
+      // ignore: empty_catches
+    } catch (e) {}
+
     final int? minimumHeapSize = json["heap_size"];
 
     return DeviceConfiguration(
@@ -44,6 +53,7 @@ class DeviceConfiguration extends WsInboundMessagePayload {
       features: features,
       siliconRevision: siliconRevision,
       flashSize: flashSize,
+      flashType: flashType,
       minimumHeapSize: minimumHeapSize,
     );
   }
@@ -61,4 +71,9 @@ enum ChipFeatures {
 
   /// 802.15.4 (Zigbee/Thread),
   ieee802154,
+}
+
+enum FlashType {
+  embedded,
+  external,
 }

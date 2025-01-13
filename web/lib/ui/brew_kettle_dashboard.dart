@@ -1,6 +1,7 @@
 import 'package:brew_kettle_dashboard/constants/app.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
-import 'package:brew_kettle_dashboard/screens/start/start_screen.dart';
+import 'package:brew_kettle_dashboard/ui/routing.dart';
+import 'package:brew_kettle_dashboard/ui/screens/start/start_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -18,21 +19,17 @@ class BrewKettleDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Observer(
       builder: (context) {
-        return MaterialApp(
+        return MaterialApp.router(
+          routerConfig: AppRouter.value,
           debugShowCheckedModeBanner: false,
           title: AppConnstants.appName,
           // theme: _themeStore.darkMode
           //     ? AppThemeData.darkThemeData
           //     : AppThemeData.lightThemeData,
           // routes: Routes.routes,
-          // locale: Locale(_languageStore.locale),
-          // supportedLocales: _languageStore.supportedLanguages
-          //     .map((language) => Locale(language.locale, language.code))
-          //     .toList(),
           locale: const Locale('en'),
           supportedLocales: AppLocalizations.supportedLocales,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
-          home: StartScreen(),
         );
       },
     );
