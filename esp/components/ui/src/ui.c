@@ -2,7 +2,7 @@
 
 #include "esp_log.h"
 #include "symbols.h"
-#include "screen.h"
+#include "display.h"
 #include "common_types.h"
 
 LV_FONT_DECLARE(font_mdi_10)
@@ -32,7 +32,7 @@ typedef struct nav_fragment_t
     page_id_t page_id;
 } nav_fragment_t;
 
-static state_subjects_t* state_subjects;
+static state_subjects_t *state_subjects;
 
 static void set_first_page(lv_fragment_manager_t *manager, page_id_t page_id);
 static lv_obj_t *nav_fragment_create(lv_fragment_t *self, lv_obj_t *parent);
@@ -166,16 +166,13 @@ static void connected_clients_count_cb(lv_observer_t *observer, lv_subject_t *su
     {
         return;
     }
-    ESP_LOGI(TAG, "FROM UI value %d", clients_data->client_count);
-
     lv_obj_t *label = lv_observer_get_target(observer);
     if (label == NULL)
     {
         return;
     }
-    lv_label_set_text_fmt(label, "Connected: %d", clients_data->client_count);
+    lv_label_set_text_fmt(label, CONNECTION_SYMBOL " connections: %d", clients_data->client_count);
 }
-
 
 static lv_obj_t *compose_status_page(lv_obj_t *parent, lv_fragment_manager_t *manager)
 {
@@ -193,23 +190,11 @@ static lv_obj_t *compose_status_page(lv_obj_t *parent, lv_fragment_manager_t *ma
     {
         lv_obj_add_event_cb(status_page, page_press_cb, LV_EVENT_PRESSED, manager);
     }
-    lv_obj_t *label_10 = lv_label_create(status_page);
-    lv_label_set_text(label_10, "10Conntected: -1");
-    lv_obj_set_style_text_font(label_10, &lv_font_montserrat_10, 0);
+    lv_obj_t *label = lv_label_create(status_page);
+    lv_obj_set_style_text_font(label, &font_mdi_12, 0);
+    lv_label_set_text(label, CONNECTION_SYMBOL " connections: -1");
 
-    lv_obj_t *label_12 = lv_label_create(status_page);
-    lv_label_set_text(label_12, "12Conntected: -1");
-    lv_obj_set_style_text_font(label_12, &lv_font_montserrat_12, 0);
-
-    lv_obj_t *label_14 = lv_label_create(status_page);
-    lv_label_set_text(label_14, "14Conntected: -1");
-    lv_obj_set_style_text_font(label_14, &lv_font_montserrat_14, 0);
-
-
-    lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, label_10, NULL);
-    lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, label_12, NULL);
-    lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, label_14, NULL);
-
+    lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, label, NULL);
 
     return status_page;
 }
@@ -369,7 +354,6 @@ void set_first_page(lv_fragment_manager_t *manager, page_id_t page_id)
     lv_fragment_t *fragment = lv_fragment_create(&nav_fragment_class, &page_id);
     lv_fragment_manager_push(manager, fragment, &container);
 }
-
 
 void compose_ui(lv_display_t *disp, state_subjects_t *arg_state_subjects)
 {

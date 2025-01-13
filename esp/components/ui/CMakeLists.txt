@@ -1,5 +1,6 @@
-set(component_srcs "src/screen.c" "src/ui.c" "font/font_mdi_10.c" "font/font_mdi_12.c" "font/font_mdi_14.c" "font/symbols.h")
+file(GLOB component_srcs "src/*.c" "src/pages/*.c")
+file(GLOB component_fonts "font/*.c")
 
-idf_component_register(SRCS "${component_srcs}"
+idf_component_register(SRCS ${component_srcs} ${component_fonts}
                        INCLUDE_DIRS "include" "font"
                        REQUIRES driver lvgl esp_lcd shared)

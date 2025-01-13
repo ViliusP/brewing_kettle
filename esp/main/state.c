@@ -1,7 +1,7 @@
 #include "lvgl.h"
 #include "ws_server.h"
 #include "esp_log.h"
-#include "screen.h"
+#include "display.h"
 
 static const char *TAG = "STATE";
 
@@ -28,16 +28,16 @@ void connected_client_data_notify(client_info_data_t client_data)
         return;
     }
 
-    ESP_LOGI(TAG, "Number of clients: %d", client_data.client_count);
-    for (size_t i = 0; i < client_data.client_count; i++)
-    {
-        printf("Client %zu:\n", i);
-        printf("  IP: %s\n", client_data.clients_info[i].ip);
-        printf("  Port: %d\n", client_data.clients_info[i].port);
-        printf("  Bytes Sent: %zu\n", client_data.clients_info[i].bytes_sent);
-        printf("  Bytes Received: %zu\n", client_data.clients_info[i].bytes_received);
-        printf("\n");
-    }
+    // ESP_LOGI(TAG, "Number of clients: %d", client_data.client_count);
+    // for (size_t i = 0; i < client_data.client_count; i++)
+    // {
+    //     printf("Client %zu:\n", i);
+    //     printf("  IP: %s\n", client_data.clients_info[i].ip);
+    //     printf("  Port: %d\n", client_data.clients_info[i].port);
+    //     printf("  Bytes Sent: %zu\n", client_data.clients_info[i].bytes_sent);
+    //     printf("  Bytes Received: %zu\n", client_data.clients_info[i].bytes_received);
+    //     printf("\n");
+    // }
     lv_subject_set_pointer(&state_subjects.connected_clients, &client_data);
 }
 

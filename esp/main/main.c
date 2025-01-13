@@ -9,7 +9,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "lvgl.h"
-#include "screen.h"
+#include "display.h"
 #include "ws_server.h"
 #include "esp_system.h"
 #include "message_handling.h"
