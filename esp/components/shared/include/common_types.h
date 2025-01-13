@@ -18,4 +18,10 @@ typedef struct ws_client_info_t {
     size_t bytes_received;
 } ws_client_info_t;
 
+
+typedef struct {
+    ws_client_info_t *clients_info;
+    size_t client_count;
+} client_info_data_t;
+
 #endif
