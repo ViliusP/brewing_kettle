@@ -30,13 +30,19 @@ struct async_resp_arg
 
 typedef struct
 {
-    httpd_handle_t *server; // Pointer to server handle
     ws_message_handler_t message_handler;
+    ws_client_changed_cb_t ws_client_connected_handler;
+} ws_uri_handler_user_ctx_t;
+
+typedef struct
+{
+    httpd_handle_t server;
+    ws_uri_handler_user_ctx_t *ws_uri_handler_user_ctx;
 } esp_connect_event_args_t;
 
 typedef struct
 {
-    httpd_handle_t *server; // Pointer to server handle
+    httpd_handle_t server;
     ws_client_changed_cb_t ws_client_changed_cb;
 } http_event_args_t;
 
@@ -91,17 +97,91 @@ static esp_err_t create_ws_frame(const char *data, httpd_ws_frame_t *frame)
     return ESP_OK;
 }
 
+// Get WebSocket client information
+static esp_err_t httpd_client_infos(httpd_handle_t server_handle, ws_client_info_t **clients_info, size_t *client_count)
+{
+    const size_t max_clients = CONFIG_LWIP_MAX_LISTENING_TCP;
+    int client_fds[max_clients];
+    size_t fds = max_clients;
+
+    esp_err_t ret = httpd_get_client_list(server_handle, &fds, client_fds);
+    if (ret != ESP_OK)
+    {
+        return ret;
+    }
+
+    *clients_info = calloc(fds, sizeof(ws_client_info_t));
+    if (!*clients_info)
+    {
+        return ESP_ERR_NO_MEM;
+    }
+
+    size_t count = 0;
+
+    for (size_t i = 0; i < fds; i++)
+    {
+        httpd_ws_client_info_t client_info = httpd_ws_get_fd_info(server_handle, client_fds[i]);
+
+        if (client_info == HTTPD_WS_CLIENT_WEBSOCKET)
+        {
+            struct sockaddr_in6 client_addr;
+            socklen_t addr_len = sizeof(client_addr);
+            if (getpeername(client_fds[i], (struct sockaddr *)&client_addr, &addr_len) == 0)
+            {
+                inet_ntop(client_addr.sin6_family, &client_addr.sin6_addr,
+                          (*clients_info)[count].ip, sizeof((*clients_info)[count].ip));
+                (*clients_info)[count].port = ntohs(client_addr.sin6_port);
+            }
+            else
+            {
+                strncpy((*clients_info)[count].ip, "Unknown", sizeof((*clients_info)[count].ip));
+                (*clients_info)[count].port = 0;
+            }
+            (*clients_info)[count].bytes_sent = 0;
+            (*clients_info)[count].bytes_received = 0;
+            count++;
+        }
+    }
+    *client_count = count;
+    return ESP_OK;
+}
+
 /*
  * This handler echos back the received ws data
  * and triggers an async send if certain message received
  */
 static esp_err_t ws_handler(httpd_req_t *req)
 {
-    ws_message_handler_t message_handler = (ws_message_handler_t)req->user_ctx;
+    ws_uri_handler_user_ctx_t *handlers = (ws_uri_handler_user_ctx_t *)req->user_ctx;
+
+    if (handlers == NULL)
+    {
+        ESP_LOGE(TAG, "ws_handler: handlers is NULL!");
+        return ESP_FAIL;
+    }
+
+    ws_message_handler_t message_handler = handlers->message_handler;
+    ws_client_changed_cb_t client_conncted_handler = handlers->ws_client_connected_handler;
 
     if (req->method == HTTP_GET)
     {
         ESP_LOGI(TAG, "Handshake done, the new connection was opened");
+        if (client_conncted_handler != NULL)
+        {
+            ws_client_info_t *clients_info = NULL;
+            size_t client_count = 0;
+            esp_err_t err = httpd_client_infos(req->handle, &clients_info, &client_count);
+            ESP_LOGI(TAG, "http_on_connected_handler: Found %d clients", client_count);
+
+            client_info_data_t client_info_data = {
+                .clients_info = clients_info,
+                .client_count = client_count,
+            };
+
+            client_conncted_handler(&client_info_data);
+
+            free(clients_info);
+        }
         return ESP_OK;
     }
     httpd_ws_frame_t ws_pkt;
@@ -150,6 +230,7 @@ static esp_err_t ws_handler(httpd_req_t *req)
         return ret;
     }
     char *data = NULL;
+    ESP_LOGI(TAG, "ws_handler: message_handler address: %p", message_handler);
     ret = message_handler(&ws_pkt, &data);
     if (data == NULL && ret == ESP_OK)
     {
@@ -164,6 +245,7 @@ static esp_err_t ws_handler(httpd_req_t *req)
         free(data);
         return ret;
     }
+
     httpd_ws_frame_t ws_response_frame;
     ret = create_ws_frame(data, &ws_response_frame);
     if (ret != ESP_OK)
@@ -221,7 +303,7 @@ bool check_client_alive_cb(wss_keep_alive_t h, int fd)
     return false;
 }
 
-static httpd_handle_t start_ws_server(ws_message_handler_t message_handler)
+static httpd_handle_t start_ws_server(ws_uri_handler_user_ctx_t *ws_uri_handler_user_ctx)
 {
     // Prepare keep-alive engine
     wss_keep_alive_config_t keep_alive_config = KEEP_ALIVE_CONFIG_DEFAULT();
@@ -244,7 +326,7 @@ static httpd_handle_t start_ws_server(ws_message_handler_t message_handler)
         .uri = "/ws",
         .method = HTTP_GET,
         .handler = ws_handler,
-        .user_ctx = message_handler,
+        .user_ctx = ws_uri_handler_user_ctx,
         .is_websocket = true};
 
     // Set URI handlers
@@ -283,60 +365,13 @@ static void connect_handler(void *arg, esp_event_base_t event_base,
 {
     ESP_LOGI(TAG, "Succesfully connected to AP");
     esp_connect_event_args_t *args = (esp_connect_event_args_t *)arg;
+    ws_uri_handler_user_ctx_t *handlers = args->ws_uri_handler_user_ctx;
 
     if (args && args->server == NULL)
     {
         ESP_LOGI(TAG, "Starting WebSocket server");
-        args->server = start_ws_server(args->message_handler);
+        args->server = start_ws_server(handlers);
     }
-}
-
-// Get WebSocket client information
-static esp_err_t httpd_client_infos(httpd_handle_t server_handle, ws_client_info_t **clients_info, size_t *client_count)
-{
-    const size_t max_clients = CONFIG_LWIP_MAX_LISTENING_TCP;
-    int client_fds[max_clients];
-    size_t fds = max_clients;
-
-    esp_err_t ret = httpd_get_client_list(server_handle, &fds, client_fds);
-    if (ret != ESP_OK)
-    {
-        return ret;
-    }
-
-    *clients_info = calloc(fds, sizeof(ws_client_info_t));
-    if (!*clients_info)
-    {
-        return ESP_ERR_NO_MEM;
-    }
-
-    size_t count = 0;
-
-    for (size_t i = 0; i < fds; i++)
-    {
-        httpd_ws_client_info_t client_info = httpd_ws_get_fd_info(server_handle, client_fds[i]);
-        if (client_info == HTTPD_WS_CLIENT_WEBSOCKET)
-        {
-            struct sockaddr_in6 client_addr;
-            socklen_t addr_len = sizeof(client_addr);
-            if (getpeername(client_fds[i], (struct sockaddr *)&client_addr, &addr_len) == 0)
-            {
-                inet_ntop(client_addr.sin6_family, &client_addr.sin6_addr,
-                          (*clients_info)[count].ip, sizeof((*clients_info)[count].ip));
-                (*clients_info)[count].port = ntohs(client_addr.sin6_port);
-            }
-            else
-            {
-                strncpy((*clients_info)[count].ip, "Unknown", sizeof((*clients_info)[count].ip));
-                (*clients_info)[count].port = 0;
-            }
-            (*clients_info)[count].bytes_sent = 0;
-            (*clients_info)[count].bytes_received = 0;
-            count++;
-        }
-    }
-    *client_count = count;
-    return ESP_OK;
 }
 
 static void http_connections_changed_handler(void *arg, esp_event_base_t event_base,
@@ -354,6 +389,8 @@ static void http_connections_changed_handler(void *arg, esp_event_base_t event_b
         ESP_LOGE(TAG, "http_connections_changed_handler: Invalid server handle");
         return;
     }
+    ESP_LOGI(TAG, "http_connections_changed_handler: ws_client_changed_cb address in struct: %p", args->ws_client_changed_cb);
+
     if (args->ws_client_changed_cb == NULL)
     {
         ESP_LOGE(TAG, "http_connections_changed_handler: ws_client_changed_cb is NULL");
@@ -372,7 +409,8 @@ static void http_connections_changed_handler(void *arg, esp_event_base_t event_b
 
     client_info_data_t client_info_data = {
         .clients_info = clients_info,
-        .client_count = client_count};
+        .client_count = client_count,
+    };
 
     args->ws_client_changed_cb(&client_info_data);
 
@@ -383,45 +421,54 @@ static httpd_handle_t server = NULL; // Declare server handle as static
 
 void initialize_ws_server(ws_message_handler_t message_handler, ws_client_changed_cb_t ws_client_changed_cb)
 {
-
     ESP_LOGI(TAG, "Initializing NVC and TCP/IP stack");
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-    /* This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
-     * Read "Establishing Wi-Fi or Ethernet Connection" section in
-     * examples/protocols/README.md for more information about this function.
-     */
     ESP_LOGI(TAG, "Connecting to WIFI");
     ESP_ERROR_CHECK(wifi_connect());
 
     ESP_LOGI(TAG, "Start MDNS service");
     start_mdns_service();
 
-    /* Start the server for the first time */
-    server = start_ws_server(message_handler);
-
-    esp_connect_event_args_t connect_event_args = {
-        .server = &server,
-        .message_handler = message_handler,
-    };
-
-    /* Register event handlers to stop the server when Wi-Fi is disconnected,
-     * and re-start it upon connection.
-     */
-    ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, connect_handler, &server));
-    ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, WIFI_EVENT_STA_DISCONNECTED, disconnect_handler, &connect_event_args));
-
-    http_event_args_t *http_event_args = malloc(sizeof(http_event_args_t)); // Correct declaration!
-
-    if (http_event_args == NULL)
+    ws_uri_handler_user_ctx_t *ws_uri_handler_user_ctx = malloc(sizeof(ws_uri_handler_user_ctx_t));
+    if (ws_uri_handler_user_ctx == NULL)
     {
+        ESP_LOGE(TAG, "Failed to allocate memory for ws_uri_handler_user_ctx");
         return;
     }
-    http_event_args->server = server;                         
-    http_event_args->ws_client_changed_cb = ws_client_changed_cb; 
 
-    ESP_ERROR_CHECK(esp_event_handler_register(ESP_HTTP_SERVER_EVENT, HTTP_SERVER_EVENT_ON_CONNECTED, &http_connections_changed_handler, http_event_args));
-    ESP_ERROR_CHECK(esp_event_handler_register(ESP_HTTP_SERVER_EVENT, HTTP_SERVER_EVENT_DISCONNECTED, &http_connections_changed_handler, http_event_args));
+    ws_uri_handler_user_ctx->message_handler = message_handler;
+    ws_uri_handler_user_ctx->ws_client_connected_handler = ws_client_changed_cb;
+
+    server = start_ws_server(ws_uri_handler_user_ctx);
+
+    esp_connect_event_args_t *connect_event_args = malloc(sizeof(esp_connect_event_args_t));
+    if (connect_event_args == NULL)
+    {
+        ESP_LOGE(TAG, "Failed to allocate memory for connect_event_args");
+        free(ws_uri_handler_user_ctx);
+        return;
+    }
+
+    connect_event_args->server = server;
+    connect_event_args->ws_uri_handler_user_ctx = ws_uri_handler_user_ctx;
+
+    ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, connect_handler, connect_event_args));
+    ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, WIFI_EVENT_STA_DISCONNECTED, disconnect_handler, connect_event_args));
+
+    http_event_args_t *http_event_args = malloc(sizeof(http_event_args_t));
+    if (http_event_args == NULL)
+    {
+        ESP_LOGE(TAG, "Failed to allocate memory for http_event_args");
+        free(ws_uri_handler_user_ctx);
+        free(connect_event_args);
+        return;
+    }
+
+    http_event_args->server = server;
+    http_event_args->ws_client_changed_cb = ws_client_changed_cb;
+
+    ESP_ERROR_CHECK(esp_event_handler_register(ESP_HTTP_SERVER_EVENT, HTTP_SERVER_EVENT_DISCONNECTED, http_connections_changed_handler, http_event_args));
 }
