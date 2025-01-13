@@ -4,6 +4,7 @@
 #include "symbols.h"
 #include "display.h"
 #include "common_types.h"
+#include "pages/pages.h"
 
 LV_FONT_DECLARE(font_mdi_10)
 LV_FONT_DECLARE(font_mdi_12)
@@ -36,7 +37,6 @@ static state_subjects_t *state_subjects;
 
 static void set_first_page(lv_fragment_manager_t *manager, page_id_t page_id);
 static lv_obj_t *nav_fragment_create(lv_fragment_t *self, lv_obj_t *parent);
-static void pop_page(lv_fragment_manager_t *manager);
 static void push_page(lv_fragment_manager_t *manager, page_id_t page_id);
 
 static lv_obj_t *keypad_label;
@@ -142,62 +142,7 @@ static void menu_button_cb(lv_event_t *e)
     push_page(args->manager, args->page_id);
 }
 
-static void page_press_cb(lv_event_t *e)
-{
-    if (e == NULL)
-    {
-        ESP_LOGD(TAG, "page_press_cb: Invalid event pointer");
-        return;
-    }
-    lv_fragment_manager_t *manager = (lv_fragment_manager_t *)lv_event_get_user_data(e);
-    if (manager == NULL)
-    {
-        ESP_LOGD(TAG, "page_press_cb: Invalid manager in event data");
-        return;
-    }
-    pop_page(manager);
-}
 
-static void connected_clients_count_cb(lv_observer_t *observer, lv_subject_t *subject)
-{
-    ESP_LOGI(TAG, "connected_clients_count_cb");
-    const client_info_data_t *clients_data = lv_subject_get_pointer(subject);
-    if (clients_data == NULL || clients_data->clients_info == NULL)
-    {
-        return;
-    }
-    lv_obj_t *label = lv_observer_get_target(observer);
-    if (label == NULL)
-    {
-        return;
-    }
-    lv_label_set_text_fmt(label, CONNECTION_SYMBOL " connections: %d", clients_data->client_count);
-}
-
-static lv_obj_t *compose_status_page(lv_obj_t *parent, lv_fragment_manager_t *manager)
-{
-    if (parent == NULL)
-    {
-        parent = lv_obj_create(NULL);
-    }
-    lv_obj_t *status_page = lv_obj_create(parent);
-    lv_obj_set_size(status_page, 128, lv_pct(100));
-    lv_obj_center(status_page);
-    lv_group_add_obj(lv_group_get_default(), status_page);
-    lv_obj_set_flex_flow(status_page, LV_FLEX_FLOW_COLUMN);
-
-    if (manager != NULL)
-    {
-        lv_obj_add_event_cb(status_page, page_press_cb, LV_EVENT_PRESSED, manager);
-    }
-    lv_obj_t *label = lv_label_create(status_page);
-    lv_obj_set_style_text_font(label, &font_mdi_12, 0);
-    lv_label_set_text(label, CONNECTION_SYMBOL " connections: -1");
-
-    lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, label, NULL);
-
-    return status_page;
-}
 
 static lv_obj_t *compose_unknown_page(lv_obj_t *parent, lv_fragment_manager_t *manager)
 {
@@ -213,7 +158,7 @@ static lv_obj_t *compose_unknown_page(lv_obj_t *parent, lv_fragment_manager_t *m
     if (manager == NULL)
     {
         ESP_LOGW(TAG, "ADDING event to unknown page ");
-        lv_obj_add_event_cb(unknown_page, page_press_cb, LV_EVENT_PRESSED, NULL);
+        lv_obj_add_event_cb(unknown_page, page_pop_on_event, LV_EVENT_PRESSED, NULL);
     }
 
     lv_obj_t *label = lv_label_create(unknown_page);
@@ -312,15 +257,7 @@ static void push_page(lv_fragment_manager_t *manager, page_id_t page_id)
     lv_fragment_manager_push(manager, fragment, &container);
 }
 
-static void pop_page(lv_fragment_manager_t *manager)
-{
 
-    if (lv_fragment_manager_get_stack_size(manager) > 1)
-    {
-        ESP_LOGD(TAG, "Popping fragment");
-        lv_fragment_manager_pop(manager);
-    }
-}
 
 static lv_obj_t *nav_fragment_create(lv_fragment_t *self, lv_obj_t *parent)
 {
@@ -334,7 +271,7 @@ static lv_obj_t *nav_fragment_create(lv_fragment_t *self, lv_obj_t *parent)
         return compose_main_menu(parent, manager);
     case PAGE_STATUS:
         ESP_LOGD(TAG, "Creating status_page fragment");
-        return compose_status_page(parent, manager);
+        return compose_status_page(parent, manager, state_subjects);
     default:
         return compose_unknown_page(parent, manager);
     }
