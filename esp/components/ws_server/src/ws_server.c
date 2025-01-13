@@ -139,6 +139,7 @@ static esp_err_t httpd_client_infos(httpd_handle_t server_handle, ws_client_info
             }
             (*clients_info)[count].bytes_sent = 0;
             (*clients_info)[count].bytes_received = 0;
+            (*clients_info)->status = CLIENT_CONNECTED;
             count++;
         }
     }
@@ -323,6 +324,7 @@ static httpd_handle_t start_ws_server(ws_uri_handler_user_ctx_t *ws_uri_handler_
         .is_websocket = true};
 
     // Set URI handlers
+    
     httpd_register_uri_handler(server, &ws);
     wss_keep_alive_set_user_ctx(keep_alive, server);
 
@@ -408,6 +410,7 @@ static void http_connections_changed_handler(void *arg, esp_event_base_t event_b
 
     free(clients_info);
 }
+
 
 static httpd_handle_t server = NULL; // Declare server handle as static
 
