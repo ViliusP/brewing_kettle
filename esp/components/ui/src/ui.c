@@ -3,6 +3,7 @@
 #include "esp_log.h"
 #include "symbols.h"
 #include "screen.h"
+#include "common_types.h"
 
 LV_FONT_DECLARE(mdi)
 
@@ -30,8 +31,6 @@ typedef struct nav_fragment_t
 } nav_fragment_t;
 
 static state_subjects_t state_subjects;
-
-void create_ui(lv_display_t *disp, state_subjects_t* arg_state_subjects);
 
 static void set_first_page(lv_fragment_manager_t *manager, page_id_t page_id);
 static lv_obj_t *nav_fragment_create(lv_fragment_t *self, lv_obj_t *parent);
@@ -337,18 +336,26 @@ void set_first_page(lv_fragment_manager_t *manager, page_id_t page_id)
     lv_fragment_manager_push(manager, fragment, &container);
 }
 
+void connected_clients_count_cb(lv_observer_t *observer, lv_subject_t *subject)
+{
+    const client_info_data_t *clients_data = lv_subject_get_pointer(subject);
+    if (clients_data == NULL || clients_data->clients_info == NULL)
+    {
+        return;
+    }
+    ESP_LOGI(TAG, "FROM UI value %d", clients_data->client_count);
 
-void connected_clients_cb(lv_observer_t * observer, lv_subject_t * subject) {
-    int32_t v = lv_subject_get_int(subject);
-    ESP_LOGI(TAG, "FROM UI value %lu", v);
+    lv_obj_t *label = lv_observer_get_target(observer);
+    if (label == NULL)
+    {
+        return;
+    }
+    lv_label_set_text_fmt(label, "Connected clients: %d", clients_data->client_count);
 }
 
-void compose_ui(lv_display_t *disp, state_subjects_t* arg_state_subjects)
+void compose_ui(lv_display_t *disp, state_subjects_t *arg_state_subjects)
 {
-    // state_subjects = *arg_state_subjects;
-    // ESP_LOGW(TAG, "Pointer of state subjects %p", &state_subjects);
-
-    lv_subject_add_observer(&arg_state_subjects->connected_clients, connected_clients_cb, NULL);
+    state_subjects = *arg_state_subjects;
     // lv_obj_t *p = lv_obj_create(lv_screen_active());
     // lv_obj_remove_style_all(p);
     // lv_group_remove_obj(p);
