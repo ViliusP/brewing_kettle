@@ -19,7 +19,7 @@ typedef struct {
 } client_info_data_t;
 #endif
 
-typedef void (*ws_client_changed_cb_t)(client_info_data_t *client_data);
+typedef void (*ws_client_changed_cb_t)(client_info_data_t client_data);
 
 typedef esp_err_t (*ws_message_handler_t)(httpd_ws_frame_t *frame, char **data);
 

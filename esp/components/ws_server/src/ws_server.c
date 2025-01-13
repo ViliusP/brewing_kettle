@@ -161,26 +161,20 @@ static esp_err_t ws_handler(httpd_req_t *req)
     }
 
     ws_message_handler_t message_handler = handlers->message_handler;
-    ws_client_changed_cb_t client_conncted_handler = handlers->ws_client_connected_handler;
+    ws_client_changed_cb_t client_connected_handler = handlers->ws_client_connected_handler;
 
     if (req->method == HTTP_GET)
     {
         ESP_LOGI(TAG, "Handshake done, the new connection was opened");
-        if (client_conncted_handler != NULL)
+        if (client_connected_handler != NULL)
         {
-            ws_client_info_t *clients_info = NULL;
-            size_t client_count = 0;
-            esp_err_t err = httpd_client_infos(req->handle, &clients_info, &client_count);
-            ESP_LOGI(TAG, "http_on_connected_handler: Found %d clients", client_count);
+            client_info_data_t client_info_data;
+            client_info_data.client_count = -1;
+            client_info_data.clients_info = NULL;
 
-            client_info_data_t client_info_data = {
-                .clients_info = clients_info,
-                .client_count = client_count,
-            };
-
-            client_conncted_handler(&client_info_data);
-
-            free(clients_info);
+            esp_err_t err = httpd_client_infos(req->handle, &client_info_data.clients_info, &client_info_data.client_count);
+            client_connected_handler(client_info_data);
+            free(client_info_data.clients_info);
         }
         return ESP_OK;
     }
@@ -230,7 +224,6 @@ static esp_err_t ws_handler(httpd_req_t *req)
         return ret;
     }
     char *data = NULL;
-    ESP_LOGI(TAG, "ws_handler: message_handler address: %p", message_handler);
     ret = message_handler(&ws_pkt, &data);
     if (data == NULL && ret == ESP_OK)
     {
@@ -389,7 +382,6 @@ static void http_connections_changed_handler(void *arg, esp_event_base_t event_b
         ESP_LOGE(TAG, "http_connections_changed_handler: Invalid server handle");
         return;
     }
-    ESP_LOGI(TAG, "http_connections_changed_handler: ws_client_changed_cb address in struct: %p", args->ws_client_changed_cb);
 
     if (args->ws_client_changed_cb == NULL)
     {
@@ -412,7 +404,7 @@ static void http_connections_changed_handler(void *arg, esp_event_base_t event_b
         .client_count = client_count,
     };
 
-    args->ws_client_changed_cb(&client_info_data);
+    args->ws_client_changed_cb(client_info_data);
 
     free(clients_info);
 }
