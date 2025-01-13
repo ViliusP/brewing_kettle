@@ -5,7 +5,9 @@
 #include "screen.h"
 #include "common_types.h"
 
-LV_FONT_DECLARE(mdi)
+LV_FONT_DECLARE(font_mdi_10)
+LV_FONT_DECLARE(font_mdi_12)
+LV_FONT_DECLARE(font_mdi_14)
 
 static const char *TAG = "SCREEN.UI";
 
@@ -30,7 +32,7 @@ typedef struct nav_fragment_t
     page_id_t page_id;
 } nav_fragment_t;
 
-static state_subjects_t state_subjects;
+static state_subjects_t* state_subjects;
 
 static void set_first_page(lv_fragment_manager_t *manager, page_id_t page_id);
 static lv_obj_t *nav_fragment_create(lv_fragment_t *self, lv_obj_t *parent);
@@ -156,6 +158,25 @@ static void page_press_cb(lv_event_t *e)
     pop_page(manager);
 }
 
+static void connected_clients_count_cb(lv_observer_t *observer, lv_subject_t *subject)
+{
+    ESP_LOGI(TAG, "connected_clients_count_cb");
+    const client_info_data_t *clients_data = lv_subject_get_pointer(subject);
+    if (clients_data == NULL || clients_data->clients_info == NULL)
+    {
+        return;
+    }
+    ESP_LOGI(TAG, "FROM UI value %d", clients_data->client_count);
+
+    lv_obj_t *label = lv_observer_get_target(observer);
+    if (label == NULL)
+    {
+        return;
+    }
+    lv_label_set_text_fmt(label, "Connected: %d", clients_data->client_count);
+}
+
+
 static lv_obj_t *compose_status_page(lv_obj_t *parent, lv_fragment_manager_t *manager)
 {
     if (parent == NULL)
@@ -166,16 +187,29 @@ static lv_obj_t *compose_status_page(lv_obj_t *parent, lv_fragment_manager_t *ma
     lv_obj_set_size(status_page, 128, lv_pct(100));
     lv_obj_center(status_page);
     lv_group_add_obj(lv_group_get_default(), status_page);
+    lv_obj_set_flex_flow(status_page, LV_FLEX_FLOW_COLUMN);
 
     if (manager != NULL)
     {
         lv_obj_add_event_cb(status_page, page_press_cb, LV_EVENT_PRESSED, manager);
     }
+    lv_obj_t *label_10 = lv_label_create(status_page);
+    lv_label_set_text(label_10, "10Conntected: -1");
+    lv_obj_set_style_text_font(label_10, &lv_font_montserrat_10, 0);
 
-    lv_obj_t *label = lv_label_create(status_page);
-    lv_label_set_text(label, "Conntected: ");
-    // lv_obj_bind_flag_if_eq(label, &subject, LV_OBJ_FLAG_*, ref_value);
-    lv_obj_center(label);
+    lv_obj_t *label_12 = lv_label_create(status_page);
+    lv_label_set_text(label_12, "12Conntected: -1");
+    lv_obj_set_style_text_font(label_12, &lv_font_montserrat_12, 0);
+
+    lv_obj_t *label_14 = lv_label_create(status_page);
+    lv_label_set_text(label_14, "14Conntected: -1");
+    lv_obj_set_style_text_font(label_14, &lv_font_montserrat_14, 0);
+
+
+    lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, label_10, NULL);
+    lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, label_12, NULL);
+    lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, label_14, NULL);
+
 
     return status_page;
 }
@@ -223,7 +257,7 @@ lv_obj_t *compose_main_menu(lv_obj_t *parent, lv_fragment_manager_t *manager)
     lv_style_set_pad_ver(&style_btn_default, 2);
     lv_style_set_width(&style_btn_default, lv_pct(100));
     lv_style_set_height(&style_btn_default, 28);
-    lv_style_set_text_font(&style_btn_default, &mdi);
+    lv_style_set_text_font(&style_btn_default, &font_mdi_14);
 
     static lv_style_t style_btn_focused;
     lv_style_set_border_color(&style_btn_focused, lv_color_black());
@@ -336,26 +370,10 @@ void set_first_page(lv_fragment_manager_t *manager, page_id_t page_id)
     lv_fragment_manager_push(manager, fragment, &container);
 }
 
-void connected_clients_count_cb(lv_observer_t *observer, lv_subject_t *subject)
-{
-    const client_info_data_t *clients_data = lv_subject_get_pointer(subject);
-    if (clients_data == NULL || clients_data->clients_info == NULL)
-    {
-        return;
-    }
-    ESP_LOGI(TAG, "FROM UI value %d", clients_data->client_count);
-
-    lv_obj_t *label = lv_observer_get_target(observer);
-    if (label == NULL)
-    {
-        return;
-    }
-    lv_label_set_text_fmt(label, "Connected clients: %d", clients_data->client_count);
-}
 
 void compose_ui(lv_display_t *disp, state_subjects_t *arg_state_subjects)
 {
-    state_subjects = *arg_state_subjects;
+    state_subjects = arg_state_subjects;
     // lv_obj_t *p = lv_obj_create(lv_screen_active());
     // lv_obj_remove_style_all(p);
     // lv_group_remove_obj(p);
