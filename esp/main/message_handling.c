@@ -1,7 +1,7 @@
 #include <esp_log.h>
 #include <esp_http_server.h>
 #include "cJSON.h"
-#include "ws_types.h"
+#include "ws_server.h"
 #include "lvgl.h"
 #include <mbedtls/base64.h>
 #include "esp_chip_info.h"
