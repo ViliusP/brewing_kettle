@@ -5,13 +5,11 @@
 #include "symbols.h"
 #include "display.h"
 
-
 LV_FONT_DECLARE(font_mdi_10)
 LV_FONT_DECLARE(font_mdi_12)
 LV_FONT_DECLARE(font_mdi_14)
 
 static const char *TAG = "SCREEN.UI.STATUS_PAGE";
-
 
 static void connected_clients_count_cb(lv_observer_t *observer, lv_subject_t *subject)
 {
@@ -37,21 +35,48 @@ lv_obj_t *compose_status_page(lv_obj_t *parent, lv_fragment_manager_t *manager, 
     {
         parent = lv_obj_create(NULL);
     }
+    // -- Container -- //
+    // ----> style     //
+    static lv_style_t style_container_default;
+    lv_style_init(&style_container_default);
+    lv_style_set_pad_ver(&style_container_default, 1);
+    lv_style_set_pad_row(&style_container_default, 1);
+    lv_style_set_size(&style_container_default, 128, lv_pct(100));
+    lv_style_set_flex_flow(&style_container_default, LV_FLEX_FLOW_COLUMN);
+    lv_style_set_layout(&style_container_default, LV_LAYOUT_FLEX);
+    lv_style_set_align(&style_container_default, LV_ALIGN_TOP_MID);
+
+    // ----> init    //
     lv_obj_t *status_page = lv_obj_create(parent);
-    lv_obj_set_size(status_page, 128, lv_pct(100));
-    lv_obj_center(status_page);
+    lv_obj_add_style(status_page, &style_container_default, LV_STATE_DEFAULT);
     lv_group_add_obj(lv_group_get_default(), status_page);
-    lv_obj_set_flex_flow(status_page, LV_FLEX_FLOW_COLUMN);
-    
     if (manager != NULL)
     {
         lv_obj_add_event_cb(status_page, page_pop_on_event, LV_EVENT_PRESSED, manager);
     }
-    lv_obj_t *label = lv_label_create(status_page);
-    lv_obj_set_style_text_font(label, &font_mdi_12, 0);
-    lv_label_set_text(label, CONNECTION_SYMBOL " connections: -1");
 
-    lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, label, NULL);
+    // -- Connection label -- //
+    lv_obj_t *connection_label = lv_label_create(status_page);
+    lv_obj_set_style_text_font(connection_label, &font_mdi_14, 0);
+    lv_label_set_text(connection_label, CONNECTION_SYMBOL " connected: -1");
+
+    lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, connection_label, NULL);
+
+    // -- Current temperature label -- //
+    lv_obj_t *current_temp_label = lv_label_create(status_page);
+    lv_obj_set_style_text_font(current_temp_label, &font_mdi_14, 0);
+    lv_label_set_text(current_temp_label, THERMOMETER_SYMBOL " current T: 0");
+
+    // lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, label, NULL);
+
+    // -- Target temperature        -- //
+    lv_obj_t *target_temp_label = lv_label_create(status_page);
+    lv_obj_set_style_text_font(target_temp_label, &font_mdi_14, 0);
+    lv_label_set_text(target_temp_label, THERMOMETER_CHEVRON_UP_SYMBOL " target T: 100 ");
+
+    // lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, label, NULL);
+
+
 
     return status_page;
 }
