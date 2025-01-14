@@ -1,3 +1,6 @@
+import 'package:brew_kettle_dashboard/core/data/models/websocket/connection_status.dart';
+import 'package:brew_kettle_dashboard/core/service_locator.dart';
+import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:brew_kettle_dashboard/ui/layout/default_layout.dart';
 import 'package:brew_kettle_dashboard/ui/screens/connection/connection_sceen.dart';
 import 'package:brew_kettle_dashboard/ui/screens/device_info/device_info_screen.dart';
@@ -13,16 +16,14 @@ final GlobalKey<NavigatorState> _defaultLayoutNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'default_layout');
 
 enum AppRoute {
-  main("/", 0),
-  connection("/connection", 4),
-  device("/device", 1),
-  test("/test", 2);
+  main("/"),
+  connection("/connection"),
+  device("/device"),
+  test("/test");
 
-  const AppRoute(this.path, [this.layoutIndex]);
+  const AppRoute(this.path);
 
   final String path;
-
-  final int? layoutIndex;
 }
 
 class AppRouter {
@@ -45,12 +46,24 @@ class AppRouter {
       debugLogDiagnostics: true,
       routes: [
         ShellRoute(
+          redirect: (context, state) {
+            final wsConnectionStore = getIt<WebSocketConnectionStore>();
+            final status = wsConnectionStore.status;
+            final name = state.name;
+
+            bool isConnected = status == WebSocketConnectionStatus.connected;
+
+            if (!isConnected && name != AppRoute.connection.name) {
+              return AppRoute.connection.path;
+            }
+            if (isConnected && name == AppRoute.connection.name) {
+              return AppRoute.main.name;
+            }
+            return null;
+          },
           navigatorKey: _defaultLayoutNavigatorKey,
           builder: (BuildContext context, GoRouterState state, Widget child) {
-            return DefaultLayout(
-              initialRouteIndex: tabIndexFromCurrentRoute(context),
-              body: child,
-            );
+            return DefaultLayout(body: child);
           },
           routes: <RouteBase>[
             GoRoute(
@@ -77,15 +90,5 @@ class AppRouter {
         )
       ],
     );
-  }
-
-  static int tabIndexFromCurrentRoute(BuildContext context) {
-    final String? routeName = GoRouterState.of(context).topRoute?.name;
-    try {
-      return AppRoute.values.byName(routeName ?? "").layoutIndex ?? 0;
-      // ignore: empty_catches
-    } catch (e) {
-      return 0;
-    }
   }
 }
