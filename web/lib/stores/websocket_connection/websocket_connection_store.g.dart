@@ -106,7 +106,7 @@ mixin _$WebSocketConnectionStore on _WebSocketConnectionStore, Store {
       AsyncAction('_WebSocketConnectionStore.connect', context: context);
 
   @override
-  Future<dynamic> connect(String address) {
+  Future<dynamic> connect(Uri address) {
     return _$connectAsyncAction.run(() => super.connect(address));
   }
 

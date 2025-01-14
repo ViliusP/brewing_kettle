@@ -1,13 +1,14 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 
 class SuggestionsRow extends StatefulWidget {
   final Widget? trailing;
-  final List<Widget> children;
+  final Widget child;
 
   const SuggestionsRow({
     super.key,
-    required this.children,
+    required this.child,
     this.trailing,
   });
 
@@ -16,8 +17,6 @@ class SuggestionsRow extends StatefulWidget {
 }
 
 class _SuggestionsRowState extends State<SuggestionsRow> {
-  static const dragCoefficient = 0.25;
-
   final ScrollController _suggestionRowScrollController = ScrollController();
 
   bool _isScrollableToLeft = false; // Store scrollable state to the left
@@ -41,11 +40,10 @@ class _SuggestionsRowState extends State<SuggestionsRow> {
 
   void _checkScrollable() {
     if (_suggestionRowScrollController.hasClients) {
+      var scrollPosition = _suggestionRowScrollController.position;
       setState(() {
-        _isScrollableToRight =
-            _suggestionRowScrollController.position.maxScrollExtent > 0;
-        _isScrollableToLeft =
-            _suggestionRowScrollController.position.pixels > 0;
+        _isScrollableToRight = scrollPosition.extentAfter > 0;
+        _isScrollableToLeft = scrollPosition.extentBefore > 0;
       });
     }
   }
@@ -82,23 +80,17 @@ class _SuggestionsRowState extends State<SuggestionsRow> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onHorizontalDragUpdate: (details) {
-        double deltaX = details.delta.dx * dragCoefficient;
-
-        _suggestionRowScrollController.jumpTo(
-          _suggestionRowScrollController.offset - deltaX,
-        );
-      },
-      child: Row(
-        children: [
-          Expanded(
-            child: FadedEdges(
-              axis: Axis.horizontal,
-              colorStops: colorStops(
-                _isScrollableToLeft,
-                _isScrollableToRight,
-              ),
+    return Row(
+      children: [
+        Expanded(
+          child: FadedEdges(
+            axis: Axis.horizontal,
+            colorStops: colorStops(
+              _isScrollableToLeft,
+              _isScrollableToRight,
+            ),
+            child: ScrollConfiguration(
+              behavior: DraggableScrollBehavior(),
               child: SingleChildScrollView(
                 controller: _suggestionRowScrollController,
                 scrollDirection: Axis.horizontal,
@@ -107,23 +99,17 @@ class _SuggestionsRowState extends State<SuggestionsRow> {
                   duration: Durations.short3,
                   curve: Curves.bounceInOut,
                   reverseDuration: Durations.medium2,
-                  child: SizedBox(
-                    child: Row(
-                      spacing: 6,
-                      mainAxisSize: MainAxisSize.min,
-                      children: widget.children,
-                    ),
-                  ),
+                  child: widget.child,
                 ),
               ),
             ),
           ),
-          if (widget.trailing != null) ...[
-            Padding(padding: EdgeInsets.symmetric(horizontal: 12)),
-            ScanDevicesChip(),
-          ],
+        ),
+        if (widget.trailing != null) ...[
+          Padding(padding: EdgeInsets.symmetric(horizontal: 12)),
+          widget.trailing!,
         ],
-      ),
+      ],
     );
   }
 
@@ -136,30 +122,55 @@ class _SuggestionsRowState extends State<SuggestionsRow> {
 
 class IpSuggestionChip extends StatelessWidget {
   final String text;
-  final void Function()? onPressed;
+  final String? tooltip;
+  final bool selected;
+  final void Function(bool) onSelected;
 
   const IpSuggestionChip({
     super.key,
-    this.onPressed,
+    required this.selected,
+    required this.onSelected,
     required this.text,
+    this.tooltip,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ActionChip.elevated(
+    return FilterChip(
       label: Text(text),
-      onPressed: onPressed,
+      tooltip: tooltip,
+      selected: selected,
+      onSelected: onSelected,
     );
   }
 }
 
 class ScanDevicesChip extends StatelessWidget {
-  const ScanDevicesChip({super.key});
+  final void Function()? onPressed;
+
+  final bool loading;
+
+  const ScanDevicesChip({
+    super.key,
+    this.loading = false,
+    this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ActionChip.elevated(
-      avatar: Icon(MdiIcons.refresh),
+    return ActionChip(
+      onPressed: onPressed,
+      avatar: AnimatedSwitcher(
+        duration: Durations.short3,
+        child: switch (loading) {
+          true => SizedBox.fromSize(
+              key: ValueKey(true),
+              size: Size.square(12),
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          false => Icon(MdiIcons.refresh, key: ValueKey(false)),
+        },
+      ),
       label: const Text('Scan'),
     );
   }
@@ -220,4 +231,14 @@ class ColorStop {
     required this.stop,
     required this.color,
   });
+}
+
+class DraggableScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        PointerDeviceKind.stylus,
+        PointerDeviceKind.unknown,
+      };
 }

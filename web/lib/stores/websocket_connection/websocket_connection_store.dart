@@ -45,26 +45,16 @@ abstract class _WebSocketConnectionStore with Store {
   Uri? _connectedTo;
 
   @action
-  Future connect(String address) async {
+  Future connect(Uri address) async {
     if (_channel != null) {
       log("Connecting failed. There is active connection to server, please close it first");
       return;
     }
 
-    final Uri uri;
-
-    try {
-      uri = Uri.parse(address);
-    } catch (e) {
-      log("Cannot parse given address");
-      _status = WebSocketConnectionStatus.error;
-      return;
-    }
-
-    log("Connecting to $uri");
+    log("Connecting to $address");
 
     _status = WebSocketConnectionStatus.connected;
-    _channel = WebSocketChannel.connect(uri);
+    _channel = WebSocketChannel.connect(address);
     try {
       await _channel?.ready;
     } on SocketException catch (e) {
@@ -86,7 +76,7 @@ abstract class _WebSocketConnectionStore with Store {
     log("Connection successful");
 
     _channel!.stream.listen(_onData, onError: _onError, onDone: _onDone);
-    _connectedTo = uri;
+    _connectedTo = address;
   }
 
   @action

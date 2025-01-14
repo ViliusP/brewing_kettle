@@ -10,6 +10,7 @@ const int refreshPeriod = 5;
 
 enum NetworkScannerState { idle, scanning, done, error }
 
+// ignore: library_private_types_in_public_api
 class NetworkScannerStore = _NetworkScannerStore with _$NetworkScannerStore;
 
 abstract class _NetworkScannerStore with Store {

@@ -3,9 +3,12 @@ import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/stores/network_scanner/network_scanner_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:brew_kettle_dashboard/ui/screens/connection/suggestion_row.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobx/mobx.dart';
 
 class ConnectionScreen extends StatefulWidget {
   const ConnectionScreen({super.key});
@@ -22,17 +25,47 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
 
   final TextEditingController _ipFormController = TextEditingController();
 
-  void tryConnect() {
-    final maybeFirstRecord = _networkScannerStore.records.firstOrNull;
-    if (maybeFirstRecord == null) {
-      return;
-    }
-    String address =
-        "ws://${maybeFirstRecord.hostname}:${maybeFirstRecord.port}/ws";
-    _wsConnectionStore.connect(address);
+  List<bool> _selectedChips = [];
+
+  ReactionDisposer? _networkDevicesReactionDispose;
+
+  @override
+  void initState() {
+    _networkDevicesReactionDispose = reaction(
+      (_) => _networkScannerStore.records,
+      (_) => setSelectedChip(),
+      fireImmediately: true,
+    );
+    _ipFormController.addListener(() => setSelectedChip());
+    super.initState();
   }
 
-  int chips = 5;
+  void setSelectedChip() {
+    List<RecordMDNS> records = _networkScannerStore.records;
+    List<bool> newChipsState = [];
+
+    for (var record in records) {
+      String address = "ws://${record.hostname}:${record.port}/ws";
+      newChipsState.add(address == _ipFormController.text);
+    }
+    if (!listEquals(_selectedChips, newChipsState)) {
+      setState(() => _selectedChips = newChipsState);
+    }
+  }
+
+  void tryConnect() {
+    final address = _ipFormController.text;
+    if (address.isEmpty) {
+      return;
+    }
+    final uriAddress = Uri.tryParse(address);
+
+    if (uriAddress == null) {
+      return;
+    }
+
+    _wsConnectionStore.connect(uriAddress);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,19 +80,52 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             SuggestionsRow(
-              trailing: ScanDevicesChip(),
-              children: List.generate(
-                chips,
-                (index) =>
-                    IpSuggestionChip(text: "IP: $index.$index.$index.$index"),
+              trailing: Observer(
+                builder: (_) {
+                  onPressed() => _networkScannerStore.start();
+                  bool loading = _networkScannerStore.state ==
+                      NetworkScannerState.scanning;
+
+                  return ScanDevicesChip(
+                    onPressed: loading ? null : onPressed,
+                    loading: loading,
+                  );
+                },
               ),
+              child: Observer(builder: (context) {
+                int length = _networkScannerStore.records.length;
+                return Row(
+                  spacing: 6,
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(length, (i) {
+                    var record = _networkScannerStore.records[i];
+                    var port = record.port;
+
+                    String addressToShow = "${record.hostname}:$port";
+                    String address = "ws://$addressToShow/ws";
+
+                    String tooltip = "${record.internetAddress.address}:$port";
+
+                    return IpSuggestionChip(
+                      onSelected: (selected) {
+                        if (selected) {
+                          _ipFormController.text = address;
+                        } else {
+                          _ipFormController.text = "";
+                        }
+                      },
+                      selected: _selectedChips[i],
+                      tooltip: tooltip,
+                      text: addressToShow,
+                    );
+                  }),
+                );
+              }),
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 12)),
             TextFormField(
               controller: _ipFormController,
-              style: TextStyle(
-                fontSize: 24,
-              ),
+              style: TextStyle(fontSize: 24),
               keyboardType: TextInputType.url,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
@@ -72,10 +138,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
                 helperStyle: TextStyle(fontSize: 14),
                 prefixIcon: Padding(
                   padding: EdgeInsets.only(left: 16, right: 8),
-                  child: Icon(
-                    MdiIcons.ipOutline,
-                    size: 28,
-                  ),
+                  child: Icon(MdiIcons.ipOutline, size: 28),
                 ),
               ),
               validator: (value) {
@@ -96,48 +159,15 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
               icon: Icon(MdiIcons.connection, size: 20),
               label: const Text('Connect', style: TextStyle(fontSize: 20)),
             ),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                shape: const StadiumBorder(),
-                minimumSize: Size(360, 60),
-                elevation: 2,
-              ),
-              onPressed: () {
-                setState(() {
-                  chips++;
-                });
-              },
-              icon: Icon(MdiIcons.connection, size: 20),
-              label: const Text('Add', style: TextStyle(fontSize: 20)),
-            ),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                shape: const StadiumBorder(),
-                minimumSize: Size(360, 60),
-                elevation: 2,
-              ),
-              onPressed: () {
-                if (chips == 0) return;
-
-                setState(() {
-                  chips--;
-                });
-              },
-              icon: Icon(MdiIcons.connection, size: 20),
-              label: const Text('Remove', style: TextStyle(fontSize: 20)),
-            ),
           ],
         ),
       ),
     );
   }
 
-  void _startScan() {
-    _networkScannerStore.start();
-  }
-
   @override
   void dispose() {
+    _networkDevicesReactionDispose?.call();
     _ipFormController.dispose();
     super.dispose();
   }
