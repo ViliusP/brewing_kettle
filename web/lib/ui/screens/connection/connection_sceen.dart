@@ -1,13 +1,16 @@
+import 'package:brew_kettle_dashboard/core/data/models/websocket/connection_status.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 
 import 'package:brew_kettle_dashboard/stores/network_scanner/network_scanner_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
+import 'package:brew_kettle_dashboard/ui/routing.dart';
 import 'package:brew_kettle_dashboard/ui/screens/connection/suggestion_row.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobx/mobx.dart';
 
 class ConnectionScreen extends StatefulWidget {
@@ -28,6 +31,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
   List<bool> _selectedChips = [];
 
   ReactionDisposer? _networkDevicesReactionDispose;
+  ReactionDisposer? _connectedReactionDispose;
 
   @override
   void initState() {
@@ -36,6 +40,13 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
       (_) => setSelectedChip(),
       fireImmediately: true,
     );
+
+    _connectedReactionDispose = reaction(
+      (_) => _wsConnectionStore.status,
+      (status) => handleConnectionStatus(status),
+      fireImmediately: true,
+    );
+
     _ipFormController.addListener(() => setSelectedChip());
     super.initState();
   }
@@ -50,6 +61,12 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
     }
     if (!listEquals(_selectedChips, newChipsState)) {
       setState(() => _selectedChips = newChipsState);
+    }
+  }
+
+  void handleConnectionStatus(WebSocketConnectionStatus status) {
+    if (status == WebSocketConnectionStatus.connected) {
+      context.replaceNamed(AppRoute.main.name);
     }
   }
 
@@ -168,6 +185,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
   @override
   void dispose() {
     _networkDevicesReactionDispose?.call();
+    _connectedReactionDispose?.call();
     _ipFormController.dispose();
     super.dispose();
   }
