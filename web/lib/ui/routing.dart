@@ -4,7 +4,7 @@ import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_conn
 import 'package:brew_kettle_dashboard/ui/layout/default_layout.dart';
 import 'package:brew_kettle_dashboard/ui/screens/connection/connection_sceen.dart';
 import 'package:brew_kettle_dashboard/ui/screens/device_info/device_info_screen.dart';
-import 'package:brew_kettle_dashboard/ui/screens/start/start_screen.dart';
+import 'package:brew_kettle_dashboard/ui/screens/main/main_screen.dart';
 import 'package:brew_kettle_dashboard/ui/screens/test/test_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';

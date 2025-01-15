@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 
@@ -89,18 +88,15 @@ class _SuggestionsRowState extends State<SuggestionsRow> {
               _isScrollableToLeft,
               _isScrollableToRight,
             ),
-            child: ScrollConfiguration(
-              behavior: DraggableScrollBehavior(),
-              child: SingleChildScrollView(
-                controller: _suggestionRowScrollController,
-                scrollDirection: Axis.horizontal,
-                child: AnimatedSize(
-                  alignment: Alignment.centerLeft,
-                  duration: Durations.short3,
-                  curve: Curves.bounceInOut,
-                  reverseDuration: Durations.medium2,
-                  child: widget.child,
-                ),
+            child: SingleChildScrollView(
+              controller: _suggestionRowScrollController,
+              scrollDirection: Axis.horizontal,
+              child: AnimatedSize(
+                alignment: Alignment.centerLeft,
+                duration: Durations.short3,
+                curve: Curves.bounceInOut,
+                reverseDuration: Durations.medium2,
+                child: widget.child,
               ),
             ),
           ),
@@ -231,14 +227,4 @@ class ColorStop {
     required this.stop,
     required this.color,
   });
-}
-
-class DraggableScrollBehavior extends MaterialScrollBehavior {
-  @override
-  Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-        PointerDeviceKind.stylus,
-        PointerDeviceKind.unknown,
-      };
 }

@@ -1,0 +1,40 @@
+import 'package:flutter/material.dart';
+
+class Tile extends StatelessWidget {
+  final String title;
+
+  const Tile({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return GridTile(
+      child: Text(
+        title,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onPrimaryContainer,
+          fontSize: 32,
+        ),
+      ),
+    );
+  }
+}
+
+class GridTile extends StatelessWidget {
+  final Widget child;
+
+  const GridTile({
+    super.key,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        color: Theme.of(context).colorScheme.primaryContainer,
+      ),
+      child: Center(child: child),
+    );
+  }
+}
