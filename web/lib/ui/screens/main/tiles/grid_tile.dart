@@ -7,7 +7,7 @@ class Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridTile(
+    return DashboardTile(
       child: Text(
         title,
         style: TextStyle(
@@ -19,10 +19,10 @@ class Tile extends StatelessWidget {
   }
 }
 
-class GridTile extends StatelessWidget {
+class DashboardTile extends StatelessWidget {
   final Widget child;
 
-  const GridTile({
+  const DashboardTile({
     super.key,
     required this.child,
   });
