@@ -1,13 +1,33 @@
 import 'dart:math';
 
+import 'package:brew_kettle_dashboard/utils/textstyle_extensions.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 
 class TempHistoryTile extends StatelessWidget {
   const TempHistoryTile({super.key});
 
+  final int maxX = 100;
+
   @override
   Widget build(BuildContext context) {
+    Color borderColor = Theme.of(context).colorScheme.outline;
+    Color dataLineColor = Theme.of(context).colorScheme.tertiary;
+    Color tooltipBackgroundColor = Theme.of(context).colorScheme.inverseSurface;
+
+    List<LineTooltipItem> lineTooltipItem(List<LineBarSpot> touchedSpots) =>
+        touchedSpots.map((LineBarSpot spot) {
+          final textStyle = TextTheme.of(context).bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onInverseSurface,
+                  ) ??
+              TextStyle();
+          return LineTooltipItem(
+            "${spot.y.toStringAsFixed(1)} °C\n${spot.x.toStringAsFixed(0)}",
+            textStyle,
+          );
+        }).toList();
+
     return Padding(
       padding: const EdgeInsets.only(
         left: 8.0,
@@ -17,6 +37,20 @@ class TempHistoryTile extends StatelessWidget {
       ),
       child: LineChart(
         LineChartData(
+          lineTouchData: LineTouchData(
+            handleBuiltInTouches: true,
+            touchTooltipData: LineTouchTooltipData(
+              getTooltipColor: (_) => tooltipBackgroundColor,
+              getTooltipItems: lineTooltipItem,
+            ),
+          ),
+          borderData: FlBorderData(
+            border: Border.all(
+              width: 2,
+              color: borderColor,
+            ),
+          ),
+          clipData: FlClipData.all(),
           gridData: FlGridData(
             show: true,
             drawHorizontalLine: true,
@@ -24,13 +58,13 @@ class TempHistoryTile extends StatelessWidget {
             horizontalInterval: 10,
             getDrawingVerticalLine: (value) {
               return const FlLine(
-                color: Color.fromARGB(30, 0, 0, 0),
-                strokeWidth: 1,
+                color: Color.fromARGB(0, 0, 0, 0),
+                strokeWidth: 0,
               );
             },
             getDrawingHorizontalLine: (value) {
               return const FlLine(
-                color: Color.fromARGB(30, 0, 0, 0),
+                color: Color.fromARGB(35, 0, 0, 0),
                 strokeWidth: 1,
               );
             },
@@ -41,14 +75,20 @@ class TempHistoryTile extends StatelessWidget {
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 30,
-                // getTitlesWidget: bottomTitleWidgets,
+                getTitlesWidget: (value, meta) => BottomAxisTickLabel(
+                  value,
+                  meta,
+                ),
                 interval: 10,
               ),
             ),
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                getTitlesWidget: (value, meta) => LeftAxisTickLabel(value),
+                getTitlesWidget: (value, meta) => LeftAxisTickLabel(
+                  value,
+                  meta,
+                ),
                 reservedSize: 42,
                 interval: 10,
               ),
@@ -61,16 +101,20 @@ class TempHistoryTile extends StatelessWidget {
             ),
           ),
           minX: 0,
-          maxX: 90,
+          maxX: maxX.toDouble(),
           minY: 0,
-          maxY: 120,
+          maxY: 110,
           lineBarsData: <LineChartBarData>[
             LineChartBarData(
-              spots: generateNormalDistributionPoints(90),
+              spots: generateNormalDistributionPoints(maxX),
               isCurved: true,
-              curveSmoothness: 0.1,
+              curveSmoothness: .5,
               dotData: const FlDotData(show: false),
-            )
+              preventCurveOverShooting: true,
+              preventCurveOvershootingThreshold: 5,
+              color: dataLineColor,
+              barWidth: 3,
+            ),
           ],
           // read about it in the LineChartData section
         ),
@@ -115,16 +159,79 @@ class TempHistoryTile extends StatelessWidget {
 
 class LeftAxisTickLabel extends StatelessWidget {
   final double value;
-  final TitleMeta? chartTitleProperties;
+  final TitleMeta chartTitleProperties;
 
   const LeftAxisTickLabel(
-    this.value, {
+    this.value,
+    this.chartTitleProperties, {
     super.key,
-    this.chartTitleProperties,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Text(value.toString());
+    String label = chartTitleProperties.formattedValue;
+
+    bool isLast = chartTitleProperties.max == value;
+
+    if (isLast) {
+      return Padding(
+        padding: const EdgeInsets.only(right: 6.0),
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: Icon(
+            MdiIcons.temperatureCelsius,
+            size: 16,
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: Text(
+        label,
+        style: TextTheme.of(context).labelLarge,
+        textAlign: TextAlign.right,
+      ),
+    );
+  }
+}
+
+class BottomAxisTickLabel extends StatelessWidget {
+  final double value;
+  final TitleMeta chartTitleProperties;
+
+  const BottomAxisTickLabel(
+    this.value,
+    this.chartTitleProperties, {
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    String label = chartTitleProperties.formattedValue;
+
+    bool isLast = chartTitleProperties.max == value;
+
+    if (isLast) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 2),
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: Icon(
+            MdiIcons.clockOutline,
+            size: 16,
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 6.5),
+      child: Text(
+        label,
+        style: TextTheme.of(context).labelLarge,
+      ),
+    );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:brew_kettle_dashboard/constants/app.dart';
+import 'package:brew_kettle_dashboard/constants/theme.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/ui/routing.dart';
 import 'package:flutter/gestures.dart';
@@ -17,6 +18,10 @@ class BrewKettleDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextTheme textTheme = MaterialTheme.createTextTheme(
+      context,
+      AppFontFamily.nunitoSans,
+    );
     return Observer(
       builder: (context) {
         return MaterialApp.router(
@@ -25,6 +30,7 @@ class BrewKettleDashboard extends StatelessWidget {
           routerConfig: AppRouter.value,
           debugShowCheckedModeBanner: false,
           title: AppConnstants.appName,
+          theme: MaterialTheme(textTheme).light(),
           // theme: _themeStore.darkMode
           //     ? AppThemeData.darkThemeData
           //     : AppThemeData.lightThemeData,

@@ -1,3 +1,4 @@
+import 'package:brew_kettle_dashboard/utils/textstyle_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 
@@ -22,14 +23,12 @@ class _CurrentTempTileState extends State<CurrentTempTile> {
             children: [
               Text(
                 "$temperature",
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                style: Theme.of(context)
+                    .textTheme
+                    .displayMedium
+                    ?.changeWeight(FontWeight.w800),
               ),
-              Icon(
-                MdiIcons.temperatureCelsius,
-                size: 54,
-              ),
+              Icon(MdiIcons.temperatureCelsius, size: 54),
             ],
           ),
         ),

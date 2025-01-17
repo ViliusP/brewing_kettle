@@ -1,5 +1,12 @@
 import "package:flutter/material.dart";
-import "package:google_fonts/google_fonts.dart";
+
+enum AppFontFamily {
+  nunitoSans("Nunito Sans");
+
+  const AppFontFamily(this.name);
+
+  final String name;
+}
 
 class MaterialTheme {
   final TextTheme textTheme;
@@ -350,27 +357,44 @@ class MaterialTheme {
 
   static TextTheme createTextTheme(
     BuildContext context,
-    String bodyFontString,
-    String displayFontString,
-  ) {
-    TextTheme baseTextTheme = Theme.of(context).textTheme;
-    TextTheme bodyTextTheme = GoogleFonts.getTextTheme(
-      bodyFontString,
-      baseTextTheme,
-    );
-    TextTheme displayTextTheme = GoogleFonts.getTextTheme(
-      displayFontString,
-      baseTextTheme,
-    );
-    TextTheme textTheme = displayTextTheme.copyWith(
-      bodyLarge: bodyTextTheme.bodyLarge,
-      bodyMedium: bodyTextTheme.bodyMedium,
-      bodySmall: bodyTextTheme.bodySmall,
-      labelLarge: bodyTextTheme.labelLarge,
-      labelMedium: bodyTextTheme.labelMedium,
-      labelSmall: bodyTextTheme.labelSmall,
-    );
+    AppFontFamily font, [
+    bool hasWght = true,
+  ]) {
+    TextTheme textTheme = Theme.of(context).textTheme.apply(
+          fontFamily: font.name,
+        );
+
+    if (!hasWght) {
+      return textTheme;
+    }
+
+    textTheme = textTheme.apply(fontFamily: font.name).copyWith(
+          displayLarge: textStyleWeightTransform(textTheme.displayLarge),
+          displayMedium: textStyleWeightTransform(textTheme.displayMedium),
+          displaySmall: textStyleWeightTransform(textTheme.displaySmall),
+          headlineLarge: textStyleWeightTransform(textTheme.headlineLarge),
+          headlineMedium: textStyleWeightTransform(textTheme.headlineMedium),
+          headlineSmall: textStyleWeightTransform(textTheme.headlineSmall),
+          titleLarge: textStyleWeightTransform(textTheme.titleLarge),
+          titleMedium: textStyleWeightTransform(textTheme.titleMedium),
+          titleSmall: textStyleWeightTransform(textTheme.titleSmall),
+          bodyLarge: textStyleWeightTransform(textTheme.bodyLarge),
+          bodyMedium: textStyleWeightTransform(textTheme.bodyMedium),
+          bodySmall: textStyleWeightTransform(textTheme.bodySmall),
+          labelLarge: textStyleWeightTransform(textTheme.labelLarge),
+          labelMedium: textStyleWeightTransform(textTheme.labelMedium),
+          labelSmall: textStyleWeightTransform(textTheme.labelSmall),
+        );
     return textTheme;
+  }
+
+  static TextStyle? textStyleWeightTransform(TextStyle? style) {
+    FontWeight? weight = style?.fontWeight;
+    if (weight == null) return style;
+    return style?.copyWith(
+      fontVariations: [FontVariation.weight(weight.value.toDouble())],
+      fontWeight: weight,
+    );
   }
 
   List<ExtendedColor> get extendedColors => [];
