@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:brew_kettle_dashboard/utils/textstyle_extensions.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
@@ -28,6 +27,31 @@ class TempHistoryTile extends StatelessWidget {
           );
         }).toList();
 
+    List<TouchedSpotIndicatorData?> touchedSpotIndicator(
+      LineChartBarData barData,
+      List<int> spotIndexes,
+    ) {
+      return spotIndexes.map((index) {
+        return TouchedSpotIndicatorData(
+          FlLine(
+            color: Theme.of(context).colorScheme.outlineVariant,
+            strokeWidth: 2,
+            dashArray: [5, 5],
+          ),
+          FlDotData(
+            getDotPainter: (spot, percent, barData, index) {
+              return FlDotCirclePainter(
+                radius: 2,
+                color: Colors.transparent,
+                strokeWidth: 3,
+                strokeColor: Theme.of(context).colorScheme.outline,
+              );
+            },
+          ),
+        );
+      }).toList();
+    }
+
     return Padding(
       padding: const EdgeInsets.only(
         left: 8.0,
@@ -43,6 +67,7 @@ class TempHistoryTile extends StatelessWidget {
               getTooltipColor: (_) => tooltipBackgroundColor,
               getTooltipItems: lineTooltipItem,
             ),
+            getTouchedSpotIndicator: touchedSpotIndicator,
           ),
           borderData: FlBorderData(
             border: Border.all(
