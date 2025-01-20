@@ -45,9 +45,16 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
 )
 
+# Link options
+# target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
+#     -u _printf_float # to print float values
+# )
+
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
+    Core/Src/temp_sensor.c
+    Core/Src/uart_communication.c
 )
 
 # Add include paths
