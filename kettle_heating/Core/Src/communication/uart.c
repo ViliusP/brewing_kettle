@@ -1,4 +1,4 @@
-#include "uart_communication.h"
+#include "communication/uart.h"
 #include <string.h>
 
 void uart_comm_init(uart_comm_t *uart_comm, UART_HandleTypeDef *huart) {
@@ -34,4 +34,13 @@ void uart_comm_process_received_data(uart_comm_t *uart_comm) {
 
 void uart_comm_send_string(uart_comm_t *uart_comm, char *str) {
     HAL_UART_Transmit(uart_comm->huart, (uint8_t*)str, strlen(str), HAL_MAX_DELAY);
+}
+
+void uart_comm_send_bytes(uart_comm_t *uart_comm, uint32_t message) {
+    uint8_t bytes[4];
+    bytes[0] = (message >> 24) & 0xFF;
+    bytes[1] = (message >> 16) & 0xFF;
+    bytes[2] = (message >> 8) & 0xFF;
+    bytes[3] = message & 0xFF;
+    HAL_UART_Transmit(uart_comm->huart, bytes, 4, HAL_MAX_DELAY);
 }

@@ -27,7 +27,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "uart_communication.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

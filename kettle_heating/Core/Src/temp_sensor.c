@@ -15,7 +15,7 @@ static GPIO_TypeDef *ds18b20_port;
 static uint16_t ds18b20_pin;
 
 
-DS18B20_StatusTypeDef ds18b20_init(GPIO_TypeDef *port, uint16_t pin)
+DS18B20_status_t ds18b20_init(GPIO_TypeDef *port, uint16_t pin)
 {
     ds18b20_port = port;
     ds18b20_pin = pin;
@@ -35,7 +35,7 @@ DS18B20_StatusTypeDef ds18b20_init(GPIO_TypeDef *port, uint16_t pin)
     return DS18B20_OK;
 }
 
-DS18B20_StatusTypeDef ds18b20_reset(void)
+DS18B20_status_t ds18b20_reset(void)
 {
     uint8_t presence;
 
@@ -62,7 +62,7 @@ DS18B20_StatusTypeDef ds18b20_reset(void)
     }
 }
 
-DS18B20_StatusTypeDef ds18b20_set_resolution(uint8_t resolution)
+DS18B20_status_t ds18b20_set_resolution(uint8_t resolution)
 {
     if (resolution < 9 || resolution > 12)
     {
@@ -167,7 +167,7 @@ uint8_t ds18b20_read_byte(void)
     return byte;
 }
 
-DS18B20_StatusTypeDef ds18b20_start_conversion(void)
+DS18B20_status_t ds18b20_start_conversion(void)
 {
     if (ds18b20_reset() != DS18B20_OK)
     {
@@ -179,7 +179,7 @@ DS18B20_StatusTypeDef ds18b20_start_conversion(void)
     return DS18B20_OK;
 }
 
-DS18B20_StatusTypeDef ds18b20_read_scratchpad(uint8_t *scratchpad)
+DS18B20_status_t ds18b20_read_scratchpad(uint8_t *scratchpad)
 {
     if (ds18b20_reset() != DS18B20_OK)
     {
@@ -195,10 +195,10 @@ DS18B20_StatusTypeDef ds18b20_read_scratchpad(uint8_t *scratchpad)
     return DS18B20_OK;
 }
 
-DS18B20_StatusTypeDef ds18b20_read_temperature(float *temperature)
+DS18B20_status_t ds18b20_read_temperature(float *temperature)
 {
     uint8_t scratchpad[9];
-    DS18B20_StatusTypeDef ret;
+    DS18B20_status_t ret;
 
     ret = ds18b20_start_conversion();
     if (ret != DS18B20_OK)

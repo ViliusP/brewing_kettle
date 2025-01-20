@@ -25,5 +25,6 @@ typedef struct {
 void uart_comm_init(uart_comm_t *uart_comm, UART_HandleTypeDef *huart);
 void uart_comm_process_received_data(uart_comm_t *uart_comm);
 void uart_comm_send_string(uart_comm_t *uart_comm, char *str);
+void uart_comm_send_bytes(uart_comm_t *uart_comm, uint32_t message);
 
 #endif // UART_COMM_H

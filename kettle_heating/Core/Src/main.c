@@ -21,7 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "uart_communication.h"
+#include "communication/uart.h"
+#include "communication/messaging.h"
 #include "temp_sensor.h"
 /* USER CODE END Includes */
 
@@ -82,8 +83,7 @@ int main(void)
 
   /* USER CODE BEGIN Init */
   uart_comm_init(&uart_comm_instance, &huart1); // Initialize the UART communication
-  char message[50];
-
+  uint32_t message;
   float current_temperature = 0;
   uint8_t ret;
   /* USER CODE END Init */
@@ -102,12 +102,12 @@ int main(void)
   /* USER CODE BEGIN 2 */
   if (ds18b20_init(DS18B20_GPIO_PORT, DS18B20_GPIO_PIN) != DS18B20_OK)
   {
-    Error_Handler(); // Handle initialization error
+    Error_Handler();
   }
 
   if (ds18b20_set_resolution(DS18B20_RESOLUTION) != DS18B20_OK)
   {
-    Error_Handler(); // Handle resolution setting error
+    Error_Handler();
   }
   /* USER CODE END 2 */
 
@@ -117,27 +117,24 @@ int main(void)
   {
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 0);
 
-    HAL_Delay(1000);
+    HAL_Delay(250);
 
     ret = ds18b20_read_temperature(&current_temperature);
     if (ret == DS18B20_OK)
     {
-      sprintf(message, "Temperature: %.2f °C\r\n", current_temperature);
-    }
-    else if (ret == DS18B20_ERROR_NO_SENSOR)
-    {
-      sprintf(message, "No DS18B20 sensor found\r\n");
+      message = compose_current_temp_message(current_temperature);
     }
     else
     {
-      sprintf(message, "Error reading temperature (code: %d)\r\n", ret); // More specific error output
+      // Error reading temperature or error with sensor.
+      message = compose_temp_sensor_error(ret);
     }
 
-    uart_comm_send_string(&uart_comm_instance, message);
+    uart_comm_send_bytes(&uart_comm_instance, message);
 
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 1);
 
-    HAL_Delay(1000);
+    HAL_Delay(250);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
