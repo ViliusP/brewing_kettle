@@ -1,0 +1,6 @@
+../Core/Src/temp_sensor.c:12:6:ds18b20_delay_us	24	static
+../Core/Src/temp_sensor.c:19:6:ds18b20_reset	32	static
+../Core/Src/temp_sensor.c:44:6:ds18b20_write_byte	40	static
+../Core/Src/temp_sensor.c:63:9:ds18b20_read_byte	32	static
+../Core/Src/temp_sensor.c:84:6:ds18b20_start_conversion	8	static
+../Core/Src/temp_sensor.c:91:6:ds18b20_read_temperature	24	static
