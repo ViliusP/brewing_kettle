@@ -167,7 +167,6 @@ int matrix_kbd_get_all_events(matrix_kbd_t* mkbd, key_event_t** events_ptr) {
 static void matrix_kbd_callback(matrix_kbd_t* mkbd, uint32_t row_num) {
     key_event_t* events = NULL; // Important: Initialize to NULL
     int num_events = matrix_kbd_get_row_events(mkbd, row_num, &events);
-    ESP_LOGI(TAG, "GAGASGFASDASD: row=%lu", row_num);
     for (int i = 0; i < num_events; i++) {
         ESP_LOGI(TAG, "Event: row=%d, col=%d, key_code=%" PRIx32 ", event=%d",
                     events[i].row, events[i].col, events[i].key_code, events[i].event);

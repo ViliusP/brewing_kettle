@@ -11,9 +11,11 @@
 #include "lvgl.h"
 #include "display.h"
 #include "ws_server.h"
+#include "uart_communication.h"
 #include "esp_system.h"
 #include "message_handling.h"
 #include "state.h"
+#include "configuration.h"
 
 static const char *TAG = "MAIN";
 
@@ -118,31 +120,27 @@ lv_subject_t test_main;
 void app_main(void)
 {
     // esp_log_level_set(TAG, ESP_LOG_DEBUG);
+    // ================ UART ===================
+    initialize_uart(uart_config, UART_TX_PIN, UART_RX_PIN);
+    start_uart_task((rx_task_callback_t)&uart_message_handling);
+    // ==========================================
 
-    matrix_kbd_handle_t kbd = NULL;
-    // Apply default matrix keyboard configuration
-    matrix_kbd_config_t config = MATRIX_KEYBOARD_DEFAULT_CONFIG();
-    // Set GPIOs used by row and column line
-    config.nr_col_gpios = 3;
-    config.col_gpios = (int[]){
-        4, 10, 11};
-    config.nr_row_gpios = 3;
-    config.row_gpios = (int[]){
-        18, 19, 20};
 
+    // ================ keyboard ===================
     // Install matrix keyboard driver
-    matrix_kbd_install(&config, &kbd);
+    matrix_kbd_handle_t kbd = NULL;
+    matrix_kbd_install(&kbd_config, &kbd);
     // Register keyboard input event handler
     // matrix_kbd_register_event_handler(kbd, example_matrix_kbd_event_handler, NULL);
     // // // Keyboard start to work
     // matrix_kbd_start(kbd);
+    // ==========================================
 
     initialize_display();
 
     // ================ state ===================
-    state_subjects_t* state_subjects = init_state();
+    state_subjects_t* state_subjects = init_state_subjects();
     ws_client_changed_cb_t ws_client_change_cb = (ws_client_changed_cb_t)&connected_client_data_notify;
-    ESP_LOGW(TAG, "Pointer of state subjects %p", state_subjects);
     // ==========================================
 
 

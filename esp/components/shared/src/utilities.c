@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h> 
 #include "cJSON.h"
+#include "utilities.h"
 
 cJSON* cJSON_create_formatted_string(const char* format, ...) {
     va_list args;
@@ -35,4 +36,8 @@ cJSON* cJSON_create_formatted_string(const char* format, ...) {
     free(formatted_string);
 
     return result;
+}
+
+float temp_to_float(uint32_t value) {
+    return value * TEMPERATURE_RESOLUTION;
 }
