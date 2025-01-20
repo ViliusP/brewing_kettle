@@ -32,8 +32,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define DS18B20_GPIO_PORT GPIOB
-#define DS18B20_GPIO_PIN GPIO_PIN_6
+#define DS18B20_GPIO_PORT GPIOA
+#define DS18B20_GPIO_PIN GPIO_PIN_1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -82,9 +82,10 @@ int main(void)
 
   /* USER CODE BEGIN Init */
   uart_comm_init(&uart_comm_instance, &huart1); // Initialize the UART communication
-  char message2[50];
+  char message[50];
 
-  float current_temperature = 1;
+  float current_temperature = 0;
+  uint8_t ret;
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -99,7 +100,15 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
+  if (ds18b20_init(DS18B20_GPIO_PORT, DS18B20_GPIO_PIN) != DS18B20_OK)
+  {
+    Error_Handler(); // Handle initialization error
+  }
 
+  if (ds18b20_set_resolution(DS18B20_RESOLUTION) != DS18B20_OK)
+  {
+    Error_Handler(); // Handle resolution setting error
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -110,29 +119,25 @@ int main(void)
 
     HAL_Delay(1000);
 
-    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 1);
-
-    HAL_Delay(1000);
-
-    if (ds18b20_start_conversion(DS18B20_GPIO_PORT, DS18B20_GPIO_PIN))
+    ret = ds18b20_read_temperature(&current_temperature);
+    if (ret == DS18B20_OK)
     {
-      HAL_Delay(750); // Wait for conversion (750ms for 12-bit resolution)
-      if (ds18b20_read_temperature(DS18B20_GPIO_PORT, DS18B20_GPIO_PIN, &current_temperature))
-      {
-        float current_temperature = 1;
-        snprintf(message2, sizeof(message2), "T: %.2f°C\n", 0.1);
-      }
-      else
-      {
-        sprintf(message2, "Error reading temperature\n");
-      }
+      sprintf(message, "Temperature: %.2f °C\r\n", current_temperature);
+    }
+    else if (ret == DS18B20_ERROR_NO_SENSOR)
+    {
+      sprintf(message, "No DS18B20 sensor found\r\n");
     }
     else
     {
-      sprintf(message2, "DS18B20 not detected or reset error\r\n");
+      sprintf(message, "Error reading temperature (code: %d)\r\n", ret); // More specific error output
     }
 
-    uart_comm_send_string(&uart_comm_instance, message2);
+    uart_comm_send_string(&uart_comm_instance, message);
+
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 1);
+
+    HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -221,7 +226,7 @@ static void MX_TIM1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN TIM1_Init 2 */
-
+  HAL_TIM_Base_Start(&htim1);
   /* USER CODE END TIM1_Init 2 */
 }
 
@@ -274,14 +279,24 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(board_led_pin_GPIO_Port, board_led_pin_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PC13 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13;
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(DS18B20_temperature_sensor_GPIO_Port, DS18B20_temperature_sensor_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : board_led_pin_Pin */
+  GPIO_InitStruct.Pin = board_led_pin_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(board_led_pin_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : DS18B20_temperature_sensor_Pin */
+  GPIO_InitStruct.Pin = DS18B20_temperature_sensor_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(DS18B20_temperature_sensor_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
   /* USER CODE END MX_GPIO_Init_2 */

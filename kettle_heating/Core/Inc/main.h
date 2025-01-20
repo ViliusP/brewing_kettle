@@ -57,6 +57,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define board_led_pin_Pin GPIO_PIN_13
+#define board_led_pin_GPIO_Port GPIOC
+#define DS18B20_temperature_sensor_Pin GPIO_PIN_1
+#define DS18B20_temperature_sensor_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 

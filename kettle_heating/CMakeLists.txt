@@ -55,11 +55,15 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
     Core/Src/temp_sensor.c
     Core/Src/uart_communication.c
+    Core/Src/utils/dwt_delay.c
+    Core/Src/utils/timer_delay.c
+
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
+    Core/Src/utils
 )
 
 # Add project symbols (macros)
