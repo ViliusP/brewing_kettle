@@ -46,9 +46,9 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 )
 
 # Link options
-# target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
-#     -u _printf_float # to print float values
-# )
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
+    -u _printf_float # to print float values
+)
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
