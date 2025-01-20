@@ -1,3 +1,0 @@
-../Core/Src/uart_communication.c:4:6:uart_comm_init	16	static
-../Core/Src/uart_communication.c:13:6:uart_comm_process_received_data	192	static
-../Core/Src/uart_communication.c:35:6:uart_comm_send_string	24	static
