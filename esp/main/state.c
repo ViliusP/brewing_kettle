@@ -97,7 +97,11 @@ void uart_message_handling(const char *data, const int bytes)
     }
     uint8_t type = (value >> 28) & 0x0F;
     uint8_t entity = (value >> 24) & 0x0F;
-    uint32_t content = value & 0x00FFFFFF;
+    int32_t content = (int32_t)(value & 0x00FFFFFF);
+    if (content & 0x00800000) // Check if the sign bit is set
+    {
+        content |= 0xFF000000; // Set the upper bits to maintain the negative value
+    }
     switch (type)
     {
     case MESSAGE_TYPE_STATE:
@@ -105,7 +109,7 @@ void uart_message_handling(const char *data, const int bytes)
         {
         case MESSAGE_ENTITY_TEMPERATURE:
             lv_subject_set_int(&state_subjects.current_temp, content);
-            ESP_LOGD(TAG, "state messaage 'Temperature': %.2f°C", temp_to_float(content));
+            ESP_LOGD(TAG, "state message 'Temperature': %.2f°C", temp_to_float(content));
             break;
         default:
             ESP_LOGW(TAG, "Unknown state entity: %d", entity);

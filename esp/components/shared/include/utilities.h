@@ -6,6 +6,6 @@
 #define TEMPERATURE_RESOLUTION 0.0625
 
 cJSON* cJSON_create_formatted_string(const char* format, ...);
-float temp_to_float(uint32_t value);
+float temp_to_float(int32_t value);
 
 #endif // UTILITIES_H

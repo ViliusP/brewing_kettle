@@ -38,6 +38,6 @@ cJSON* cJSON_create_formatted_string(const char* format, ...) {
     return result;
 }
 
-float temp_to_float(uint32_t value) {
+float temp_to_float(int32_t value) {
     return value * TEMPERATURE_RESOLUTION;
 }
