@@ -355,9 +355,7 @@ static void current_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
 
   cJSON_AddStringToObject(response_root, COMMON_FIELD_TYPE, "current_temperature");
 
-  time_t now;
-  time(&now);
-  cJSON_AddNumberToObject(response_root, "timestamp", now);
+
 
   cJSON *payload = cJSON_CreateObject();
   if (payload == NULL)
@@ -367,6 +365,10 @@ static void current_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
     return;
   }
   cJSON_AddItemToObject(response_root, COMMON_FIELD_PAYLOAD, payload);
+
+  time_t now;
+  time(&now);
+  cJSON_AddNumberToObject(payload, "timestamp", now);
 
   cJSON *value = cJSON_CreateNumber((double)current_temp); // Use cJSON_CreateNumber()
   if (value == NULL)
