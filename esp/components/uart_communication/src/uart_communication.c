@@ -9,16 +9,6 @@
 
 static const char *TAG = "UART";
 
-static void tx_task(void *arg)
-{
-    static const char *TX_TASK_TAG = "TX_TASK";
-    esp_log_level_set(TX_TASK_TAG, ESP_LOG_INFO);
-    while (1)
-    {
-        send_data(TX_TASK_TAG, "Hello world");
-        vTaskDelay(10000 / portTICK_PERIOD_MS);
-    }
-}
 static void rx_task(void *arg)
 {
     static const char *RX_TASK_TAG = "RX_TASK";
@@ -57,7 +47,6 @@ int send_data(const char *log_name, const char *data)
 void start_uart_task(rx_task_callback_t rx_task_callback)
 {
     xTaskCreate(rx_task, "uart_rx_task", 1024 * 2, rx_task_callback, configMAX_PRIORITIES - 1, NULL);
-    xTaskCreate(tx_task, "uart_tx_task", 1024 * 2, NULL, configMAX_PRIORITIES - 2, NULL);
 }
 
 void initialize_uart(uart_config_t uart_config, int tx_pin, int rx_pin)
