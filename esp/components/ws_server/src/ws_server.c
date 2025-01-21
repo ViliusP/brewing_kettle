@@ -13,6 +13,7 @@
 #include <lwip/sockets.h>
 #include "ws_server.h"
 #include <esp_http_server.h>
+#include "sntp.h"
 
 static const char *TAG = "WS_SERVER";
 static const size_t max_clients = 4;
@@ -361,7 +362,7 @@ static void connect_handler(void *arg, esp_event_base_t event_base,
     ESP_LOGI(TAG, "Succesfully connected to AP");
     esp_connect_event_args_t *args = (esp_connect_event_args_t *)arg;
     ws_uri_handler_user_ctx_t *handlers = args->ws_uri_handler_user_ctx;
-
+    initialize_sntp();
     if (args && args->server == NULL)
     {
         ESP_LOGI(TAG, "Starting WebSocket server");

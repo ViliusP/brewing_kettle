@@ -64,9 +64,9 @@ void connected_client_data_notify(client_info_data_t client_data)
 
 state_subjects_t *init_state_subjects()
 {
-    lv_subject_init_int(&state_subjects.current_temp, 0);
-    lv_subject_init_int(&state_subjects.target_temp, 0);
-    lv_subject_init_int(&state_subjects.heater_state, HEATER_STATE_HEATING);
+    lv_subject_init_int(&state_subjects.current_temp, temp_to_int(-100.0f));
+    lv_subject_init_int(&state_subjects.target_temp, temp_to_int(-100.0f));
+    lv_subject_init_int(&state_subjects.heater_state, HEATER_STATE_IDLE);
 
     lv_subject_init_pointer(&state_subjects.connected_clients, NULL);
 

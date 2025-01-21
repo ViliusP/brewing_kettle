@@ -16,8 +16,16 @@
 #include "ws_message_handling.h"
 #include "state.h"
 #include "configuration.h"
+#include <esp_sntp.h>
 
 static const char *TAG = "MAIN";
+
+/* Variable holding number of times ESP32 restarted since first boot.
+ * It is placed into RTC memory using RTC_DATA_ATTR and
+ * maintains its value when ESP32 wakes from deep sleep.
+ */
+
+RTC_DATA_ATTR static int boot_count = 0;
 
 /**
  * @brief Matrix keyboard event handler
@@ -116,12 +124,14 @@ static void keypad_read(lv_indev_t *indev_drv, lv_indev_data_t *data)
 
 void app_main(void)
 {
+    ++boot_count;
+    ESP_LOGI(TAG, "Hello, World!");
+    ESP_LOGI(TAG, "Boot count: %d", boot_count);
     // esp_log_level_set(TAG, ESP_LOG_DEBUG);
     // ================ UART ===================
     initialize_uart(uart_config, UART_TX_PIN, UART_RX_PIN);
     start_uart_task((rx_task_callback_t)&uart_message_handling);
     // ==========================================
-
 
     // ================ keyboard ===================
     // Install matrix keyboard driver
@@ -136,10 +146,9 @@ void app_main(void)
     initialize_display();
 
     // ================ state ===================
-    state_subjects_t* state_subjects = init_state_subjects();
+    state_subjects_t *state_subjects = init_state_subjects();
     ws_client_changed_cb_t ws_client_change_cb = (ws_client_changed_cb_t)&connected_client_data_notify;
     // ==========================================
-
 
     // ================= UI =====================
     add_keypad_input(keypad_read, kbd);
@@ -150,7 +159,6 @@ void app_main(void)
     ws_message_handler_t message_handler = create_handler();
     initialize_ws_server(message_handler, ws_client_change_cb);
     // ==========================================
-
 
     /// DO NOT DELETE
     for (int i = 720 * 10; i >= 0; i--)
