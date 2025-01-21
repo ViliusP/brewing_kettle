@@ -97,7 +97,7 @@ lv_obj_t *compose_status_page(lv_obj_t *parent, lv_fragment_manager_t *manager, 
     lv_obj_t *target_temp_label = lv_label_create(status_page);
     lv_obj_set_style_text_font(target_temp_label, &font_mdi_14, 0);
     lv_label_set_text(target_temp_label, THERMOMETER_CHEVRON_UP_SYMBOL " target T: X.00 " TEMPERATURE_CELSIUS_SYMBOL);
-    lv_subject_add_observer_obj(&state_subjects->target_temp, target_temperature_cb, current_temp_label, NULL);
+    lv_subject_add_observer_obj(&state_subjects->target_temp, target_temperature_cb, target_temp_label, NULL);
 
     return status_page;
 }
