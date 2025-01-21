@@ -157,7 +157,8 @@ void app_main(void)
 
     // ============== WS_SERVER =================
     ws_message_handler_t message_handler = create_handler();
-    initialize_ws_server(message_handler, ws_client_change_cb);
+    httpd_handle_t httpd_handle = initialize_ws_server(message_handler, ws_client_change_cb);
+    init_ws_observer(state_subjects, httpd_handle);
     // ==========================================
 
     /// DO NOT DELETE

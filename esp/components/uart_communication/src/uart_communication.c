@@ -46,7 +46,7 @@ int send_data(const char *log_name, const char *data)
 
 void start_uart_task(rx_task_callback_t rx_task_callback)
 {
-    xTaskCreate(rx_task, "uart_rx_task", 1024 * 2, rx_task_callback, configMAX_PRIORITIES - 1, NULL);
+    xTaskCreate(rx_task, "uart_rx_task", RX_BUF_SIZE * 2, rx_task_callback, configMAX_PRIORITIES - 1, NULL);
 }
 
 void initialize_uart(uart_config_t uart_config, int tx_pin, int rx_pin)

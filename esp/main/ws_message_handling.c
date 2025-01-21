@@ -7,6 +7,7 @@
 #include "esp_chip_info.h"
 #include "esp_flash.h"
 #include "utilities.h"
+#include "ws_server.h"
 
 #define COMMON_FIELD_ID "id"
 #define COMMON_FIELD_TYPE "type"
@@ -192,10 +193,10 @@ static esp_err_t get_snapshot_response(cJSON *root, char **data)
   return ESP_OK;
 }
 
-static cJSON * device_configuration_json()
+static cJSON *device_configuration_json()
 {
   cJSON *payload = cJSON_CreateObject();
-  
+
   esp_chip_info_t chip_info;
   uint32_t flash_size;
   esp_chip_info(&chip_info);
@@ -331,6 +332,64 @@ static esp_err_t handle_message(httpd_ws_frame_t *frame, char **data)
 
   cJSON_Delete(root);
   return ESP_OK;
+}
+
+static void current_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
+{
+  httpd_handle_t httpd_handle = (httpd_handle_t)lv_observer_get_user_data(observer);
+  if (httpd_handle == NULL)
+  {
+    ESP_LOGW(TAG, "httpd_handle is NULL, can't send message about current temperature change");
+    return;
+  }
+
+  int temp_value = lv_subject_get_int(subject);
+  float current_temp = temp_to_float(temp_value);
+
+  cJSON *response_root = cJSON_CreateObject();
+  if (response_root == NULL)
+  {
+    ESP_LOGE(TAG, "Failed to create JSON root object");
+    return;
+  }
+
+  cJSON_AddStringToObject(response_root, COMMON_FIELD_TYPE, "current_temperature");
+
+  time_t now;
+  time(&now);
+  cJSON_AddNumberToObject(response_root, "timestamp", now);
+
+  cJSON *payload = cJSON_CreateObject();
+  if (payload == NULL)
+  {
+    ESP_LOGE(TAG, "Failed to create JSON payload object");
+    cJSON_Delete(response_root);
+    return;
+  }
+  cJSON_AddItemToObject(response_root, COMMON_FIELD_PAYLOAD, payload);
+
+  cJSON *value = cJSON_CreateNumber((double)current_temp); // Use cJSON_CreateNumber()
+  if (value == NULL)
+  {
+    ESP_LOGE(TAG, "Failed to create JSON number");
+    cJSON_Delete(response_root);
+    return;
+  }
+  cJSON_AddItemToObject(payload, "value", value);
+
+  char *data = cJSON_Print(response_root);
+  cJSON_Delete(response_root);
+
+  esp_err_t ret = send_ws_message(httpd_handle, data);
+  if (ret)
+  {
+    ESP_LOGW(TAG, "Failed to send message about current temperature change");
+  }
+}
+
+void init_ws_observer(state_subjects_t *state_subjects, httpd_handle_t httpd_handle)
+{
+  lv_subject_add_observer(&state_subjects->current_temp, current_temp_handler, httpd_handle);
 }
 
 ws_message_handler_t create_handler()

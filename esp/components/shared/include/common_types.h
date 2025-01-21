@@ -2,6 +2,7 @@
 #define COMMON_TYPES_H
 
 #include "lwip/inet.h"
+#include "lvgl.h"
 
 typedef enum
 {
@@ -23,5 +24,14 @@ typedef struct {
     ws_client_info_t *clients_info;
     size_t client_count;
 } client_info_data_t;
+
+
+typedef struct
+{
+    lv_subject_t current_temp;
+    lv_subject_t target_temp;
+    lv_subject_t heater_state;
+    lv_subject_t connected_clients;
+} state_subjects_t;
 
 #endif

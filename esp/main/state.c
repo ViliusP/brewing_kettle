@@ -5,7 +5,11 @@
 #include "uart_communication.h"
 #include "utilities.h"
 
+#define DS18B20_LOWEST_POSSIBLE_TEMP -55.0f 
+
+
 static const char *TAG = "STATE";
+
 
 typedef enum
 {
@@ -64,8 +68,8 @@ void connected_client_data_notify(client_info_data_t client_data)
 
 state_subjects_t *init_state_subjects()
 {
-    lv_subject_init_int(&state_subjects.current_temp, temp_to_int(-100.0f));
-    lv_subject_init_int(&state_subjects.target_temp, temp_to_int(-100.0f));
+    lv_subject_init_int(&state_subjects.current_temp, temp_to_int(DS18B20_LOWEST_POSSIBLE_TEMP));
+    lv_subject_init_int(&state_subjects.target_temp, temp_to_int(DS18B20_LOWEST_POSSIBLE_TEMP));
     lv_subject_init_int(&state_subjects.heater_state, HEATER_STATE_IDLE);
 
     lv_subject_init_pointer(&state_subjects.connected_clients, NULL);

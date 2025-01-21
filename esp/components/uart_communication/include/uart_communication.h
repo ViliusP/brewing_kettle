@@ -3,7 +3,7 @@
 
 #include "driver/uart.h"
 
-#define RX_BUF_SIZE 1024
+#define RX_BUF_SIZE 2048
 
 typedef void (*rx_task_callback_t)(const char *, const int);
 
