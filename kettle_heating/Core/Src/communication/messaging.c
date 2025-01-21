@@ -10,7 +10,7 @@ static uint32_t compose_message(message_type_t type, uint8_t entity, uint32_t co
     return message;
 }
 uint32_t compose_current_temp_message(float value) {
-    uint16_t int_value = (uint16_t)(value / 0.0625);
+    int16_t int_value = (int16_t)(value / 0.0625);
     return compose_message(MESSAGE_TYPE_STATE, MESSAGE_ENTITY_TEMPERATURE, int_value);
 }
 
