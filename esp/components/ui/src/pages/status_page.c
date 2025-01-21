@@ -15,13 +15,16 @@ static const char *TAG = "SCREEN.UI.STATUS_PAGE";
 static void connected_clients_count_cb(lv_observer_t *observer, lv_subject_t *subject)
 {
     const client_info_data_t *clients_data = lv_subject_get_pointer(subject);
-    if (clients_data == NULL || clients_data->clients_info == NULL)
-    {
-        return;
-    }
+
     lv_obj_t *label = lv_observer_get_target(observer);
     if (label == NULL)
     {
+        return;
+    }
+    
+    if (clients_data == NULL || clients_data->clients_info == NULL)
+    {
+        lv_label_set_text_fmt(label, CONNECTION_SYMBOL " connections: 0");
         return;
     }
     lv_label_set_text_fmt(label, CONNECTION_SYMBOL " connections: %d", clients_data->client_count);
@@ -84,7 +87,7 @@ lv_obj_t *compose_status_page(lv_obj_t *parent, lv_fragment_manager_t *manager, 
     // -- Connection label -- //
     lv_obj_t *connection_label = lv_label_create(status_page);
     lv_obj_set_style_text_font(connection_label, &font_mdi_14, 0);
-    lv_label_set_text(connection_label, CONNECTION_SYMBOL " connected: -1");
+    lv_label_set_text(connection_label, CONNECTION_SYMBOL " connected: X");
     lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, connection_label, NULL);
 
     // -- Current temperature label -- //

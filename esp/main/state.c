@@ -39,24 +39,26 @@ static void test_observer_cb(lv_observer_t *observer, lv_subject_t *subject)
     ESP_LOGI(TAG, "value %lu", v);
 }
 
+static void print_client_info(client_info_data_t client_data)
+{
+    ESP_LOGI(TAG, "Number of clients: %d", client_data.client_count);
+    for (size_t i = 0; i < client_data.client_count; i++)
+    {
+        printf("Client %zu:\n", i);
+        printf("  IP: %s\n", client_data.clients_info[i].ip);
+        printf("  Port: %d\n", client_data.clients_info[i].port);
+        printf("  Bytes Sent: %zu\n", client_data.clients_info[i].bytes_sent);
+        printf("  Bytes Received: %zu\n", client_data.clients_info[i].bytes_received);
+        printf("\n");
+    }
+}
+
 void connected_client_data_notify(client_info_data_t client_data)
 {
     if (client_data.clients_info == NULL)
     {
-        printf("No client information available.\n");
         return;
     }
-
-    // ESP_LOGI(TAG, "Number of clients: %d", client_data.client_count);
-    // for (size_t i = 0; i < client_data.client_count; i++)
-    // {
-    //     printf("Client %zu:\n", i);
-    //     printf("  IP: %s\n", client_data.clients_info[i].ip);
-    //     printf("  Port: %d\n", client_data.clients_info[i].port);
-    //     printf("  Bytes Sent: %zu\n", client_data.clients_info[i].bytes_sent);
-    //     printf("  Bytes Received: %zu\n", client_data.clients_info[i].bytes_received);
-    //     printf("\n");
-    // }
     lv_subject_set_pointer(&state_subjects.connected_clients, &client_data);
 }
 
