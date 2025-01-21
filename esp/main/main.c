@@ -13,7 +13,7 @@
 #include "ws_server.h"
 #include "uart_communication.h"
 #include "esp_system.h"
-#include "message_handling.h"
+#include "ws_message_handling.h"
 #include "state.h"
 #include "configuration.h"
 
@@ -113,9 +113,6 @@ static void keypad_read(lv_indev_t *indev_drv, lv_indev_data_t *data)
     }
     free(all_events);
 }
-
-lv_subject_t test_main;
-
 
 void app_main(void)
 {
