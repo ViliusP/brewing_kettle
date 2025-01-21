@@ -2,9 +2,11 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:brew_kettle_dashboard/utils/string_extensions.dart';
+import 'package:collection/collection.dart';
 
 part 'device_configuration.dart';
 part 'device_snapshot.dart';
+part 'message_simple_value.dart';
 
 /// Represents an inbound message received via WebSocket.
 ///
@@ -93,7 +95,18 @@ class WsInboundMessageJson extends WsInboundMessageSimple {
     final Map<String, dynamic> rawPayload = json[_InboundMessageFields.payload];
 
     try {
-      final type = InboundMessageType.values.byName(rawType);
+      final type = InboundMessageType.values.firstWhereOrNull(
+        (m) => m.field == rawType,
+      );
+      if (type == null) {
+        return WsInboundMessageJson._(
+          json,
+          data,
+          sender,
+          DateTime.now(),
+          requestID,
+        );
+      }
 
       final payload = WsInboundMessagePayload.fromJsonMap(rawPayload, type);
       return WsInboundMessage._(
@@ -127,6 +140,8 @@ sealed class WsInboundMessagePayload {
     return switch (type) {
       InboundMessageType.configuration => DeviceConfiguration.fromJson(json),
       InboundMessageType.snapshot => DeviceSnapshot.fromJson(json),
+      InboundMessageType.currentTemperature =>
+        MessageSimpleValue<double>.fromJson(json)
     };
   }
 }
@@ -149,7 +164,8 @@ class WsInboundMessage<T extends WsInboundMessagePayload>
 
 enum InboundMessageType {
   configuration("configuration"),
-  snapshot("snapshot");
+  snapshot("snapshot"),
+  currentTemperature("current_temperature");
 
   const InboundMessageType([this._field]);
 
