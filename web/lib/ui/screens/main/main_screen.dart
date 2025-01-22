@@ -18,7 +18,7 @@ class MainScreen extends StatelessWidget {
           crossAxisCount: 8,
           mainAxisSpacing: 2,
           crossAxisSpacing: 4,
-          children: const [
+          children: [
             StaggeredGridTile.count(
               crossAxisCellCount: 2,
               mainAxisCellCount: 2,
