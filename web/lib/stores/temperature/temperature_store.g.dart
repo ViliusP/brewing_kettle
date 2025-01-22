@@ -9,6 +9,14 @@ part of 'temperature_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$TemperatureStore on _TemperatureStore, Store {
+  Computed<List<TimeseriesViewEntry>>? _$temperatureHistoryComputed;
+
+  @override
+  List<TimeseriesViewEntry> get temperatureHistory =>
+      (_$temperatureHistoryComputed ??= Computed<List<TimeseriesViewEntry>>(
+              () => super.temperatureHistory,
+              name: '_TemperatureStore.temperatureHistory'))
+          .value;
   Computed<double?>? _$currentTemperatureComputed;
 
   @override
@@ -16,6 +24,22 @@ mixin _$TemperatureStore on _TemperatureStore, Store {
           Computed<double?>(() => super.currentTemperature,
               name: '_TemperatureStore.currentTemperature'))
       .value;
+
+  late final _$_temperatureHistoryAtom =
+      Atom(name: '_TemperatureStore._temperatureHistory', context: context);
+
+  @override
+  ObservableList<TimeSeriesEntry> get _temperatureHistory {
+    _$_temperatureHistoryAtom.reportRead();
+    return super._temperatureHistory;
+  }
+
+  @override
+  set _temperatureHistory(ObservableList<TimeSeriesEntry> value) {
+    _$_temperatureHistoryAtom.reportWrite(value, super._temperatureHistory, () {
+      super._temperatureHistory = value;
+    });
+  }
 
   late final _$_currentTemperatureAtom =
       Atom(name: '_TemperatureStore._currentTemperature', context: context);
@@ -61,6 +85,7 @@ mixin _$TemperatureStore on _TemperatureStore, Store {
   @override
   String toString() {
     return '''
+temperatureHistory: ${temperatureHistory},
 currentTemperature: ${currentTemperature}
     ''';
   }

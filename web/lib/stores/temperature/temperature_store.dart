@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:brew_kettle_dashboard/core/data/models/store/ws_listener.dart';
-import 'package:brew_kettle_dashboard/core/data/models/typedefs.dart';
+import 'package:brew_kettle_dashboard/core/data/models/timeseries/timeseries.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/outbound_message.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
@@ -26,11 +26,15 @@ abstract class _TemperatureStore with Store {
   }
 
   @computed
-  List<TempHistoryEntry> get tempHistory => _tempHistory.toList();
+  List<TimeseriesViewEntry> get temperatureHistory =>
+      TimeSeries.from(_temperatureHistory.toList()).aggregate(
+        type: AggregationType.mean,
+        interval: AggregationInterval.seconds(10),
+      );
 
   @observable
   // ignore: prefer_final_fields
-  ObservableList<TempHistoryEntry> _tempHistory = ObservableList.of([]);
+  ObservableList<TimeSeriesEntry> _temperatureHistory = ObservableList.of([]);
 
   @computed
   double? get currentTemperature => _currentTemperature;
@@ -56,8 +60,12 @@ abstract class _TemperatureStore with Store {
         message.type == InboundMessageType.currentTemperature) {
       var tempMessage = (message.payload as MessageSimpleValue);
       _currentTemperature = tempMessage.value;
-      int timestamp = tempMessage.timestamp;
-      _tempHistory.add((temp: tempMessage.value, timestamp: timestamp));
+      _temperatureHistory.add(
+        TimeSeriesEntry(
+          DateTime.fromMillisecondsSinceEpoch(tempMessage.timestamp * 1000),
+          tempMessage.value,
+        ),
+      );
     }
   }
 

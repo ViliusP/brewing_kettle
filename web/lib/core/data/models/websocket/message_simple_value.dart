@@ -8,12 +8,15 @@ class MessageSimpleValue<T> implements WsInboundMessagePayload {
   MessageSimpleValue(this.value, this.timestamp);
 
   factory MessageSimpleValue.fromJson(Map<String, dynamic> json) {
-    final T? value = json["value"];
+    dynamic value = json["value"];
     final int? timestamp = json["timestamp"];
     if (value == null || timestamp == null) {
       throw Exception("Cannot create MessageSimpleValue from $json");
     }
-    return MessageSimpleValue(value, timestamp);
+    if (T == double && value is int) {
+      value = value.toDouble();
+    }
+    return MessageSimpleValue(value as T, timestamp);
   }
 
   @override

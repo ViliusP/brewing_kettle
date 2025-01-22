@@ -24,13 +24,14 @@ class TempHistoryTile extends StatelessWidget {
         bottom: 8.0,
       ),
       child: Observer(builder: (context) {
-        List<FlSpot> points = _temperatureStore.tempHistory
+        List<FlSpot> points = _temperatureStore.temperatureHistory
             .takeLast(100)
-            .map((e) => FlSpot(e.timestamp.toDouble(), e.temp))
+            .map((e) => FlSpot(
+                  e.date.millisecondsSinceEpoch.toDouble(),
+                  (e.value ?? 0.0).toDouble(),
+                ))
             .toList();
-        return TempHistoryChart(
-          spots: points,
-        );
+        return TempHistoryChart(spots: points);
       }),
     );
   }
@@ -42,29 +43,6 @@ class TempHistoryTile extends StatelessWidget {
       points.add(FlSpot(i.toDouble(), random.nextDouble() * 120));
     }
     return points;
-  }
-
-  List<FlSpot> generateNormalDistributionPoints(int count) {
-    List<FlSpot> points = [];
-    final random = Random(15);
-    for (int i = 0; i <= count; i++) {
-      double x = i.toDouble();
-      double y = _generateNormalRandomValue(
-        60,
-        20,
-        random,
-      ); // mean = 60, stddev = 15
-      points.add(FlSpot(x, y));
-    }
-    return points;
-  }
-
-  double _generateNormalRandomValue(double mean, double stddev, Random random) {
-    // Using Box-Muller transform to generate a normally distributed value
-    double u1 = random.nextDouble();
-    double u2 = random.nextDouble();
-    double z0 = sqrt(-2.0 * log(u1)) * cos(2.0 * pi * u2);
-    return z0 * stddev + mean;
   }
 }
 
@@ -82,11 +60,13 @@ class TempHistoryChart extends StatelessWidget {
     List<LineTooltipItem> lineTooltipItem(List<LineBarSpot> touchedSpots) =>
         touchedSpots.map((LineBarSpot spot) {
           DateTime date = DateTime.fromMillisecondsSinceEpoch(
-            spot.x.toInt() * 1000,
+            spot.x.toInt(),
           ).toLocal();
 
-          String labelX =
-              "${date.hour}:${date.minute}:${date.second.toString().padLeft(2, "0")}";
+          String seconds = date.second.toString().padLeft(2, "0");
+          String minutes = date.minute.toString().padLeft(2, "0");
+          String hours = date.hour.toString().padLeft(2, "0");
+          String labelX = "$hours:$minutes:$seconds";
 
           final textStyle = TextTheme.of(context).bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.onInverseSurface,
@@ -168,7 +148,7 @@ class TempHistoryChart extends StatelessWidget {
                 value,
                 meta,
               ),
-              interval: 10,
+              interval: 5,
             ),
           ),
           leftTitles: AxisTitles(
@@ -190,7 +170,7 @@ class TempHistoryChart extends StatelessWidget {
           ),
         ),
         minX: spots.firstOrNull?.x ?? 0.0,
-        maxX: spots.lastOrNull?.x ?? 0.0,
+        maxX: spots.lastOrNull?.x ?? 1.0,
         minY: 0,
         maxY: 110,
         lineBarsData: <LineChartBarData>[
@@ -265,10 +245,6 @@ class BottomAxisTickLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(
-      value.toInt() * 1000,
-    ).toLocal();
-
     bool isLast = chartTitleProperties.max == value;
 
     if (isLast) {
@@ -284,10 +260,18 @@ class BottomAxisTickLabel extends StatelessWidget {
       );
     }
 
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(
+      value.toInt(),
+    ).toLocal();
+
+    String minutes = date.minute.toString().padLeft(2, "0");
+    String hours = date.hour.toString().padLeft(2, "0");
+    String labelX = "$hours:$minutes";
+
     return Padding(
       padding: const EdgeInsets.only(top: 6.5),
       child: Text(
-        "${date.hour}:${date.minute}",
+        labelX,
         style: TextTheme.of(context).labelLarge,
       ),
     );
