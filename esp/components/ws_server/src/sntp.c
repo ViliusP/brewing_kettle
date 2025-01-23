@@ -22,6 +22,7 @@
 
 static const char *TAG = "SNTP";
 
+
 #ifndef INET6_ADDRSTRLEN
 #define INET6_ADDRSTRLEN 48
 #endif
@@ -32,7 +33,7 @@ void time_sync_notification_cb(struct timeval *tv)
     time_t now;
     struct tm timeinfo;
 
-    setenv("TZ", "EET-2EEST,M3.5.0/3,M10.5.0/4", 1);
+    setenv("TZ", SNTP_TZ, 1);
     tzset();
     time(&now);
     localtime_r(&now, &timeinfo);
