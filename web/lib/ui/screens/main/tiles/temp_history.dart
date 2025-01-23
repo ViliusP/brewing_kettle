@@ -1,12 +1,10 @@
-import 'dart:math';
-
+import 'package:brew_kettle_dashboard/core/data/models/timeseries/timeseries.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/stores/temperature/temperature_store.dart';
 import 'package:brew_kettle_dashboard/utils/list_extensions.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:graphic/graphic.dart';
 
 class TempHistoryTile extends StatelessWidget {
   TempHistoryTile({super.key});
@@ -24,256 +22,116 @@ class TempHistoryTile extends StatelessWidget {
         bottom: 8.0,
       ),
       child: Observer(builder: (context) {
-        List<FlSpot> points = _temperatureStore.temperatureHistory
-            .takeLast(100)
-            .map((e) => FlSpot(
-                  e.date.millisecondsSinceEpoch.toDouble(),
-                  (e.value ?? 0.0).toDouble(),
-                ))
-            .toList();
-        return TempHistoryChart(spots: points);
+        return TempHistoryChart(data: _temperatureStore.temperatureHistory);
       }),
     );
-  }
-
-  List<FlSpot> generateRandomPoints(int count) {
-    List<FlSpot> points = [];
-    final random = Random(15);
-    for (int i = 0; i <= count; i++) {
-      points.add(FlSpot(i.toDouble(), random.nextDouble() * 120));
-    }
-    return points;
   }
 }
 
 class TempHistoryChart extends StatelessWidget {
-  final List<FlSpot> spots;
+  final List<TimeseriesViewEntry> data;
+  final List<PaintStyle?> _showCrosshairOnPrice = [
+    PaintStyle(strokeColor: Colors.black),
+    PaintStyle(strokeColor: Colors.black),
+  ];
 
-  const TempHistoryChart({super.key, required this.spots});
+  final List<double> _labelPaddingOnPrice = [8.0, 8.0];
+
+  TempHistoryChart({
+    super.key,
+    required this.data,
+  });
 
   @override
   Widget build(BuildContext context) {
-    Color borderColor = Theme.of(context).colorScheme.outline;
-    Color dataLineColor = Theme.of(context).colorScheme.tertiary;
-    Color tooltipBackgroundColor = Theme.of(context).colorScheme.inverseSurface;
+    var convertedData = data
+        .takeLast(100)
+        .map((e) => {
+              'date': e.date,
+              'temperature': e.value ?? 0,
+            })
+        .toList();
 
-    List<LineTooltipItem> lineTooltipItem(List<LineBarSpot> touchedSpots) =>
-        touchedSpots.map((LineBarSpot spot) {
-          DateTime date = DateTime.fromMillisecondsSinceEpoch(
-            spot.x.toInt(),
-          ).toLocal();
-
-          String seconds = date.second.toString().padLeft(2, "0");
-          String minutes = date.minute.toString().padLeft(2, "0");
-          String hours = date.hour.toString().padLeft(2, "0");
-          String labelX = "$hours:$minutes:$seconds";
-
-          final textStyle = TextTheme.of(context).bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onInverseSurface,
-                  ) ??
-              TextStyle();
-          return LineTooltipItem(
-            "${spot.y.toStringAsFixed(1)} °C\n$labelX",
-            textStyle,
-          );
-        }).toList();
-
-    List<TouchedSpotIndicatorData?> touchedSpotIndicator(
-      LineChartBarData barData,
-      List<int> spotIndexes,
-    ) {
-      return spotIndexes.map((index) {
-        return TouchedSpotIndicatorData(
-          FlLine(
-            color: Theme.of(context).colorScheme.outlineVariant,
-            strokeWidth: 2,
-            dashArray: [5, 5],
-          ),
-          FlDotData(
-            getDotPainter: (spot, percent, barData, index) {
-              return FlDotCirclePainter(
-                radius: 2,
-                color: Colors.transparent,
-                strokeWidth: 3,
-                strokeColor: Theme.of(context).colorScheme.outline,
-              );
+    return ListView(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 0),
+          color: Theme.of(context).colorScheme.surfaceContainer,
+          width: double.maxFinite,
+          height: 280,
+          child: Chart(
+            padding: (_) => const EdgeInsets.fromLTRB(36, 8, 16, 24),
+            rebuild: true,
+            data: convertedData,
+            variables: {
+              'date': Variable(
+                accessor: (Map map) => map['date'] as DateTime,
+                scale: TimeScale(
+                    marginMin: 0,
+                    marginMax: 0,
+                    tickCount: 3,
+                    formatter: (d) {
+                      String hours = d.hour.toString().padLeft(2, '0');
+                      String minutes = d.minute.toString().padLeft(2, '0');
+                      String seconds = d.second.toString().padLeft(2, '0');
+                      return '$hours:$minutes:$seconds';
+                    }),
+              ),
+              'temperature': Variable(
+                accessor: (Map map) => map['temperature'] as num,
+                scale: LinearScale(
+                  min: 0,
+                  max: 105,
+                  tickCount: 7,
+                  formatter: (v) => v.toStringAsFixed(2),
+                ),
+              ),
             },
-          ),
-        );
-      }).toList();
-    }
-
-    return LineChart(
-      LineChartData(
-        lineTouchData: LineTouchData(
-          handleBuiltInTouches: true,
-          touchTooltipData: LineTouchTooltipData(
-            getTooltipColor: (_) => tooltipBackgroundColor,
-            getTooltipItems: lineTooltipItem,
-          ),
-          getTouchedSpotIndicator: touchedSpotIndicator,
-        ),
-        borderData: FlBorderData(
-          border: Border.all(
-            width: 2,
-            color: borderColor,
-          ),
-        ),
-        clipData: FlClipData.all(),
-        gridData: FlGridData(
-          show: true,
-          drawHorizontalLine: true,
-          verticalInterval: 10,
-          horizontalInterval: 10,
-          getDrawingVerticalLine: (value) {
-            return const FlLine(
-              color: Color.fromARGB(0, 0, 0, 0),
-              strokeWidth: 0,
-            );
-          },
-          getDrawingHorizontalLine: (value) {
-            return const FlLine(
-              color: Color.fromARGB(35, 0, 0, 0),
-              strokeWidth: 1,
-            );
-          },
-        ),
-        titlesData: FlTitlesData(
-          show: true,
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 30,
-              getTitlesWidget: (value, meta) => BottomAxisTickLabel(
-                value,
-                meta,
+            marks: [
+              LineMark(
+                size: SizeEncode(value: 2),
+                color: ColorEncode(
+                  value: Theme.of(context).colorScheme.inversePrimary,
+                ),
               ),
-              interval: 5,
+            ],
+            axes: [
+              AxisGuide(
+                dim: Dim.x,
+                line: PaintStyle(
+                  strokeWidth: 1,
+                  strokeColor: Theme.of(context).colorScheme.outline,
+                ),
+                label: LabelStyle(
+                  textStyle: TextTheme.of(context).labelSmall,
+                  offset: const Offset(0, 7.5),
+                ),
+              ),
+              Defaults.verticalAxis
+                ..gridMapper =
+                    (_, index, __) => index == 0 ? null : Defaults.strokeStyle,
+            ],
+            selections: {
+              'touchMove': PointSelection(
+                on: {
+                  GestureType.scaleUpdate,
+                  GestureType.tapDown,
+                  GestureType.longPressMoveUpdate
+                },
+                dim: Dim.x,
+              )
+            },
+            crosshair: CrosshairGuide(
+              labelPaddings: _labelPaddingOnPrice,
+              showLabel: [true, true],
+              followPointer: [false, false],
+              styles: _showCrosshairOnPrice,
             ),
           ),
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              getTitlesWidget: (value, meta) => LeftAxisTickLabel(
-                value,
-                meta,
-              ),
-              reservedSize: 42,
-              interval: 10,
-            ),
-          ),
-          topTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          rightTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
         ),
-        minX: spots.firstOrNull?.x ?? 0.0,
-        maxX: spots.lastOrNull?.x ?? 1.0,
-        minY: 0,
-        maxY: 110,
-        lineBarsData: <LineChartBarData>[
-          LineChartBarData(
-            spots: spots,
-            isCurved: true,
-            curveSmoothness: .5,
-            dotData: const FlDotData(show: false),
-            preventCurveOverShooting: true,
-            preventCurveOvershootingThreshold: 5,
-            color: dataLineColor,
-            barWidth: 3,
-          ),
-        ],
-        // read about it in the LineChartData section
-      ),
-      duration: Duration(milliseconds: 150), // Optional
-      curve: Curves.linear, // Optional
-    );
-  }
-}
-
-class LeftAxisTickLabel extends StatelessWidget {
-  final double value;
-  final TitleMeta chartTitleProperties;
-
-  const LeftAxisTickLabel(
-    this.value,
-    this.chartTitleProperties, {
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    String label = chartTitleProperties.formattedValue;
-
-    bool isLast = chartTitleProperties.max == value;
-
-    if (isLast) {
-      return Padding(
-        padding: const EdgeInsets.only(right: 6.0),
-        child: Align(
-          alignment: Alignment.centerRight,
-          child: Icon(
-            MdiIcons.temperatureCelsius,
-            size: 16,
-          ),
-        ),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(right: 8.0),
-      child: Text(
-        label,
-        style: TextTheme.of(context).labelLarge,
-        textAlign: TextAlign.right,
-      ),
-    );
-  }
-}
-
-class BottomAxisTickLabel extends StatelessWidget {
-  final double value;
-  final TitleMeta chartTitleProperties;
-
-  const BottomAxisTickLabel(
-    this.value,
-    this.chartTitleProperties, {
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    bool isLast = chartTitleProperties.max == value;
-
-    if (isLast) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 2),
-        child: Align(
-          alignment: Alignment.centerRight,
-          child: Icon(
-            MdiIcons.clockOutline,
-            size: 16,
-          ),
-        ),
-      );
-    }
-
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(
-      value.toInt(),
-    ).toLocal();
-
-    String minutes = date.minute.toString().padLeft(2, "0");
-    String hours = date.hour.toString().padLeft(2, "0");
-    String labelX = "$hours:$minutes";
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 6.5),
-      child: Text(
-        labelX,
-        style: TextTheme.of(context).labelLarge,
-      ),
+      ],
     );
   }
 }
