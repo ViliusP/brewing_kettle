@@ -5,6 +5,7 @@ import 'package:brew_kettle_dashboard/core/data/models/store/ws_listener.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/connection_status.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:mobx/mobx.dart';
+import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 part 'websocket_connection_store.g.dart';
@@ -54,7 +55,10 @@ abstract class _WebSocketConnectionStore with Store {
     log("Connecting to $address");
 
     _status = WebSocketConnectionStatus.connected;
-    _channel = WebSocketChannel.connect(address);
+    _channel = IOWebSocketChannel.connect(
+      address,
+      pingInterval: Duration(seconds: 5),
+    );
     try {
       await _channel?.ready;
     } on SocketException catch (e) {
