@@ -47,7 +47,7 @@ class TempHistoryChart extends StatelessWidget {
 
     return Chart(
       padding: (_) => const EdgeInsets.fromLTRB(50, 8, 24, 24),
-      rebuild: true,
+      rebuild: false,
       data: convertedData,
       variables: {
         'date': Variable(
