@@ -30,108 +30,117 @@ class TempHistoryTile extends StatelessWidget {
 
 class TempHistoryChart extends StatelessWidget {
   final List<TimeseriesViewEntry> data;
-  final List<PaintStyle?> _showCrosshairOnPrice = [
-    PaintStyle(strokeColor: Colors.black),
-    PaintStyle(strokeColor: Colors.black),
-  ];
 
-  final List<double> _labelPaddingOnPrice = [8.0, 8.0];
-
-  TempHistoryChart({
+  const TempHistoryChart({
     super.key,
     required this.data,
   });
 
   @override
   Widget build(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     var convertedData = data
         .takeLast(100)
-        .map((e) => {
-              'date': e.date,
-              'temperature': e.value ?? 0,
-            })
+        .map((e) => {'date': e.date, 'temperature': e.value ?? 0})
         .toList();
 
-    return ListView(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 0),
-          color: Theme.of(context).colorScheme.surfaceContainer,
-          width: double.maxFinite,
-          height: 280,
-          child: Chart(
-            padding: (_) => const EdgeInsets.fromLTRB(36, 8, 16, 24),
-            rebuild: true,
-            data: convertedData,
-            variables: {
-              'date': Variable(
-                accessor: (Map map) => map['date'] as DateTime,
-                scale: TimeScale(
-                    marginMin: 0,
-                    marginMax: 0,
-                    tickCount: 3,
-                    formatter: (d) {
-                      String hours = d.hour.toString().padLeft(2, '0');
-                      String minutes = d.minute.toString().padLeft(2, '0');
-                      String seconds = d.second.toString().padLeft(2, '0');
-                      return '$hours:$minutes:$seconds';
-                    }),
-              ),
-              'temperature': Variable(
-                accessor: (Map map) => map['temperature'] as num,
-                scale: LinearScale(
-                  min: 0,
-                  max: 105,
-                  tickCount: 7,
-                  formatter: (v) => v.toStringAsFixed(2),
-                ),
-              ),
-            },
-            marks: [
-              LineMark(
-                size: SizeEncode(value: 2),
-                color: ColorEncode(
-                  value: Theme.of(context).colorScheme.inversePrimary,
-                ),
-              ),
-            ],
-            axes: [
-              AxisGuide(
-                dim: Dim.x,
-                line: PaintStyle(
-                  strokeWidth: 1,
-                  strokeColor: Theme.of(context).colorScheme.outline,
-                ),
-                label: LabelStyle(
-                  textStyle: TextTheme.of(context).labelSmall,
-                  offset: const Offset(0, 7.5),
-                ),
-              ),
-              Defaults.verticalAxis
-                ..gridMapper =
-                    (_, index, __) => index == 0 ? null : Defaults.strokeStyle,
-            ],
-            selections: {
-              'touchMove': PointSelection(
-                on: {
-                  GestureType.scaleUpdate,
-                  GestureType.tapDown,
-                  GestureType.longPressMoveUpdate
-                },
-                dim: Dim.x,
-              )
-            },
-            crosshair: CrosshairGuide(
-              labelPaddings: _labelPaddingOnPrice,
-              showLabel: [true, true],
-              followPointer: [false, false],
-              styles: _showCrosshairOnPrice,
-            ),
+    return Chart(
+      padding: (_) => const EdgeInsets.fromLTRB(50, 8, 24, 24),
+      rebuild: true,
+      data: convertedData,
+      variables: {
+        'date': Variable(
+          accessor: (Map map) => map['date'] as DateTime,
+          scale: TimeScale(
+              marginMin: 0,
+              marginMax: 0,
+              tickCount: 3,
+              formatter: (d) {
+                String hours = d.hour.toString().padLeft(2, '0');
+                String minutes = d.minute.toString().padLeft(2, '0');
+                String seconds = d.second.toString().padLeft(2, '0');
+                return '$hours:$minutes:$seconds';
+              }),
+        ),
+        'temperature': Variable(
+          accessor: (Map map) => map['temperature'] as num,
+          scale: LinearScale(
+            min: 0,
+            max: 105,
+            tickCount: 7,
+            formatter: (v) => v.toStringAsFixed(1),
           ),
         ),
+      },
+      marks: [
+        LineMark(
+          size: SizeEncode(value: 2),
+          color: ColorEncode(value: colorScheme.inversePrimary),
+        ),
       ],
+      axes: [
+        AxisGuide(
+          dim: Dim.x,
+          line: PaintStyle(strokeWidth: 1, strokeColor: colorScheme.outline),
+          label: LabelStyle(
+            textStyle: TextTheme.of(context).labelSmall,
+            offset: const Offset(0, 7.5),
+          ),
+        ),
+        AxisGuide(
+          dim: Dim.y,
+          line: PaintStyle(strokeWidth: 1, strokeColor: colorScheme.outline),
+          labelMapper: (_, index, ___) {
+            return switch (index) {
+              0 => null,
+              _ => LabelStyle(
+                  textStyle: TextTheme.of(context).labelSmall,
+                  offset: const Offset(-10, 0),
+                )
+            };
+          },
+          tickLineMapper: (_, index, ___) {
+            return switch (index) {
+              0 => null,
+              _ => TickLine(
+                  style: PaintStyle(
+                    strokeWidth: 1,
+                    strokeColor: colorScheme.outline,
+                  ),
+                )
+            };
+          },
+          gridMapper: (_, index, __) {
+            return switch (index) {
+              0 => null,
+              _ => PaintStyle(
+                  strokeWidth: 1,
+                  strokeColor: colorScheme.outline.withAlpha(35),
+                )
+            };
+          },
+        ),
+      ],
+      selections: {
+        'touchMove': PointSelection(
+          on: {
+            GestureType.scaleUpdate,
+            GestureType.tapDown,
+            GestureType.longPressMoveUpdate
+          },
+          dim: Dim.x,
+        )
+      },
+      crosshair: CrosshairGuide(
+        labelPaddings: const [8.0, 8.0],
+        showLabel: const [true, true],
+        followPointer: const [false, false],
+        styles: [
+          PaintStyle(strokeColor: Color.fromRGBO(0, 0, 0, 1)),
+          PaintStyle(strokeColor: Color.fromRGBO(0, 0, 0, 1)),
+        ],
+      ),
     );
   }
 }
