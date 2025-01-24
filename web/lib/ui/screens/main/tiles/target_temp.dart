@@ -18,11 +18,13 @@ class TargetTempTile extends StatelessWidget {
               Row(
                 children: [
                   Spacer(),
-                  Text("$temperature",
-                      style: Theme.of(context)
-                          .textTheme
-                          .displayMedium
-                          ?.changeWeight(FontWeight.w800)),
+                  Text(
+                    "$temperature",
+                    style: Theme.of(context)
+                        .textTheme
+                        .displayMedium
+                        ?.changeWeight(FontWeight.w800),
+                  ),
                   Icon(
                     MdiIcons.temperatureCelsius,
                     size: 54,

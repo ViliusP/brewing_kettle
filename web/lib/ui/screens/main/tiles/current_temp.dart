@@ -1,5 +1,5 @@
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
-import 'package:brew_kettle_dashboard/stores/temperature/temperature_store.dart';
+import 'package:brew_kettle_dashboard/stores/temperature/current_temperature_store.dart';
 import 'package:brew_kettle_dashboard/utils/textstyle_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
@@ -13,7 +13,8 @@ class CurrentTempTile extends StatefulWidget {
 }
 
 class _CurrentTempTileState extends State<CurrentTempTile> {
-  final TemperatureStore _temperatureStore = getIt<TemperatureStore>();
+  final CurrentTemperatureStore _temperatureStore =
+      getIt<CurrentTemperatureStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +27,9 @@ class _CurrentTempTileState extends State<CurrentTempTile> {
             children: [
               Observer(builder: (context) {
                 double? temperature = _temperatureStore.currentTemperature;
-                String text = "X.XX";
+                String text = "X.X";
                 if (temperature != null) {
-                  text = temperature.toStringAsFixed(2);
+                  text = temperature.toStringAsFixed(1);
                 }
 
                 return Text(

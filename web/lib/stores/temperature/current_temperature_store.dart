@@ -7,15 +7,16 @@ import 'package:brew_kettle_dashboard/core/data/models/websocket/outbound_messag
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:mobx/mobx.dart';
 
-part 'temperature_store.g.dart';
+part 'current_temperature_store.g.dart';
 
 // ignore: library_private_types_in_public_api
-class TemperatureStore = _TemperatureStore with _$TemperatureStore;
+class CurrentTemperatureStore = _CurrentTemperatureStore
+    with _$CurrentTemperatureStore;
 
-abstract class _TemperatureStore with Store {
+abstract class _CurrentTemperatureStore with Store {
   final WebSocketConnectionStore _webSocketConnectionStore;
 
-  _TemperatureStore({
+  _CurrentTemperatureStore({
     required WebSocketConnectionStore webSocketConnectionStore,
   }) : _webSocketConnectionStore = webSocketConnectionStore {
     _webSocketConnectionStore.subscribe(StoreWebSocketListener(

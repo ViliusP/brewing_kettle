@@ -1,6 +1,6 @@
 import 'package:brew_kettle_dashboard/core/data/models/timeseries/timeseries.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
-import 'package:brew_kettle_dashboard/stores/temperature/temperature_store.dart';
+import 'package:brew_kettle_dashboard/stores/temperature/current_temperature_store.dart';
 import 'package:brew_kettle_dashboard/utils/list_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -8,7 +8,8 @@ import 'package:graphic/graphic.dart';
 
 class TempHistoryTile extends StatelessWidget {
   TempHistoryTile({super.key});
-  final TemperatureStore _temperatureStore = getIt<TemperatureStore>();
+  final CurrentTemperatureStore _temperatureStore =
+      getIt<CurrentTemperatureStore>();
 
   final int maxX = 100;
 
