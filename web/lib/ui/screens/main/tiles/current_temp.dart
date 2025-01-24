@@ -1,5 +1,5 @@
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
-import 'package:brew_kettle_dashboard/stores/temperature/current_temperature_store.dart';
+import 'package:brew_kettle_dashboard/stores/current_temperature/current_temperature_store.dart';
 import 'package:brew_kettle_dashboard/utils/textstyle_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
