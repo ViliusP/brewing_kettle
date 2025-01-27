@@ -36,11 +36,11 @@ static void rx_task(void *arg)
     free(data);
 }
 
-int send_data(const char *log_name, const char *data)
+int uart_send_data(const char *data)
 {
     const int len = strlen(data);
     const int tx_bytes = uart_write_bytes(UART_NUM_1, data, len);
-    ESP_LOGI(log_name, "Wrote %d bytes", tx_bytes);
+    ESP_LOGI(TAG, "Wrote %d bytes", tx_bytes);
     return tx_bytes;
 }
 

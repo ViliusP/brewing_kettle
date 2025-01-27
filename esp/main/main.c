@@ -127,7 +127,7 @@ void app_main(void)
     ++boot_count;
     ESP_LOGI(TAG, "Hello, World!");
     ESP_LOGI(TAG, "Boot count: %d", boot_count);
-    // esp_log_level_set(TAG, ESP_LOG_DEBUG);
+    
     // ================ UART ===================
     initialize_uart(uart_config, UART_TX_PIN, UART_RX_PIN);
     start_uart_task((rx_task_callback_t)&uart_message_handling);

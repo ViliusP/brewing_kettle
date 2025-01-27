@@ -98,7 +98,6 @@ esp_err_t send_ws_message(httpd_handle_t server_handle, const char *message)
             }
         }
     }
-
     return ESP_OK;
 }
 

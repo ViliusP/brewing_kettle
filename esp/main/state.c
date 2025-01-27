@@ -82,7 +82,13 @@ void uart_message_handling(const char *data, const int bytes)
     if (bytes != 4)
     {
         ESP_LOGW(TAG, "Unexpected message size: %d bytes", bytes);
-        char bit_str[33] = {0};
+        char *bit_str = malloc(bytes * 8 + 1); // Adjust size based on the number of bytes
+        if (bit_str == NULL)
+        {
+            ESP_LOGE(TAG, "Failed to allocate memory for bit_str");
+            return;
+        }
+        memset(bit_str, 0, bytes * 8 + 1); // Initialize the array to zero
         for (int i = 0; i < bytes; i++)
         {
             for (int bit = 7; bit >= 0; bit--)
@@ -93,6 +99,7 @@ void uart_message_handling(const char *data, const int bytes)
         bit_str[bytes * 8] = '\0'; // Null-terminate the string
         ESP_LOGW(TAG, "Message content in bits: %s", bit_str);
         ESP_LOGW(TAG, "Message content in string: %.*s", bytes, data);
+        free(bit_str);
         return;
     }
 

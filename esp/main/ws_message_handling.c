@@ -8,6 +8,7 @@
 #include "esp_flash.h"
 #include "utilities.h"
 #include "ws_server.h"
+#include "uart_communication.h"
 
 #define COMMON_FIELD_ID "id"
 #define COMMON_FIELD_TYPE "type"
@@ -19,6 +20,7 @@
 
 #define MESSAGE_IN_GET_CONFIGURATION_STR "configuration_get"
 #define MESSAGE_IN_GET_SNAPSHOT_STR "snapshot_get"
+#define MESSAGE_IN_SET_TARGET_TEMPERATURE_STR "temperature_set"
 
 #define MESSAGE_IN_EXAMPLE_STR "example"
 
@@ -87,6 +89,7 @@ typedef enum
   MESSAGE_UNKNOWN = -1,
   MESSAGE_GET_CONFIGURATION = 0,
   MESSAGE_GET_SNAPSHOT = 1,
+  MESSAGE_SET_TARGET_TEMP = 2,
   MESSAGE_EXAMPLE = 99,
 } message_in_type_t;
 
@@ -99,6 +102,10 @@ message_in_type_t get_message_type(const char *type_str)
   if (strcmp(type_str, MESSAGE_IN_GET_SNAPSHOT_STR) == 0)
   {
     return MESSAGE_GET_SNAPSHOT;
+  }
+  if (strcmp(type_str, MESSAGE_IN_SET_TARGET_TEMPERATURE_STR) == 0)
+  {
+    return MESSAGE_SET_TARGET_TEMP;
   }
   return MESSAGE_UNKNOWN;
 }
@@ -113,7 +120,7 @@ static lv_draw_buf_t *get_snapshot_buffer()
   return NULL;
 }
 
-static int32_t calcBase64EncodedSize(int input_length)
+static int32_t calc_base64_encoded_size(int input_length)
 {
   int32_t output_length = 4 * ((input_length + 2) / 3);
   return output_length;
@@ -148,7 +155,7 @@ static esp_err_t get_snapshot_response(cJSON *root, char **data)
     size_t raw_data_size = snapshot->data_size;
 
     // Calculate the Base64 encoded size
-    int32_t encoded_size = calcBase64EncodedSize(raw_data_size);
+    int32_t encoded_size = calc_base64_encoded_size(raw_data_size);
     unsigned char *encoded_data = malloc(encoded_size + 1); // +1 for null-termination
     if (encoded_data == NULL)
     {
@@ -324,6 +331,9 @@ static esp_err_t handle_message(httpd_ws_frame_t *frame, char **data)
       return ESP_FAIL;
     }
     break;
+  case MESSAGE_SET_TARGET_TEMP:
+    uart_send_data(compose_message(MESSAGE_TYPE_SET, MESSAGE_ENTITY_TARGET_TEMPERATURE, 0));
+    break;
   default:
     ESP_LOGD(TAG, "Unknown type");
     cJSON_Delete(root);
@@ -355,8 +365,6 @@ static void current_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
 
   cJSON_AddStringToObject(response_root, COMMON_FIELD_TYPE, "current_temperature");
 
-
-
   cJSON *payload = cJSON_CreateObject();
   if (payload == NULL)
   {
@@ -387,6 +395,7 @@ static void current_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
   {
     ESP_LOGW(TAG, "Failed to send message about current temperature change");
   }
+  free(data);
 }
 
 void init_ws_observer(state_subjects_t *state_subjects, httpd_handle_t httpd_handle)
