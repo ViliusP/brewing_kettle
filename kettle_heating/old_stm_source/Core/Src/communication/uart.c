@@ -11,7 +11,9 @@ void uart_comm_init(uart_comm_t *uart_comm, UART_HandleTypeDef *huart) {
 }
 
 void uart_comm_process_received_data(uart_comm_t *uart_comm) {
-    if (uart_comm->rx_index > 0 && uart_comm->rx_buffer[uart_comm->rx_index - 1] == '\n') {
+    // if (uart_comm->rx_index > 0 && uart_comm->rx_buffer[uart_comm->rx_index - 1] == '\n') {
+    if (uart_comm->rx_index > 0) {
+
         char message[RX_BUFFER_SIZE];
         uint32_t message_len = 0;
         for(uint32_t i = 0; i < uart_comm->rx_index; i++){
@@ -44,3 +46,4 @@ void uart_comm_send_bytes(uart_comm_t *uart_comm, uint32_t message) {
     bytes[3] = message & 0xFF;
     HAL_UART_Transmit(uart_comm->huart, bytes, 4, HAL_MAX_DELAY);
 }
+

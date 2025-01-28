@@ -47,18 +47,18 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Link options
 target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
-    -u _printf_float # to print float values
+    -u _printf_float # to print float values    
 )
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
     Core/Src/temp_sensor.c
+    Core/Src/state.c
     Core/Src/communication/uart.c
     Core/Src/communication/messaging.c
     Core/Src/utils/dwt_delay.c
     Core/Src/utils/timer_delay.c
-
 )
 
 # Add include paths
@@ -66,6 +66,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     Core/Src/utils
     Core/Src/communication
+    Libs/tinycbot/src
 )
 
 # Add project symbols (macros)
@@ -76,6 +77,5 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
     stm32cubemx
-
     # Add user defined libraries
 )

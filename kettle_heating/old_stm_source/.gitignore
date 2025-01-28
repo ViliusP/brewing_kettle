@@ -12,3 +12,6 @@ bld/
 [Ll]og/
 _build/
 build/
+
+# Python environment
+.stm32_pyenv

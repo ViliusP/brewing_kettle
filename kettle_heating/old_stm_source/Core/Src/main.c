@@ -24,6 +24,7 @@
 #include "communication/uart.h"
 #include "communication/messaging.h"
 #include "temp_sensor.h"
+#include "state.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -62,7 +63,21 @@ static void MX_TIM1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  if (huart->Instance == USART1)
+  { // Adjust for your UART instance
+    uart_comm_instance.rx_buffer[uart_comm_instance.rx_index++] = (char)(huart->Instance->DR & 0xFF);
 
+    if (uart_comm_instance.rx_index >= RX_BUFFER_SIZE)
+    {
+      uart_comm_instance.rx_index = 0; // Reset buffer if overflow occurs
+    }
+
+    // Restart the interrupt to receive the next byte
+    HAL_UART_Receive_IT(uart_comm_instance.huart, (uint8_t *)&uart_comm_instance.huart->Instance->DR, 1);
+  }
+}
 /* USER CODE END 0 */
 
 /**
@@ -82,9 +97,8 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  uart_comm_init(&uart_comm_instance, &huart1); // Initialize the UART communication
   uint32_t message;
-  float current_temperature = 0;
+  app_state_t app_state = app_state_init();
   uint8_t ret;
   /* USER CODE END Init */
 
@@ -100,6 +114,8 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
+  uart_comm_init(&uart_comm_instance, &huart1); // Initialize the UART communication
+
   if (ds18b20_init(DS18B20_GPIO_PORT, DS18B20_GPIO_PIN) != DS18B20_OK)
   {
     Error_Handler();
@@ -115,14 +131,16 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    uart_comm_process_received_data(&uart_comm_instance);
+
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 0);
 
     HAL_Delay(250);
 
-    ret = ds18b20_read_temperature(&current_temperature);
+    ret = ds18b20_read_temperature(&app_state.current_temp);
     if (ret == DS18B20_OK)
     {
-      message = compose_current_temp_message(current_temperature);
+      message = compose_current_temp_message(app_state.current_temp);
     }
     else
     {

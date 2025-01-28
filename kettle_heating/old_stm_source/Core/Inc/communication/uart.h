@@ -12,7 +12,7 @@
 #include <stdint.h> // For standard integer types
 #include <stdio.h>
 
-#define RX_BUFFER_SIZE 64
+#define RX_BUFFER_SIZE 32
 
 // Structure to hold UART communication data (optional but recommended)
 typedef struct {
