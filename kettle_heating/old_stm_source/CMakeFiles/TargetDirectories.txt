@@ -1,5 +1,0 @@
-/home/viliusp/development/source/brewing_kettle_stm/kettle_heating/CMakeFiles/kettle_heating.dir
-/home/viliusp/development/source/brewing_kettle_stm/kettle_heating/CMakeFiles/edit_cache.dir
-/home/viliusp/development/source/brewing_kettle_stm/kettle_heating/CMakeFiles/rebuild_cache.dir
-/home/viliusp/development/source/brewing_kettle_stm/kettle_heating/cmake/stm32cubemx/CMakeFiles/edit_cache.dir
-/home/viliusp/development/source/brewing_kettle_stm/kettle_heating/cmake/stm32cubemx/CMakeFiles/rebuild_cache.dir
