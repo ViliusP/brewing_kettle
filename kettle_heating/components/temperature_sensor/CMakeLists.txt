@@ -4,4 +4,4 @@ idf_component_register(SRCS "${component_srcs}"
                        INCLUDE_DIRS "include"
                        PRIV_INCLUDE_DIRS ""
                        PRIV_REQUIRES ""
-                       REQUIRES "")
+                       REQUIRES ds18b20 onewire_bus)

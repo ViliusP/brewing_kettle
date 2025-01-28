@@ -1,0 +1,43 @@
+dependencies:
+  espressif/cbor:
+    component_hash: 440f4ee4504841cc9b4f3a8ef755776a612ac9dace355514c68b999868f990ff
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=4.3'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 0.6.0~1
+  espressif/ds18b20:
+    component_hash: d676429d9f1f686b65ed895e418eb4b331477bcd5d63c27f43dc3d6a2de8f13b
+    dependencies:
+    - name: espressif/onewire_bus
+      registry_url: https://components.espressif.com
+      require: private
+      version: ^1.0.0
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 0.1.1
+  espressif/onewire_bus:
+    component_hash: c4c781940d8bd988432b47ac3ee68479c69e14e01fdfba0b61365b233a3ba5d6
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com
+      type: service
+    version: 1.0.2
+  idf:
+    source:
+      type: idf
+    version: 5.4.0
+direct_dependencies:
+- espressif/cbor
+- espressif/ds18b20
+- idf
+manifest_hash: 3233407a6da1eec37bdaf34810c674bc3350fca5c78435c695a4505bf38544f0
+target: esp32c6
+version: 2.0.0
