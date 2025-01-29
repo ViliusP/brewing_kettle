@@ -46,8 +46,8 @@ void handle_current_temperature_data(CborValue *value)
     {
         cbor_value_get_double(value, &temperature);
     }
-
-    ESP_LOGI(TAG, "Current temperature: %.2f", temperature);
+    lv_subject_set_pointer(&state_subjects->current_temp, &temperature);
+    ESP_LOGI(TAG, "Current temperature: %.5f", temperature);
 }
 
 void handle_target_temperature_data(CborValue *value)
@@ -70,7 +70,7 @@ void handle_target_temperature_data(CborValue *value)
         cbor_value_get_double(value, &temperature);
     }
 
-    ESP_LOGI("TEMP", "Target temperature: %.2f", temperature);
+    ESP_LOGI("TEMP", "Target temperature: %.5f", temperature);
 }
 
 void uart_message_handler(const uint8_t *data, int len)

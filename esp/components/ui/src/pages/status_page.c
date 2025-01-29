@@ -32,30 +32,34 @@ static void connected_clients_count_cb(lv_observer_t *observer, lv_subject_t *su
 
 static void current_temperature_cb(lv_observer_t *observer, lv_subject_t *subject)
 {
-    uint32_t temperature = lv_subject_get_int(subject);
+    const double *temperature_ptr = lv_subject_get_pointer(subject);
+    if (temperature_ptr == NULL)
+    {
+        return;
+    }
+    double temperature = *temperature_ptr;
     lv_obj_t *label = lv_observer_get_target(observer);
     if (label == NULL)
     {
         return;
     }
-    void *user_data = lv_observer_get_user_data(observer);
-    const char *fmt = (const char *)user_data;
-    float float_temp = temp_to_float(temperature);
-    lv_label_set_text_fmt(label, THERMOMETER_SYMBOL " current T: %.2f " TEMPERATURE_CELSIUS_SYMBOL, float_temp);
+    lv_label_set_text_fmt(label, THERMOMETER_SYMBOL " current T: %.2f " TEMPERATURE_CELSIUS_SYMBOL, temperature);
 }
 
 static void target_temperature_cb(lv_observer_t *observer, lv_subject_t *subject)
 {
-    uint32_t temperature = lv_subject_get_int(subject);
+    const double *temperature_ptr = lv_subject_get_pointer(subject);
+    if (temperature_ptr == NULL)
+    {
+        return;
+    }
+    double temperature = *temperature_ptr;
     lv_obj_t *label = lv_observer_get_target(observer);
     if (label == NULL)
     {
         return;
     }
-    void *user_data = lv_observer_get_user_data(observer);
-    const char *fmt = (const char *)user_data;
-    float float_temp = temp_to_float(temperature);
-    lv_label_set_text_fmt(label, THERMOMETER_CHEVRON_UP_SYMBOL " target T: %.2f " TEMPERATURE_CELSIUS_SYMBOL, float_temp);
+    lv_label_set_text_fmt(label, THERMOMETER_CHEVRON_UP_SYMBOL " target T: %.2f " TEMPERATURE_CELSIUS_SYMBOL, temperature);
 }
 
 lv_obj_t *compose_status_page(lv_obj_t *parent, lv_fragment_manager_t *manager, state_subjects_t *state_subjects)
