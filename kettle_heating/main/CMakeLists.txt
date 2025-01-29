@@ -1,3 +1,3 @@
-idf_component_register(SRCS "main.c" "uart_messaging.c"
+idf_component_register(SRCS "main.c" "uart_messaging.c" "state.c"
                     REQUIRES uart_communication temperature_sensor
                     INCLUDE_DIRS ".")

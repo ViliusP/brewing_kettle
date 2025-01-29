@@ -1,8 +1,11 @@
 #include "cbor.h"
 #include "uart_communication.h"
 #include "esp_log.h"
+#include "state.h"
 
 static const char *TAG = "UART_MESSAGING";
+
+static app_state_t *app_state;
 
 int send_temperature_data(float temperature) {
     uint8_t cbor_buffer[256]; // Adjust size as needed
@@ -46,4 +49,10 @@ int send_temperature_data(float temperature) {
 void uart_message_handler(const char *data, const int bytes)
 {
     ESP_LOGW(TAG, "Message content in string: %.*s", (int)bytes, data);
+}
+
+rx_task_callback_t init_uart_message_handler(app_state_t *arg_app_state)
+{
+    app_state = arg_app_state;
+    return (rx_task_callback_t)&uart_message_handler;
 }
