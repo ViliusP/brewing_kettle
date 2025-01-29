@@ -457,7 +457,7 @@ static void target_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
     return;
   }
 
-  cJSON_AddStringToObject(response_root, COMMON_FIELD_TYPE, "target_temp");
+  cJSON_AddStringToObject(response_root, COMMON_FIELD_TYPE, "target_temperature");
 
   cJSON *payload = cJSON_CreateObject();
   if (payload == NULL)
