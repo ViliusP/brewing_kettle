@@ -101,51 +101,117 @@ static int decode_message(uint8_t *buffer, int buffer_len, uart_message_t *msg)
     return 0;
 }
 
-// RX task (modified to use decode_message)
 static void rx_task(void *arg)
 {
     static const char *RX_TASK_TAG = "RX_TASK";
     rx_task_callback_t callback = (rx_task_callback_t)arg;
-    uint8_t *buffer = (uint8_t *)malloc(RX_BUF_SIZE + 1); // Use uint8_t for raw bytes
+    static uint8_t persistent_buffer[PERSISTENT_BUFFER_SIZE];
+    static size_t persistent_buffer_len = 0;
     uart_message_t received_msg;
 
     while (1)
     {
-        const int rx_bytes = uart_read_bytes(UART_NUM_1, buffer, RX_BUF_SIZE, 1000 / portTICK_PERIOD_MS);
+        uint8_t temp_buffer[RX_BUF_SIZE];
+        const int rx_bytes = uart_read_bytes(UART_NUM_1, temp_buffer, RX_BUF_SIZE, 1000 / portTICK_PERIOD_MS);
         if (rx_bytes > 0)
         {
-            ESP_LOGD(RX_TASK_TAG, "Received %d bytes", rx_bytes);
-
-            if (decode_message(buffer, rx_bytes, &received_msg) == 0)
+            // Handle buffer overflow by discarding old data
+            if (persistent_buffer_len + rx_bytes > PERSISTENT_BUFFER_SIZE)
             {
-                ESP_LOGD(RX_TASK_TAG, "Decoded message: Command: %d, Data Length: %d", received_msg.command, received_msg.data_len);
+                const size_t overflow = persistent_buffer_len + rx_bytes - PERSISTENT_BUFFER_SIZE;
+                persistent_buffer_len = (overflow > persistent_buffer_len) ? 0 : persistent_buffer_len - overflow;
+                memmove(persistent_buffer, persistent_buffer + overflow, persistent_buffer_len);
+                ESP_LOGW(RX_TASK_TAG, "Buffer overflow, discarded %zu bytes", overflow);
+            }
 
-                // Now you have the decoded message in received_msg.  Call the callback or process it directly.
-                if (callback)
+            // Append new data to the persistent buffer
+            memcpy(persistent_buffer + persistent_buffer_len, temp_buffer, rx_bytes);
+            persistent_buffer_len += rx_bytes;
+
+            size_t processed = 0;
+            while (processed < persistent_buffer_len)
+            {
+                // Search for STX to align message boundaries
+                size_t stx_pos = processed;
+                while (stx_pos < persistent_buffer_len && persistent_buffer[stx_pos] != MESSAGE_START_BYTE)
                 {
-                    if (received_msg.data_len < MAX_MESSAGE_LENGTH)
+                    stx_pos++;
+                }
+                if (stx_pos >= persistent_buffer_len)
+                {
+                    // No STX found; discard processed data
+                    processed = persistent_buffer_len;
+                    break;
+                }
+                processed = stx_pos;
+
+                // Check if minimum message length is available (STX + cmd + len + CRC + ETX = 5 bytes)
+                if (persistent_buffer_len - processed < MIN_MESSAGE_LENGTH)
+                {
+                    break; // Wait for more data
+                }
+
+                // Extract data_len (located at processed + 2)
+                const uint8_t data_len = persistent_buffer[processed + 2];
+                const size_t total_message_length = data_len + 5; // STX + cmd + len + data + CRC + ETX
+
+                // Check if full message is available
+                if (persistent_buffer_len - processed < total_message_length)
+                {
+                    break; // Not enough data yet
+                }
+
+                // Validate ETX at the end
+                const size_t etx_pos = processed + total_message_length - 1;
+                if (persistent_buffer[etx_pos] != MESSAGE_END_BYTE)
+                {
+                    ESP_LOGE(RX_TASK_TAG, "Invalid ETX at position %zu", etx_pos);
+                    processed++; // Skip invalid STX and continue searching
+                    continue;
+                }
+
+                // Attempt to decode the message
+                if (decode_message(persistent_buffer + processed, total_message_length, &received_msg) == 0)
+                {
+                    ESP_LOGD(RX_TASK_TAG, "Decoded: Command %d, Data Length %d", received_msg.command, received_msg.data_len);
+
+                    // Call callback or handle the message
+                    if (callback)
                     {
-                        received_msg.data[received_msg.data_len] = 0; // Null-terminate
+                        if (received_msg.data_len < MAX_MESSAGE_LENGTH)
+                        {
+                            received_msg.data[received_msg.data_len] = '\0'; // Null-terminate
+                        }
+                        else
+                        {
+                            ESP_LOGW(RX_TASK_TAG, "Data too long to null-terminate");
+                        }
+                        callback((const char *)received_msg.data, received_msg.data_len);
                     }
                     else
-                    {
-                        ESP_LOGW(RX_TASK_TAG, "Received data too long to null-terminate safely.");
+                    {   
+                        ESP_LOGW(RX_TASK_TAG, "No callback defined");
                     }
-                    callback((const char *)received_msg.data, received_msg.data_len);
+
+                    processed += total_message_length; // Move to next message
                 }
                 else
                 {
-                    ESP_LOGW(RX_TASK_TAG, "No callback registered in UART RX task");
+                    // Decode failed; skip this STX and continue searching
+                    processed++;
                 }
             }
-            else
+
+            // Shift remaining data to the start of the buffer
+            if (processed > 0)
             {
-                ESP_LOGE(RX_TASK_TAG, "Failed to decode message");
+                persistent_buffer_len -= processed;
+                memmove(persistent_buffer, persistent_buffer + processed, persistent_buffer_len);
             }
         }
     }
-    free(buffer);
 }
+
 
 // Modified uart_send_data to use encode_message
 int uart_send_message(uart_message_t *msg)

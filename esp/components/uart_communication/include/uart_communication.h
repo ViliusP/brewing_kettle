@@ -3,7 +3,11 @@
 
 #include "driver/uart.h"
 
-#define RX_BUF_SIZE 2048
+// Define the size for the persistent buffer (adjust based on expected message size)
+#define PERSISTENT_BUFFER_SIZE 2048
+// Define the size of the message header (command + data_len)
+#define MIN_MESSAGE_LENGTH 5  // STX (1) + command (1) + data_len (1) + CRC (1) + ETX (1)
+#define RX_BUF_SIZE 3072
 #define MESSAGE_START_BYTE 0x02 // STX
 #define MESSAGE_END_BYTE 0x03   // ETX
 #define MAX_MESSAGE_LENGTH 256
