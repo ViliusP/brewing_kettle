@@ -1,5 +1,5 @@
-#ifndef UART_COMMUNICATION_H
-#define UART_COMMUNICATION_H
+#ifndef UART_COMMUNICATION_H_
+#define UART_COMMUNICATION_H_
 
 #include "driver/uart.h"
 
