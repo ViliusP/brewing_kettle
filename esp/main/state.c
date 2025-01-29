@@ -4,12 +4,32 @@
 #include "display.h"
 #include "uart_communication.h"
 #include "utilities.h"
+#include "cbor.h"
 
-#define DS18B20_LOWEST_POSSIBLE_TEMP -55.0f 
-
+#define DS18B20_LOWEST_POSSIBLE_TEMP -55.0f
+#define ENTITY_BUFFER_SIZE 64
 
 static const char *TAG = "STATE";
 
+static char entity_buffer[ENTITY_BUFFER_SIZE];
+
+typedef void (*entity_handler_t)(CborValue *);
+
+typedef struct
+{
+    const char *entity_name;
+    entity_handler_t handler_function;
+} entity_handler_map_t;
+
+void handle_current_temperature_data(CborValue *value);
+void handle_target_temperature_data(CborValue *value);
+
+// Array of entity handler mappings
+entity_handler_map_t entity_handlers[] = {
+    {"current_temperature", handle_current_temperature_data},
+    {"target_temperature", handle_target_temperature_data},
+    // ... more entities
+};
 
 typedef enum
 {
@@ -17,6 +37,14 @@ typedef enum
     HEATER_STATE_COOLING,
     HEATER_STATE_HEATING,
 } heater_state_t;
+
+typedef struct
+{
+    heater_state_t heater_state;
+    float current_temp;
+    float target_temp;
+    client_info_data_t *connected_clients;
+} app_state_t;
 
 typedef enum
 {
@@ -77,74 +105,139 @@ state_subjects_t *init_state_subjects()
     return &state_subjects;
 }
 
-void uart_message_handling(const char *data, const int bytes)
+void handle_current_temperature_data(CborValue *value)
 {
-    if (bytes != 4)
+    if (!cbor_value_is_float(value) && !cbor_value_is_double(value))
     {
-        ESP_LOGW(TAG, "Unexpected message size: %d bytes", bytes);
-        char *bit_str = malloc(bytes * 8 + 1); // Adjust size based on the number of bytes
-        if (bit_str == NULL)
-        {
-            ESP_LOGE(TAG, "Failed to allocate memory for bit_str");
-            return;
-        }
-        memset(bit_str, 0, bytes * 8 + 1); // Initialize the array to zero
-        for (int i = 0; i < bytes; i++)
-        {
-            for (int bit = 7; bit >= 0; bit--)
-            {
-                bit_str[7 - bit + (i * 8)] = ((data[i] >> bit) & 1) ? '1' : '0';
-            }
-        }
-        bit_str[bytes * 8] = '\0'; // Null-terminate the string
-        ESP_LOGW(TAG, "Message content in bits: %s", bit_str);
-        ESP_LOGW(TAG, "Message content in string: %.*s", bytes, data);
-        free(bit_str);
+        ESP_LOGE("TEMP", "CBOR: value is not a float or double");
         return;
     }
 
-    uint32_t value = 0;
-    for (int i = 0; i < 4; i++)
+    double temperature;
+    if (cbor_value_is_float(value))
     {
-        value |= (uint8_t)data[i] << (8 * (3 - i));
+        float temp_f;
+        cbor_value_get_float(value, &temp_f);
+        temperature = (double)temp_f;
     }
-    uint8_t type = (value >> 28) & 0x0F;
-    uint8_t entity = (value >> 24) & 0x0F;
-    int32_t content = (int32_t)(value & 0x00FFFFFF);
-    if (content & 0x00800000) // Check if the sign bit is set
+    else
     {
-        content |= 0xFF000000; // Set the upper bits to maintain the negative value
+        cbor_value_get_double(value, &temperature);
     }
-    switch (type)
+
+    ESP_LOGI("TEMP", "Temperature: %.2f", temperature);
+}
+
+void handle_target_temperature_data(CborValue *value)
+{
+    if (!cbor_value_is_float(value) && !cbor_value_is_double(value))
     {
-    case MESSAGE_TYPE_STATE:
-        switch (entity)
+        ESP_LOGE("TEMP", "CBOR: value is not a float or double");
+        return;
+    }
+
+    double temperature;
+    if (cbor_value_is_float(value))
+    {
+        float temp_f;
+        cbor_value_get_float(value, &temp_f);
+        temperature = (double)temp_f;
+    }
+    else
+    {
+        cbor_value_get_double(value, &temperature);
+    }
+
+    ESP_LOGI("TEMP", "Temperature: %.2f", temperature);
+}
+
+void uart_message_handling(const uint8_t *data, int len)
+{
+    if (len == 0)
+    {
+        ESP_LOGW("APP", "Received empty message");
+        return;
+    }
+
+    CborParser parser;
+    CborValue root, entity_value, payload_value;
+
+    // Initialize CBOR parser
+    CborError err = cbor_parser_init(data, len, 0, &parser, &root);
+    if (err != CborNoError)
+    {
+        ESP_LOGE("APP", "CBOR parsing error: %s", cbor_error_string(err));
+        return;
+    }
+
+    // Verify root is a map
+    if (!cbor_value_is_map(&root))
+    {
+        ESP_LOGE("APP", "CBOR root is not a map");
+        return;
+    }
+
+    // Find "entity" key in root map
+    err = cbor_value_map_find_value(&root, "entity", &entity_value);
+    if (err != CborNoError)
+    {
+        ESP_LOGE("APP", "CBOR: entity not found: %s", cbor_error_string(err));
+        return;
+    }
+
+    // Verify entity is a text string
+    if (!cbor_value_is_text_string(&entity_value))
+    {
+        ESP_LOGE("APP", "CBOR: entity is not a text string");
+        return;
+    }
+
+    // Extract entity string
+    size_t entity_len;
+    err = cbor_value_get_string_length(&entity_value, &entity_len);
+    if (err != CborNoError || entity_len >= ENTITY_BUFFER_SIZE)
+    {
+        ESP_LOGE("APP", "CBOR: invalid entity length");
+        return;
+    }
+
+    err = cbor_value_copy_text_string(&entity_value, entity_buffer, &entity_len, NULL);
+    if (err != CborNoError)
+    {
+        ESP_LOGE("APP", "CBOR: failed to copy entity: %s", cbor_error_string(err));
+        return;
+    }
+    entity_buffer[entity_len] = '\0'; // Ensure null-termination
+
+    for (size_t i = 0; i < sizeof(entity_handlers) / sizeof(entity_handlers[0]); i++)
+    {
+        if (strcmp(entity_buffer, entity_handlers[i].entity_name) == 0)
         {
-        case MESSAGE_ENTITY_TEMPERATURE:
-            lv_subject_set_int(&state_subjects.current_temp, content);
-            ESP_LOGD(TAG, "state message 'Temperature': %.2f°C", temp_to_float(content));
-            break;
-        default:
-            ESP_LOGW(TAG, "Unknown state entity: %d", entity);
-            break;
+            ESP_LOGI("APP", "Calling handler for entity: %s", entity_buffer);
+
+            CborValue payload_value; // No longer const
+
+            // Get the payload
+            CborError err = cbor_value_map_find_value(&root, "payload", &payload_value);
+            if (err != CborNoError)
+            {
+                ESP_LOGE("APP", "CBOR: payload not found: %s", cbor_error_string(err));
+                return;
+            }
+
+            CborValue value_value; // Get the "value" from the payload
+
+            err = cbor_value_map_find_value(&payload_value, "value", &value_value);
+            if (err != CborNoError)
+            {
+                ESP_LOGE("APP", "CBOR: value not found: %s", cbor_error_string(err));
+                return;
+            }
+
+            entity_handlers[i].handler_function(&value_value); // Pass the "value" CborValue
+            return;                                            // Found and handled, exit the loop
         }
-        break;
-    case MESSAGE_TYPE_ERROR:
-        switch (entity)
-        {
-        case ERR_ENTITY_TEMPERATURE_SENSOR:
-            ESP_LOGW(TAG, "Error Message - Temperature Sensor: %lu", content);
-            break;
-        default:
-            ESP_LOGW(TAG, "Unknown error entity: %d", entity);
-            break;
-        }
-        break;
-    case MESSAGE_TYPE_DEBUG:
-        ESP_LOGD(TAG, "Debug Message: %lu", content);
-        break;
-    default:
-        ESP_LOGW(TAG, "Unknown message type: %d", type);
-        break;
     }
+
+    ESP_LOGW("APP", "No handler found for entity: %s", entity_buffer);
 }

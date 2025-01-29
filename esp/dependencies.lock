@@ -1,4 +1,14 @@
 dependencies:
+  espressif/cbor:
+    component_hash: 440f4ee4504841cc9b4f3a8ef755776a612ac9dace355514c68b999868f990ff
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=4.3'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 0.6.0~1
   espressif/esp_lcd_sh1107:
     component_hash: 9cc00a4d066e3e1d120fd2006d30612766488379b820804092a9bfedb3c1f93c
     dependencies:
@@ -31,9 +41,10 @@ dependencies:
       type: service
     version: 9.2.0
 direct_dependencies:
+- espressif/cbor
 - espressif/esp_lcd_sh1107
 - espressif/mdns
 - lvgl/lvgl
-manifest_hash: 5ba7974ababeb4bab9685972998d3405dda7c87d3969e432faa42c478ae68555
+manifest_hash: 985a2aec0635aaddfa416889bd807058c8285d343f3cda7cdafe0760cb5adfad
 target: esp32c6
 version: 2.0.0
