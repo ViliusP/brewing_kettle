@@ -38,12 +38,12 @@ int send_temperature_data(float temperature) {
 
     size_t cbor_len = cbor_encoder_get_buffer_size(&encoder, cbor_buffer);
 
-    message_t msg_to_send;
+    uart_message_t msg_to_send;
     msg_to_send.command = CMD_SEND_SENSOR_DATA;
     memcpy(msg_to_send.data, cbor_buffer, cbor_len);
     msg_to_send.data_len = cbor_len;
 
-    return uart_send_data(&msg_to_send);
+    return uart_send_message(&msg_to_send);
 }
 
 void uart_message_handling(const char *data, const int bytes)
