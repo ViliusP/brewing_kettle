@@ -1,6 +1,8 @@
 #ifndef STATE_H_
 #define STATE_H_
 
+#define ABSOLUTE_ZERO -273.15f
+
 typedef enum
 {
     HEATER_STATE_IDLE,

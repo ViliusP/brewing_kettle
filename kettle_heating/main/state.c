@@ -5,8 +5,8 @@ app_state_t init_state()
 {
     app_state_t state = {
         .heater_state = HEATER_STATE_IDLE,
-        .current_temp = FLT_MIN,
-        .target_temp = FLT_MIN,
+        .current_temp = ABSOLUTE_ZERO,
+        .target_temp = ABSOLUTE_ZERO,
     };
     return state;
 }

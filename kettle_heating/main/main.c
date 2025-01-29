@@ -31,7 +31,7 @@ void app_main(void)
         if (ret == ESP_OK)
         {
             send_temperature_data(app_state.current_temp);
-            ESP_LOGI(TAG, "Temperature: %.2f", app_state.current_temp);
+            ESP_LOGI(TAG, "current_temp: %.2f, target_temp: %.2f.", app_state.current_temp, app_state.target_temp);
         }
         else
         {
