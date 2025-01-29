@@ -385,12 +385,12 @@ void current_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
     return;
   }
 
-  const double *temperature_ptr = lv_subject_get_pointer(subject);
-  if (temperature_ptr == NULL)
+  float *current_temperature_ptr = (float *)lv_subject_get_pointer(subject);
+  if (current_temperature_ptr == NULL)
   {
     return;
   }
-  double current_temp = *temperature_ptr;
+  float current_temp = *current_temperature_ptr;
 
   cJSON *response_root = cJSON_CreateObject();
   if (response_root == NULL)
@@ -443,12 +443,12 @@ static void target_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
     return;
   }
 
-  const double *temperature_ptr = lv_subject_get_pointer(subject);
-  if (temperature_ptr == NULL)
+  float *target_temperature_ptr = (float *)lv_subject_get_pointer(subject);
+  if (target_temperature_ptr == NULL)
   {
     return;
   }
-  double target_temp = *temperature_ptr;
+  float target_temp = *target_temperature_ptr;
 
   cJSON *response_root = cJSON_CreateObject();
   if (response_root == NULL)
