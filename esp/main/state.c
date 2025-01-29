@@ -5,51 +5,12 @@
 #include "uart_communication.h"
 #include "utilities.h"
 #include "cbor.h"
-
-#define DS18B20_LOWEST_POSSIBLE_TEMP -55.0f
+#include "state.h"
 
 static const char *TAG = "STATE";
 
-
-typedef enum
-{
-    HEATER_STATE_IDLE,
-    HEATER_STATE_COOLING,
-    HEATER_STATE_HEATING,
-} heater_state_t;
-
-typedef struct
-{
-    heater_state_t heater_state;
-    float current_temp;
-    float target_temp;
-    client_info_data_t *connected_clients;
-} app_state_t;
-
-typedef enum
-{
-    MESSAGE_TYPE_STATE = 1,
-    MESSAGE_TYPE_ERROR,
-    MESSAGE_TYPE_DEBUG,
-} message_type_t;
-
-typedef enum
-{
-    ERR_ENTITY_TEMPERATURE_SENSOR = 1,
-} error_entity_t;
-
-typedef enum
-{
-    MESSAGE_ENTITY_TEMPERATURE = 1,
-} state_entity_t;
-
 state_subjects_t state_subjects;
-
-static void test_observer_cb(lv_observer_t *observer, lv_subject_t *subject)
-{
-    int32_t v = lv_subject_get_int(subject);
-    ESP_LOGI(TAG, "value %lu", v);
-}
+app_state_t app_state;
 
 static void print_client_info(client_info_data_t client_data)
 {
@@ -74,10 +35,21 @@ void connected_client_data_notify(client_info_data_t client_data)
     lv_subject_set_pointer(&state_subjects.connected_clients, &client_data);
 }
 
-state_subjects_t *init_state_subjects()
+app_state_t *app_state_init()
 {
-    lv_subject_init_pointer(&state_subjects.current_temp, NULL);
-    lv_subject_init_pointer(&state_subjects.target_temp, NULL);
+    app_state.current_temp = ABSOLUTE_ZERO;
+    app_state.target_temp = ABSOLUTE_ZERO;
+    app_state.heater_state = HEATER_STATE_IDLE;
+    app_state.connected_clients = NULL;
+
+    return &app_state;
+}
+
+
+state_subjects_t *init_state_subjects(app_state_t *app_state)
+{
+    lv_subject_init_pointer(&state_subjects.current_temp, &app_state->current_temp);
+    lv_subject_init_pointer(&state_subjects.target_temp, &app_state->target_temp);
     lv_subject_init_int(&state_subjects.heater_state, HEATER_STATE_IDLE);
 
     lv_subject_init_pointer(&state_subjects.connected_clients, NULL);

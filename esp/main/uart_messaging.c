@@ -34,18 +34,20 @@ void handle_current_temperature_data(CborValue *value)
         return;
     }
 
-    double temperature;
+    float temperature;
     if (cbor_value_is_float(value))
     {
-        float temp_f;
-        cbor_value_get_float(value, &temp_f);
-        temperature = (double)temp_f;
+        cbor_value_get_float(value, &temperature);
     }
     else
     {
-        cbor_value_get_double(value, &temperature);
+        double temp_d;
+        cbor_value_get_double(value, &temp_d);
+        temperature = (float)temp_d;
     }
-    lv_subject_set_pointer(&state_subjects->current_temp, &temperature);
+    float *current_temperature_ptr = (float *)lv_subject_get_pointer(&state_subjects->current_temp);
+    *current_temperature_ptr = temperature;
+    lv_subject_notify(&state_subjects->current_temp);
 }
 
 void handle_target_temperature_data(CborValue *value)
@@ -56,18 +58,20 @@ void handle_target_temperature_data(CborValue *value)
         return;
     }
 
-    double temperature;
+    float temperature;
     if (cbor_value_is_float(value))
     {
-        float temp_f;
-        cbor_value_get_float(value, &temp_f);
-        temperature = (double)temp_f;
+        cbor_value_get_float(value, &temperature);
     }
     else
     {
-        cbor_value_get_double(value, &temperature);
+        double temp_d;
+        cbor_value_get_double(value, &temp_d);
+        temperature = (float)temp_d;
     }
-    lv_subject_set_pointer(&state_subjects->target_temp, &temperature);
+    float *target_temperature_ptr = (float *)lv_subject_get_pointer(&state_subjects->target_temp);
+    *target_temperature_ptr = temperature;
+    lv_subject_notify(&state_subjects->target_temp);
 }
 
 void uart_message_handler(const uint8_t *data, int len)

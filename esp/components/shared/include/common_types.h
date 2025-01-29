@@ -1,5 +1,5 @@
-#ifndef COMMON_TYPES_H
-#define COMMON_TYPES_H
+#ifndef COMMON_TYPES_H_
+#define COMMON_TYPES_H_
 
 #include "lwip/inet.h"
 #include "lvgl.h"

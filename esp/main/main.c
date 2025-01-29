@@ -128,12 +128,12 @@ void app_main(void)
     ++boot_count;
     ESP_LOGI(TAG, "Hello, World!");
     ESP_LOGI(TAG, "Boot count: %d", boot_count);
-    
+
     initialize_display();
 
     // ================ state ===================
-    state_subjects_t *state_subjects = init_state_subjects();
-    ws_client_changed_cb_t ws_client_change_cb = (ws_client_changed_cb_t)&connected_client_data_notify;
+    app_state_t *app_state = app_state_init();
+    state_subjects_t *state_subjects = init_state_subjects(app_state);
     // ==========================================
 
     // ================ UART ===================
@@ -159,6 +159,7 @@ void app_main(void)
 
     // ============== WS_SERVER =================
     ws_message_handler_t message_handler = create_handler();
+    ws_client_changed_cb_t ws_client_change_cb = (ws_client_changed_cb_t)&connected_client_data_notify;
     httpd_handle_t httpd_handle = initialize_ws_server(message_handler, ws_client_change_cb);
     init_ws_observer(state_subjects, httpd_handle);
     // ==========================================

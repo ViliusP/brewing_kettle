@@ -21,7 +21,7 @@ static void connected_clients_count_cb(lv_observer_t *observer, lv_subject_t *su
     {
         return;
     }
-    
+
     if (clients_data == NULL || clients_data->clients_info == NULL)
     {
         lv_label_set_text_fmt(label, CONNECTION_SYMBOL " connections: 0");
@@ -32,7 +32,7 @@ static void connected_clients_count_cb(lv_observer_t *observer, lv_subject_t *su
 
 static void current_temperature_cb(lv_observer_t *observer, lv_subject_t *subject)
 {
-    const double *temperature_ptr = lv_subject_get_pointer(subject);
+    const float *temperature_ptr = (const float *)lv_subject_get_pointer(subject);
     if (temperature_ptr == NULL)
     {
         return;
@@ -43,12 +43,13 @@ static void current_temperature_cb(lv_observer_t *observer, lv_subject_t *subjec
     {
         return;
     }
+
     lv_label_set_text_fmt(label, THERMOMETER_SYMBOL " current T: %.2f " TEMPERATURE_CELSIUS_SYMBOL, temperature);
 }
 
 static void target_temperature_cb(lv_observer_t *observer, lv_subject_t *subject)
 {
-    const double *temperature_ptr = lv_subject_get_pointer(subject);
+    const float *temperature_ptr = (const float *)lv_subject_get_pointer(subject);
     if (temperature_ptr == NULL)
     {
         return;
@@ -95,15 +96,29 @@ lv_obj_t *compose_status_page(lv_obj_t *parent, lv_fragment_manager_t *manager, 
     lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, connection_label, NULL);
 
     // -- Current temperature label -- //
+    const float *current_temperature_ptr = (const float *)lv_subject_get_pointer(&state_subjects->current_temp);
+    float current_temperature = ABSOLUTE_ZERO;
+    if (current_temperature_ptr != NULL)
+    {
+        current_temperature = *current_temperature_ptr;
+    }
+
     lv_obj_t *current_temp_label = lv_label_create(status_page);
     lv_obj_set_style_text_font(current_temp_label, &font_mdi_14, 0);
-    lv_label_set_text(current_temp_label, THERMOMETER_SYMBOL " current T: X.00 " TEMPERATURE_CELSIUS_SYMBOL);
+    lv_label_set_text_fmt(current_temp_label, THERMOMETER_SYMBOL " current T: %.2f " TEMPERATURE_CELSIUS_SYMBOL, current_temperature);
     lv_subject_add_observer_obj(&state_subjects->current_temp, current_temperature_cb, current_temp_label, NULL);
 
     // -- Target temperature        -- //
+    const float *target_emperature_ptr = (const float *)lv_subject_get_pointer(&state_subjects->target_temp);
+    double target_temperature = ABSOLUTE_ZERO;
+    if (target_emperature_ptr != NULL)
+    {
+        target_temperature = *target_emperature_ptr;
+    }
+
     lv_obj_t *target_temp_label = lv_label_create(status_page);
     lv_obj_set_style_text_font(target_temp_label, &font_mdi_14, 0);
-    lv_label_set_text(target_temp_label, THERMOMETER_CHEVRON_UP_SYMBOL " target T: X.00 " TEMPERATURE_CELSIUS_SYMBOL);
+    lv_label_set_text_fmt(target_temp_label, THERMOMETER_CHEVRON_UP_SYMBOL " target T: %.2f " TEMPERATURE_CELSIUS_SYMBOL, target_temperature);
     lv_subject_add_observer_obj(&state_subjects->target_temp, target_temperature_cb, target_temp_label, NULL);
 
     return status_page;
