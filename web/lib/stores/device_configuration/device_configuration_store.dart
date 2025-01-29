@@ -37,7 +37,9 @@ abstract class _DeviceConfigurationStore with Store {
   @action
   void request() {
     if (_webSocketConnectionStore.connectedTo != null) {
-      var message = WsMessageComposer.requestConfiguration();
+      var message = WsMessageComposer.simpleRequest(
+        OutboundMessageType.configurationGet,
+      );
       _webSocketConnectionStore.message(message);
     } else {
       log("Cannot send configuration request because there is no online channell");

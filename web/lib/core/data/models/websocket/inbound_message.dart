@@ -141,6 +141,8 @@ sealed class WsInboundMessagePayload {
       InboundMessageType.configuration => DeviceConfiguration.fromJson(json),
       InboundMessageType.snapshot => DeviceSnapshot.fromJson(json),
       InboundMessageType.currentTemperature =>
+        MessageSimpleValue<double>.fromJson(json),
+      InboundMessageType.targetTemperature =>
         MessageSimpleValue<double>.fromJson(json)
     };
   }
@@ -165,7 +167,8 @@ class WsInboundMessage<T extends WsInboundMessagePayload>
 enum InboundMessageType {
   configuration("configuration"),
   snapshot("snapshot"),
-  currentTemperature("current_temperature");
+  currentTemperature("current_temperature"),
+  targetTemperature("target_temperature");
 
   const InboundMessageType([this._field]);
 

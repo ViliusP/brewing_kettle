@@ -1,0 +1,112 @@
+asyncapi: 3.0.0
+info:
+  title: Brewkettle WebSocket API
+  version: 0.0.1
+  description: |-
+    TODO
+
+  # license:
+  #   name: Apache 2.0
+  #   url: https://www.apache.org/licenses/LICENSE-2.0
+defaultContentType: application/json
+servers:
+  main:
+    host: esp32_brewkettle.local:80
+    protocol: ws
+    description: server for UI managing brewkettle via UI
+channels:
+  root:
+    address: /ws
+    messages:
+      hello:
+        $ref: '#/components/messages/hello'
+      temperature_set:
+        $ref: '#/components/messages/temperature_set'
+    bindings:
+      ws:
+        query:
+          type: object
+          description: Tokens are produced in the WebSocket URL generated from the [apps.connections.open](https://api.slack.com/methods/apps.connections.open) method from Slack\u2019s API
+          properties:
+            ticket:
+              type: string
+              description: Temporary token generated when connection is initiated
+              const: '13748dac-b866-4ea7-b98e-4fb7895c0a7f'
+            app_id:
+              type: string
+              description: Unique identifier assigned to the Slack app
+              const: 'fe684dfa62159c6ac646beeac31c8f4ef415e4f39c626c2dbd1530e3a690892f'
+operations:
+  hello_listener:
+    action: receive
+    channel:
+      $ref: '#/channels/root'
+    messages:
+      - $ref: '#/channels/root/messages/hello'
+  temperature_set:
+    action: receive
+    channel:
+      $ref: '#/channels/root'
+    messages:
+      - $ref: '#/channels/root/messages/temperature_set'
+components:
+  messages:
+    temperature_set:
+      summary: Action triggered when the channel receives a message_set type message 
+      payload:
+        $ref: '#/components/schemas/temperature_set'
+    hello:
+      summary: Action triggered when a successful WebSocket connection is established
+      payload:
+        $ref: '#/components/schemas/hello'
+  schemas:
+    message_schema:
+      type: object
+    hello:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A hello string confirming WebSocket connection
+        connection_info:
+          type: object
+          properties:
+            app_id:
+              type: string
+            num_connections:
+              type: integer
+            debug_info:
+              type: object
+              properties:
+                host:
+                  type: string
+                started:
+                  type: string
+                build_number:
+                  type: integer
+                approximate_connection_time:
+                  type: integer
+    temperature_set:
+      type: object
+      properties:
+        user:
+          type: string
+          description: User ID who performed this event
+        reaction:
+          type: string
+          description: The only reaction that we need is a heart emoji
+        item_user:
+          type: string
+          description: User ID that created the original item that has been reacted to
+        item:
+          type: object
+          properties:
+            channel:
+              type: string
+              description: Channel information of original message
+            ts:
+              type: string
+              description: Timestamp information of original message
+        event_ts:
+          type: string
+          description: Reaction timestamp 

@@ -28,24 +28,52 @@ class WsOutboundMessage<T extends ControllerMessagePayload> {
         'payload': payload,
       };
 
-  String get jonString => json.encode(jsonMap);
+  String get jsonString => json.encode(jsonMap);
+}
+
+class WsOutboundValueMessage extends WsOutboundMessage {
+  final dynamic value;
+
+  WsOutboundValueMessage({
+    required super.id,
+    required super.type,
+    required super.time,
+    required this.value,
+  });
+
+  @override
+  Map<String, dynamic> get jsonMap => {
+        'id': id,
+        'type': type.field,
+        'time': time.millisecondsSinceEpoch,
+        'payload': {
+          'value': value,
+        },
+      };
+
+  @override
+  String get jsonString => json.encode(jsonMap);
 }
 
 class WsMessageComposer {
-  static String requestConfiguration() {
-    return WsOutboundMessage(
-      id: Uuid().v4(),
-      type: OutboundMessageType.configurationGet,
-      time: DateTime.now(),
-    ).jonString;
-  }
-
   static String simpleRequest(OutboundMessageType type) {
     return WsOutboundMessage(
       id: Uuid().v4(),
       type: type,
       time: DateTime.now(),
-    ).jonString;
+    ).jsonString;
+  }
+
+  static WsOutboundValueMessage setValueMessage(
+    OutboundMessageType type,
+    dynamic value,
+  ) {
+    return WsOutboundValueMessage(
+      id: Uuid().v4(),
+      type: type,
+      time: DateTime.now(),
+      value: value,
+    );
   }
 }
 

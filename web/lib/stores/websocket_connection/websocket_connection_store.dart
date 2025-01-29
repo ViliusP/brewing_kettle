@@ -93,13 +93,6 @@ abstract class _WebSocketConnectionStore with Store {
 
   @action
   void _onData(dynamic data) {
-    String msg = "Got data from [$connectedTo]: ${data.toString()}";
-    if (msg.length > 75) {
-      log("${msg.substring(0, 75)}...");
-    } else {
-      log(msg);
-    }
-
     if (_connectedTo == null || _channel == null) {
       log("Unexpected: got message when connection is null");
       _status = WebSocketConnectionStatus.finishedNoStatus;
@@ -114,6 +107,16 @@ abstract class _WebSocketConnectionStore with Store {
     if (message is WsInboundMessage) {
       for (var listener in _listeners) {
         listener.onData(message);
+      }
+    }
+
+    if (message is WsInboundMessage &&
+        message.type != InboundMessageType.currentTemperature) {
+      String msg = "Got data from [$connectedTo]: ${data.toString()}";
+      if (msg.length > 75) {
+        log("${msg.substring(0, 75)}...");
+      } else {
+        log(msg);
       }
     }
 
