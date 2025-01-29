@@ -160,7 +160,7 @@ int uart_send_message(uart_message_t *msg)
     if (encoded_len > 0)
     {
         int tx_bytes = uart_write_bytes(UART_NUM_1, (const char *)send_buffer, encoded_len);
-        ESP_LOGI(TAG, "Sent message (encoded %d bytes)", encoded_len);
+        ESP_LOGD(TAG, "Sent message (encoded %d bytes)", encoded_len);
         return tx_bytes;
     }
     else

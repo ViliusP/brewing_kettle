@@ -10,15 +10,15 @@ void app_main(void)
 {
     ESP_LOGI(TAG, "Hello, World!");
     
-    // ================ Temperature Sensor ===================
+    // ================ Temperature Sensor ===================================
     ds18b20_device_handle_t ds18b20_handle = initialize_temperature_sensor();
-    ds18b20_set_resolution(ds18b20_handle, DS18B20_RESOLUTION_11B);
-    // =======================================================
+    ds18b20_set_resolution(ds18b20_handle, DS18B20_RESOLUTION_10B);
+    // =======================================================================
 
-    // ================ UART ===================
+    // ================ UART ====================================
     initialize_uart(uart_config, UART_TX_PIN, UART_RX_PIN);
-    start_uart_task((rx_task_callback_t)&uart_message_handling);
-    // ==========================================
+    start_uart_task((rx_task_callback_t)&uart_message_handler);
+    // ==========================================================
 
     float temp = -55.0f;
     while (1)
@@ -34,6 +34,6 @@ void app_main(void)
         {
             ESP_LOGE(TAG, "Failed to read temperature");
         }
-        vTaskDelay(pdMS_TO_TICKS(5 * 1000)); // Delay for 2000 milliseconds (2 seconds)
+        vTaskDelay(pdMS_TO_TICKS(2 * 1000)); // Delay for 2000 milliseconds (2 seconds)
     }
 }

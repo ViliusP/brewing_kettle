@@ -43,7 +43,7 @@ int send_temperature_data(float temperature) {
     return uart_send_message(&msg_to_send);
 }
 
-void uart_message_handling(const char *data, const int bytes)
+void uart_message_handler(const char *data, const int bytes)
 {
     ESP_LOGW(TAG, "Message content in string: %.*s", (int)bytes, data);
 }
