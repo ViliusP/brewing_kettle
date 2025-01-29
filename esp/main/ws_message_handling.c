@@ -295,6 +295,27 @@ static esp_err_t error_response(char **data)
   return ESP_OK;
 }
 
+// EXAMPLE: 
+// "{"id":"0ea777fc-f079-4ba8-b3f5-a890df475625","type":"temperature_set","time":1738153122695,"payload":{"value":21.5}}"
+double parse_target_temperature(cJSON *root)
+{
+  cJSON *payload = cJSON_GetObjectItem(root, COMMON_FIELD_PAYLOAD);
+  if (payload == NULL)
+  {
+    ESP_LOGW(TAG, "Payload not found");
+    return ABSOLUTE_ZERO;
+  }
+
+  cJSON *value = cJSON_GetObjectItem(payload, "value");
+  if (value == NULL)
+  {
+    ESP_LOGW(TAG, "Value not found");
+    return ABSOLUTE_ZERO;
+  }
+
+  return value->valuedouble;
+}
+
 static esp_err_t handle_message(httpd_ws_frame_t *frame, char **data)
 {
   if (frame->type != HTTPD_WS_TYPE_TEXT)
@@ -333,10 +354,18 @@ static esp_err_t handle_message(httpd_ws_frame_t *frame, char **data)
     }
     break;
   case MESSAGE_SET_TARGET_TEMP:
-    send_set_target_temperature(20.0f);
+    double message_temp = parse_target_temperature(root);
+    if(message_temp == ABSOLUTE_ZERO) {
+      ESP_LOGW(TAG, "Couldn't parse temperature from message");
+      cJSON_Delete(root);
+      return ESP_OK;
+    }
+    send_set_target_temperature(message_temp);
+    cJSON_Delete(root);
+    return ESP_OK;
     break;
   default:
-    ESP_LOGD(TAG, "Unknown type");
+    ESP_LOGW(TAG, "Unknown message type from WS client");
     cJSON_Delete(root);
     return ESP_OK;
   }
@@ -345,7 +374,9 @@ static esp_err_t handle_message(httpd_ws_frame_t *frame, char **data)
   return ESP_OK;
 }
 
-static void current_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
+
+
+void current_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
 {
   httpd_handle_t httpd_handle = (httpd_handle_t)lv_observer_get_user_data(observer);
   if (httpd_handle == NULL)
@@ -357,7 +388,7 @@ static void current_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
   const double *temperature_ptr = lv_subject_get_pointer(subject);
   if (temperature_ptr == NULL)
   {
-      return;
+    return;
   }
   double current_temp = *temperature_ptr;
 
@@ -403,9 +434,68 @@ static void current_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
   free(data);
 }
 
+static void target_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
+{
+  httpd_handle_t httpd_handle = (httpd_handle_t)lv_observer_get_user_data(observer);
+  if (httpd_handle == NULL)
+  {
+    ESP_LOGW(TAG, "httpd_handle is NULL, can't send message about target temperature");
+    return;
+  }
+
+  const double *temperature_ptr = lv_subject_get_pointer(subject);
+  if (temperature_ptr == NULL)
+  {
+    return;
+  }
+  double target_temp = *temperature_ptr;
+
+  cJSON *response_root = cJSON_CreateObject();
+  if (response_root == NULL)
+  {
+    ESP_LOGE(TAG, "Failed to create JSON root object");
+    return;
+  }
+
+  cJSON_AddStringToObject(response_root, COMMON_FIELD_TYPE, "target_temp");
+
+  cJSON *payload = cJSON_CreateObject();
+  if (payload == NULL)
+  {
+    ESP_LOGE(TAG, "Failed to create JSON payload object");
+    cJSON_Delete(response_root);
+    return;
+  }
+  cJSON_AddItemToObject(response_root, COMMON_FIELD_PAYLOAD, payload);
+
+  time_t now;
+  time(&now);
+  cJSON_AddNumberToObject(payload, "timestamp", now);
+
+  cJSON *value = cJSON_CreateNumber((double)target_temp); // Use cJSON_CreateNumber()
+  if (value == NULL)
+  {
+    ESP_LOGE(TAG, "Failed to create JSON number");
+    cJSON_Delete(response_root);
+    return;
+  }
+  cJSON_AddItemToObject(payload, "value", value);
+
+  char *data = cJSON_Print(response_root);
+  cJSON_Delete(response_root);
+
+  esp_err_t ret = send_ws_message(httpd_handle, data);
+  if (ret)
+  {
+    ESP_LOGW(TAG, "Failed to send message about current temperature change");
+  }
+  free(data);
+}
+
 void init_ws_observer(state_subjects_t *state_subjects, httpd_handle_t httpd_handle)
 {
   lv_subject_add_observer(&state_subjects->current_temp, current_temp_handler, httpd_handle);
+  lv_subject_add_observer(&state_subjects->target_temp, target_temp_handler, httpd_handle);
 }
 
 ws_message_handler_t create_handler()

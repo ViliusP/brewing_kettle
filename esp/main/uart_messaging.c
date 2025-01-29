@@ -24,7 +24,6 @@ static state_subjects_t *state_subjects;
 entity_handler_map_t entity_handlers[] = {
     {"current_temperature", handle_current_temperature_data},
     {"target_temperature", handle_target_temperature_data},
-    // ... more entities
 };
 
 void handle_current_temperature_data(CborValue *value)

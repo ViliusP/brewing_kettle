@@ -4,6 +4,8 @@
 #include "lwip/inet.h"
 #include "lvgl.h"
 
+#define ABSOLUTE_ZERO -273.15f
+
 typedef enum
 {
     CLEINT_STATUS_UNKNOWN = -1,
