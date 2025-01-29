@@ -30,7 +30,7 @@ void app_main(void)
         esp_err_t ret = get_temperature(ds18b20_handle, &app_state.current_temp);
         if (ret == ESP_OK)
         {
-            send_temperature_data(app_state.current_temp);
+            send_entity_data(CURRENT_TEMP_ENTITY, app_state.current_temp);
             ESP_LOGI(TAG, "current_temp: %.2f, target_temp: %.2f.", app_state.current_temp, app_state.target_temp);
         }
         else

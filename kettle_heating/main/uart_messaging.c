@@ -1,9 +1,8 @@
 #include "cbor.h"
 #include "uart_communication.h"
+#include "uart_messaging.h"
 #include "esp_log.h"
 #include "state.h"
-
-
 
 #define ENTITY_BUFFER_SIZE 64
 
@@ -28,7 +27,7 @@ entity_handler_map_t entity_handlers[] = {
 };
 
 
-int send_temperature_data(float temperature) {
+int send_entity_data(const char *entity, float value) {
     uint8_t cbor_buffer[256]; // Adjust size as needed
     CborEncoder encoder, map_encoder, payload_encoder;
 
@@ -37,17 +36,17 @@ int send_temperature_data(float temperature) {
     CborError err = CborNoError;
 
     // Outer map
-    err |= cbor_encoder_create_map(&encoder, &map_encoder, 2); // 2 items: type and payload
+    err |= cbor_encoder_create_map(&encoder, &map_encoder, 2); // 2 items: entity and payload
 
-    // "type": "temperature"
+    // "entity": entity
     err |= cbor_encode_text_string(&map_encoder, "entity", strlen("entity"));
-    err |= cbor_encode_text_string(&map_encoder, "current_temperature", strlen("current_temperature"));
+    err |= cbor_encode_text_string(&map_encoder, entity, strlen(entity));
 
-    // "payload": { "value": temperature }
+    // "payload": { "value": value }
     err |= cbor_encode_text_string(&map_encoder, "payload", strlen("payload"));
     err |= cbor_encoder_create_map(&map_encoder, &payload_encoder, 1); // Payload map
     err |= cbor_encode_text_string(&payload_encoder, "value", strlen("value"));
-    err |= cbor_encode_float(&payload_encoder, temperature);
+    err |= cbor_encode_float(&payload_encoder, value);
     err |= cbor_encoder_close_container(&map_encoder, &payload_encoder); // Close payload map
 
     err |= cbor_encoder_close_container(&encoder, &map_encoder); // Close outer map
@@ -87,8 +86,8 @@ void handle_target_temperature_data(CborValue *value)
         cbor_value_get_double(value, &temperature);
     }
 
-    ESP_LOGI("TEMP", "Target temperature: %.5f", temperature);
     app_state->target_temp = temperature;
+    send_entity_data(TARGET_TEMP_ENTITY, app_state->target_temp);
 }
 
 void uart_message_handler(const uint8_t *data, int len)
