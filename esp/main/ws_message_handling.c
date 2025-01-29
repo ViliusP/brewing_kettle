@@ -332,7 +332,7 @@ static esp_err_t handle_message(httpd_ws_frame_t *frame, char **data)
     }
     break;
   case MESSAGE_SET_TARGET_TEMP:
-    uart_send_data(compose_message(MESSAGE_TYPE_SET, MESSAGE_ENTITY_TARGET_TEMPERATURE, 0));
+    // uart_send_uint32(compose_set_target_temp_msg(20.0f));
     break;
   default:
     ESP_LOGD(TAG, "Unknown type");

@@ -14,6 +14,7 @@
 #include "uart_communication.h"
 #include "esp_system.h"
 #include "ws_message_handling.h"
+#include "uart_messaging.h"
 #include "state.h"
 #include "configuration.h"
 #include <esp_sntp.h>
@@ -130,7 +131,7 @@ void app_main(void)
     
     // ================ UART ===================
     initialize_uart(uart_config, UART_TX_PIN, UART_RX_PIN);
-    start_uart_task((rx_task_callback_t)&uart_message_handling);
+    start_uart_task((rx_task_callback_t)&uart_message_handler);
     // ==========================================
 
     // ================ keyboard ===================
