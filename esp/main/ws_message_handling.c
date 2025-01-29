@@ -9,6 +9,7 @@
 #include "utilities.h"
 #include "ws_server.h"
 #include "uart_communication.h"
+#include "uart_messaging.h"
 
 #define COMMON_FIELD_ID "id"
 #define COMMON_FIELD_TYPE "type"
@@ -332,7 +333,7 @@ static esp_err_t handle_message(httpd_ws_frame_t *frame, char **data)
     }
     break;
   case MESSAGE_SET_TARGET_TEMP:
-    // uart_send_uint32(compose_set_target_temp_msg(20.0f));
+    send_set_target_temperature(20.0f);
     break;
   default:
     ESP_LOGD(TAG, "Unknown type");
