@@ -173,7 +173,7 @@ static void rx_task(void *arg)
                 // Attempt to decode the message
                 if (decode_message(persistent_buffer + processed, total_message_length, &received_msg) == 0)
                 {
-                    ESP_LOGI(RX_TASK_TAG, "Decoded: Command %d, Data Length %d", received_msg.command, received_msg.data_len);
+                    ESP_LOGD(RX_TASK_TAG, "Decoded: Command %d, Data Length %d", received_msg.command, received_msg.data_len);
 
                     // Call callback or handle the message
                     if (callback)
@@ -189,8 +189,8 @@ static void rx_task(void *arg)
                         callback((const char *)received_msg.data, received_msg.data_len);
                     }
                     else
-                    {
-                        ESP_LOGI(RX_TASK_TAG, "Data: %.*s", received_msg.data_len, received_msg.data);
+                    {   
+                        ESP_LOGW(RX_TASK_TAG, "No callback defined");
                     }
 
                     processed += total_message_length; // Move to next message
