@@ -60,18 +60,24 @@ ds18b20_device_handle_t initialize_temperature_sensor(void)
     return NULL; // Return NULL if no DS18B20 device is found
 }
 
-
-float get_temperature(ds18b20_device_handle_t device_handle)
+esp_err_t get_temperature(ds18b20_device_handle_t device_handle, float *temperature)
 {
-    if(device_handle == NULL) {
+    if (device_handle == NULL)
+    {
         ESP_LOGW(TAG, "DS18B20 device handle is NULL");
-        return -55.0f; 
+        return ESP_ERR_INVALID_ARG;
     }
-    float temperature;
-   
-    ESP_ERROR_CHECK(ds18b20_trigger_temperature_conversion(device_handle));
-    ESP_ERROR_CHECK(ds18b20_get_temperature(device_handle, &temperature));
-    ESP_LOGI(TAG, "temperature read from DS18B20: %.2fC", temperature);
-
-    return temperature;
+    esp_err_t ret = ds18b20_trigger_temperature_conversion(device_handle);
+    if (ret != ESP_OK)
+    {
+        ESP_LOGW(TAG, "Couldn't trigger temperature conversion");
+        return ret;
+    }
+    ret = ds18b20_get_temperature(device_handle, temperature);
+    if (ret != ESP_OK)
+    {
+        ESP_LOGW(TAG, "Couldn't get temperature from DS18B20");
+        return ret;
+    }
+    return ESP_OK;
 }
