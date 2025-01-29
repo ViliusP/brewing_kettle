@@ -129,9 +129,17 @@ void app_main(void)
     ESP_LOGI(TAG, "Hello, World!");
     ESP_LOGI(TAG, "Boot count: %d", boot_count);
     
+    initialize_display();
+
+    // ================ state ===================
+    state_subjects_t *state_subjects = init_state_subjects();
+    ws_client_changed_cb_t ws_client_change_cb = (ws_client_changed_cb_t)&connected_client_data_notify;
+    // ==========================================
+
     // ================ UART ===================
+    rx_task_callback_t uart_message_handler = init_uart_message_handler(state_subjects);
     initialize_uart(uart_config, UART_TX_PIN, UART_RX_PIN);
-    start_uart_task((rx_task_callback_t)&uart_message_handler);
+    start_uart_task(uart_message_handler);
     // ==========================================
 
     // ================ keyboard ===================
@@ -142,13 +150,6 @@ void app_main(void)
     // matrix_kbd_register_event_handler(kbd, example_matrix_kbd_event_handler, NULL);
     // // // Keyboard start to work
     // matrix_kbd_start(kbd);
-    // ==========================================
-
-    initialize_display();
-
-    // ================ state ===================
-    state_subjects_t *state_subjects = init_state_subjects();
-    ws_client_changed_cb_t ws_client_change_cb = (ws_client_changed_cb_t)&connected_client_data_notify;
     // ==========================================
 
     // ================= UI =====================

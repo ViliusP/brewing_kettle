@@ -1,11 +1,12 @@
 #include "cbor.h"
 #include "esp_log.h"
-
-static const char *TAG = "UART_MESSAGING";
+#include "uart_communication.h"
+#include "common_types.h"
 
 #define ENTITY_BUFFER_SIZE 64
 
-static char entity_buffer[ENTITY_BUFFER_SIZE];
+void handle_current_temperature_data(CborValue *value);
+void handle_target_temperature_data(CborValue *value);
 
 typedef void (*entity_handler_t)(CborValue *);
 
@@ -15,8 +16,9 @@ typedef struct
     entity_handler_t handler_function;
 } entity_handler_map_t;
 
-void handle_current_temperature_data(CborValue *value);
-void handle_target_temperature_data(CborValue *value);
+static const char *TAG = "UART_MESSAGING";
+static char entity_buffer[ENTITY_BUFFER_SIZE];
+static state_subjects_t *state_subjects;
 
 // Array of entity handler mappings
 entity_handler_map_t entity_handlers[] = {
@@ -160,4 +162,11 @@ void uart_message_handler(const uint8_t *data, int len)
     }
 
     ESP_LOGW(TAG, "No handler found for entity: %s", entity_buffer);
+}
+
+
+rx_task_callback_t init_uart_message_handler(state_subjects_t *arg_state_subjects)
+{
+    state_subjects = arg_state_subjects;
+    return (rx_task_callback_t)&uart_message_handler;
 }
