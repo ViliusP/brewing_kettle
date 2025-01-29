@@ -353,8 +353,12 @@ static void current_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
     return;
   }
 
-  int temp_value = lv_subject_get_int(subject);
-  float current_temp = temp_to_float(temp_value);
+  const double *temperature_ptr = lv_subject_get_pointer(subject);
+  if (temperature_ptr == NULL)
+  {
+      return;
+  }
+  double current_temp = *temperature_ptr;
 
   cJSON *response_root = cJSON_CreateObject();
   if (response_root == NULL)
