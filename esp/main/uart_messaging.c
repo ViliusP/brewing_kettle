@@ -47,7 +47,6 @@ void handle_current_temperature_data(CborValue *value)
         cbor_value_get_double(value, &temperature);
     }
     lv_subject_set_pointer(&state_subjects->current_temp, &temperature);
-    ESP_LOGI(TAG, "Current temperature: %.5f", temperature);
 }
 
 void handle_target_temperature_data(CborValue *value)
@@ -135,7 +134,7 @@ void uart_message_handler(const uint8_t *data, int len)
     {
         if (strcmp(entity_buffer, entity_handlers[i].entity_name) == 0)
         {
-            ESP_LOGI(TAG, "Calling handler for entity: %s", entity_buffer);
+            ESP_LOGD(TAG, "Calling handler for entity: %s", entity_buffer);
 
             CborValue payload_value; // No longer const
 
