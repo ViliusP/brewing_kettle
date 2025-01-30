@@ -82,7 +82,7 @@ void pid_auto_tune(pid_auto_tune_t *tuner, float process_variable) {
     }
 
     // Apply relay output
-    float output = relay_state ? tuner->output_high : tuner->output_low;
+    tuner->output = relay_state ? tuner->output_high : tuner->output_low;
 
     // Detect peaks (simplified logic)
     if ((process_variable > last_pv && process_variable > tuner->setpoint) ||

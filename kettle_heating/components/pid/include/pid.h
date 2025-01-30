@@ -24,9 +24,12 @@ typedef struct {
     float sample_time_sec;   // Tuning loop interval
     float Ku;                // Ultimate gain (from Ziegler-Nichols)
     float Tu;                // Ultimate period (seconds)
+    float output;            // Current relay output (ADD THIS LINE)
 } pid_auto_tune_t;
 
 void pid_init(pid_controller_t *pid, float Kp, float Ki, float Kd, float setpoint, float sample_time, float output_min, float output_max);
 float pid_update(pid_controller_t *pid, float process_variable);
+void apply_ziegler_nichols(pid_controller_t *pid, pid_auto_tune_t *tuner);
+void pid_auto_tune(pid_auto_tune_t *tuner, float process_variable);
 
 #endif // PID_H_
