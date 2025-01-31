@@ -1,23 +1,15 @@
+import 'package:brew_kettle_dashboard/core/data/storages/sharedpref/shared_preference_helper.dart';
+
 class Repository {
-  // // Sub repos
-  // final SharedPreferenceHelper _sharedPrefsHelper;
-  // final AbstractStopsRepository _stops;
-  // final AbstractTagsRepository _tags;
-  // final AbstractVehiclesRepository _vehicles;
-  // final AbstractSecretsRepository _secrets;
+  // Sub repos
+
+  final SharedPreferenceHelper _sharedPrefsHelper;
 
   Repository(
-      // this._stops,
-      // this._tags,
-      // this._vehicles,
-      // this._sharedPrefsHelper,
-      // this._secrets,
-      );
+    this._sharedPrefsHelper,
+  );
 
-  // SharedPreferenceHelper get sharedPreferences => _sharedPrefsHelper;
-
-  // AbstractStopsRepository get stops => _stops;
-  // AbstractVehiclesRepository get vehicles => _vehicles;
-  // AbstractTagsRepository get tags => _tags;
-  // AbstractSecretsRepository get secrets => _secrets;
+  SharedPreferenceHelper get sharedPreferences {
+    return _sharedPrefsHelper;
+  }
 }

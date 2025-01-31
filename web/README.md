@@ -17,6 +17,8 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Development
 
+To generate *MobX* stores:
+
 ```sh
 dart run build_runner build --delete-conflicting-outputs
 ```
@@ -25,4 +27,10 @@ or
 
 ```sh
 dart run build_runner watch
+```
+
+To generate *l10n*:
+
+```sh
+flutter gen-l10n
 ```
