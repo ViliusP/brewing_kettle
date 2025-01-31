@@ -37,12 +37,16 @@
   "@pSettingsSectionGeneralTitle": {
     "description": "Title for general section at settings page"
   },
+  "pSettingsLanguage": "Language",
+  "@pSettingsLanguage": {
+    "description": "Setting name for language"
+  },
   "cLanguageSelectDialogTitle": "Select language",
   "@cLanguageSelectDialogTitle": {
     "description": "Title for language select dialog, showed at top of component"
   },
-  "pageSettingsInputLanguage": "{locale, select, ar {عربي} en {English} es {Español} other {-}}",
-  "@pageSettingsInputLanguage": {
+  "pSettingsInputLanguage": "{locale, select, lt {Lithuanian} en {English} lv {Latvian} other {unknown}}",
+  "@pSettingsInputLanguage": {
     "placeholders": {
       "locale": {
         "type": "String"

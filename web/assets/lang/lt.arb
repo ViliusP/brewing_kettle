@@ -26,10 +26,12 @@
       }
     }
   },
-  "pageSettingsTitle": "Ajustes",
-  "@pageSettingsTitle": {},
-  "pageSettingsInputLanguage": "{locale, select, ar {\u0639\u0631\u0628\u064a} en {English} es {Espa�ol} other {-}}",
-  "@pageSettingsInputLanguage": {
+  "pSettingsTitle": "Nustatymai",
+  "pSettingsSectionGeneralTitle": "Bendri",
+  "pSettingsLanguage": "Kalba",
+  "cLanguageSelectDialogTitle": "Pasirinkite kalbą",
+  "pSettingsInputLanguage": "{locale, select, lt {Lietuvių} en {Anglų} lv {Latvių} other {nežinoma}}",
+  "@pSettingsInputLanguage": {
     "placeholders": {
       "locale": {
         "type": "String"

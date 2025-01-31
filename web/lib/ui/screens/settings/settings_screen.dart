@@ -1,23 +1,36 @@
+import 'package:brew_kettle_dashboard/core/service_locator.dart';
+import 'package:brew_kettle_dashboard/localizations/localization.dart';
+import 'package:brew_kettle_dashboard/stores/locale/locale_store.dart';
 import 'package:brew_kettle_dashboard/ui/common/flags/country_flag.dart';
 import 'package:brew_kettle_dashboard/ui/screens/settings/language_select_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
-  Future<void> _dialogBuilder(BuildContext context) {
-    return showDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return LanguageSelectDialog();
-        });
+  Future<void> _dialogBuilder(BuildContext context) async {
+    LocaleStore localeStore = getIt<LocaleStore>();
+
+    Locale? returnedValue = await showDialog<Locale>(
+      context: context,
+      builder: (BuildContext context) {
+        return LanguageSelectDialog(currentLocale: localeStore.locale);
+      },
+    );
+
+    if (returnedValue != null) {
+      localeStore.changeLanguage(returnedValue);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    ColorScheme colorScheme = Theme.of(context).colorScheme;
-    TextTheme textTheme = TextTheme.of(context);
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = TextTheme.of(context);
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
+    final LocaleStore localeStore = getIt<LocaleStore>();
 
     return Center(
       child: ConstrainedBox(
@@ -28,7 +41,7 @@ class SettingsScreen extends StatelessWidget {
               return Column(
                 children: [
                   SettingsCard(
-                    title: "General",
+                    title: localizations.pSettingsSectionGeneralTitle,
                     child: Column(
                       children: [
                         Card.outlined(
@@ -62,13 +75,19 @@ class SettingsScreen extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    "Language",
+                                    localizations.pSettingsLanguage,
                                     style: textTheme.bodyLarge,
                                   ),
                                   Spacer(),
                                   SizedBox(
                                     height: 20,
-                                    child: CountryFlag(code: CountryCode.lt),
+                                    child: Observer(builder: (context) {
+                                      return CountryFlag(
+                                        code: CountryCode.fromLanguageCode(
+                                          localeStore.locale.languageCode,
+                                        ),
+                                      );
+                                    }),
                                   )
                                 ],
                               ),

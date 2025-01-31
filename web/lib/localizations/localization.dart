@@ -143,17 +143,23 @@ abstract class AppLocalizations {
   /// **'General'**
   String get pSettingsSectionGeneralTitle;
 
+  /// Setting name for language
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get pSettingsLanguage;
+
   /// Title for language select dialog, showed at top of component
   ///
   /// In en, this message translates to:
   /// **'Select language'**
   String get cLanguageSelectDialogTitle;
 
-  /// No description provided for @pageSettingsInputLanguage.
+  /// No description provided for @pSettingsInputLanguage.
   ///
   /// In en, this message translates to:
-  /// **'{locale, select, ar {عربي} en {English} es {Español} other {-}}'**
-  String pageSettingsInputLanguage(String locale);
+  /// **'{locale, select, lt {Lithuanian} en {English} lv {Latvian} other {unknown}}'**
+  String pSettingsInputLanguage(String locale);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

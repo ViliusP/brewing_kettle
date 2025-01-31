@@ -48,17 +48,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pSettingsSectionGeneralTitle => 'General';
 
   @override
+  String get pSettingsLanguage => 'Language';
+
+  @override
   String get cLanguageSelectDialogTitle => 'Select language';
 
   @override
-  String pageSettingsInputLanguage(String locale) {
+  String pSettingsInputLanguage(String locale) {
     String _temp0 = intl.Intl.selectLogic(
       locale,
       {
-        'ar': 'عربي',
+        'lt': 'Lithuanian',
         'en': 'English',
-        'es': 'Español',
-        'other': '-',
+        'lv': 'Latvian',
+        'other': 'unknown',
       },
     );
     return '$_temp0';

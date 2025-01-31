@@ -7,6 +7,14 @@ enum CountryCode {
   lt,
   gb,
   lv;
+
+  static CountryCode fromLanguageCode(String value) {
+    return switch (value) {
+      "en" => CountryCode.gb,
+      "lt" => CountryCode.lt,
+      _ => CountryCode.lv,
+    };
+  }
 }
 
 class CountryFlag extends StatelessWidget {

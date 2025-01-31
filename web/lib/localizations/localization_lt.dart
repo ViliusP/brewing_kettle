@@ -42,23 +42,26 @@ class AppLocalizationsLt extends AppLocalizations {
   }
 
   @override
-  String get pSettingsTitle => 'Settings';
+  String get pSettingsTitle => 'Nustatymai';
 
   @override
-  String get pSettingsSectionGeneralTitle => 'General';
+  String get pSettingsSectionGeneralTitle => 'Bendri';
 
   @override
-  String get cLanguageSelectDialogTitle => 'Select language';
+  String get pSettingsLanguage => 'Kalba';
 
   @override
-  String pageSettingsInputLanguage(String locale) {
+  String get cLanguageSelectDialogTitle => 'Pasirinkite kalbą';
+
+  @override
+  String pSettingsInputLanguage(String locale) {
     String _temp0 = intl.Intl.selectLogic(
       locale,
       {
-        'ar': 'عربي',
-        'en': 'English',
-        'es': 'Espa�ol',
-        'other': '-',
+        'lt': 'Lietuvių',
+        'en': 'Anglų',
+        'lv': 'Latvių',
+        'other': 'nežinoma',
       },
     );
     return '$_temp0';

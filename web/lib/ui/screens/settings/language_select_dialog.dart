@@ -3,32 +3,32 @@ import 'package:brew_kettle_dashboard/ui/common/flags/country_flag.dart';
 import 'package:flutter/material.dart';
 
 class LanguageSelectDialog extends StatelessWidget {
-  const LanguageSelectDialog({super.key});
+  final Locale? currentLocale;
+
+  const LanguageSelectDialog({super.key, this.currentLocale});
 
   @override
   Widget build(BuildContext context) {
-    List<String> languageCodes = AppLocalizations.supportedLocales
-        .map(
-          (l) => l.languageCode,
-        )
-        .toList();
+    final localizations = AppLocalizations.of(context)!;
 
     return AlertDialog(
-      title: Text(AppLocalizations.of(context)!.cLanguageSelectDialogTitle),
+      title: Text(localizations.cLanguageSelectDialogTitle),
       content: SizedBox(
         width: 260,
         child: ListView.builder(
           shrinkWrap: true,
           primary: false,
-          itemCount: languageCodes.length,
+          itemCount: AppLocalizations.supportedLocales.length,
           itemBuilder: (BuildContext context, int index) {
-            CountryCode code = switch (languageCodes[index]) {
+            Locale locale = AppLocalizations.supportedLocales[index];
+            CountryCode code = switch (locale.languageCode) {
               "en" => CountryCode.gb,
               "lt" => CountryCode.lt,
               _ => CountryCode.lv,
             };
 
             return ListTile(
+              selected: currentLocale == locale,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
               ),
@@ -36,8 +36,10 @@ class LanguageSelectDialog extends StatelessWidget {
                 width: 30,
                 child: CountryFlag(code: code),
               ),
-              title: Text('Map'),
-              onTap: () => Navigator.of(context).pop(),
+              title: Text(
+                localizations.pSettingsInputLanguage(locale.languageCode),
+              ),
+              onTap: () => Navigator.of(context).pop(locale),
             );
           },
         ),
