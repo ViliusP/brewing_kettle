@@ -33,15 +33,15 @@ abstract class _LocaleStore with Store {
   @action
   void changeLanguage(Locale locale) {
     _locale = locale;
-    _repository.sharedPreferences.changeLanguage(locale.languageCode);
+    _repository.sharedPreferences.changeLocale(locale.languageCode);
   }
 
   // ======================
   // General:
   // ======================
   void _init() async {
-    String rawLocale = _repository.sharedPreferences.currentLocale ?? "en";
-    _locale = switch (rawLocale) {
+    String prefLocale = _repository.sharedPreferences.locale ?? "en";
+    _locale = switch (prefLocale) {
       "en" => Locale("en"),
       "lt" => Locale("lt"),
       _ => AppLocalizations.supportedLocales.first,

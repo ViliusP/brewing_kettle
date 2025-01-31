@@ -14,7 +14,7 @@ class LanguageSelectDialog extends StatelessWidget {
         .toList();
 
     return AlertDialog(
-      title: const Text('Select language'),
+      title: Text(AppLocalizations.of(context)!.cLanguageSelectDialogTitle),
       content: SizedBox(
         width: 260,
         child: ListView.builder(
