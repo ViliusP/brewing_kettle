@@ -124,6 +124,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{locale, select, lt {Lithuanian} en {English} lv {Latvian} other {unknown}}'**
   String pSettingsInputLanguage(String locale);
+
+  /// Setting name for the current theme change
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get pSettingsTheme;
+
+  /// Title for theme select dialog, showed at top of component
+  ///
+  /// In en, this message translates to:
+  /// **'Select theme'**
+  String get cThemeSelectDialogTitle;
+
+  /// Names for all available themes in application
+  ///
+  /// In en, this message translates to:
+  /// **'{theme, select, light {Light} lightMediumContrast {Light - medium contrast} lightHighContrast {Light - high contrast} dark {Dark} darkMediumContrast {Dark - medium contrast} darkHighContrast {Dark - high contrast} other {unknown}}'**
+  String pSettingsThemeNames(String theme);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

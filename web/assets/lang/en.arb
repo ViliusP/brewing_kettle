@@ -23,5 +23,22 @@
         "type": "String"
       }
     }
+  },
+  "pSettingsTheme": "Theme",
+  "@pSettingsTheme": {
+    "description": "Setting name for the current theme change"
+  },
+  "cThemeSelectDialogTitle": "Select theme",
+  "@cThemeSelectDialogTitle": {
+    "description": "Title for theme select dialog, showed at top of component"
+  },  
+  "pSettingsThemeNames": "{theme, select, light {Light} lightMediumContrast {Light - medium contrast} lightHighContrast {Light - high contrast} dark {Dark} darkMediumContrast {Dark - medium contrast} darkHighContrast {Dark - high contrast} other {unknown}}",
+  "@pSettingsThemeNames": {
+    "description": "Names for all available themes in application",
+    "placeholders": {
+      "theme": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -33,4 +33,27 @@ class AppLocalizationsLt extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get pSettingsTheme => 'Tema';
+
+  @override
+  String get cThemeSelectDialogTitle => 'Pasirinkite temą';
+
+  @override
+  String pSettingsThemeNames(String theme) {
+    String _temp0 = intl.Intl.selectLogic(
+      theme,
+      {
+        'light': 'Šviesi',
+        'lightMediumContrast': 'Šviesi - vidutinio kontrasto',
+        'lightHighContrast': 'Šviesi - didelio kontrasto',
+        'dark': 'Tamsi',
+        'darkMediumContrast': 'Tamsi - vidutinio kontrasto',
+        'darkHighContrast': 'Tamsi - didelio kontrasto',
+        'other': 'nežinoma tema',
+      },
+    );
+    return '$_temp0';
+  }
 }

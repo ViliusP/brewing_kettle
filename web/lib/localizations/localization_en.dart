@@ -33,4 +33,27 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get pSettingsTheme => 'Theme';
+
+  @override
+  String get cThemeSelectDialogTitle => 'Select theme';
+
+  @override
+  String pSettingsThemeNames(String theme) {
+    String _temp0 = intl.Intl.selectLogic(
+      theme,
+      {
+        'light': 'Light',
+        'lightMediumContrast': 'Light - medium contrast',
+        'lightHighContrast': 'Light - high contrast',
+        'dark': 'Dark',
+        'darkMediumContrast': 'Dark - medium contrast',
+        'darkHighContrast': 'Dark - high contrast',
+        'other': 'unknown',
+      },
+    );
+    return '$_temp0';
+  }
 }

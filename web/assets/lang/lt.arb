@@ -11,5 +11,15 @@
         "type": "String"
       }
     }
+  },
+  "pSettingsTheme": "Tema",
+  "cThemeSelectDialogTitle": "Pasirinkite temą",
+  "pSettingsThemeNames": "{theme, select, light {Šviesi} lightMediumContrast {Šviesi - vidutinio kontrasto} lightHighContrast {Šviesi - didelio kontrasto} dark {Tamsi} darkMediumContrast {Tamsi - vidutinio kontrasto} darkHighContrast {Tamsi - didelio kontrasto} other {nežinoma tema}}",
+  "@pSettingsThemeNames": {
+    "placeholders": {
+      "theme": {
+        "type": "String"
+      }
+    }
   }
 }
