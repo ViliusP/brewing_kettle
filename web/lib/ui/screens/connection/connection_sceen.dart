@@ -48,6 +48,8 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
     );
 
     _ipFormController.addListener(() => setSelectedChip());
+
+    _networkScannerStore.start();
     super.initState();
   }
 
