@@ -72,40 +72,39 @@ class TargetTempTile extends StatelessWidget {
             ],
           ),
         ),
+        VerticalDivider(indent: 16, endIndent: 16, width: 0),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: VerticalDivider(indent: 16, endIndent: 16, width: 0),
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              onPressed: () {
-                double currentTarget = _tempStore.lastRequestedTemperature ??
-                    _defaultTargetTemperature;
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                onPressed: () {
+                  double currentTarget = _tempStore.lastRequestedTemperature ??
+                      _defaultTargetTemperature;
 
-                _tempStore.changeTargetTemperature(
-                  currentTarget + _temperatureChangeStep,
-                );
-              },
-              icon: Icon(MdiIcons.arrowUpDropCircleOutline),
-              iconSize: 60,
-            ),
-            IconButton(
-              onPressed: () {
-                double currentTarget = _tempStore.lastRequestedTemperature ??
-                    _defaultTargetTemperature;
+                  _tempStore.changeTargetTemperature(
+                    currentTarget + _temperatureChangeStep,
+                  );
+                },
+                icon: Icon(MdiIcons.arrowUpDropCircleOutline),
+                iconSize: 60,
+              ),
+              IconButton(
+                onPressed: () {
+                  double currentTarget = _tempStore.lastRequestedTemperature ??
+                      _defaultTargetTemperature;
 
-                _tempStore.changeTargetTemperature(
-                  currentTarget - _temperatureChangeStep,
-                );
-              },
-              icon: Icon(MdiIcons.arrowDownDropCircleOutline),
-              iconSize: 60,
-            )
-          ],
+                  _tempStore.changeTargetTemperature(
+                    currentTarget - _temperatureChangeStep,
+                  );
+                },
+                icon: Icon(MdiIcons.arrowDownDropCircleOutline),
+                iconSize: 60,
+              )
+            ],
+          ),
         ),
-        const Padding(padding: EdgeInsets.only(left: 12)),
       ],
     );
   }
