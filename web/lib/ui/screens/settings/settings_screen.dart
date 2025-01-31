@@ -46,8 +46,9 @@ class SettingsScreen extends StatelessWidget {
     final ThemeStore themeStore = getIt<ThemeStore>();
 
     return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: 800),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+        constraints: BoxConstraints(maxWidth: 816),
         child: SingleChildScrollView(
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -182,13 +183,11 @@ class SettingsButton extends StatelessWidget {
             children: [
               if (icon != null) icon!,
               Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 2,
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: DefaultTextStyle(
+                  style: textTheme.bodyLarge ?? TextStyle(),
+                  child: child,
                 ),
-              ),
-              DefaultTextStyle(
-                style: textTheme.bodyLarge ?? TextStyle(),
-                child: child,
               ),
               Spacer(),
               if (trailing != null)
