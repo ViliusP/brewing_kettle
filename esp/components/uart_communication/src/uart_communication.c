@@ -112,7 +112,7 @@ static void rx_task(void *arg)
     while (1)
     {
         uint8_t temp_buffer[RX_BUF_SIZE];
-        const int rx_bytes = uart_read_bytes(UART_NUM_1, temp_buffer, RX_BUF_SIZE, 1000 / portTICK_PERIOD_MS);
+        const int rx_bytes = uart_read_bytes(UART_NUM_1, temp_buffer, RX_BUF_SIZE, pdMS_TO_TICKS(250));
         if (rx_bytes > 0)
         {
             // Handle buffer overflow by discarding old data
