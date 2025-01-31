@@ -4,6 +4,7 @@ import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_conn
 import 'package:brew_kettle_dashboard/ui/routing.dart';
 import 'package:brew_kettle_dashboard/utils/enum_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:go_router/go_router.dart';
 
 class DefaultLayout extends StatefulWidget {
@@ -36,7 +37,7 @@ class _DefaultLayoutState extends State<DefaultLayout> {
   static int? _routeToIndex(AppRoute route) {
     return switch (route) {
       AppRoute.main => 0,
-      AppRoute.device => 1,
+      AppRoute.settings => 1,
       AppRoute.test => 2,
       _ => null,
     };
@@ -45,7 +46,7 @@ class _DefaultLayoutState extends State<DefaultLayout> {
   static AppRoute? _indexToRoute(int index) {
     return switch (index) {
       0 => AppRoute.main,
-      1 => AppRoute.device,
+      1 => AppRoute.settings,
       2 => AppRoute.test,
       _ => null,
     };
@@ -116,35 +117,14 @@ class _DefaultLayoutState extends State<DefaultLayout> {
                     labelType: NavigationRailLabelType.all,
                     destinations: <NavigationRailDestination>[
                       NavigationRailDestination(
-                        icon: Icon(Icons.favorite_border),
-                        selectedIcon: Icon(Icons.favorite),
-                        label: Text('First'),
+                        icon: Icon(MdiIcons.homeOutline),
+                        selectedIcon: Icon(MdiIcons.home),
+                        label: Text('Home'),
                       ),
                       NavigationRailDestination(
-                        icon: Icon(Icons.bookmark_border),
-                        selectedIcon: Icon(Icons.book),
-                        label: Text('Second'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.star_border),
-                        selectedIcon: Icon(Icons.star),
-                        label: Text('Third'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.abc_rounded),
-                        selectedIcon: Icon(Icons.ac_unit),
-                        label: Text('Fourth'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.abc_rounded),
-                        selectedIcon: Icon(Icons.ac_unit),
-                        label: Text(
-                          GoRouter.of(context)
-                              .routeInformationProvider
-                              .value
-                              .uri
-                              .toString(),
-                        ),
+                        icon: Icon(MdiIcons.cogOutline),
+                        selectedIcon: Icon(MdiIcons.cog),
+                        label: Text('Settings'),
                       ),
                     ],
                   )

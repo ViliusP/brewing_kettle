@@ -3,8 +3,8 @@ import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:brew_kettle_dashboard/ui/layout/default_layout.dart';
 import 'package:brew_kettle_dashboard/ui/screens/connection/connection_sceen.dart';
-import 'package:brew_kettle_dashboard/ui/screens/device_info/device_info_screen.dart';
 import 'package:brew_kettle_dashboard/ui/screens/main/main_screen.dart';
+import 'package:brew_kettle_dashboard/ui/screens/settings/settings_screen.dart';
 import 'package:brew_kettle_dashboard/ui/screens/test/test_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -18,7 +18,7 @@ final GlobalKey<NavigatorState> _defaultLayoutNavigatorKey =
 enum AppRoute {
   main("/"),
   connection("/connection"),
-  device("/device"),
+  settings("/settings"),
   test("/test");
 
   const AppRoute(this.path);
@@ -77,9 +77,9 @@ class AppRouter {
               builder: (context, state) => const MainScreen(),
             ),
             GoRoute(
-              path: AppRoute.device.path,
-              name: AppRoute.device.name,
-              builder: (context, state) => DeviceInfoScreen(),
+              path: AppRoute.settings.path,
+              name: AppRoute.settings.name,
+              builder: (context, state) => SettingsScreen(),
             ),
             GoRoute(
               path: AppRoute.test.path,
