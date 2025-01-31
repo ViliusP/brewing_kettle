@@ -1,8 +1,5 @@
 {
   "@@locale": "lt",
-  "pageHomeTitle": "Recetas",
-  "pageHomeDrawerHeader": "Recetas",
-  "pageHomeDrawerListTileSettings": "Ajustes",
   "pageHomeRecipeAuthor": "por {name}",
   "@pageHomeRecipeAuthor": {
     "placeholders": {
@@ -29,13 +26,8 @@
       }
     }
   },
-  "pageHomeRecipeSaladName": "Ensalada",
-  "pageHomeRecipeSaladDescription": "Ensalada de verduras frescas llena de vitaminas, fibra y minerales.",
-  "pageHomeRecipeRiceName": "Arroz",
-  "pageHomeRecipeRiceDescription": "Arroz con verduras y frijoles. Una comida nutritiva alta en fibra.",
-  "pageHomeRecipeFriedEggsName": "Huevos fritos",
-  "pageHomeRecipeFriedEggsDescription": "Una comida llena de prote�nas y minerales.",
   "pageSettingsTitle": "Ajustes",
+  "@pageSettingsTitle": {},
   "pageSettingsInputLanguage": "{locale, select, ar {\u0639\u0631\u0628\u064a} en {English} es {Espa�ol} other {-}}",
   "@pageSettingsInputLanguage": {
     "placeholders": {

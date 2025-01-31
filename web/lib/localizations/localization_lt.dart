@@ -9,13 +9,13 @@ class AppLocalizationsLt extends AppLocalizations {
   AppLocalizationsLt([String locale = 'lt']) : super(locale);
 
   @override
-  String get pageHomeTitle => 'Recetas';
+  String get pageHomeTitle => 'Recipes';
 
   @override
-  String get pageHomeDrawerHeader => 'Recetas';
+  String get pageHomeDrawerHeader => 'Recipes';
 
   @override
-  String get pageHomeDrawerListTileSettings => 'Ajustes';
+  String get pageHomeDrawerListTileSettings => 'Settings';
 
   @override
   String pageHomeRecipeAuthor(String name) {
@@ -42,25 +42,13 @@ class AppLocalizationsLt extends AppLocalizations {
   }
 
   @override
-  String get pageHomeRecipeSaladName => 'Ensalada';
+  String get pSettingsTitle => 'Settings';
 
   @override
-  String get pageHomeRecipeSaladDescription => 'Ensalada de verduras frescas llena de vitaminas, fibra y minerales.';
+  String get pSettingsSectionGeneralTitle => 'General';
 
   @override
-  String get pageHomeRecipeRiceName => 'Arroz';
-
-  @override
-  String get pageHomeRecipeRiceDescription => 'Arroz con verduras y frijoles. Una comida nutritiva alta en fibra.';
-
-  @override
-  String get pageHomeRecipeFriedEggsName => 'Huevos fritos';
-
-  @override
-  String get pageHomeRecipeFriedEggsDescription => 'Una comida llena de prote�nas y minerales.';
-
-  @override
-  String get pageSettingsTitle => 'Ajustes';
+  String get cLanguageSelectDialogTitle => 'Select language';
 
   @override
   String pageSettingsInputLanguage(String locale) {

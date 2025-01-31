@@ -131,47 +131,23 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1 {{count} vote} other {{count} votes}}'**
   String pageHomeRecipeVotes(int count);
 
-  /// No description provided for @pageHomeRecipeSaladName.
-  ///
-  /// In en, this message translates to:
-  /// **'Salad'**
-  String get pageHomeRecipeSaladName;
-
-  /// No description provided for @pageHomeRecipeSaladDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Fresh vegetable salad full of vitamins, fiber and minerals.'**
-  String get pageHomeRecipeSaladDescription;
-
-  /// No description provided for @pageHomeRecipeRiceName.
-  ///
-  /// In en, this message translates to:
-  /// **'Rice'**
-  String get pageHomeRecipeRiceName;
-
-  /// No description provided for @pageHomeRecipeRiceDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Rice with vegetables and beans. A nutritious meal high in fiber.'**
-  String get pageHomeRecipeRiceDescription;
-
-  /// No description provided for @pageHomeRecipeFriedEggsName.
-  ///
-  /// In en, this message translates to:
-  /// **'Fried eggs'**
-  String get pageHomeRecipeFriedEggsName;
-
-  /// No description provided for @pageHomeRecipeFriedEggsDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'A meal full of protein and minerals.'**
-  String get pageHomeRecipeFriedEggsDescription;
-
-  /// No description provided for @pageSettingsTitle.
+  /// Title for settings page, show at top of the page
   ///
   /// In en, this message translates to:
   /// **'Settings'**
-  String get pageSettingsTitle;
+  String get pSettingsTitle;
+
+  /// Title for general section at settings page
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get pSettingsSectionGeneralTitle;
+
+  /// Title for language select dialog, showed at top of component
+  ///
+  /// In en, this message translates to:
+  /// **'Select language'**
+  String get cLanguageSelectDialogTitle;
 
   /// No description provided for @pageSettingsInputLanguage.
   ///

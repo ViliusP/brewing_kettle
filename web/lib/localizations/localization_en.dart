@@ -42,25 +42,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get pageHomeRecipeSaladName => 'Salad';
+  String get pSettingsTitle => 'Settings';
 
   @override
-  String get pageHomeRecipeSaladDescription => 'Fresh vegetable salad full of vitamins, fiber and minerals.';
+  String get pSettingsSectionGeneralTitle => 'General';
 
   @override
-  String get pageHomeRecipeRiceName => 'Rice';
-
-  @override
-  String get pageHomeRecipeRiceDescription => 'Rice with vegetables and beans. A nutritious meal high in fiber.';
-
-  @override
-  String get pageHomeRecipeFriedEggsName => 'Fried eggs';
-
-  @override
-  String get pageHomeRecipeFriedEggsDescription => 'A meal full of protein and minerals.';
-
-  @override
-  String get pageSettingsTitle => 'Settings';
+  String get cLanguageSelectDialogTitle => 'Select language';
 
   @override
   String pageSettingsInputLanguage(String locale) {
