@@ -95,42 +95,6 @@ abstract class AppLocalizations {
     Locale('lt')
   ];
 
-  /// No description provided for @pageHomeTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Recipes'**
-  String get pageHomeTitle;
-
-  /// No description provided for @pageHomeDrawerHeader.
-  ///
-  /// In en, this message translates to:
-  /// **'Recipes'**
-  String get pageHomeDrawerHeader;
-
-  /// No description provided for @pageHomeDrawerListTileSettings.
-  ///
-  /// In en, this message translates to:
-  /// **'Settings'**
-  String get pageHomeDrawerListTileSettings;
-
-  /// No description provided for @pageHomeRecipeAuthor.
-  ///
-  /// In en, this message translates to:
-  /// **'by {name}'**
-  String pageHomeRecipeAuthor(String name);
-
-  /// No description provided for @pageHomeRecipeCreated.
-  ///
-  /// In en, this message translates to:
-  /// **'created {date}'**
-  String pageHomeRecipeCreated(DateTime date);
-
-  /// The gen_l10n does not handle properly plural forms: zero, one, and two. Check the reported issue for more details: https://github.com/flutter/flutter/issues/84291
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1 {{count} vote} other {{count} votes}}'**
-  String pageHomeRecipeVotes(int count);
-
   /// Title for settings page, show at top of the page
   ///
   /// In en, this message translates to:

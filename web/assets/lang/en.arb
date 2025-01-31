@@ -1,34 +1,5 @@
 {
   "@@locale": "en",
-  "pageHomeTitle": "Recipes",
-  "pageHomeDrawerHeader": "Recipes",
-  "pageHomeDrawerListTileSettings": "Settings",
-  "pageHomeRecipeAuthor": "by {name}",
-  "@pageHomeRecipeAuthor": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "pageHomeRecipeCreated": "created {date}",
-  "@pageHomeRecipeCreated": {
-    "placeholders": {
-      "date": {
-        "type": "DateTime",
-        "format": "yMd"
-      }
-    }
-  },
-  "pageHomeRecipeVotes": "{count, plural, =1 {{count} vote} other {{count} votes}}",
-  "@pageHomeRecipeVotes": {
-    "description": "The gen_l10n does not handle properly plural forms: zero, one, and two. Check the reported issue for more details: https://github.com/flutter/flutter/issues/84291",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "pSettingsTitle": "Settings",
   "@pSettingsTitle": {
     "description": "Title for settings page, show at top of the page"
