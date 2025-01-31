@@ -22,14 +22,11 @@ class SharedPreferenceHelper {
   // ===============
   // Language:
   // ===============
-  String? get currentLocale {
+  String? get locale {
     return _sharedPreference.getString(PreferenceKey.currentLocale.key);
   }
 
-  Future changeLanguage(String language) {
-    return _sharedPreference.setString(
-      PreferenceKey.currentLocale.key,
-      language,
-    );
+  Future changeLocale(String value) {
+    return _sharedPreference.setString(PreferenceKey.currentLocale.key, value);
   }
 }

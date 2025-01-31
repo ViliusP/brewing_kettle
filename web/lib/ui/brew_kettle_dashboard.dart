@@ -1,6 +1,9 @@
 import 'package:brew_kettle_dashboard/constants/app.dart';
 import 'package:brew_kettle_dashboard/constants/theme.dart';
+import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
+import 'package:brew_kettle_dashboard/stores/locale/locale_store.dart';
+import 'package:brew_kettle_dashboard/stores/theme/theme_store.dart';
 import 'package:brew_kettle_dashboard/ui/routing.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -10,18 +13,19 @@ class BrewKettleDashboard extends StatelessWidget {
   // This widget is the root of your application.
   // Create your store as a final variable in a base Widget. This works better
   // with Hot Reload than creating it directly in the `build` function.
-  // final ThemeStore _themeStore = getIt<ThemeStore>();
-  // final LanguageStore _languageStore = getIt<LanguageStore>();
-  // final UserStore _userStore = getIt<UserStore>();
 
-  const BrewKettleDashboard({super.key});
+  final LocaleStore _localeStore = getIt<LocaleStore>();
+  final ThemeStore _themeStore = getIt<ThemeStore>();
+
+  BrewKettleDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = MaterialTheme.createTextTheme(
       context,
-      AppFontFamily.nunitoSans,
+      AppDefaults.font,
     );
+    MaterialTheme materialTheme = MaterialTheme(textTheme);
     return Observer(
       builder: (context) {
         return MaterialApp.router(
@@ -29,12 +33,16 @@ class BrewKettleDashboard extends StatelessWidget {
           scrollBehavior: AppScrollBehavior(),
           routerConfig: AppRouter.value,
           debugShowCheckedModeBanner: false,
-          title: AppConnstants.appName,
-          theme: MaterialTheme(textTheme).light(),
-          // theme: _themeStore.darkMode
-          //     ? AppThemeData.darkThemeData
-          //     : AppThemeData.lightThemeData,
-          locale: const Locale('en'),
+          title: AppConstants.appName,
+          theme: switch (_themeStore.theme) {
+            AppTheme.light => materialTheme.light(),
+            AppTheme.lightMediumContrast => materialTheme.lightMediumContrast(),
+            AppTheme.lightHighContrast => materialTheme.lightHighContrast(),
+            AppTheme.dark => materialTheme.dark(),
+            AppTheme.darkMediumContrast => materialTheme.darkMediumContrast(),
+            AppTheme.darkHighContrast => materialTheme.darkHighContrast(),
+          },
+          locale: _localeStore.locale,
           supportedLocales: AppLocalizations.supportedLocales,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
         );

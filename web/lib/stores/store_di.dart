@@ -9,6 +9,7 @@ import 'package:brew_kettle_dashboard/stores/locale/locale_store.dart';
 import 'package:brew_kettle_dashboard/stores/network_scanner/network_scanner_store.dart';
 import 'package:brew_kettle_dashboard/stores/current_temperature/current_temperature_store.dart';
 import 'package:brew_kettle_dashboard/stores/target_temperature/target_temperature_store.dart';
+import 'package:brew_kettle_dashboard/stores/theme/theme_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,5 +51,6 @@ class StoreModule {
 
     getIt.registerSingleton<NetworkScannerStore>(NetworkScannerStore());
     getIt.registerSingleton<LocaleStore>(LocaleStore(repository));
+    getIt.registerSingleton<ThemeStore>(ThemeStore(repository));
   }
 }

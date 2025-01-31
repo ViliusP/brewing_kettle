@@ -8,6 +8,19 @@ enum AppFontFamily {
   final String name;
 }
 
+enum AppTheme {
+  light("light"),
+  lightMediumContrast("light_medium_contrast"),
+  lightHighContrast("light_high_contrast"),
+  dark("dark"),
+  darkMediumContrast("dark_medium_contrast"),
+  darkHighContrast("dark_high_contrast");
+
+  const AppTheme(this.preferenceValue);
+
+  final String preferenceValue;
+}
+
 class MaterialTheme {
   final TextTheme textTheme;
 
