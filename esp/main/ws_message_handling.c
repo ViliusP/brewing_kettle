@@ -303,14 +303,14 @@ double parse_target_temperature(cJSON *root)
   if (payload == NULL)
   {
     ESP_LOGW(TAG, "Payload not found");
-    return ABSOLUTE_ZERO;
+    return ABSOLUTE_ZERO_FLOAT;
   }
 
   cJSON *value = cJSON_GetObjectItem(payload, "value");
   if (value == NULL)
   {
     ESP_LOGW(TAG, "Value not found");
-    return ABSOLUTE_ZERO;
+    return ABSOLUTE_ZERO_FLOAT;
   }
 
   return value->valuedouble;
@@ -355,7 +355,7 @@ static esp_err_t handle_message(httpd_ws_frame_t *frame, char **data)
     break;
   case MESSAGE_SET_TARGET_TEMP:
     double message_temp = parse_target_temperature(root);
-    if(message_temp == ABSOLUTE_ZERO) {
+    if(message_temp == ABSOLUTE_ZERO_FLOAT) {
       ESP_LOGW(TAG, "Couldn't parse temperature from message");
       cJSON_Delete(root);
       return ESP_OK;
@@ -494,8 +494,8 @@ static void target_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
 
 void init_ws_observer(state_subjects_t *state_subjects, httpd_handle_t httpd_handle)
 {
-  lv_subject_add_observer(&state_subjects->current_temp, current_temp_handler, httpd_handle);
-  lv_subject_add_observer(&state_subjects->target_temp, target_temp_handler, httpd_handle);
+  // lv_subject_add_observer(&state_subjects->current_temp, current_temp_handler, httpd_handle);
+  // lv_subject_add_observer(&state_subjects->target_temp, target_temp_handler, httpd_handle);
 }
 
 ws_message_handler_t create_handler()

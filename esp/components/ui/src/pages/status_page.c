@@ -32,34 +32,38 @@ static void connected_clients_count_cb(lv_observer_t *observer, lv_subject_t *su
 
 static void current_temperature_cb(lv_observer_t *observer, lv_subject_t *subject)
 {
-    const float *temperature_ptr = (const float *)lv_subject_get_pointer(subject);
-    if (temperature_ptr == NULL)
+    const heater_controller_state_t *heater_controller_state_ptr = (const heater_controller_state_t *)lv_subject_get_pointer(subject);
+
+    if (heater_controller_state_ptr == NULL)
     {
         return;
     }
-    double temperature = *temperature_ptr;
+    
     lv_obj_t *label = lv_observer_get_target(observer);
     if (label == NULL)
     {
         return;
     }
 
+    float temperature = heater_controller_state_ptr->current_temp;
     lv_label_set_text_fmt(label, THERMOMETER_SYMBOL " current T: %.2f " TEMPERATURE_CELSIUS_SYMBOL, temperature);
 }
 
 static void target_temperature_cb(lv_observer_t *observer, lv_subject_t *subject)
 {
-    const float *temperature_ptr = (const float *)lv_subject_get_pointer(subject);
-    if (temperature_ptr == NULL)
+    const heater_controller_state_t *heater_controller_state_ptr = (const heater_controller_state_t *)lv_subject_get_pointer(subject);
+    if (heater_controller_state_ptr == NULL)
     {
         return;
     }
-    double temperature = *temperature_ptr;
+    
     lv_obj_t *label = lv_observer_get_target(observer);
     if (label == NULL)
     {
         return;
     }
+
+    float temperature = heater_controller_state_ptr->target_temp;
     lv_label_set_text_fmt(label, THERMOMETER_CHEVRON_UP_SYMBOL " target T: %.2f " TEMPERATURE_CELSIUS_SYMBOL, temperature);
 }
 
@@ -95,31 +99,27 @@ lv_obj_t *compose_status_page(lv_obj_t *parent, lv_fragment_manager_t *manager, 
     lv_label_set_text(connection_label, CONNECTION_SYMBOL " connected: X");
     lv_subject_add_observer_obj(&state_subjects->connected_clients, connected_clients_count_cb, connection_label, NULL);
 
-    // -- Current temperature label -- //
-    const float *current_temperature_ptr = (const float *)lv_subject_get_pointer(&state_subjects->current_temp);
-    float current_temperature = ABSOLUTE_ZERO;
-    if (current_temperature_ptr != NULL)
+    // -- Current label state -- //
+    const heater_controller_state_t *heater_controller_state_ptr = (const heater_controller_state_t *)lv_subject_get_pointer(&state_subjects->heater_controller_state);
+    float current_temperature = ABSOLUTE_ZERO_FLOAT;
+    float target_temperature = ABSOLUTE_ZERO_FLOAT;
+    if (heater_controller_state_ptr != NULL)
     {
-        current_temperature = *current_temperature_ptr;
+        current_temperature = heater_controller_state_ptr->current_temp;
+        target_temperature = heater_controller_state_ptr->target_temp;
     }
 
+    // -- Current temperature label -- //
     lv_obj_t *current_temp_label = lv_label_create(status_page);
     lv_obj_set_style_text_font(current_temp_label, &font_mdi_14, 0);
     lv_label_set_text_fmt(current_temp_label, THERMOMETER_SYMBOL " current T: %.2f " TEMPERATURE_CELSIUS_SYMBOL, current_temperature);
-    lv_subject_add_observer_obj(&state_subjects->current_temp, current_temperature_cb, current_temp_label, NULL);
+    lv_subject_add_observer_obj(&state_subjects->heater_controller_state, current_temperature_cb, current_temp_label, NULL);
 
     // -- Target temperature        -- //
-    const float *target_emperature_ptr = (const float *)lv_subject_get_pointer(&state_subjects->target_temp);
-    double target_temperature = ABSOLUTE_ZERO;
-    if (target_emperature_ptr != NULL)
-    {
-        target_temperature = *target_emperature_ptr;
-    }
-
     lv_obj_t *target_temp_label = lv_label_create(status_page);
     lv_obj_set_style_text_font(target_temp_label, &font_mdi_14, 0);
     lv_label_set_text_fmt(target_temp_label, THERMOMETER_CHEVRON_UP_SYMBOL " target T: %.2f " TEMPERATURE_CELSIUS_SYMBOL, target_temperature);
-    lv_subject_add_observer_obj(&state_subjects->target_temp, target_temperature_cb, target_temp_label, NULL);
+    lv_subject_add_observer_obj(&state_subjects->heater_controller_state, target_temperature_cb, target_temp_label, NULL);
 
     return status_page;
 }

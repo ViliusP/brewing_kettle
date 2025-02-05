@@ -4,7 +4,7 @@
 #include "lwip/inet.h"
 #include "lvgl.h"
 
-#define ABSOLUTE_ZERO -273.15f
+#define ABSOLUTE_ZERO_FLOAT -273.15f
 
 typedef enum
 {
@@ -13,7 +13,8 @@ typedef enum
     CLIENT_DISCONNECTED = 1,
 } client_status_t;
 
-typedef struct ws_client_info_t {
+typedef struct ws_client_info_t
+{
     char ip[INET6_ADDRSTRLEN];
     uint16_t port;
     client_status_t status;
@@ -21,18 +22,37 @@ typedef struct ws_client_info_t {
     size_t bytes_received;
 } ws_client_info_t;
 
+typedef enum
+{
+    HEATER_STATE_IDLE,
+    HEATER_STATE_HEATING_MANUAL,
+    HEATER_STATE_HEATING_PID,
+    HEATER_STATE_ERROR,
+} heater_state_t;
 
-typedef struct {
+typedef struct
+{
+    heater_state_t heater_state;
+    float current_temp;
+    float target_temp;
+    float current_power;
+} heater_controller_state_t;
+
+typedef struct
+{
     ws_client_info_t *clients_info;
     size_t client_count;
 } client_info_data_t;
 
+typedef struct
+{
+    heater_controller_state_t *heater_controller_state;
+    client_info_data_t *connected_clients;
+} app_state_t;
 
 typedef struct
 {
-    lv_subject_t current_temp;
-    lv_subject_t target_temp;
-    lv_subject_t heater_state;
+    lv_subject_t heater_controller_state;
     lv_subject_t connected_clients;
 } state_subjects_t;
 

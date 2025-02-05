@@ -2,11 +2,11 @@
 #include "esp_log.h"
 #include "uart_communication.h"
 #include "common_types.h"
+#include "state.h"
 
 #define ENTITY_BUFFER_SIZE 64
 
-void handle_current_temperature_data(CborValue *value);
-void handle_target_temperature_data(CborValue *value);
+void handle_state_data(CborValue *payload);
 
 typedef void (*entity_handler_t)(CborValue *);
 
@@ -22,56 +22,132 @@ static state_subjects_t *state_subjects;
 
 // Array of entity handler mappings
 entity_handler_map_t entity_handlers[] = {
-    {"current_temperature", handle_current_temperature_data},
-    {"target_temperature", handle_target_temperature_data},
+    {"state", handle_state_data},
 };
 
-void handle_current_temperature_data(CborValue *value)
+void handle_state_data(CborValue *payload)
 {
-    if (!cbor_value_is_float(value) && !cbor_value_is_double(value))
+    CborError err = CborNoError;
+
+    // -------------
+    // heater_state
+    // -------------
+    CborValue heater_state_val;
+    err = cbor_value_map_find_value(payload, "heater_state", &heater_state_val);
+    if (err != CborNoError)
     {
-        ESP_LOGE(TAG, "CBOR: value is not a float or double");
+        ESP_LOGE(TAG, "CBOR: heater_state not found: %s", cbor_error_string(err));
         return;
     }
-
-    float temperature;
-    if (cbor_value_is_float(value))
+    int heater_state;
+    if (cbor_value_is_integer(&heater_state_val))
     {
-        cbor_value_get_float(value, &temperature);
+        cbor_value_get_int(&heater_state_val, &heater_state);
     }
     else
     {
-        double temp_d;
-        cbor_value_get_double(value, &temp_d);
-        temperature = (float)temp_d;
+        ESP_LOGE(TAG, "CBOR: heater_state is not int");
+        return;
     }
-    float *current_temperature_ptr = (float *)lv_subject_get_pointer(&state_subjects->current_temp);
-    *current_temperature_ptr = temperature;
-    lv_subject_notify(&state_subjects->current_temp);
-}
+    ESP_LOGD(TAG, "State Info | heater_state %s", heater_state_string(heater_state));
 
-void handle_target_temperature_data(CborValue *value)
-{
-    if (!cbor_value_is_float(value) && !cbor_value_is_double(value))
+    // --------------------
+    // current_temperature
+    // --------------------
+    CborValue current_temp_val;
+    err = cbor_value_map_find_value(payload, "current_temperature", &current_temp_val);
+    if (err != CborNoError)
     {
-        ESP_LOGE(TAG, "CBOR: value is not a float or double");
+        ESP_LOGE(TAG, "CBOR: current_temperature not found: %s", cbor_error_string(err));
         return;
     }
 
-    float temperature;
-    if (cbor_value_is_float(value))
+    if (!cbor_value_is_float(&current_temp_val) && !cbor_value_is_double(&current_temp_val))
     {
-        cbor_value_get_float(value, &temperature);
+        ESP_LOGE(TAG, "CBOR: current_temperature is not a float or double");
+        return;
+    }
+
+    float current_temp;
+    if (cbor_value_is_float(&current_temp_val))
+    {
+        cbor_value_get_float(&current_temp_val, &current_temp);
     }
     else
     {
-        double temp_d;
-        cbor_value_get_double(value, &temp_d);
-        temperature = (float)temp_d;
+        double current_temp_d;
+        cbor_value_get_double(&current_temp_val, &current_temp_d);
+        current_temp = (float)current_temp_d;
     }
-    float *target_temperature_ptr = (float *)lv_subject_get_pointer(&state_subjects->target_temp);
-    *target_temperature_ptr = temperature;
-    lv_subject_notify(&state_subjects->target_temp);
+    ESP_LOGD(TAG, "State Info | current_temperature %f", current_temp);
+
+    // --------------------
+    // target_temperature
+    // --------------------
+    CborValue target_temp_val;
+    err = cbor_value_map_find_value(payload, "target_temperature", &target_temp_val);
+    if (err != CborNoError)
+    {
+        ESP_LOGE(TAG, "CBOR: target_temperature not found: %s", cbor_error_string(err));
+        return;
+    }
+
+    if (!cbor_value_is_float(&target_temp_val) && !cbor_value_is_double(&target_temp_val))
+    {
+        ESP_LOGE(TAG, "CBOR: target_temperature is not a float or double");
+        return;
+    }
+
+    float target_temp;
+    if (cbor_value_is_float(&target_temp_val))
+    {
+        cbor_value_get_float(&target_temp_val, &target_temp);
+    }
+    else
+    {
+        double target_temp_d;
+        cbor_value_get_double(&target_temp_val, &target_temp_d);
+        target_temp = (float)target_temp_d;
+    }
+    ESP_LOGD(TAG, "State Info | target_temperature %f", target_temp);
+
+    // ---------------
+    // current_power
+    // ---------------
+    CborValue current_power_val;
+    err = cbor_value_map_find_value(payload, "current_power", &current_power_val);
+    if (err != CborNoError)
+    {
+        ESP_LOGE(TAG, "CBOR: current_power not found: %s", cbor_error_string(err));
+        return;
+    }
+
+    if (!cbor_value_is_float(&current_power_val) && !cbor_value_is_double(&current_power_val))
+    {
+        ESP_LOGE(TAG, "CBOR: current_power is not a float or double");
+        return;
+    }
+
+    float current_power;
+    if (cbor_value_is_float(&current_power_val))
+    {
+        cbor_value_get_float(&current_power_val, &current_power);
+    }
+    else
+    {
+        double current_power_d;
+        cbor_value_get_double(&current_power_val, &current_power_d);
+        target_temp = (float)current_power_d;
+    }
+    ESP_LOGD(TAG, "State Info | current_power %f", current_power);
+
+    heater_controller_state_t *heater_controller_state_ptr = (heater_controller_state_t *)lv_subject_get_pointer(&state_subjects->heater_controller_state);
+    heater_controller_state_ptr->current_power = current_power;
+    heater_controller_state_ptr->current_temp = current_temp;
+    heater_controller_state_ptr->target_temp = target_temp;
+    heater_controller_state_ptr->heater_state = heater_state;
+
+    lv_subject_notify(&state_subjects->heater_controller_state);
 }
 
 void uart_message_handler(const uint8_t *data, int len)
@@ -148,17 +224,8 @@ void uart_message_handler(const uint8_t *data, int len)
                 return;
             }
 
-            CborValue value_value; // Get the "value" from the payload
-
-            err = cbor_value_map_find_value(&payload_value, "value", &value_value);
-            if (err != CborNoError)
-            {
-                ESP_LOGE(TAG, "CBOR: value not found: %s", cbor_error_string(err));
-                return;
-            }
-
-            entity_handlers[i].handler_function(&value_value); // Pass the "value" CborValue
-            return;                                            // Found and handled, exit the loop
+            entity_handlers[i].handler_function(&payload_value); // Pass the "payload" CborValue
+            return;                                              // Found and handled, exit the loop
         }
     }
 
