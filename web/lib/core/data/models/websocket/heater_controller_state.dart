@@ -40,6 +40,32 @@ class HeaterControllerState extends WsInboundMessagePayload {
       timestamp: timestamp!,
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other.runtimeType != runtimeType) return false;
+    return other is HeaterControllerState &&
+        timestamp == other.timestamp &&
+        status == other.status &&
+        currentTemperature == other.currentTemperature &&
+        targetTemperature == other.targetTemperature &&
+        power == other.power;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        timestamp,
+        status,
+        currentTemperature,
+        targetTemperature,
+        power,
+      );
+
+  @override
+  String toString() {
+    return 'HeaterControllerState{timestamp: $timestamp, status: $status, currentTemperature: $currentTemperature, targetTemperature: $targetTemperature, power: $power}';
+  }
 }
 
 enum HeaterStatus {
