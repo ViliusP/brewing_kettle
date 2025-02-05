@@ -63,20 +63,35 @@ void app_main(void)
 
     while (1)
     {
+        if (app_state.status == HEATER_STATUS_HEATING_MANUAL)
+        {
+            ESP_LOGI(TAG, "| manual | current_temp: %.2f, target_temp: %.2f, power: %.2f", app_state.current_temp, app_state.target_temp, app_state.power);
+            set_ssr_duty(app_state.power);
+        }
+
+        if (app_state.status == HEATER_STATUS_HEATING_PID)
+        {
+            ESP_LOGI(TAG, "| pid | current_temp: %.2f, target_temp: %.2f, power: %.2f", app_state.current_temp, app_state.target_temp, app_state);
+            float pid_power = 0; // pid_update(&pid, app_state.current_temp);
+            app_state.power = pid_power;
+            set_ssr_duty(pid_power);
+        }
+
+        if (app_state.status == HEATER_STATUS_IDLE)
+        {
+            ESP_LOGI(TAG, "| idle | current_temp: %.2f, target_temp: %.2f, power: %.2f", app_state.current_temp, app_state.target_temp, app_state);
+        }
 
         esp_err_t ret = get_temperature(ds18b20_handle, &app_state.current_temp);
 
         if (ret == ESP_OK)
         {
-            // float output = pid_update(&pid, app_state.current_temp);
-            // set_heater_duty(output);
             uart_send_state(app_state);
-            ESP_LOGI(TAG, "current_temp: %.2f, target_temp: %.2f.", app_state.current_temp, app_state.target_temp);
         }
         else
         {
             ESP_LOGE(TAG, "Failed to read temperature");
         }
-        vTaskDelay(pdMS_TO_TICKS(pid.sample_time_sec * 1000));
+        vTaskDelay(pdMS_TO_TICKS(pid.sample_time_sec * 2000));
     }
 }
