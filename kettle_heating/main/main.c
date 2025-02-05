@@ -71,7 +71,7 @@ void app_main(void)
 
         if (app_state.status == HEATER_STATUS_HEATING_PID)
         {
-            ESP_LOGI(TAG, "| pid | current_temp: %.2f, target_temp: %.2f, power: %.2f", app_state.current_temp, app_state.target_temp, app_state);
+            ESP_LOGI(TAG, "| pid | current_temp: %.2f, target_temp: %.2f, power: %.2f", app_state.current_temp, app_state.target_temp, app_state.power);
             float pid_power = 0; // pid_update(&pid, app_state.current_temp);
             app_state.power = pid_power;
             set_ssr_duty(pid_power);
@@ -79,7 +79,7 @@ void app_main(void)
 
         if (app_state.status == HEATER_STATUS_IDLE)
         {
-            ESP_LOGI(TAG, "| idle | current_temp: %.2f, target_temp: %.2f, power: %.2f", app_state.current_temp, app_state.target_temp, app_state);
+            ESP_LOGI(TAG, "| idle | current_temp: %.2f, target_temp: %.2f, power: %.2f", app_state.current_temp, app_state.target_temp, app_state.power);
         }
 
         esp_err_t ret = get_temperature(ds18b20_handle, &app_state.current_temp);
