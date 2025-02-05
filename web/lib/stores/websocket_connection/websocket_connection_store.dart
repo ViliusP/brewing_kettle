@@ -111,7 +111,7 @@ abstract class _WebSocketConnectionStore with Store {
     }
 
     if (message is WsInboundMessage &&
-        message.type != InboundMessageType.currentTemperature) {
+        message.type != InboundMessageType.heaterControllerState) {
       String msg = "Got data from [$connectedTo]: ${data.toString()}";
       if (msg.length > 75) {
         log("${msg.substring(0, 75)}...");

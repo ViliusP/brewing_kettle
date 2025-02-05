@@ -1,12 +1,13 @@
-import 'dart:collection';
 import 'dart:convert';
 
+import 'package:brew_kettle_dashboard/utils/enum_extensions.dart';
 import 'package:brew_kettle_dashboard/utils/string_extensions.dart';
 import 'package:collection/collection.dart';
 
 part 'device_configuration.dart';
 part 'device_snapshot.dart';
 part 'message_simple_value.dart';
+part 'heater_controller_state.dart';
 
 /// Represents an inbound message received via WebSocket.
 ///
@@ -140,10 +141,8 @@ sealed class WsInboundMessagePayload {
     return switch (type) {
       InboundMessageType.configuration => DeviceConfiguration.fromJson(json),
       InboundMessageType.snapshot => DeviceSnapshot.fromJson(json),
-      InboundMessageType.currentTemperature =>
-        MessageSimpleValue<double>.fromJson(json),
-      InboundMessageType.targetTemperature =>
-        MessageSimpleValue<double>.fromJson(json)
+      InboundMessageType.heaterControllerState =>
+        HeaterControllerState.fromJson(json),
     };
   }
 }
@@ -167,8 +166,7 @@ class WsInboundMessage<T extends WsInboundMessagePayload>
 enum InboundMessageType {
   configuration("configuration"),
   snapshot("snapshot"),
-  currentTemperature("current_temperature"),
-  targetTemperature("target_temperature");
+  heaterControllerState("heater_controller_state");
 
   const InboundMessageType([this._field]);
 

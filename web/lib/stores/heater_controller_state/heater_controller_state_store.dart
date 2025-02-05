@@ -7,22 +7,22 @@ import 'package:brew_kettle_dashboard/core/data/models/websocket/outbound_messag
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:mobx/mobx.dart';
 
-part 'target_temperature_store.g.dart';
+part 'heater_controller_state_store.g.dart';
 
 // ignore: library_private_types_in_public_api
-class TargetTemperatureStore = _TargetTemperatureStore
-    with _$TargetTemperatureStore;
+class HeaterControllerStateStore = _HeaterControllerStateStore
+    with _$HeaterControllerStateStore;
 
-abstract class _TargetTemperatureStore with Store {
+abstract class _HeaterControllerStateStore with Store {
   final WebSocketConnectionStore _webSocketConnectionStore;
 
-  _TargetTemperatureStore({
+  _HeaterControllerStateStore({
     required WebSocketConnectionStore webSocketConnectionStore,
   }) : _webSocketConnectionStore = webSocketConnectionStore {
     _webSocketConnectionStore.subscribe(StoreWebSocketListener(
       _onData,
-      InboundMessageType.currentTemperature,
-      "TargetTemperatureStore",
+      InboundMessageType.heaterControllerState,
+      "HeaterControllerStateStore",
     ));
   }
 
@@ -38,29 +38,18 @@ abstract class _TargetTemperatureStore with Store {
   ObservableList<TimeSeriesEntry> _temperatureHistory = ObservableList.of([]);
 
   @computed
-  double? get targetTemperature => _targetTemperature;
+  double? get currentTemperature => _currentTemperature;
 
   @observable
-  double? _targetTemperature;
-
-  @computed
-  double? get lastRequestedTemperature => _lastRequestedTemperature;
-
-  @observable
-  double? _lastRequestedTemperature;
-
-  // String? _lastRequestID;
+  double? _currentTemperature;
 
   @action
-  void changeTargetTemperature(double value) {
+  void request() {
     if (_webSocketConnectionStore.connectedTo != null) {
-      var message = WsMessageComposer.setValueMessage(
-        OutboundMessageType.temperatureSet,
-        value,
+      var message = WsMessageComposer.simpleRequest(
+        OutboundMessageType.snapshotGet,
       );
-      // _lastRequestID = message.id;
-      _lastRequestedTemperature = value;
-      _webSocketConnectionStore.message(message.jsonString);
+      _webSocketConnectionStore.message(message);
     } else {
       log("Cannot send snapshot request because there is no online channell");
     }
@@ -68,14 +57,14 @@ abstract class _TargetTemperatureStore with Store {
 
   @action
   void _onData(WsInboundMessage message) {
-    if (message.payload is MessageSimpleValue<double> &&
-        message.type == InboundMessageType.targetTemperature) {
-      var tempMessage = (message.payload as MessageSimpleValue);
-      _targetTemperature = tempMessage.value;
+    if (message.payload is HeaterControllerState &&
+        message.type == InboundMessageType.heaterControllerState) {
+      var tempMessage = (message.payload as HeaterControllerState);
+      _currentTemperature = tempMessage.currentTemperature;
       _temperatureHistory.add(
         TimeSeriesEntry(
           DateTime.fromMillisecondsSinceEpoch(tempMessage.timestamp * 1000),
-          tempMessage.value,
+          tempMessage.currentTemperature,
         ),
       );
     }

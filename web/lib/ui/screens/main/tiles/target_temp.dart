@@ -1,5 +1,5 @@
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
-import 'package:brew_kettle_dashboard/stores/target_temperature/target_temperature_store.dart';
+import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
 import 'package:brew_kettle_dashboard/utils/textstyle_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
@@ -8,7 +8,8 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 class TargetTempTile extends StatelessWidget {
   TargetTempTile({super.key});
 
-  final TargetTemperatureStore _tempStore = getIt<TargetTemperatureStore>();
+  final HeaterControllerStateStore _heaterControllerStateStore =
+      getIt<HeaterControllerStateStore>();
 
   final double temperature = 64;
 
@@ -23,40 +24,41 @@ class TargetTempTile extends StatelessWidget {
           child: Column(
             children: [
               Spacer(),
-              Row(
-                children: [
-                  Spacer(),
-                  Observer(builder: (context) {
-                    double? targetTemperature = _tempStore.targetTemperature;
-                    double? lastRequestedTarget =
-                        _tempStore.lastRequestedTemperature;
+              // Row(
+              //   children: [
+              //     Spacer(),
+              //     Observer(builder: (context) {
+              //       double? targetTemperature =
+              //           _heaterControllerStateStore.targetTemperature;
+              //       double? lastRequestedTarget =
+              //           _heaterControllerStateStore.lastRequestedTemperature;
 
-                    String text =
-                        targetTemperature?.toStringAsFixed(1) ?? "N/A";
+              //       String text =
+              //           targetTemperature?.toStringAsFixed(1) ?? "N/A";
 
-                    bool showLabel = lastRequestedTarget != null &&
-                        lastRequestedTarget != targetTemperature;
+              //       bool showLabel = lastRequestedTarget != null &&
+              //           lastRequestedTarget != targetTemperature;
 
-                    String badgeTexts =
-                        (lastRequestedTarget ?? 0).toStringAsFixed(1);
-                    return Badge(
-                      alignment: Alignment.topLeft,
-                      offset: const Offset(-16, 0),
-                      isLabelVisible: showLabel,
-                      label: Text(badgeTexts),
-                      child: Text(
-                        text,
-                        style: Theme.of(context)
-                            .textTheme
-                            .displayMedium
-                            ?.changeWeight(FontWeight.w800),
-                      ),
-                    );
-                  }),
-                  Icon(MdiIcons.temperatureCelsius, size: 54),
-                  Spacer(),
-                ],
-              ),
+              //       String badgeTexts =
+              //           (lastRequestedTarget ?? 0).toStringAsFixed(1);
+              //       return Badge(
+              //         alignment: Alignment.topLeft,
+              //         offset: const Offset(-16, 0),
+              //         isLabelVisible: showLabel,
+              //         label: Text(badgeTexts),
+              //         child: Text(
+              //           text,
+              //           style: Theme.of(context)
+              //               .textTheme
+              //               .displayMedium
+              //               ?.changeWeight(FontWeight.w800),
+              //         ),
+              //       );
+              //     }),
+              //     Icon(MdiIcons.temperatureCelsius, size: 54),
+              //     Spacer(),
+              //   ],
+              // ),
               Expanded(
                 child: Align(
                   alignment: Alignment.bottomCenter,
@@ -78,30 +80,32 @@ class TargetTempTile extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(
-                onPressed: () {
-                  double currentTarget = _tempStore.lastRequestedTemperature ??
-                      _defaultTargetTemperature;
+              // IconButton(
+              //   onPressed: () {
+              //     double currentTarget =
+              //         _heaterControllerStateStore.lastRequestedTemperature ??
+              //             _defaultTargetTemperature;
 
-                  _tempStore.changeTargetTemperature(
-                    currentTarget + _temperatureChangeStep,
-                  );
-                },
-                icon: Icon(MdiIcons.arrowUpDropCircleOutline),
-                iconSize: 60,
-              ),
-              IconButton(
-                onPressed: () {
-                  double currentTarget = _tempStore.lastRequestedTemperature ??
-                      _defaultTargetTemperature;
+              //     _heaterControllerStateStore.changeTargetTemperature(
+              //       currentTarget + _temperatureChangeStep,
+              //     );
+              //   },
+              //   icon: Icon(MdiIcons.arrowUpDropCircleOutline),
+              //   iconSize: 60,
+              // ),
+              // IconButton(
+              //   onPressed: () {
+              //     double currentTarget =
+              //         _heaterControllerStateStore.lastRequestedTemperature ??
+              //             _defaultTargetTemperature;
 
-                  _tempStore.changeTargetTemperature(
-                    currentTarget - _temperatureChangeStep,
-                  );
-                },
-                icon: Icon(MdiIcons.arrowDownDropCircleOutline),
-                iconSize: 60,
-              )
+              //     _heaterControllerStateStore.changeTargetTemperature(
+              //       currentTarget - _temperatureChangeStep,
+              //     );
+              //   },
+              //   icon: Icon(MdiIcons.arrowDownDropCircleOutline),
+              //   iconSize: 60,
+              // )
             ],
           ),
         ),

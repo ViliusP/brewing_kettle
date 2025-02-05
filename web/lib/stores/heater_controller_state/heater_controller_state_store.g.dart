@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'current_temperature_store.dart';
+part of 'heater_controller_state_store.dart';
 
 // **************************************************************************
 // StoreGenerator
@@ -8,25 +8,26 @@ part of 'current_temperature_store.dart';
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
-mixin _$CurrentTemperatureStore on _CurrentTemperatureStore, Store {
+mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
   Computed<List<TimeseriesViewEntry>>? _$temperatureHistoryComputed;
 
   @override
   List<TimeseriesViewEntry> get temperatureHistory =>
       (_$temperatureHistoryComputed ??= Computed<List<TimeseriesViewEntry>>(
               () => super.temperatureHistory,
-              name: '_CurrentTemperatureStore.temperatureHistory'))
+              name: '_HeaterControllerStateStore.temperatureHistory'))
           .value;
   Computed<double?>? _$currentTemperatureComputed;
 
   @override
   double? get currentTemperature => (_$currentTemperatureComputed ??=
           Computed<double?>(() => super.currentTemperature,
-              name: '_CurrentTemperatureStore.currentTemperature'))
+              name: '_HeaterControllerStateStore.currentTemperature'))
       .value;
 
   late final _$_temperatureHistoryAtom = Atom(
-      name: '_CurrentTemperatureStore._temperatureHistory', context: context);
+      name: '_HeaterControllerStateStore._temperatureHistory',
+      context: context);
 
   @override
   ObservableList<TimeSeriesEntry> get _temperatureHistory {
@@ -42,7 +43,8 @@ mixin _$CurrentTemperatureStore on _CurrentTemperatureStore, Store {
   }
 
   late final _$_currentTemperatureAtom = Atom(
-      name: '_CurrentTemperatureStore._currentTemperature', context: context);
+      name: '_HeaterControllerStateStore._currentTemperature',
+      context: context);
 
   @override
   double? get _currentTemperature {
@@ -57,28 +59,28 @@ mixin _$CurrentTemperatureStore on _CurrentTemperatureStore, Store {
     });
   }
 
-  late final _$_CurrentTemperatureStoreActionController =
-      ActionController(name: '_CurrentTemperatureStore', context: context);
+  late final _$_HeaterControllerStateStoreActionController =
+      ActionController(name: '_HeaterControllerStateStore', context: context);
 
   @override
   void request() {
-    final _$actionInfo = _$_CurrentTemperatureStoreActionController.startAction(
-        name: '_CurrentTemperatureStore.request');
+    final _$actionInfo = _$_HeaterControllerStateStoreActionController
+        .startAction(name: '_HeaterControllerStateStore.request');
     try {
       return super.request();
     } finally {
-      _$_CurrentTemperatureStoreActionController.endAction(_$actionInfo);
+      _$_HeaterControllerStateStoreActionController.endAction(_$actionInfo);
     }
   }
 
   @override
   void _onData(WsInboundMessage<WsInboundMessagePayload> message) {
-    final _$actionInfo = _$_CurrentTemperatureStoreActionController.startAction(
-        name: '_CurrentTemperatureStore._onData');
+    final _$actionInfo = _$_HeaterControllerStateStoreActionController
+        .startAction(name: '_HeaterControllerStateStore._onData');
     try {
       return super._onData(message);
     } finally {
-      _$_CurrentTemperatureStoreActionController.endAction(_$actionInfo);
+      _$_HeaterControllerStateStoreActionController.endAction(_$actionInfo);
     }
   }
 
