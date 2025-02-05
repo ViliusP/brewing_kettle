@@ -7,6 +7,7 @@
 #define ENTITY_BUFFER_SIZE 64
 
 void handle_target_temperature_data(CborValue *value);
+void handle_heater_mode_data(CborValue *value);
 
 typedef void (*entity_handler_t)(CborValue *);
 
@@ -23,11 +24,12 @@ static char entity_buffer[ENTITY_BUFFER_SIZE];
 // Array of entity handler mappings
 entity_handler_map_t entity_handlers[] = {
     {"target_temperature", handle_target_temperature_data},
+    {"heater_mode", handle_heater_mode_data},
     // ... more entities
 };
 
-
-int uart_send_entity_data(const char *entity, float value) {
+int uart_send_entity_data(const char *entity, float value)
+{
     uint8_t cbor_buffer[256]; // Adjust size as needed
     CborEncoder encoder, map_encoder, payload_encoder;
 
@@ -51,7 +53,8 @@ int uart_send_entity_data(const char *entity, float value) {
 
     err |= cbor_encoder_close_container(&encoder, &map_encoder); // Close outer map
 
-    if (err != CborNoError) {
+    if (err != CborNoError)
+    {
         ESP_LOGE(TAG, "CBOR encoding error: %s", cbor_error_string(err));
         return -1;
     }
@@ -66,7 +69,8 @@ int uart_send_entity_data(const char *entity, float value) {
     return uart_send_message(&msg_to_send);
 }
 
-int uart_send_state(app_state_t app_state) {
+int uart_send_state(app_state_t app_state)
+{
     uint8_t cbor_buffer[256]; // Adjust size as needed
     CborEncoder encoder, map_encoder, payload_encoder;
 
@@ -98,9 +102,10 @@ int uart_send_state(app_state_t app_state) {
     err |= cbor_encode_int(&payload_encoder, app_state.status);
 
     err |= cbor_encoder_close_container(&map_encoder, &payload_encoder); // Close payload map
-    err |= cbor_encoder_close_container(&encoder, &map_encoder); // Close outer map
+    err |= cbor_encoder_close_container(&encoder, &map_encoder);         // Close outer map
 
-    if (err != CborNoError) {
+    if (err != CborNoError)
+    {
         ESP_LOGE(TAG, "CBOR encoding error: %s", cbor_error_string(err));
         return -1;
     }
@@ -115,6 +120,21 @@ int uart_send_state(app_state_t app_state) {
     return uart_send_message(&msg_to_send);
 }
 
+void handle_heater_mode_data(CborValue *value)
+{
+    if (!cbor_value_is_unsigned_integer(value))
+    {
+        ESP_LOGE(TAG, "CBOR: value in heater_mode data is not unsigned integer");
+        return;
+    }
+
+    uint64_t mode;
+    cbor_value_get_uint64(value, &mode);
+
+    app_state->status = mode;
+    app_state->power = 0.0f;
+    uart_send_state(*app_state);
+}
 
 void handle_target_temperature_data(CborValue *value)
 {
@@ -137,6 +157,7 @@ void handle_target_temperature_data(CborValue *value)
     }
 
     app_state->target_temp = temperature;
+    app_state->status = HEATER_STATUS_HEATING_PID;
     uart_send_state(*app_state);
 }
 
@@ -230,7 +251,6 @@ void uart_message_handler(const uint8_t *data, int len)
 
     ESP_LOGW(TAG, "No handler found for entity: %s", entity_buffer);
 }
-
 
 rx_task_callback_t init_uart_message_handler(app_state_t *arg_app_state)
 {
