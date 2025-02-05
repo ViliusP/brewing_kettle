@@ -296,7 +296,7 @@ static esp_err_t error_response(char **data)
   return ESP_OK;
 }
 
-// EXAMPLE: 
+// EXAMPLE:
 // "{"id":"0ea777fc-f079-4ba8-b3f5-a890df475625","type":"temperature_set","time":1738153122695,"payload":{"value":21.5}}"
 double parse_target_temperature(cJSON *root)
 {
@@ -311,6 +311,11 @@ double parse_target_temperature(cJSON *root)
   if (value == NULL)
   {
     ESP_LOGW(TAG, "Value not found");
+    return ABSOLUTE_ZERO_FLOAT;
+  }
+  if (value->type != cJSON_Number)
+  {
+    ESP_LOGW(TAG, "Given JSON's value isn't number");
     return ABSOLUTE_ZERO_FLOAT;
   }
 
@@ -356,7 +361,8 @@ static esp_err_t handle_message(httpd_ws_frame_t *frame, char **data)
     break;
   case MESSAGE_SET_TARGET_TEMP:
     double message_temp = parse_target_temperature(root);
-    if(message_temp == ABSOLUTE_ZERO_FLOAT) {
+    if (message_temp == ABSOLUTE_ZERO_FLOAT)
+    {
       ESP_LOGW(TAG, "Couldn't parse temperature from message");
       cJSON_Delete(root);
       return ESP_OK;
@@ -374,8 +380,6 @@ static esp_err_t handle_message(httpd_ws_frame_t *frame, char **data)
   cJSON_Delete(root);
   return ESP_OK;
 }
-
-
 
 void current_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
 {
@@ -443,9 +447,10 @@ static void heater_controller_state_handler(lv_observer_t *observer, lv_subject_
     ESP_LOGW(TAG, "httpd_handle is NULL, can't send message about target temperature");
     return;
   }
-  
+
   const heater_controller_state_t *heater_controller_state_ptr = (const heater_controller_state_t *)lv_subject_get_pointer(subject);
-  if(heater_controller_state_ptr == NULL) {
+  if (heater_controller_state_ptr == NULL)
+  {
     ESP_LOGW(TAG, "heater_controller_state pointer is NULL, in heater_controller_state_handler");
     return;
   }
@@ -472,7 +477,6 @@ static void heater_controller_state_handler(lv_observer_t *observer, lv_subject_
   time(&now);
   cJSON_AddNumberToObject(payload, "timestamp", now);
 
-
   // --------------------
   // target_temperature
   // --------------------
@@ -486,7 +490,6 @@ static void heater_controller_state_handler(lv_observer_t *observer, lv_subject_
   }
   cJSON_AddItemToObject(payload, "target_temperature", target_temp_cjson);
 
-
   // --------------------
   // current_temperature
   // --------------------
@@ -499,7 +502,6 @@ static void heater_controller_state_handler(lv_observer_t *observer, lv_subject_
     return;
   }
   cJSON_AddItemToObject(payload, "current_temperature", current_temperature_cjson);
-
 
   // --------------------
   // power
@@ -519,7 +521,6 @@ static void heater_controller_state_handler(lv_observer_t *observer, lv_subject_
   // --------------------
   heater_status_t status = heater_controller_state_ptr->status;
   cJSON_AddStringToObject(payload, "status", heater_status_json_string(status));
-
 
   char *data = cJSON_Print(response_root);
   cJSON_Delete(response_root);
