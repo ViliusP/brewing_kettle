@@ -23,8 +23,13 @@
 #define MESSAGE_IN_GET_CONFIGURATION_STR "configuration_get"
 #define MESSAGE_IN_GET_SNAPSHOT_STR "snapshot_get"
 #define MESSAGE_IN_SET_TARGET_TEMPERATURE_STR "temperature_set"
-
+#define MESSAGE_IN_SET_HEATER_MODE_STR "heater_mode_set"
 #define MESSAGE_IN_EXAMPLE_STR "example"
+
+#define HEATER_MODE_IDLE_JSON "idle"
+#define HEATER_MODE_PID_JSON "heating_pid"
+#define HEATER_MODE_MANUAL_JSON "heating_manual"
+
 
 static const char *TAG = "WS_SERVER_HANDLER";
 
@@ -90,8 +95,9 @@ typedef enum
 {
   MESSAGE_UNKNOWN = -1,
   MESSAGE_GET_CONFIGURATION = 0,
-  MESSAGE_GET_SNAPSHOT = 1,
-  MESSAGE_SET_TARGET_TEMP = 2,
+  MESSAGE_GET_SNAPSHOT,
+  MESSAGE_SET_TARGET_TEMP,
+  MESSAGE_SET_HEATER_MODE,
   MESSAGE_EXAMPLE = 99,
 } message_in_type_t;
 
@@ -109,8 +115,31 @@ message_in_type_t get_message_type(const char *type_str)
   {
     return MESSAGE_SET_TARGET_TEMP;
   }
+  if (strcmp(type_str, MESSAGE_IN_SET_HEATER_MODE_STR) == 0)
+  {
+    return MESSAGE_SET_HEATER_MODE;
+  }
   return MESSAGE_UNKNOWN;
 }
+
+heater_status_t heater_status_by_str(const char *value)
+{
+  if (strcmp(value, HEATER_MODE_IDLE_JSON) == 0)
+  {
+    return HEATER_STATUS_IDLE;
+  }
+  if (strcmp(value, HEATER_MODE_PID_JSON) == 0)
+  {
+    return HEATER_STATUS_HEATING_PID;
+  }
+  if (strcmp(value, HEATER_MODE_MANUAL_JSON) == 0)
+  {
+    return HEATER_STATUS_HEATING_MANUAL;
+  }
+  return HEATER_STATUS_UNKNOWN;
+}
+
+
 
 static lv_draw_buf_t *get_snapshot_buffer()
 {
@@ -322,6 +351,34 @@ double parse_target_temperature(cJSON *root)
   return value->valuedouble;
 }
 
+
+// EXAMPLE:
+// "{"id":"89573144-d4df-4415-9805-dc1d7eaf9897","type":"heater_mode_set","time":1738780934060,"payload":{"value":"heating_manual"}}"
+heater_status_t parse_heater_mode(cJSON *root)
+{
+  cJSON *payload = cJSON_GetObjectItem(root, COMMON_FIELD_PAYLOAD);
+  if (payload == NULL)
+  {
+    ESP_LOGW(TAG, "Payload not found");
+    return HEATER_STATUS_UNKNOWN;
+  }
+
+  cJSON *value = cJSON_GetObjectItem(payload, "value");
+  if (value == NULL)
+  {
+    ESP_LOGW(TAG, "Value not found");
+    return HEATER_STATUS_UNKNOWN;
+  }
+  if (value->type != cJSON_String)
+  {
+    ESP_LOGW(TAG, "Given JSON's value isn't string");
+    return HEATER_STATUS_UNKNOWN;
+  }
+
+  return  heater_status_by_str(value->valuestring);
+}
+
+
 static esp_err_t handle_message(httpd_ws_frame_t *frame, char **data)
 {
   if (frame->type != HTTPD_WS_TYPE_TEXT)
@@ -368,6 +425,18 @@ static esp_err_t handle_message(httpd_ws_frame_t *frame, char **data)
       return ESP_OK;
     }
     send_set_target_temperature(message_temp);
+    cJSON_Delete(root);
+    return ESP_OK;
+    break;
+  case MESSAGE_SET_HEATER_MODE:
+    heater_status_t heater_status = parse_heater_mode(root);
+    if (heater_status == HEATER_STATUS_UNKNOWN)
+    {
+      ESP_LOGW(TAG, "Couldn't parse heater status from 'MESSAGE_SET_HEATER_MODE'");
+      cJSON_Delete(root);
+      return ESP_OK;
+    }
+    send_set_heater_mode(heater_status);
     cJSON_Delete(root);
     return ESP_OK;
     break;

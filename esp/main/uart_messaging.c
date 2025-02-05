@@ -232,6 +232,47 @@ void uart_message_handler(const uint8_t *data, int len)
     ESP_LOGW(TAG, "No handler found for entity: %s", entity_buffer);
 }
 
+int send_set_heater_mode(heater_status_t mode)
+{
+    uint8_t cbor_buffer[256]; // Adjust size as needed
+    CborEncoder encoder, map_encoder, payload_encoder;
+
+    cbor_encoder_init(&encoder, cbor_buffer, sizeof(cbor_buffer), 0);
+
+    CborError err = CborNoError;
+
+    // Outer map
+    err |= cbor_encoder_create_map(&encoder, &map_encoder, 2); // 2 items: type and payload
+
+    // "type": "temperature"
+    err |= cbor_encode_text_string(&map_encoder, "entity", strlen("entity"));
+    err |= cbor_encode_text_string(&map_encoder, "heater_mode", strlen("heater_mode"));
+
+    // "payload": { "value": temperature }
+    err |= cbor_encode_text_string(&map_encoder, "payload", strlen("payload"));
+    err |= cbor_encoder_create_map(&map_encoder, &payload_encoder, 1); // Payload map
+    err |= cbor_encode_text_string(&payload_encoder, "value", strlen("value"));
+    err |= cbor_encode_uint(&payload_encoder, mode);
+    err |= cbor_encoder_close_container(&map_encoder, &payload_encoder); // Close payload map
+
+    err |= cbor_encoder_close_container(&encoder, &map_encoder); // Close outer map
+
+    if (err != CborNoError)
+    {
+        ESP_LOGE(TAG, "CBOR encoding error: %s", cbor_error_string(err));
+        return -1;
+    }
+
+    size_t cbor_len = cbor_encoder_get_buffer_size(&encoder, cbor_buffer);
+
+    uart_message_t msg_to_send;
+    msg_to_send.command = CMD_SET_VALUE;
+    memcpy(msg_to_send.data, cbor_buffer, cbor_len);
+    msg_to_send.data_len = cbor_len;
+
+    return uart_send_message(&msg_to_send);
+}
+
 int send_set_target_temperature(float value)
 {
     uint8_t cbor_buffer[256]; // Adjust size as needed

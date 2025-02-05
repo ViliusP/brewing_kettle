@@ -27,8 +27,11 @@ const char *heater_status_human_string(heater_status_t state)
 
     case HEATER_STATUS_ERROR:
         return "Heater controller has error(s)";
+    
+    case HEATER_STATUS_UNKNOWN:
+        return "Probably parsing error occured: heater status unknown";
     }
-    return "state unknown";
+    return "Probably parsing error occured: heater status unknown";
 }
 
 const char *heater_status_string(heater_status_t state)
@@ -46,6 +49,9 @@ const char *heater_status_string(heater_status_t state)
 
     case HEATER_STATUS_ERROR:
         return "HEATER_STATUS_ERROR";
+
+    case HEATER_STATUS_UNKNOWN:
+        return "HEATER_STATUS_UNKNOWN";
     }
     return "HEATER_STATUS_UNKNOWN";
 }
@@ -65,6 +71,9 @@ const char *heater_status_json_string(heater_status_t state)
 
     case HEATER_STATUS_ERROR:
         return "error";
+
+    case HEATER_STATUS_UNKNOWN:
+        return "unknown";
     }
     return "unknown";
 }
@@ -94,54 +103,58 @@ void connected_client_data_notify(client_info_data_t client_data)
 
 app_state_t app_state;
 
-app_state_t *app_state_init(void) {
+app_state_t *app_state_init(void)
+{
     // Allocate heater state on the heap
     heater_controller_state_t *heater_state = malloc(sizeof(heater_controller_state_t));
-    if (!heater_state) {
+    if (!heater_state)
+    {
         ESP_LOGE(TAG, "Failed to allocate heater state");
         return NULL;
     }
-    
+
     // Initialize heater state
-    *heater_state = (heater_controller_state_t) {
+    *heater_state = (heater_controller_state_t){
         .status = HEATER_STATUS_IDLE,
         .current_temp = ABSOLUTE_ZERO_FLOAT,
         .target_temp = ABSOLUTE_ZERO_FLOAT,
-        .power = 0.0f
-    };
+        .power = 0.0f};
 
     // Allocate connected clients structure
     client_info_data_t *clients = malloc(sizeof(client_info_data_t));
-    if (!clients) {
+    if (!clients)
+    {
         free(heater_state);
         ESP_LOGE(TAG, "Failed to allocate client info");
         return NULL;
     }
-    
+
     // Initialize client info
-    *clients = (client_info_data_t) {
+    *clients = (client_info_data_t){
         .clients_info = NULL,
-        .client_count = 0
-    };
+        .client_count = 0};
 
     // Initialize global app state
-    app_state = (app_state_t) {
+    app_state = (app_state_t){
         .heater_controller_state = heater_state,
-        .connected_clients = clients
-    };
+        .connected_clients = clients};
 
     return &app_state;
 }
 
-void app_state_deinit(void) {
-    if (app_state.heater_controller_state) {
+void app_state_deinit(void)
+{
+    if (app_state.heater_controller_state)
+    {
         free(app_state.heater_controller_state);
         app_state.heater_controller_state = NULL;
     }
-    
-    if (app_state.connected_clients) {
+
+    if (app_state.connected_clients)
+    {
         // Free individual client structs if they exist
-        if (app_state.connected_clients->clients_info) {
+        if (app_state.connected_clients->clients_info)
+        {
             free(app_state.connected_clients->clients_info);
         }
         free(app_state.connected_clients);
