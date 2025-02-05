@@ -49,7 +49,7 @@ abstract class _TargetTemperatureStore with Store {
   @observable
   double? _lastRequestedTemperature;
 
-  String? _lastRequestID;
+  // String? _lastRequestID;
 
   @action
   void changeTargetTemperature(double value) {
@@ -58,7 +58,7 @@ abstract class _TargetTemperatureStore with Store {
         OutboundMessageType.temperatureSet,
         value,
       );
-      _lastRequestID = message.id;
+      // _lastRequestID = message.id;
       _lastRequestedTemperature = value;
       _webSocketConnectionStore.message(message.jsonString);
     } else {
