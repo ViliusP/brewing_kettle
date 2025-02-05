@@ -30,6 +30,11 @@ abstract class _HeaterControllerStateStore with Store {
   HeaterControllerState? _state;
 
   @computed
+  bool get isModeChanging =>
+      _requestedMode?.toHeaterStatus() != null &&
+      _requestedMode?.toHeaterStatus() != _state?.status;
+
+  @computed
   List<TimeseriesViewEntry> get temperatureHistory =>
       TimeSeries.from(_temperatureHistory.toList()).aggregate(
         type: AggregationType.mean,
@@ -43,6 +48,12 @@ abstract class _HeaterControllerStateStore with Store {
   @computed
   double? get currentTemperature => _state?.currentTemperature;
 
+  // -----------------------
+  // STATUS STATE
+  // -----------------------
+  @observable
+  HeaterMode? _requestedMode;
+
   @computed
   HeaterStatus? get status => _state?.status;
 
@@ -54,10 +65,10 @@ abstract class _HeaterControllerStateStore with Store {
   double? get targetTemperature => _state?.targetTemperature;
 
   @computed
-  double? get lastRequestedTemperature => _lastRequestedTemperature;
+  double? get requestedTemperature => _requestedTemperature;
 
   @observable
-  double? _lastRequestedTemperature;
+  double? _requestedTemperature;
 
   // -----------------------
   // POWER STATE
@@ -67,10 +78,10 @@ abstract class _HeaterControllerStateStore with Store {
   double? get power => _state?.power;
 
   @computed
-  double? get lastRequestedPower => _lastRequestedPower;
+  double? get requestedPower => _requestedPower;
 
   @observable
-  double? _lastRequestedPower;
+  double? _requestedPower;
 
   // -----------------------
   // ACTIONS
@@ -83,12 +94,13 @@ abstract class _HeaterControllerStateStore with Store {
 
       return;
     }
+
     var message = WsMessageComposer.requestStateChangeMessage(
       OutboundMessageType.temperatureSet,
       value,
     );
     // _lastRequestID = message.id;
-    _lastRequestedTemperature = value;
+    _requestedTemperature = value;
     _webSocketConnectionStore.message(message.jsonString);
   }
 
@@ -103,7 +115,7 @@ abstract class _HeaterControllerStateStore with Store {
       OutboundMessageType.powerSet,
       value,
     );
-    _lastRequestedPower = value;
+    _requestedPower = value;
     _webSocketConnectionStore.message(message.jsonString);
   }
 
@@ -114,6 +126,7 @@ abstract class _HeaterControllerStateStore with Store {
 
       return;
     }
+    _requestedMode = value;
     var message = WsMessageComposer.requestStateChangeMessage(
       OutboundMessageType.heaterModeSet,
       value.jsonValue,
@@ -128,6 +141,9 @@ abstract class _HeaterControllerStateStore with Store {
         message.type == InboundMessageType.heaterControllerState) {
       var heaterState = (message.payload as HeaterControllerState);
       _state = heaterState;
+      if (heaterState.status == _requestedMode?.toHeaterStatus()) {
+        _requestedMode = null;
+      }
       _temperatureHistory.add(
         TimeSeriesEntry(
           DateTime.fromMillisecondsSinceEpoch(heaterState.timestamp * 1000),

@@ -21,9 +21,8 @@ class HeaterControlTile extends StatelessWidget {
   static const double _powerChangeStep = 5;
 
   void increaseHeatingPid() {
-    double currentTarget =
-        _heaterControllerStateStore.lastRequestedTemperature ??
-            _defaultTargetTemperature;
+    double currentTarget = _heaterControllerStateStore.requestedTemperature ??
+        _defaultTargetTemperature;
 
     _heaterControllerStateStore.changeTargetTemperature(
       currentTarget + _temperatureChangeStep,
@@ -32,7 +31,7 @@ class HeaterControlTile extends StatelessWidget {
 
   void increaseHeatingManual() {
     double currentPower =
-        _heaterControllerStateStore.lastRequestedPower ?? _defaultPower;
+        _heaterControllerStateStore.requestedPower ?? _defaultPower;
 
     _heaterControllerStateStore.changePower(
       currentPower + _powerChangeStep,
@@ -40,9 +39,8 @@ class HeaterControlTile extends StatelessWidget {
   }
 
   void decreaseHeatingPid() {
-    double currentTarget =
-        _heaterControllerStateStore.lastRequestedTemperature ??
-            _defaultTargetTemperature;
+    double currentTarget = _heaterControllerStateStore.requestedTemperature ??
+        _defaultTargetTemperature;
 
     _heaterControllerStateStore.changeTargetTemperature(
       currentTarget - _temperatureChangeStep,
@@ -51,7 +49,7 @@ class HeaterControlTile extends StatelessWidget {
 
   void decreaseHeatingManual() {
     double currentPower =
-        _heaterControllerStateStore.lastRequestedPower ?? _defaultPower;
+        _heaterControllerStateStore.requestedPower ?? _defaultPower;
 
     _heaterControllerStateStore.changePower(
       currentPower - _powerChangeStep,
@@ -62,6 +60,17 @@ class HeaterControlTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        Observer(builder: (context) {
+          if (_heaterControllerStateStore.isModeChanging) {
+            return Align(
+              alignment: Alignment.bottomCenter,
+              child: LinearProgressIndicator(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            );
+          }
+          return SizedBox.shrink();
+        }),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Observer(builder: (context) {
@@ -76,20 +85,17 @@ class HeaterControlTile extends StatelessWidget {
         Row(
           children: [
             Expanded(child: Observer(builder: (context) {
-              switch (_heaterControllerStateStore.status) {
-                case HeaterStatus.unknown:
-                  return _PidControlContent();
-                case HeaterStatus.idle:
-                  return _IdleStatusContent();
-                case HeaterStatus.heatingPid:
-                  return _PidControlContent();
-                case HeaterStatus.heatingManual:
-                  return _ManualControlContent();
-                case HeaterStatus.error:
-                  return _PidControlContent();
-                case null:
-                  return _PidControlContent();
-              }
+              return AnimatedSwitcher(
+                duration: Durations.short4,
+                child: switch (_heaterControllerStateStore.status) {
+                  HeaterStatus.unknown => _PidControlContent(),
+                  HeaterStatus.idle => _IdleStatusContent(),
+                  HeaterStatus.heatingPid => _PidControlContent(),
+                  HeaterStatus.heatingManual => _ManualControlContent(),
+                  HeaterStatus.error => _PidControlContent(),
+                  null => _PidControlContent(),
+                },
+              );
             })),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -149,7 +155,7 @@ class _ManualControlContent extends StatelessWidget {
             Observer(builder: (context) {
               double? power = _heaterControllerStateStore.power;
               double? lastRequestedPower =
-                  _heaterControllerStateStore.lastRequestedPower;
+                  _heaterControllerStateStore.requestedPower;
 
               String text = power?.toStringAsFixed(0) ?? "N/A";
 
@@ -210,7 +216,7 @@ class _PidControlContent extends StatelessWidget {
               double? targetTemperature =
                   _heaterControllerStateStore.targetTemperature;
               double? lastRequestedTarget =
-                  _heaterControllerStateStore.lastRequestedTemperature;
+                  _heaterControllerStateStore.requestedTemperature;
 
               String text = targetTemperature?.toStringAsFixed(1) ?? "N/A";
 
