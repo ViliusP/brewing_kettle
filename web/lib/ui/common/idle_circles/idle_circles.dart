@@ -25,26 +25,39 @@ class _AnimatedIdleCirclesState extends State<AnimatedIdleCircles> {
 
   @override
   void initState() {
-    for (int _ in List.generate(widget.count, (i) => i)) {
-      _ranges.add(
-        widget.radius / 2 + (_random.nextDouble() * widget.radius * 3),
-      );
-      _durations.add(Duration(milliseconds: 2000 + _random.nextInt(3000)));
+    var countIter = List.generate(widget.count, (i) => i);
+
+    for (int _ in countIter) {
+      _ranges.add(generateRange());
+      _durations.add(generateDuration());
       _directions.add(
         _random.nextBool() ? VerticalDirection.up : VerticalDirection.down,
       );
     }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
-        for (int i in List.generate(widget.count, (i) => i)) {
-          _directions[i] = switch (_directions[i]) {
-            VerticalDirection.up => VerticalDirection.down,
-            VerticalDirection.down => VerticalDirection.up
-          };
+        for (var i in countIter) {
+          flipDirection(i);
         }
       });
     });
     super.initState();
+  }
+
+  double generateRange() {
+    return widget.radius / 2 + (_random.nextDouble() * widget.radius * 3);
+  }
+
+  Duration generateDuration() {
+    return Duration(milliseconds: 2000 + _random.nextInt(3000));
+  }
+
+  void flipDirection(int index) {
+    _directions[index] = switch (_directions[index]) {
+      VerticalDirection.up => VerticalDirection.down,
+      VerticalDirection.down => VerticalDirection.up
+    };
   }
 
   @override
@@ -78,15 +91,9 @@ class _AnimatedIdleCirclesState extends State<AnimatedIdleCircles> {
             curve: Curves.elasticInOut,
             onEnd: () {
               setState(() {
-                _directions[index] = switch (_directions[index]) {
-                  VerticalDirection.up => VerticalDirection.down,
-                  VerticalDirection.down => VerticalDirection.up
-                };
-                _ranges[index] = widget.radius / 2 +
-                    (_random.nextDouble() * widget.radius * 3);
-                _durations[index] = Duration(
-                  milliseconds: 1500 + _random.nextInt(3000),
-                );
+                flipDirection(index);
+                _ranges[index] = generateRange();
+                _durations[index] = generateDuration();
               });
             },
             child: Container(
