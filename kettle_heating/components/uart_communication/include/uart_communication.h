@@ -17,6 +17,8 @@ typedef enum
 {
     CMD_SEND_SENSOR_DATA = 0x01,
     CMD_SET_VALUE = 0x02,
+    CMD_SEND_STATE = 0x03,
+    CMD_HELLO = 0x04,
 } uart_message_command_t;
 
 // Define message structure

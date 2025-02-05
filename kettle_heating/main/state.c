@@ -60,9 +60,9 @@ app_state_t init_state()
     // }
 
     app_state_t state = {
-        .heater_state = HEATER_STATE_IDLE,
+        .status = HEATER_STATUS_IDLE,
         .current_temp = ABSOLUTE_ZERO,
-        .current_power = 0,
+        .power = 0,
         .target_temp = ABSOLUTE_ZERO,
     };
     return state;

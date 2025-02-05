@@ -27,7 +27,7 @@ entity_handler_map_t entity_handlers[] = {
 };
 
 
-int send_entity_data(const char *entity, float value) {
+int uart_send_entity_data(const char *entity, float value) {
     uint8_t cbor_buffer[256]; // Adjust size as needed
     CborEncoder encoder, map_encoder, payload_encoder;
 
@@ -66,6 +66,56 @@ int send_entity_data(const char *entity, float value) {
     return uart_send_message(&msg_to_send);
 }
 
+int uart_send_state(app_state_t app_state) {
+    uint8_t cbor_buffer[256]; // Adjust size as needed
+    CborEncoder encoder, map_encoder, payload_encoder;
+
+    cbor_encoder_init(&encoder, cbor_buffer, sizeof(cbor_buffer), 0);
+
+    CborError err = CborNoError;
+
+    // Outer map
+    err |= cbor_encoder_create_map(&encoder, &map_encoder, 2); // 1 item: entity
+
+    // "entity": entity
+    err |= cbor_encode_text_string(&map_encoder, "entity", strlen("entity"));
+    err |= cbor_encode_text_string(&map_encoder, "state", strlen("state"));
+
+    // "payload": { "value": value }
+    err |= cbor_encode_text_string(&map_encoder, "payload", strlen("payload"));
+    err |= cbor_encoder_create_map(&map_encoder, &payload_encoder, 4); // Payload map
+
+    err |= cbor_encode_text_string(&payload_encoder, "power", strlen("power"));
+    err |= cbor_encode_float(&payload_encoder, app_state.power);
+
+    err |= cbor_encode_text_string(&payload_encoder, "current_temperature", strlen("current_temperature"));
+    err |= cbor_encode_float(&payload_encoder, app_state.current_temp);
+
+    err |= cbor_encode_text_string(&payload_encoder, "target_temperature", strlen("target_temperature"));
+    err |= cbor_encode_float(&payload_encoder, app_state.target_temp);
+
+    err |= cbor_encode_text_string(&payload_encoder, "status", strlen("status"));
+    err |= cbor_encode_int(&payload_encoder, app_state.status);
+
+    err |= cbor_encoder_close_container(&map_encoder, &payload_encoder); // Close payload map
+    err |= cbor_encoder_close_container(&encoder, &map_encoder); // Close outer map
+
+    if (err != CborNoError) {
+        ESP_LOGE(TAG, "CBOR encoding error: %s", cbor_error_string(err));
+        return -1;
+    }
+
+    size_t cbor_len = cbor_encoder_get_buffer_size(&encoder, cbor_buffer);
+
+    uart_message_t msg_to_send;
+    msg_to_send.command = CMD_SEND_STATE;
+    memcpy(msg_to_send.data, cbor_buffer, cbor_len);
+    msg_to_send.data_len = cbor_len;
+
+    return uart_send_message(&msg_to_send);
+}
+
+
 void handle_target_temperature_data(CborValue *value)
 {
     if (!cbor_value_is_float(value) && !cbor_value_is_double(value))
@@ -87,7 +137,7 @@ void handle_target_temperature_data(CborValue *value)
     }
 
     app_state->target_temp = temperature;
-    send_entity_data(TARGET_TEMP_ENTITY, app_state->target_temp);
+    uart_send_state(*app_state);
 }
 
 void uart_message_handler(const uint8_t *data, int len)
