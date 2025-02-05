@@ -26,8 +26,10 @@ class _AnimatedIdleCirclesState extends State<AnimatedIdleCircles> {
   @override
   void initState() {
     for (int _ in List.generate(widget.count, (i) => i)) {
-      _ranges.add(widget.radius + (_random.nextDouble() * widget.radius));
-      _durations.add(Duration(milliseconds: 2500 + _random.nextInt(2500)));
+      _ranges.add(
+        widget.radius / 2 + (_random.nextDouble() * widget.radius * 3),
+      );
+      _durations.add(Duration(milliseconds: 2000 + _random.nextInt(3000)));
       _directions.add(
         _random.nextBool() ? VerticalDirection.up : VerticalDirection.down,
       );
@@ -80,6 +82,11 @@ class _AnimatedIdleCirclesState extends State<AnimatedIdleCircles> {
                   VerticalDirection.up => VerticalDirection.down,
                   VerticalDirection.down => VerticalDirection.up
                 };
+                _ranges[index] = widget.radius / 2 +
+                    (_random.nextDouble() * widget.radius * 3);
+                _durations[index] = Duration(
+                  milliseconds: 1500 + _random.nextInt(3000),
+                );
               });
             },
             child: Container(

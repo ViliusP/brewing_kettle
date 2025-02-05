@@ -270,7 +270,7 @@ class _IdleStatusContent extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(bottom: 4.0),
           child: Text(
-            "Pauzė",
+            "Ramybės būsena",
             style: TextTheme.of(context).labelLarge,
           ),
         )
