@@ -24,12 +24,13 @@
 #define MESSAGE_IN_GET_SNAPSHOT_STR "snapshot_get"
 #define MESSAGE_IN_SET_TARGET_TEMPERATURE_STR "temperature_set"
 #define MESSAGE_IN_SET_HEATER_MODE_STR "heater_mode_set"
+#define MESSAGE_IN_MESSAGE_SET_POWER_STR "power_set"
+
 #define MESSAGE_IN_EXAMPLE_STR "example"
 
 #define HEATER_MODE_IDLE_JSON "idle"
 #define HEATER_MODE_PID_JSON "heating_pid"
 #define HEATER_MODE_MANUAL_JSON "heating_manual"
-
 
 static const char *TAG = "WS_SERVER_HANDLER";
 
@@ -98,6 +99,7 @@ typedef enum
   MESSAGE_GET_SNAPSHOT,
   MESSAGE_SET_TARGET_TEMP,
   MESSAGE_SET_HEATER_MODE,
+  MESSAGE_SET_POWER,
   MESSAGE_EXAMPLE = 99,
 } message_in_type_t;
 
@@ -119,6 +121,10 @@ message_in_type_t get_message_type(const char *type_str)
   {
     return MESSAGE_SET_HEATER_MODE;
   }
+  if (strcmp(type_str, MESSAGE_IN_MESSAGE_SET_POWER_STR) == 0)
+  {
+    return MESSAGE_SET_POWER;
+  }
   return MESSAGE_UNKNOWN;
 }
 
@@ -138,8 +144,6 @@ heater_status_t heater_status_by_str(const char *value)
   }
   return HEATER_STATUS_UNKNOWN;
 }
-
-
 
 static lv_draw_buf_t *get_snapshot_buffer()
 {
@@ -326,6 +330,32 @@ static esp_err_t error_response(char **data)
 }
 
 // EXAMPLE:
+// "{"id":"e23275a7-d9f4-4553-903f-bb77d573e55d","type":"power_set","time":1738785222171,"payload":{"value":5.0}}"
+double parse_power_value(cJSON *root)
+{
+  cJSON *payload = cJSON_GetObjectItem(root, COMMON_FIELD_PAYLOAD);
+  if (payload == NULL)
+  {
+    ESP_LOGW(TAG, "Payload not found");
+    return NEGATIVE_POWER_VALUE;
+  }
+
+  cJSON *value = cJSON_GetObjectItem(payload, "value");
+  if (value == NULL)
+  {
+    ESP_LOGW(TAG, "Value not found");
+    return NEGATIVE_POWER_VALUE;
+  }
+  if (value->type != cJSON_Number)
+  {
+    ESP_LOGW(TAG, "Given JSON's value isn't number");
+    return NEGATIVE_POWER_VALUE;
+  }
+
+  return value->valuedouble;
+}
+
+// EXAMPLE:
 // "{"id":"0ea777fc-f079-4ba8-b3f5-a890df475625","type":"temperature_set","time":1738153122695,"payload":{"value":21.5}}"
 double parse_target_temperature(cJSON *root)
 {
@@ -351,7 +381,6 @@ double parse_target_temperature(cJSON *root)
   return value->valuedouble;
 }
 
-
 // EXAMPLE:
 // "{"id":"89573144-d4df-4415-9805-dc1d7eaf9897","type":"heater_mode_set","time":1738780934060,"payload":{"value":"heating_manual"}}"
 heater_status_t parse_heater_mode(cJSON *root)
@@ -375,9 +404,8 @@ heater_status_t parse_heater_mode(cJSON *root)
     return HEATER_STATUS_UNKNOWN;
   }
 
-  return  heater_status_by_str(value->valuestring);
+  return heater_status_by_str(value->valuestring);
 }
-
 
 static esp_err_t handle_message(httpd_ws_frame_t *frame, char **data)
 {
@@ -425,6 +453,18 @@ static esp_err_t handle_message(httpd_ws_frame_t *frame, char **data)
       return ESP_OK;
     }
     send_set_target_temperature(message_temp);
+    cJSON_Delete(root);
+    return ESP_OK;
+    break;
+  case MESSAGE_SET_POWER:
+    double power = parse_power_value(root);
+    if (power == NEGATIVE_POWER_VALUE)
+    {
+      ESP_LOGW(TAG, "Couldn't parse power value from message");
+      cJSON_Delete(root);
+      return ESP_OK;
+    }
+    send_power_value(power);
     cJSON_Delete(root);
     return ESP_OK;
     break;

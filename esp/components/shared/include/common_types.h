@@ -5,6 +5,7 @@
 #include "lvgl.h"
 
 #define ABSOLUTE_ZERO_FLOAT -273.15f
+#define NEGATIVE_POWER_VALUE -1.0f
 
 typedef enum
 {
