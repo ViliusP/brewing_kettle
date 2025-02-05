@@ -20,7 +20,9 @@ class HeaterControllerState extends WsInboundMessagePayload {
     final num? currentTemperature = json["current_temperature"];
     final num? targetTemperature = json["target_temperature"];
     final num? power = json["power"];
-    final HeaterStatus? status = HeaterStatus.values.byNameSafe(json["status"]);
+    final HeaterStatus? status = HeaterStatus.values.firstWhereOrNull(
+      (v) => json["status"] == v.jsonValue,
+    );
 
     if ([
       timestamp,
@@ -78,4 +80,27 @@ enum HeaterStatus {
   const HeaterStatus(this.jsonValue);
 
   final String jsonValue;
+}
+
+enum HeaterMode {
+  idle("idle"),
+  heatingManual("heating_manual"),
+  heatingPid("heating_pid");
+
+  const HeaterMode(this.jsonValue);
+
+  final String jsonValue;
+
+  HeaterStatus toHeaterStatus() => switch (this) {
+        idle => HeaterStatus.idle,
+        heatingManual => HeaterStatus.heatingManual,
+        heatingPid => HeaterStatus.heatingPid,
+      };
+
+  static HeaterMode? fromHeaterStatus(HeaterStatus value) => switch (value) {
+        HeaterStatus.idle => HeaterMode.idle,
+        HeaterStatus.heatingManual => HeaterMode.heatingManual,
+        HeaterStatus.heatingPid => HeaterMode.heatingPid,
+        _ => null,
+      };
 }

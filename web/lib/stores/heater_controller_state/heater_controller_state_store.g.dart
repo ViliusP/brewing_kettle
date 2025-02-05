@@ -107,6 +107,17 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
   }
 
   @override
+  void changeMode(HeaterMode value) {
+    final _$actionInfo = _$_HeaterControllerStateStoreActionController
+        .startAction(name: '_HeaterControllerStateStore.changeMode');
+    try {
+      return super.changeMode(value);
+    } finally {
+      _$_HeaterControllerStateStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void _onData(WsInboundMessage<WsInboundMessagePayload> message) {
     final _$actionInfo = _$_HeaterControllerStateStoreActionController
         .startAction(name: '_HeaterControllerStateStore._onData');

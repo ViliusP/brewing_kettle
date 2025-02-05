@@ -59,12 +59,27 @@ abstract class _HeaterControllerStateStore with Store {
 
       return;
     }
-    var message = WsMessageComposer.setValueMessage(
+    var message = WsMessageComposer.requestStateChangeMessage(
       OutboundMessageType.temperatureSet,
       value,
     );
     // _lastRequestID = message.id;
     _lastRequestedTemperature = value;
+    _webSocketConnectionStore.message(message.jsonString);
+  }
+
+  @action
+  void changeMode(HeaterMode value) {
+    if (_webSocketConnectionStore.connectedTo == null) {
+      log("Cannot send snapshot request because there is no online channell");
+
+      return;
+    }
+    var message = WsMessageComposer.requestStateChangeMessage(
+      OutboundMessageType.heaterModeSet,
+      value.jsonValue,
+    );
+
     _webSocketConnectionStore.message(message.jsonString);
   }
 

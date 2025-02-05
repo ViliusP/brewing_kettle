@@ -64,7 +64,7 @@ class WsMessageComposer {
     ).jsonString;
   }
 
-  static WsOutboundValueMessage setValueMessage(
+  static WsOutboundValueMessage requestStateChangeMessage(
     OutboundMessageType type,
     dynamic value,
   ) {
@@ -81,7 +81,8 @@ enum OutboundMessageType {
   configurationGet("configuration_get"),
   snapshotGet("snapshot_get"),
 
-  temperatureSet("temperature_set");
+  temperatureSet("temperature_set"),
+  heaterModeSet("heater_mode_set");
 
   const OutboundMessageType([this._field]);
 
