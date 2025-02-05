@@ -9,6 +9,14 @@ part of 'heater_controller_state_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
+  Computed<double?>? _$lastRequestedTemperatureComputed;
+
+  @override
+  double? get lastRequestedTemperature =>
+      (_$lastRequestedTemperatureComputed ??= Computed<double?>(
+              () => super.lastRequestedTemperature,
+              name: '_HeaterControllerStateStore.lastRequestedTemperature'))
+          .value;
   Computed<List<TimeseriesViewEntry>>? _$temperatureHistoryComputed;
 
   @override
@@ -24,6 +32,31 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
           Computed<double?>(() => super.currentTemperature,
               name: '_HeaterControllerStateStore.currentTemperature'))
       .value;
+  Computed<double?>? _$targetTemperatureComputed;
+
+  @override
+  double? get targetTemperature => (_$targetTemperatureComputed ??=
+          Computed<double?>(() => super.targetTemperature,
+              name: '_HeaterControllerStateStore.targetTemperature'))
+      .value;
+
+  late final _$_lastRequestedTemperatureAtom = Atom(
+      name: '_HeaterControllerStateStore._lastRequestedTemperature',
+      context: context);
+
+  @override
+  double? get _lastRequestedTemperature {
+    _$_lastRequestedTemperatureAtom.reportRead();
+    return super._lastRequestedTemperature;
+  }
+
+  @override
+  set _lastRequestedTemperature(double? value) {
+    _$_lastRequestedTemperatureAtom
+        .reportWrite(value, super._lastRequestedTemperature, () {
+      super._lastRequestedTemperature = value;
+    });
+  }
 
   late final _$_temperatureHistoryAtom = Atom(
       name: '_HeaterControllerStateStore._temperatureHistory',
@@ -42,20 +75,19 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
     });
   }
 
-  late final _$_currentTemperatureAtom = Atom(
-      name: '_HeaterControllerStateStore._currentTemperature',
-      context: context);
+  late final _$stateAtom =
+      Atom(name: '_HeaterControllerStateStore.state', context: context);
 
   @override
-  double? get _currentTemperature {
-    _$_currentTemperatureAtom.reportRead();
-    return super._currentTemperature;
+  HeaterControllerState? get state {
+    _$stateAtom.reportRead();
+    return super.state;
   }
 
   @override
-  set _currentTemperature(double? value) {
-    _$_currentTemperatureAtom.reportWrite(value, super._currentTemperature, () {
-      super._currentTemperature = value;
+  set state(HeaterControllerState? value) {
+    _$stateAtom.reportWrite(value, super.state, () {
+      super.state = value;
     });
   }
 
@@ -63,11 +95,12 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
       ActionController(name: '_HeaterControllerStateStore', context: context);
 
   @override
-  void request() {
-    final _$actionInfo = _$_HeaterControllerStateStoreActionController
-        .startAction(name: '_HeaterControllerStateStore.request');
+  void changeTargetTemperature(double value) {
+    final _$actionInfo =
+        _$_HeaterControllerStateStoreActionController.startAction(
+            name: '_HeaterControllerStateStore.changeTargetTemperature');
     try {
-      return super.request();
+      return super.changeTargetTemperature(value);
     } finally {
       _$_HeaterControllerStateStoreActionController.endAction(_$actionInfo);
     }
@@ -87,8 +120,11 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
   @override
   String toString() {
     return '''
+state: ${state},
+lastRequestedTemperature: ${lastRequestedTemperature},
 temperatureHistory: ${temperatureHistory},
-currentTemperature: ${currentTemperature}
+currentTemperature: ${currentTemperature},
+targetTemperature: ${targetTemperature}
     ''';
   }
 }

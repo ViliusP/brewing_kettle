@@ -27,6 +27,12 @@ abstract class _HeaterControllerStateStore with Store {
   }
 
   @computed
+  double? get lastRequestedTemperature => _lastRequestedTemperature;
+
+  @observable
+  double? _lastRequestedTemperature;
+
+  @computed
   List<TimeseriesViewEntry> get temperatureHistory =>
       TimeSeries.from(_temperatureHistory.toList()).aggregate(
         type: AggregationType.mean,
@@ -38,33 +44,40 @@ abstract class _HeaterControllerStateStore with Store {
   ObservableList<TimeSeriesEntry> _temperatureHistory = ObservableList.of([]);
 
   @computed
-  double? get currentTemperature => _currentTemperature;
+  double? get currentTemperature => state?.currentTemperature;
+
+  @computed
+  double? get targetTemperature => state?.targetTemperature;
 
   @observable
-  double? _currentTemperature;
+  HeaterControllerState? state;
 
   @action
-  void request() {
-    if (_webSocketConnectionStore.connectedTo != null) {
-      var message = WsMessageComposer.simpleRequest(
-        OutboundMessageType.snapshotGet,
-      );
-      _webSocketConnectionStore.message(message);
-    } else {
+  void changeTargetTemperature(double value) {
+    if (_webSocketConnectionStore.connectedTo == null) {
       log("Cannot send snapshot request because there is no online channell");
+
+      return;
     }
+    var message = WsMessageComposer.setValueMessage(
+      OutboundMessageType.temperatureSet,
+      value,
+    );
+    // _lastRequestID = message.id;
+    _lastRequestedTemperature = value;
+    _webSocketConnectionStore.message(message.jsonString);
   }
 
   @action
   void _onData(WsInboundMessage message) {
     if (message.payload is HeaterControllerState &&
         message.type == InboundMessageType.heaterControllerState) {
-      var tempMessage = (message.payload as HeaterControllerState);
-      _currentTemperature = tempMessage.currentTemperature;
+      var heaterState = (message.payload as HeaterControllerState);
+      state = heaterState;
       _temperatureHistory.add(
         TimeSeriesEntry(
-          DateTime.fromMillisecondsSinceEpoch(tempMessage.timestamp * 1000),
-          tempMessage.currentTemperature,
+          DateTime.fromMillisecondsSinceEpoch(heaterState.timestamp * 1000),
+          heaterState.currentTemperature,
         ),
       );
     }
