@@ -30,26 +30,26 @@ void handle_state_data(CborValue *payload)
     CborError err = CborNoError;
 
     // -------------
-    // heater_state
+    // heater_status
     // -------------
-    CborValue heater_state_val;
-    err = cbor_value_map_find_value(payload, "heater_state", &heater_state_val);
+    CborValue heater_status_val;
+    err = cbor_value_map_find_value(payload, "status", &heater_status_val);
     if (err != CborNoError)
     {
-        ESP_LOGE(TAG, "CBOR: heater_state not found: %s", cbor_error_string(err));
+        ESP_LOGE(TAG, "CBOR: (heater) status not found: %s", cbor_error_string(err));
         return;
     }
-    int heater_state;
-    if (cbor_value_is_integer(&heater_state_val))
+    int heater_status;
+    if (cbor_value_is_integer(&heater_status_val))
     {
-        cbor_value_get_int(&heater_state_val, &heater_state);
+        cbor_value_get_int(&heater_status_val, &heater_status);
     }
     else
     {
-        ESP_LOGE(TAG, "CBOR: heater_state is not int");
+        ESP_LOGE(TAG, "CBOR: (heater) status is not int");
         return;
     }
-    ESP_LOGD(TAG, "State Info | heater_state %s", heater_state_string(heater_state));
+    ESP_LOGD(TAG, "State Info | heater_state %s", heater_status_human_string(heater_status));
 
     // --------------------
     // current_temperature
@@ -112,19 +112,19 @@ void handle_state_data(CborValue *payload)
     ESP_LOGD(TAG, "State Info | target_temperature %f", target_temp);
 
     // ---------------
-    // current_power
+    // power
     // ---------------
     CborValue current_power_val;
-    err = cbor_value_map_find_value(payload, "current_power", &current_power_val);
+    err = cbor_value_map_find_value(payload, "power", &current_power_val);
     if (err != CborNoError)
     {
-        ESP_LOGE(TAG, "CBOR: current_power not found: %s", cbor_error_string(err));
+        ESP_LOGE(TAG, "CBOR: power not found: %s", cbor_error_string(err));
         return;
     }
 
     if (!cbor_value_is_float(&current_power_val) && !cbor_value_is_double(&current_power_val))
     {
-        ESP_LOGE(TAG, "CBOR: current_power is not a float or double");
+        ESP_LOGE(TAG, "CBOR: power is not a float or double");
         return;
     }
 
@@ -142,10 +142,10 @@ void handle_state_data(CborValue *payload)
     ESP_LOGD(TAG, "State Info | current_power %f", current_power);
 
     heater_controller_state_t *heater_controller_state_ptr = (heater_controller_state_t *)lv_subject_get_pointer(&state_subjects->heater_controller_state);
-    heater_controller_state_ptr->current_power = current_power;
+    heater_controller_state_ptr->power = current_power;
     heater_controller_state_ptr->current_temp = current_temp;
     heater_controller_state_ptr->target_temp = target_temp;
-    heater_controller_state_ptr->heater_state = heater_state;
+    heater_controller_state_ptr->status = heater_status;
 
     lv_subject_notify(&state_subjects->heater_controller_state);
 }

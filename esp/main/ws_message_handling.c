@@ -10,6 +10,7 @@
 #include "ws_server.h"
 #include "uart_communication.h"
 #include "uart_messaging.h"
+#include "state.h"
 
 #define COMMON_FIELD_ID "id"
 #define COMMON_FIELD_TYPE "type"
@@ -434,7 +435,7 @@ void current_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
   free(data);
 }
 
-static void target_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
+static void heater_controller_state_handler(lv_observer_t *observer, lv_subject_t *subject)
 {
   httpd_handle_t httpd_handle = (httpd_handle_t)lv_observer_get_user_data(observer);
   if (httpd_handle == NULL)
@@ -442,13 +443,12 @@ static void target_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
     ESP_LOGW(TAG, "httpd_handle is NULL, can't send message about target temperature");
     return;
   }
-
-  float *target_temperature_ptr = (float *)lv_subject_get_pointer(subject);
-  if (target_temperature_ptr == NULL)
-  {
+  
+  const heater_controller_state_t *heater_controller_state_ptr = (const heater_controller_state_t *)lv_subject_get_pointer(subject);
+  if(heater_controller_state_ptr == NULL) {
+    ESP_LOGW(TAG, "heater_controller_state pointer is NULL, in heater_controller_state_handler");
     return;
   }
-  float target_temp = *target_temperature_ptr;
 
   cJSON *response_root = cJSON_CreateObject();
   if (response_root == NULL)
@@ -457,7 +457,7 @@ static void target_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
     return;
   }
 
-  cJSON_AddStringToObject(response_root, COMMON_FIELD_TYPE, "target_temperature");
+  cJSON_AddStringToObject(response_root, COMMON_FIELD_TYPE, "heater_controller_state");
 
   cJSON *payload = cJSON_CreateObject();
   if (payload == NULL)
@@ -472,14 +472,54 @@ static void target_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
   time(&now);
   cJSON_AddNumberToObject(payload, "timestamp", now);
 
-  cJSON *value = cJSON_CreateNumber((double)target_temp); // Use cJSON_CreateNumber()
-  if (value == NULL)
+
+  // --------------------
+  // target_temperature
+  // --------------------
+  float target_temp = heater_controller_state_ptr->target_temp;
+  cJSON *target_temp_cjson = cJSON_CreateNumber((double)target_temp); // Use cJSON_CreateNumber()
+  if (target_temp_cjson == NULL)
   {
-    ESP_LOGE(TAG, "Failed to create JSON number");
+    ESP_LOGE(TAG, "Failed to create JSON number (target_temperature)");
     cJSON_Delete(response_root);
     return;
   }
-  cJSON_AddItemToObject(payload, "value", value);
+  cJSON_AddItemToObject(payload, "target_temperature", target_temp_cjson);
+
+
+  // --------------------
+  // current_temperature
+  // --------------------
+  float current_temperature = heater_controller_state_ptr->current_temp;
+  cJSON *current_temperature_cjson = cJSON_CreateNumber((double)current_temperature); // Use cJSON_CreateNumber()
+  if (current_temperature_cjson == NULL)
+  {
+    ESP_LOGE(TAG, "Failed to create JSON number (current_temperature)");
+    cJSON_Delete(response_root);
+    return;
+  }
+  cJSON_AddItemToObject(payload, "current_temperature", current_temperature_cjson);
+
+
+  // --------------------
+  // power
+  // --------------------
+  float power = heater_controller_state_ptr->power;
+  cJSON *power_cjson = cJSON_CreateNumber((double)power); // Use cJSON_CreateNumber()
+  if (power_cjson == NULL)
+  {
+    ESP_LOGE(TAG, "Failed to create JSON number (power)");
+    cJSON_Delete(response_root);
+    return;
+  }
+  cJSON_AddItemToObject(payload, "power", power_cjson);
+
+  // --------------------
+  // heater_state
+  // --------------------
+  heater_status_t status = heater_controller_state_ptr->status;
+  cJSON_AddStringToObject(payload, "status", heater_status_json_string(status));
+
 
   char *data = cJSON_Print(response_root);
   cJSON_Delete(response_root);
@@ -494,8 +534,7 @@ static void target_temp_handler(lv_observer_t *observer, lv_subject_t *subject)
 
 void init_ws_observer(state_subjects_t *state_subjects, httpd_handle_t httpd_handle)
 {
-  // lv_subject_add_observer(&state_subjects->current_temp, current_temp_handler, httpd_handle);
-  // lv_subject_add_observer(&state_subjects->target_temp, target_temp_handler, httpd_handle);
+  lv_subject_add_observer(&state_subjects->heater_controller_state, heater_controller_state_handler, httpd_handle);
 }
 
 ws_message_handler_t create_handler()
