@@ -1,6 +1,7 @@
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
+import 'package:brew_kettle_dashboard/ui/common/idle_circles/idle_circles.dart';
 import 'package:brew_kettle_dashboard/utils/textstyle_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
@@ -64,7 +65,7 @@ class HeaterControlTile extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Observer(builder: (context) {
-            return HeaterModeSelect(
+            return _HeaterModeSelect(
               currentStatus: _heaterControllerStateStore.status,
               onSelected: (value) => _heaterControllerStateStore.changeMode(
                 value,
@@ -79,7 +80,7 @@ class HeaterControlTile extends StatelessWidget {
                 case HeaterStatus.unknown:
                   return _PidControlContent();
                 case HeaterStatus.idle:
-                  return _PidControlContent();
+                  return _IdleStatusContent();
                 case HeaterStatus.heatingPid:
                   return _PidControlContent();
                 case HeaterStatus.heatingManual:
@@ -90,7 +91,6 @@ class HeaterControlTile extends StatelessWidget {
                   return _PidControlContent();
               }
             })),
-            VerticalDivider(indent: 16, endIndent: 16, width: 0),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: Observer(builder: (context) {
@@ -253,12 +253,31 @@ class _PidControlContent extends StatelessWidget {
   }
 }
 
-class HeaterModeSelect extends StatelessWidget {
+class _IdleStatusContent extends StatelessWidget {
+  const _IdleStatusContent();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(child: AnimatedIdleCircles()),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 4.0),
+          child: Text(
+            "Pauzė",
+            style: TextTheme.of(context).labelLarge,
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class _HeaterModeSelect extends StatelessWidget {
   final HeaterStatus? currentStatus;
   final void Function(HeaterMode)? onSelected;
 
-  const HeaterModeSelect({
-    super.key,
+  const _HeaterModeSelect({
     this.onSelected,
     this.currentStatus,
   });
@@ -280,6 +299,8 @@ class HeaterModeSelect extends StatelessWidget {
     }
 
     return PopupMenuButton<HeaterMode>(
+      iconSize: 36,
+      tooltip: "Kaitinimo būdas ${initialValue?.jsonValue}",
       icon: Icon(statusToIcon(currentStatus)),
       initialValue: initialValue,
       onSelected: onSelected,
