@@ -6,6 +6,8 @@
 #define UART_RX_PIN (GPIO_NUM_4)
 #define UART_TX_PIN (GPIO_NUM_5)
 
+#define SSR_GPIO (GPIO_NUM_21)
+
 const uart_config_t uart_config = {
     .baud_rate = UART_BAUD_RATE,
     .data_bits = UART_DATA_8_BITS,
