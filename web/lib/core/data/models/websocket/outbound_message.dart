@@ -82,7 +82,8 @@ enum OutboundMessageType {
   snapshotGet("snapshot_get"),
 
   temperatureSet("temperature_set"),
-  heaterModeSet("heater_mode_set");
+  heaterModeSet("heater_mode_set"),
+  powerSet("power_set");
 
   const OutboundMessageType([this._field]);
 

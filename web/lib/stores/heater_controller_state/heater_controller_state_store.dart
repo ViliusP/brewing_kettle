@@ -26,11 +26,8 @@ abstract class _HeaterControllerStateStore with Store {
     ));
   }
 
-  @computed
-  double? get lastRequestedTemperature => _lastRequestedTemperature;
-
   @observable
-  double? _lastRequestedTemperature;
+  HeaterControllerState? _state;
 
   @computed
   List<TimeseriesViewEntry> get temperatureHistory =>
@@ -44,18 +41,45 @@ abstract class _HeaterControllerStateStore with Store {
   ObservableList<TimeSeriesEntry> _temperatureHistory = ObservableList.of([]);
 
   @computed
-  double? get currentTemperature => state?.currentTemperature;
+  double? get currentTemperature => _state?.currentTemperature;
 
   @computed
-  double? get targetTemperature => state?.targetTemperature;
+  HeaterStatus? get status => _state?.status;
+
+  // -----------------------
+  // TARGET TEMPERATURE STATE
+  // -----------------------
+
+  @computed
+  double? get targetTemperature => _state?.targetTemperature;
+
+  @computed
+  double? get lastRequestedTemperature => _lastRequestedTemperature;
 
   @observable
-  HeaterControllerState? state;
+  double? _lastRequestedTemperature;
+
+  // -----------------------
+  // POWER STATE
+  // -----------------------
+
+  @computed
+  double? get power => _state?.power;
+
+  @computed
+  double? get lastRequestedPower => _lastRequestedPower;
+
+  @observable
+  double? _lastRequestedPower;
+
+  // -----------------------
+  // ACTIONS
+  // -----------------------
 
   @action
   void changeTargetTemperature(double value) {
     if (_webSocketConnectionStore.connectedTo == null) {
-      log("Cannot send snapshot request because there is no online channell");
+      log("Cannot send set target temperature request because there is no online channell");
 
       return;
     }
@@ -65,6 +89,21 @@ abstract class _HeaterControllerStateStore with Store {
     );
     // _lastRequestID = message.id;
     _lastRequestedTemperature = value;
+    _webSocketConnectionStore.message(message.jsonString);
+  }
+
+  @action
+  void changePower(double value) {
+    if (_webSocketConnectionStore.connectedTo == null) {
+      log("Cannot send set power request because there is no online channell");
+
+      return;
+    }
+    var message = WsMessageComposer.requestStateChangeMessage(
+      OutboundMessageType.powerSet,
+      value,
+    );
+    _lastRequestedPower = value;
     _webSocketConnectionStore.message(message.jsonString);
   }
 
@@ -88,7 +127,7 @@ abstract class _HeaterControllerStateStore with Store {
     if (message.payload is HeaterControllerState &&
         message.type == InboundMessageType.heaterControllerState) {
       var heaterState = (message.payload as HeaterControllerState);
-      state = heaterState;
+      _state = heaterState;
       _temperatureHistory.add(
         TimeSeriesEntry(
           DateTime.fromMillisecondsSinceEpoch(heaterState.timestamp * 1000),
