@@ -8,6 +8,7 @@
 
 void handle_target_temperature_data(CborValue *value);
 void handle_heater_mode_data(CborValue *value);
+void handle_set_power_data(CborValue *value);
 
 typedef void (*entity_handler_t)(CborValue *);
 
@@ -25,6 +26,8 @@ static char entity_buffer[ENTITY_BUFFER_SIZE];
 entity_handler_map_t entity_handlers[] = {
     {"target_temperature", handle_target_temperature_data},
     {"heater_mode", handle_heater_mode_data},
+    {"power", handle_set_power_data},
+
     // ... more entities
 };
 
@@ -133,6 +136,31 @@ void handle_heater_mode_data(CborValue *value)
 
     app_state->status = mode;
     app_state->power = 0.0f;
+    uart_send_state(*app_state);
+}
+
+void handle_set_power_data(CborValue *value)
+{
+    if (!cbor_value_is_float(value) && !cbor_value_is_double(value))
+    {
+        ESP_LOGE(TAG, "CBOR: value in set_power data not a float or double");
+        return;
+    }
+
+    float power;
+    if (cbor_value_is_double(value))
+    {
+        double power_d;
+        cbor_value_get_double(value, &power_d);
+        power = (double)power_d;
+    }
+    else
+    {
+        cbor_value_get_float(value, &power);
+    }
+
+    app_state->power = power;
+    app_state->status = HEATER_STATUS_HEATING_MANUAL;
     uart_send_state(*app_state);
 }
 
