@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field, unused_element
+
 import 'dart:math';
 
 import 'package:brew_kettle_dashboard/ui/common/arc_slider/arc_slider_painter.dart';

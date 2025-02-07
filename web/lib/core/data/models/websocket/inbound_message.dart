@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:brew_kettle_dashboard/utils/enum_extensions.dart';
 import 'package:brew_kettle_dashboard/utils/string_extensions.dart';
 import 'package:collection/collection.dart';
 
