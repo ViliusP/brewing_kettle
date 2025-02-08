@@ -71,7 +71,10 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                       increaseNotifier: _increaseTapNotifier,
                       decreaseNotifier: _decreaseTapNotifier,
                     ),
-                  HeaterStatus.heatingManual => _ManualControlContent(),
+                  HeaterStatus.heatingManual => _ManualControlContent(
+                      increaseNotifier: _increaseTapNotifier,
+                      decreaseNotifier: _decreaseTapNotifier,
+                    ),
                   HeaterStatus.unknown => _PidControlContent(),
                   HeaterStatus.idle => _IdleStatusContent(),
                   HeaterStatus.error => _PidControlContent(),
@@ -87,10 +90,10 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                   children: [
                     IconButton(
                       onPressed: switch (_heaterControllerStateStore.status) {
-                        HeaterStatus.heatingPid => _increaseTapNotifier.notify,
-                        HeaterStatus.idle => null,
+                        HeaterStatus.heatingPid ||
                         HeaterStatus.heatingManual =>
-                          _decreaseTapNotifier.notify,
+                          _increaseTapNotifier.notify,
+                        HeaterStatus.idle => null,
                         HeaterStatus.error => null,
                         HeaterStatus.unknown => null,
                         null => null,
@@ -141,63 +144,142 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
   }
 }
 
-class _ManualControlContent extends StatelessWidget {
+class _ManualControlContent extends StatefulWidget {
+  final ButtonTapNotifier? increaseNotifier;
+  final ButtonTapNotifier? decreaseNotifier;
+
+  const _ManualControlContent({this.increaseNotifier, this.decreaseNotifier});
+
+  @override
+  State<_ManualControlContent> createState() => _ManualControlContentState();
+}
+
+class _ManualControlContentState extends State<_ManualControlContent> {
   final HeaterControllerStateStore _heaterControllerStateStore =
       getIt<HeaterControllerStateStore>();
 
-  _ManualControlContent();
+  static const double _powerChangeStep = 1;
+
+  double _targetPower = 0;
+  Timer? _debounce;
+  late final ReactionDisposer _powerTargetReaction;
+
+  @override
+  void initState() {
+    _targetPower = _heaterControllerStateStore.targetTemperature ?? 0;
+
+    widget.increaseNotifier?.addListener(increaseTemperature);
+    widget.decreaseNotifier?.addListener(decreaseTemperature);
+
+    _powerTargetReaction = reaction(
+      (_) => _heaterControllerStateStore.power,
+      onStoreTargetTempChange,
+      fireImmediately: true,
+    );
+    super.initState();
+  }
+
+  void onStoreTargetTempChange(double? value) {
+    if (value != _targetPower) {
+      setState(() {
+        _targetPower = value ?? 0;
+      });
+    }
+  }
+
+  void increaseTemperature() {
+    _updateTarget(_targetPower + _powerChangeStep);
+  }
+
+  void decreaseTemperature() {
+    _updateTarget(_targetPower - _powerChangeStep);
+  }
+
+  void _updateTarget(double value) {
+    setState(() {
+      _targetPower = value.clamp(0, 100);
+    });
+
+    // Reset the timer if it's already running
+    if (_debounce?.isActive ?? false) {
+      _debounce?.cancel();
+    }
+
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      _heaterControllerStateStore.changePower(_targetPower);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Spacer(),
-        Row(
-          children: [
-            Spacer(),
-            Observer(builder: (context) {
-              double? power = _heaterControllerStateStore.power;
-              double? lastRequestedPower =
-                  _heaterControllerStateStore.requestedPower;
+    return SliderContainer(
+      direction: AxisDirection.up,
+      onChanged: _updateTarget,
+      step: 1,
+      range: RangeValues(0, 100),
+      value: _targetPower,
+      child: Column(
+        children: [
+          Spacer(),
+          Row(
+            children: [
+              Spacer(),
+              Observer(builder: (context) {
+                double? storePower = _heaterControllerStateStore.power;
+                double? lastRequestedTarget =
+                    _heaterControllerStateStore.requestedPower;
 
-              String text = power?.toStringAsFixed(0) ?? "N/A";
+                String text = storePower?.toStringAsFixed(1) ?? "N/A";
 
-              bool showLabel =
-                  lastRequestedPower != null && lastRequestedPower != power;
+                bool showLabel = _targetPower != lastRequestedTarget ||
+                    (lastRequestedTarget != null &&
+                        lastRequestedTarget != storePower);
 
-              String badgeTexts = (lastRequestedPower ?? 0).toStringAsFixed(0);
-              return Badge(
-                alignment: Alignment.topLeft,
-                offset: const Offset(-16, 0),
-                isLabelVisible: showLabel,
-                label: Text(badgeTexts),
+                String badgeTexts = _targetPower.toStringAsFixed(0);
+                return Badge(
+                  alignment: Alignment.topLeft,
+                  offset: const Offset(-16, 0),
+                  isLabelVisible: showLabel,
+                  label: Text(badgeTexts),
+                  child: Text(
+                    text,
+                    style: Theme.of(context)
+                        .textTheme
+                        .displayMedium
+                        ?.changeWeight(FontWeight.w800),
+                  ),
+                );
+              }),
+              Icon(MdiIcons.percentOutline, size: 54),
+              Spacer(),
+            ],
+          ),
+          Expanded(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 4.0),
                 child: Text(
-                  text,
-                  style: Theme.of(context)
-                      .textTheme
-                      .displayMedium
-                      ?.changeWeight(FontWeight.w800),
+                  "Galia",
+                  style: TextTheme.of(context).labelLarge,
                 ),
-              );
-            }),
-            Icon(MdiIcons.percentOutline, size: 54),
-            Spacer(),
-          ],
-        ),
-        Expanded(
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 4.0),
-              child: Text(
-                "Galia",
-                style: TextTheme.of(context).labelLarge,
               ),
             ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
+  }
+
+  @override
+  void dispose() {
+    widget.increaseNotifier?.removeListener(increaseTemperature);
+    widget.decreaseNotifier?.removeListener(decreaseTemperature);
+
+    _debounce?.cancel();
+
+    _powerTargetReaction.call();
+    super.dispose();
   }
 }
 
@@ -205,10 +287,7 @@ class _PidControlContent extends StatefulWidget {
   final ButtonTapNotifier? increaseNotifier;
   final ButtonTapNotifier? decreaseNotifier;
 
-  const _PidControlContent({
-    this.increaseNotifier,
-    this.decreaseNotifier,
-  });
+  const _PidControlContent({this.increaseNotifier, this.decreaseNotifier});
 
   @override
   State<_PidControlContent> createState() => _PidControlContentState();
