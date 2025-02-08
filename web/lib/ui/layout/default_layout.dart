@@ -6,6 +6,7 @@ import 'package:brew_kettle_dashboard/utils/enum_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobx/mobx.dart';
 
 class DefaultLayout extends StatefulWidget {
   final Widget body;
@@ -24,12 +25,17 @@ class _DefaultLayoutState extends State<DefaultLayout> {
       getIt<WebSocketConnectionStore>();
 
   int? _selectedIndex;
-
+  ReactionDisposer? _connectedReactionDispose;
   bool _navigationRailVisible = true;
 
   @override
   void initState() {
     onRouteChange();
+    _connectedReactionDispose = reaction(
+      (_) => wsConnectionStore.status,
+      (status) => handleConnectionStatus(status),
+      fireImmediately: true,
+    );
     AppRouter.value.routerDelegate.addListener(onRouteChange);
     super.initState();
   }
@@ -50,6 +56,26 @@ class _DefaultLayoutState extends State<DefaultLayout> {
       2 => AppRoute.test,
       _ => null,
     };
+  }
+
+  void handleConnectionStatus(WebSocketConnectionStatus status) {
+    switch (status) {
+      case WebSocketConnectionStatus.connected:
+        context.replaceNamed(AppRoute.main.name);
+        break;
+      case WebSocketConnectionStatus.connecting:
+        break;
+      case _:
+        var currentPath = GoRouter.maybeOf(context)
+            ?.routerDelegate
+            .currentConfiguration
+            .uri
+            .path;
+        if (currentPath != AppRoute.connection) {
+          context.replaceNamed(AppRoute.main.name);
+        }
+        break;
+    }
   }
 
   void onRouteChange() {
@@ -112,7 +138,7 @@ class _DefaultLayoutState extends State<DefaultLayout> {
             child: _navigationRailVisible
                 ? NavigationRail(
                     selectedIndex: _selectedIndex,
-                    groupAlignment: -1,
+                    groupAlignment: 0,
                     onDestinationSelected: onDestinatationSelected,
                     labelType: NavigationRailLabelType.all,
                     destinations: <NavigationRailDestination>[
@@ -140,7 +166,7 @@ class _DefaultLayoutState extends State<DefaultLayout> {
   @override
   void dispose() {
     AppRouter.value.routerDelegate.removeListener(onRouteChange);
-    // _connectionReactionDispose();
+    _connectedReactionDispose?.call();
     super.dispose();
   }
 }

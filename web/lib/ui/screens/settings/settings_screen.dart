@@ -3,6 +3,7 @@ import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/locale/locale_store.dart';
 import 'package:brew_kettle_dashboard/stores/theme/theme_store.dart';
+import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:brew_kettle_dashboard/ui/common/flags/country_flag.dart';
 import 'package:brew_kettle_dashboard/ui/screens/settings/language_select_dialog.dart';
 import 'package:brew_kettle_dashboard/ui/screens/settings/theme_select_dialog.dart';
@@ -12,7 +13,12 @@ import 'package:flutter_material_design_icons/flutter_material_design_icons.dart
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+  final LocaleStore localeStore = getIt<LocaleStore>();
+  final ThemeStore themeStore = getIt<ThemeStore>();
+  final WebSocketConnectionStore wsConnectionStore =
+      getIt<WebSocketConnectionStore>();
+
+  SettingsScreen({super.key});
 
   Future<void> _languageSelectDialogBuidlder(BuildContext context) async {
     LocaleStore localeStore = getIt<LocaleStore>();
@@ -42,8 +48,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations localizations = AppLocalizations.of(context)!;
-    final LocaleStore localeStore = getIt<LocaleStore>();
-    final ThemeStore themeStore = getIt<ThemeStore>();
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Center(
       child: Container(
@@ -54,6 +59,30 @@ class SettingsScreen extends StatelessWidget {
             builder: (context, constraints) {
               return Column(
                 children: [
+                  Row(
+                    children: [
+                      Spacer(),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            wsConnectionStore.close();
+                          },
+                          style: OutlinedButton.styleFrom(
+                              foregroundColor: colorScheme.secondary,
+                              iconColor: colorScheme.secondary,
+                              iconSize: 22,
+                              textStyle: TextStyle(fontSize: 16),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 16,
+                              )),
+                          label: Text("Atsijungti"),
+                          icon: Icon(MdiIcons.logoutVariant),
+                        ),
+                      ),
+                    ],
+                  ),
                   SettingsCard(
                     title: localizations.pSettingsSectionGeneralTitle,
                     child: Column(
