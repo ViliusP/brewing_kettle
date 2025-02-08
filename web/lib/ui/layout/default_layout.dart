@@ -25,13 +25,13 @@ class _DefaultLayoutState extends State<DefaultLayout> {
       getIt<WebSocketConnectionStore>();
 
   int? _selectedIndex;
-  ReactionDisposer? _connectedReactionDispose;
+  late final ReactionDisposer _connectedReaction;
   bool _navigationRailVisible = true;
 
   @override
   void initState() {
     onRouteChange();
-    _connectedReactionDispose = reaction(
+    _connectedReaction = reaction(
       (_) => wsConnectionStore.status,
       (status) => handleConnectionStatus(status),
       fireImmediately: true,
@@ -166,7 +166,7 @@ class _DefaultLayoutState extends State<DefaultLayout> {
   @override
   void dispose() {
     AppRouter.value.routerDelegate.removeListener(onRouteChange);
-    _connectedReactionDispose?.call();
+    _connectedReaction.call();
     super.dispose();
   }
 }

@@ -1,33 +1,32 @@
+import 'dart:async';
+
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
 import 'package:brew_kettle_dashboard/ui/common/idle_circles/idle_circles.dart';
+import 'package:brew_kettle_dashboard/ui/common/slider_container/slider_container.dart';
 import 'package:brew_kettle_dashboard/utils/textstyle_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobx/mobx.dart';
 
-class HeaterControlTile extends StatelessWidget {
-  HeaterControlTile({super.key});
+class HeaterControlTile extends StatefulWidget {
+  const HeaterControlTile({super.key});
+
+  @override
+  State<HeaterControlTile> createState() => _HeaterControlTileState();
+}
+
+class _HeaterControlTileState extends State<HeaterControlTile> {
+  static const double _defaultPower = 0;
+  static const double _powerChangeStep = 5;
 
   final HeaterControllerStateStore _heaterControllerStateStore =
       getIt<HeaterControllerStateStore>();
 
-  final double temperature = 64;
-
-  static const double _temperatureChangeStep = .5;
-  static const double _defaultTargetTemperature = 20;
-  static const double _defaultPower = 0;
-  static const double _powerChangeStep = 5;
-
-  void increaseHeatingPid() {
-    double currentTarget = _heaterControllerStateStore.requestedTemperature ??
-        _defaultTargetTemperature;
-
-    _heaterControllerStateStore.changeTargetTemperature(
-      currentTarget + _temperatureChangeStep,
-    );
-  }
+  final ButtonTapNotifier _increaseTapNotifier = ButtonTapNotifier();
+  final ButtonTapNotifier _decreaseTapNotifier = ButtonTapNotifier();
 
   void increaseHeatingManual() {
     double currentPower =
@@ -35,15 +34,6 @@ class HeaterControlTile extends StatelessWidget {
 
     _heaterControllerStateStore.changePower(
       currentPower + _powerChangeStep,
-    );
-  }
-
-  void decreaseHeatingPid() {
-    double currentTarget = _heaterControllerStateStore.requestedTemperature ??
-        _defaultTargetTemperature;
-
-    _heaterControllerStateStore.changeTargetTemperature(
-      currentTarget - _temperatureChangeStep,
     );
   }
 
@@ -71,27 +61,19 @@ class HeaterControlTile extends StatelessWidget {
           }
           return SizedBox.shrink();
         }),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Observer(builder: (context) {
-            return _HeaterModeSelect(
-              currentStatus: _heaterControllerStateStore.status,
-              onSelected: (value) => _heaterControllerStateStore.changeMode(
-                value,
-              ),
-            );
-          }),
-        ),
         Row(
           children: [
             Expanded(child: Observer(builder: (context) {
               return AnimatedSwitcher(
                 duration: Durations.short4,
                 child: switch (_heaterControllerStateStore.status) {
+                  HeaterStatus.heatingPid => _PidControlContent(
+                      increaseNotifier: _increaseTapNotifier,
+                      decreaseNotifier: _decreaseTapNotifier,
+                    ),
+                  HeaterStatus.heatingManual => _ManualControlContent(),
                   HeaterStatus.unknown => _PidControlContent(),
                   HeaterStatus.idle => _IdleStatusContent(),
-                  HeaterStatus.heatingPid => _PidControlContent(),
-                  HeaterStatus.heatingManual => _ManualControlContent(),
                   HeaterStatus.error => _PidControlContent(),
                   null => _PidControlContent(),
                 },
@@ -105,9 +87,10 @@ class HeaterControlTile extends StatelessWidget {
                   children: [
                     IconButton(
                       onPressed: switch (_heaterControllerStateStore.status) {
-                        HeaterStatus.heatingPid => increaseHeatingPid,
+                        HeaterStatus.heatingPid => _increaseTapNotifier.notify,
                         HeaterStatus.idle => null,
-                        HeaterStatus.heatingManual => increaseHeatingManual,
+                        HeaterStatus.heatingManual =>
+                          _decreaseTapNotifier.notify,
                         HeaterStatus.error => null,
                         HeaterStatus.unknown => null,
                         null => null,
@@ -115,11 +98,24 @@ class HeaterControlTile extends StatelessWidget {
                       icon: Icon(MdiIcons.arrowUpDropCircleOutline),
                       iconSize: 60,
                     ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: Observer(builder: (context) {
+                        return _HeaterModeSelect(
+                          currentStatus: _heaterControllerStateStore.status,
+                          onSelected: (value) =>
+                              _heaterControllerStateStore.changeMode(
+                            value,
+                          ),
+                        );
+                      }),
+                    ),
                     IconButton(
                       onPressed: switch (_heaterControllerStateStore.status) {
-                        HeaterStatus.heatingPid => decreaseHeatingPid,
+                        HeaterStatus.heatingPid ||
+                        HeaterStatus.heatingManual =>
+                          _decreaseTapNotifier.notify,
                         HeaterStatus.idle => null,
-                        HeaterStatus.heatingManual => decreaseHeatingManual,
                         HeaterStatus.error => null,
                         HeaterStatus.unknown => null,
                         null => null,
@@ -135,6 +131,13 @@ class HeaterControlTile extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _increaseTapNotifier.dispose();
+    _decreaseTapNotifier.dispose();
+    super.dispose();
   }
 }
 
@@ -198,64 +201,146 @@ class _ManualControlContent extends StatelessWidget {
   }
 }
 
-class _PidControlContent extends StatelessWidget {
+class _PidControlContent extends StatefulWidget {
+  final ButtonTapNotifier? increaseNotifier;
+  final ButtonTapNotifier? decreaseNotifier;
+
+  const _PidControlContent({
+    this.increaseNotifier,
+    this.decreaseNotifier,
+  });
+
+  @override
+  State<_PidControlContent> createState() => _PidControlContentState();
+}
+
+class _PidControlContentState extends State<_PidControlContent> {
   final HeaterControllerStateStore _heaterControllerStateStore =
       getIt<HeaterControllerStateStore>();
 
-  _PidControlContent();
+  static const double _temperatureChangeStep = 1;
+
+  double _targetTemp = 0;
+  Timer? _debounce;
+  late final ReactionDisposer _temperatureTargetReaction;
+
+  @override
+  void initState() {
+    _targetTemp = _heaterControllerStateStore.targetTemperature ?? 0;
+
+    widget.increaseNotifier?.addListener(increaseTemperature);
+    widget.decreaseNotifier?.addListener(decreaseTemperature);
+
+    _temperatureTargetReaction = reaction(
+      (_) => _heaterControllerStateStore.targetTemperature,
+      onStoreTargetTempChange,
+      fireImmediately: true,
+    );
+    super.initState();
+  }
+
+  void onStoreTargetTempChange(double? value) {
+    if (value != _targetTemp) {
+      setState(() {
+        _targetTemp = value ?? 0;
+      });
+    }
+  }
+
+  void increaseTemperature() {
+    _updateTarget(_targetTemp + _temperatureChangeStep);
+  }
+
+  void decreaseTemperature() {
+    _updateTarget(_targetTemp - _temperatureChangeStep);
+  }
+
+  void _updateTarget(double value) {
+    setState(() {
+      _targetTemp = value.clamp(0, 100);
+    });
+
+    // Reset the timer if it's already running
+    if (_debounce?.isActive ?? false) {
+      _debounce?.cancel();
+    }
+
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      _heaterControllerStateStore.changeTargetTemperature(_targetTemp);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Spacer(),
-        Row(
-          children: [
-            Spacer(),
-            Observer(builder: (context) {
-              double? targetTemperature =
-                  _heaterControllerStateStore.targetTemperature;
-              double? lastRequestedTarget =
-                  _heaterControllerStateStore.requestedTemperature;
+    return SliderContainer(
+      direction: AxisDirection.up,
+      onChanged: _updateTarget,
+      step: 1,
+      range: RangeValues(0, 100),
+      value: _targetTemp,
+      child: Column(
+        children: [
+          Spacer(),
+          Row(
+            children: [
+              Spacer(),
+              Observer(builder: (context) {
+                double? storeTargetTemp =
+                    _heaterControllerStateStore.targetTemperature;
+                double? lastRequestedTarget =
+                    _heaterControllerStateStore.requestedTemperature;
 
-              String text = targetTemperature?.toStringAsFixed(1) ?? "N/A";
+                String text = storeTargetTemp?.toStringAsFixed(1) ?? "N/A";
 
-              bool showLabel = lastRequestedTarget != null &&
-                  lastRequestedTarget != targetTemperature;
+                bool showLabel = _targetTemp != lastRequestedTarget ||
+                    (lastRequestedTarget != null &&
+                        lastRequestedTarget != storeTargetTemp);
 
-              String badgeTexts = (lastRequestedTarget ?? 0).toStringAsFixed(1);
-              return Badge(
-                alignment: Alignment.topLeft,
-                offset: const Offset(-16, 0),
-                isLabelVisible: showLabel,
-                label: Text(badgeTexts),
+                String badgeTexts = _targetTemp.toStringAsFixed(0);
+                return Badge(
+                  alignment: Alignment.topLeft,
+                  offset: const Offset(-16, 0),
+                  isLabelVisible: showLabel,
+                  label: Text(badgeTexts),
+                  child: Text(
+                    text,
+                    style: Theme.of(context)
+                        .textTheme
+                        .displayMedium
+                        ?.changeWeight(FontWeight.w800),
+                  ),
+                );
+              }),
+              Icon(MdiIcons.temperatureCelsius, size: 54),
+              Spacer(),
+            ],
+          ),
+          Expanded(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 4.0),
                 child: Text(
-                  text,
-                  style: Theme.of(context)
-                      .textTheme
-                      .displayMedium
-                      ?.changeWeight(FontWeight.w800),
+                  "Tikslo temperatūra",
+                  style: TextTheme.of(context).labelLarge,
                 ),
-              );
-            }),
-            Icon(MdiIcons.temperatureCelsius, size: 54),
-            Spacer(),
-          ],
-        ),
-        Expanded(
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 4.0),
-              child: Text(
-                "Tikslo temperatūra",
-                style: TextTheme.of(context).labelLarge,
               ),
             ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
+  }
+
+  @override
+  void dispose() {
+    widget.increaseNotifier?.removeListener(increaseTemperature);
+    widget.decreaseNotifier?.removeListener(decreaseTemperature);
+
+    _debounce?.cancel();
+
+    _temperatureTargetReaction.call();
+    super.dispose();
   }
 }
 
@@ -294,7 +379,7 @@ class _HeaterModeSelect extends StatelessWidget {
         HeaterStatus.idle => MdiIcons.sleep,
         HeaterStatus.error => MdiIcons.kettleAlertOutline,
         HeaterStatus.unknown => MdiIcons.helpCircleOutline,
-        null => MdiIcons.dotsVerticalCircleOutline,
+        null => MdiIcons.dotsHorizontal,
       };
 
   @override
@@ -327,5 +412,11 @@ class _HeaterModeSelect extends StatelessWidget {
               ))
           .toList(),
     );
+  }
+}
+
+class ButtonTapNotifier with ChangeNotifier {
+  void notify() {
+    notifyListeners();
   }
 }
