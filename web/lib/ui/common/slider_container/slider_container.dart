@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class SliderContainer extends StatelessWidget {
+class SliderContainer extends StatefulWidget {
   final Widget child;
   final AxisDirection direction;
   final double value;
@@ -20,77 +20,97 @@ class SliderContainer extends StatelessWidget {
     this.decorations = const SliderContainerDecorations(),
   });
 
+  @override
+  State<SliderContainer> createState() => _SliderContainerState();
+}
+
+class _SliderContainerState extends State<SliderContainer> {
+  bool _dragging = false;
+
   void onGesture(Offset position, BoxConstraints boxConstraints) {
     double dy = position.dy;
     double dx = position.dx;
     double maxHeight = boxConstraints.maxHeight;
     double maxWidth = boxConstraints.maxWidth;
 
-    double percent = switch (direction) {
+    double percent = switch (widget.direction) {
       AxisDirection.up => (maxHeight - dy) / maxHeight,
       AxisDirection.down => dy / maxHeight,
       AxisDirection.right => dx / maxWidth,
       AxisDirection.left => (maxWidth - dx) / maxWidth,
     };
 
-    var newValue = (range.end - range.start) * percent;
-    newValue = (newValue / step).ceil() * step;
-    newValue = newValue.clamp(range.start, range.end);
-    onChanged?.call(newValue);
+    var newValue = (widget.range.end - widget.range.start) * percent;
+    newValue = (newValue / widget.step).ceil() * widget.step;
+    newValue = newValue.clamp(widget.range.start, widget.range.end);
+    widget.onChanged?.call(newValue);
   }
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    final fillPercent = value / (range.end - range.start);
+    final fillPercent = widget.value / (widget.range.end - widget.range.start);
 
     Color color = colorScheme.primary;
-    if (decorations.withColorFade) {
+    if (widget.decorations.withColorFade) {
       color = color.withAlpha((25 + 15 * fillPercent).toInt());
     }
-    // Slider()
+
     return LayoutBuilder(builder: (context, constraints) {
-      return GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTapDown: (details) => onGesture(details.localPosition, constraints),
-        onVerticalDragUpdate: (details) => onGesture(
-          details.localPosition,
-          constraints,
-        ),
-        onVerticalDragStart: (details) => onGesture(
-          details.localPosition,
-          constraints,
-        ),
-        child: Stack(
-          children: [
-            Align(
-              alignment: switch (direction) {
-                AxisDirection.up => Alignment.bottomCenter,
-                AxisDirection.down => Alignment.topCenter,
-                AxisDirection.right => Alignment.centerLeft,
-                AxisDirection.left => Alignment.centerRight,
-              },
-              child: AnimatedContainer(
-                height: switch (direction) {
-                  AxisDirection.up => constraints.maxHeight * fillPercent,
-                  AxisDirection.down => constraints.maxHeight * fillPercent,
-                  AxisDirection.right => null,
-                  AxisDirection.left => null,
+      return MouseRegion(
+        cursor: switch (_dragging) {
+          true => SystemMouseCursors.grabbing,
+          false => SystemMouseCursors.grab,
+        },
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapDown: (details) {
+            if (!_dragging) setState(() => _dragging = true);
+            onGesture(details.localPosition, constraints);
+          },
+          onTapUp: (details) => setState(() => _dragging = false),
+          onTapCancel: () => setState(() => _dragging = false),
+          onVerticalDragUpdate: (details) {
+            if (!_dragging) setState(() => _dragging = true);
+            onGesture(details.localPosition, constraints);
+          },
+          onVerticalDragStart: (details) {
+            if (!_dragging) setState(() => _dragging = true);
+            onGesture(details.localPosition, constraints);
+          },
+          onVerticalDragEnd: (details) => setState(() => _dragging = false),
+          onVerticalDragCancel: () => setState(() => _dragging = false),
+          child: Stack(
+            children: [
+              Align(
+                alignment: switch (widget.direction) {
+                  AxisDirection.up => Alignment.bottomCenter,
+                  AxisDirection.down => Alignment.topCenter,
+                  AxisDirection.right => Alignment.centerLeft,
+                  AxisDirection.left => Alignment.centerRight,
                 },
-                width: switch (direction) {
-                  AxisDirection.up => null,
-                  AxisDirection.down => null,
-                  AxisDirection.right => constraints.maxWidth * fillPercent,
-                  AxisDirection.left => constraints.maxWidth * fillPercent,
-                },
-                color: color,
-                duration: Durations.medium1,
-                curve: Curves.fastEaseInToSlowEaseOut,
+                child: AnimatedContainer(
+                  height: switch (widget.direction) {
+                    AxisDirection.up => constraints.maxHeight * fillPercent,
+                    AxisDirection.down => constraints.maxHeight * fillPercent,
+                    AxisDirection.right => null,
+                    AxisDirection.left => null,
+                  },
+                  width: switch (widget.direction) {
+                    AxisDirection.up => null,
+                    AxisDirection.down => null,
+                    AxisDirection.right => constraints.maxWidth * fillPercent,
+                    AxisDirection.left => constraints.maxWidth * fillPercent,
+                  },
+                  color: color,
+                  duration: Durations.medium1,
+                  curve: Curves.fastEaseInToSlowEaseOut,
+                ),
               ),
-            ),
-            child,
-          ],
+              widget.child,
+            ],
+          ),
         ),
       );
     });
