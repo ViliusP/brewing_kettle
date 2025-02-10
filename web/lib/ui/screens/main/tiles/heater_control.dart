@@ -453,7 +453,7 @@ class _HeaterModeSelect extends StatelessWidget {
   });
 
   IconData statusToIcon(HeaterStatus? value) => switch (value) {
-        HeaterStatus.heatingManual => MdiIcons.percentCircleOutline,
+        HeaterStatus.heatingManual => MdiIcons.gasBurner,
         HeaterStatus.heatingPid => MdiIcons.thermometerAuto,
         HeaterStatus.idle => MdiIcons.sleep,
         HeaterStatus.error => MdiIcons.kettleAlertOutline,
