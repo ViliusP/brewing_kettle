@@ -7,6 +7,7 @@ class SliderContainer extends StatelessWidget {
   final RangeValues range;
   final double step;
   final void Function(double)? onChanged;
+  final SliderContainerDecorations decorations;
 
   const SliderContainer({
     super.key,
@@ -16,6 +17,7 @@ class SliderContainer extends StatelessWidget {
     required this.range,
     required this.onChanged,
     this.step = 1.0,
+    this.decorations = const SliderContainerDecorations(),
   });
 
   void onGesture(Offset position, BoxConstraints boxConstraints) {
@@ -39,8 +41,14 @@ class SliderContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var fillPercent = value / (range.end - range.start);
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
+    final fillPercent = value / (range.end - range.start);
+
+    Color color = colorScheme.primary;
+    if (decorations.withColorFade) {
+      color = color.withAlpha((25 + 15 * fillPercent).toInt());
+    }
     // Slider()
     return LayoutBuilder(builder: (context, constraints) {
       return GestureDetector(
@@ -76,7 +84,7 @@ class SliderContainer extends StatelessWidget {
                   AxisDirection.right => constraints.maxWidth * fillPercent,
                   AxisDirection.left => constraints.maxWidth * fillPercent,
                 },
-                color: Color.fromRGBO(0, 0, 0, 0.1),
+                color: color,
                 duration: Durations.medium1,
                 curve: Curves.fastEaseInToSlowEaseOut,
               ),
@@ -87,4 +95,12 @@ class SliderContainer extends StatelessWidget {
       );
     });
   }
+}
+
+class SliderContainerDecorations {
+  const SliderContainerDecorations({
+    this.withColorFade = true,
+  });
+
+  final bool withColorFade;
 }
