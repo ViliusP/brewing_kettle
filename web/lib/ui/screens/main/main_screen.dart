@@ -41,7 +41,10 @@ class MainScreen extends StatelessWidget {
                     StaggeredGridTile.count(
                       crossAxisCellCount: 5,
                       mainAxisCellCount: 3,
-                      child: DashboardTile(child: TempHistoryTile()),
+                      child: DashboardTile(
+                        outlined: true,
+                        child: TempHistoryTile(),
+                      ),
                     ),
                   ],
                 ),

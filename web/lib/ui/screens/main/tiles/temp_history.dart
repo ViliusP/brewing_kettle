@@ -26,9 +26,7 @@ class TempHistoryTile extends StatelessWidget {
       ),
       child: Observer(builder: (context) {
         var tempHistory = _temperatureStore.stateHistory.takeLast(entriesLimit);
-        return TempHistoryChart(
-          data: tempHistory,
-        );
+        return TempHistoryChart(data: tempHistory);
       }),
     );
   }

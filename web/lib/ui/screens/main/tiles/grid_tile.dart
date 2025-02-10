@@ -1,41 +1,42 @@
 import 'package:flutter/material.dart';
 
-class Tile extends StatelessWidget {
-  final String title;
-
-  const Tile({super.key, required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return DashboardTile(
-      child: Text(
-        title,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onPrimaryContainer,
-          fontSize: 32,
-        ),
-      ),
-    );
-  }
-}
-
 class DashboardTile extends StatelessWidget {
   final Widget child;
+  final bool outlined;
 
   const DashboardTile({
     super.key,
     required this.child,
+    this.outlined = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+    var shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(12.0)),
+    );
+
+    if (outlined) {
+      shape = shape.copyWith(
+        side: BorderSide(color: colorScheme.outlineVariant, width: 1),
+      );
+      return Card.outlined(
+        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+        elevation: 0,
+        shape: shape,
+        clipBehavior: Clip.antiAlias,
+        child: Center(child: child),
+      );
+    }
+
+    return Card.filled(
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+      elevation: 0,
+      shape: shape,
+      color: colorScheme.surfaceContainer,
       clipBehavior: Clip.hardEdge,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-        color: Theme.of(context).colorScheme.surfaceContainer,
-      ),
       child: Center(child: child),
     );
   }
