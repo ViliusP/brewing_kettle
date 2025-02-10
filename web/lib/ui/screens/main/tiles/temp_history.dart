@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:brew_kettle_dashboard/core/data/models/timeseries/timeseries.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
@@ -11,7 +13,7 @@ class TempHistoryTile extends StatelessWidget {
   final HeaterControllerStateStore _temperatureStore =
       getIt<HeaterControllerStateStore>();
 
-  final int maxX = 100;
+  static const entriesLimit = 100;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class TempHistoryTile extends StatelessWidget {
         bottom: 8.0,
       ),
       child: Observer(builder: (context) {
-        var tempHistory = _temperatureStore.stateHistory.takeLast(100);
+        var tempHistory = _temperatureStore.stateHistory.takeLast(entriesLimit);
         return TempHistoryChart(
           data: tempHistory,
         );
@@ -43,6 +45,8 @@ class TempHistoryChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
+    TextTheme textTheme = TextTheme.of(context);
+
     var convertedData = data
         .map((e) => {
               'date': e.date,
@@ -117,30 +121,22 @@ class TempHistoryChart extends StatelessWidget {
       },
       marks: [
         LineMark(
-          position: Varset('date') * Varset('target_temperature'),
-          size: SizeEncode(value: 2),
-          color: ColorEncode(
-            value: colorScheme.error.withAlpha(96),
-          ),
-          shape: ShapeEncode(
-            value: BasicLineShape(smooth: true, dash: [24, 2]),
-          ),
-        ),
-        LineMark(
           position: Varset('date') * Varset('temperature'),
           shape: ShapeEncode(value: BasicLineShape(smooth: true)),
           size: SizeEncode(value: 3),
           color: ColorEncode(value: colorScheme.outline),
         ),
         LineMark(
-          position: Varset('date') * Varset('power'),
-          shape: ShapeEncode(
-            value: BasicLineShape(smooth: true, dash: [12, 2]),
-          ),
+          position: Varset('date') * Varset('target_temperature'),
           size: SizeEncode(value: 2),
-          color: ColorEncode(
-            value: colorScheme.inversePrimary,
-          ),
+          color: ColorEncode(value: colorScheme.error.withAlpha(96)),
+          shape: ShapeEncode(value: BasicLineShape(dash: [24, 2])),
+        ),
+        LineMark(
+          position: Varset('date') * Varset('power'),
+          shape: ShapeEncode(value: BasicLineShape(dash: [12, 2])),
+          size: SizeEncode(value: 2),
+          color: ColorEncode(value: colorScheme.inversePrimary),
         ),
       ],
       axes: [
@@ -149,9 +145,10 @@ class TempHistoryChart extends StatelessWidget {
           line: PaintStyle(
             strokeWidth: 1,
             strokeColor: colorScheme.outline.withAlpha(128),
+            strokeCap: StrokeCap.round,
           ),
           label: LabelStyle(
-            textStyle: TextTheme.of(context).labelSmall,
+            textStyle: textTheme.labelMedium,
             offset: const Offset(0, 7.5),
           ),
         ),
@@ -160,12 +157,13 @@ class TempHistoryChart extends StatelessWidget {
           line: PaintStyle(
             strokeWidth: 1,
             strokeColor: colorScheme.outline.withAlpha(128),
+            strokeCap: StrokeCap.round,
           ),
           labelMapper: (_, index, ___) {
             return switch (index) {
               0 => null,
               _ => LabelStyle(
-                  textStyle: TextTheme.of(context).labelSmall,
+                  textStyle: textTheme.labelMedium,
                   offset: const Offset(-10, 0),
                 )
             };
@@ -177,6 +175,7 @@ class TempHistoryChart extends StatelessWidget {
                   style: PaintStyle(
                     strokeWidth: 1,
                     strokeColor: colorScheme.outline,
+                    strokeCap: StrokeCap.round,
                   ),
                 )
             };
@@ -187,35 +186,19 @@ class TempHistoryChart extends StatelessWidget {
               _ => PaintStyle(
                   strokeWidth: 1,
                   strokeColor: colorScheme.outline.withAlpha(35),
+                  strokeCap: StrokeCap.round,
                 )
             };
           },
         ),
       ],
       selections: {
-        'touchMove': PointSelection(
-          on: {
-            GestureType.scaleUpdate,
-            GestureType.tapDown,
-            GestureType.longPressMoveUpdate
-          },
-          clear: {
-            GestureType.longPressEnd,
-          },
-          dim: Dim.x,
-        ),
+        _ChartSelections.tooltipShow: _ChartSelections.tooltipShowSettings,
+        _ChartSelections.crosshairShow: _ChartSelections.crossHairShowSettings,
       },
       tooltip: TooltipGuide(
-        selections: {'touchMove', 'tooltipMouse'},
+        selections: {_ChartSelections.tooltipShow},
         followPointer: [false, false],
-        // align: Alignment.topLeft,
-        // mark: 0,
-        // variables: [
-        //   'date',
-        //   'temperature',
-        //   'target_temperature',
-        //   'power',
-        // ],
         renderer: (size, anchor, selectedTuples) {
           ColorScheme colorScheme = Theme.of(context).colorScheme;
 
@@ -226,25 +209,27 @@ class TempHistoryChart extends StatelessWidget {
           var maybeDate = values?[ControllerStateFields.date];
           if (maybeDate != null && maybeDate is DateTime) {
             repr += "Date: ";
-            repr += "${maybeDate.hour}:${maybeDate.minute}:${maybeDate.second}";
-          }
-
-          var maybePower = values?[ControllerStateFields.power];
-          if (maybePower != null && maybePower is num) {
-            repr += "\nPower: ${maybePower.toStringAsFixed(0)}%";
-          }
-
-          var maybeTemperature =
-              values?[ControllerStateFields.currentTemperature];
-          if (maybeTemperature != null && maybeTemperature is num) {
-            repr += "\nTemperature: ${maybeTemperature.toStringAsFixed(0)}%";
+            repr += [maybeDate.hour, maybeDate.minute, maybeDate.second]
+                .map((v) => v.toString().padLeft(2, "0"))
+                .join(":");
           }
 
           var targetTemperature =
               values?[ControllerStateFields.targetTemperature];
           if (targetTemperature != null && targetTemperature is num) {
             repr += "\nTarget temperature: ";
-            repr += "${targetTemperature.toStringAsFixed(0)}%";
+            repr += "${targetTemperature.toStringAsFixed(0)}°C";
+          }
+
+          var maybeTemperature =
+              values?[ControllerStateFields.currentTemperature];
+          if (maybeTemperature != null && maybeTemperature is num) {
+            repr += "\nTemperature: ${maybeTemperature.toStringAsFixed(0)}°C";
+          }
+
+          var maybePower = values?[ControllerStateFields.power];
+          if (maybePower != null && maybePower is num) {
+            repr += "\nPower: ${maybePower.toStringAsFixed(0)}%";
           }
 
           LabelElement tooltipLabelGen(Offset offset, String text) =>
@@ -253,7 +238,7 @@ class TempHistoryChart extends StatelessWidget {
                 text: text,
                 anchor: offset,
                 style: LabelStyle(
-                  textStyle: TextStyle(
+                  textStyle: textTheme.labelMedium?.copyWith(
                     color: colorScheme.onInverseSurface,
                     backgroundColor: Colors.transparent,
                   ),
@@ -284,9 +269,49 @@ class TempHistoryChart extends StatelessWidget {
         },
       ),
       crosshair: CrosshairGuide(
+        selections: {_ChartSelections.crosshairShow},
         labelPaddings: const [8.0, 8.0],
         showLabel: const [true, true],
         followPointer: const [false, false],
+        formatter: [
+          // Date
+          (val) {
+            if (val is DateTime) {
+              return [val.hour, val.minute, val.second]
+                  .map((v) => v.toString().padLeft(2, "0"))
+                  .join(":");
+            }
+            return val.toString();
+          },
+          // Temperature
+          (val) {
+            if (val is num) {
+              return "${val.toStringAsFixed(2)}°C";
+            }
+            return val.toString();
+          },
+        ],
+        labelStyles: [
+          // Date
+          LabelStyle(
+            textStyle: textTheme.labelMedium?.copyWith(
+              color: colorScheme.onInverseSurface,
+              backgroundColor: Colors.transparent,
+            ),
+          ),
+          // Temperature
+          LabelStyle(
+            offset: Offset(-4, 0),
+            textStyle: textTheme.labelMedium?.copyWith(
+              color: colorScheme.onInverseSurface,
+              backgroundColor: Colors.transparent,
+            ),
+          ),
+        ],
+        labelBackgroundStyles: [
+          PaintStyle(fillColor: colorScheme.inverseSurface),
+          PaintStyle(fillColor: colorScheme.inverseSurface),
+        ],
         styles: [
           PaintStyle(
             strokeColor: Color.fromRGBO(0, 0, 0, .25),
@@ -309,4 +334,41 @@ class ControllerStateFields {
   static const targetTemperature = "target_temperature";
   static const power = "power";
   static const date = "date";
+}
+
+class _ChartSelections {
+  static const crosshairShow = "crosshair_show";
+  static const tooltipShow = "tooltip_show";
+
+  static final PointSelection crossHairShowSettings = PointSelection(
+    on: {
+      GestureType.hover,
+      GestureType.scaleUpdate,
+      GestureType.tapDown,
+      GestureType.longPressMoveUpdate,
+    },
+    clear: {
+      GestureType.mouseExit,
+    },
+    nearest: true,
+    devices: {PointerDeviceKind.mouse},
+    variable: 'date',
+    dim: Dim.x,
+  );
+
+  static final PointSelection tooltipShowSettings = PointSelection(
+    on: {
+      GestureType.scaleUpdate,
+      GestureType.tapDown,
+      GestureType.longPressMoveUpdate,
+    },
+    clear: {
+      GestureType.mouseExit,
+      GestureType.scaleEnd,
+    },
+    nearest: true,
+    devices: {PointerDeviceKind.mouse},
+    variable: 'date',
+    dim: Dim.x,
+  );
 }
