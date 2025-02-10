@@ -3,31 +3,102 @@ import 'dart:ui';
 import 'package:brew_kettle_dashboard/core/data/models/timeseries/timeseries.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
+import 'package:brew_kettle_dashboard/ui/screens/main/tiles/history_graph_info.dart';
 import 'package:brew_kettle_dashboard/utils/list_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:graphic/graphic.dart';
 
-class TempHistoryTile extends StatelessWidget {
-  TempHistoryTile({super.key});
+class TempHistoryTile extends StatefulWidget {
+  const TempHistoryTile({super.key});
+
+  @override
+  State<TempHistoryTile> createState() => _TempHistoryTileState();
+}
+
+class _TempHistoryTileState extends State<TempHistoryTile> {
+  static const _entriesLimit = 100;
+
   final HeaterControllerStateStore _temperatureStore =
       getIt<HeaterControllerStateStore>();
 
-  static const entriesLimit = 100;
+  bool _showInfo = false;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: 8.0,
-        right: 16.0,
-        top: 16.0,
-        bottom: 8.0,
-      ),
-      child: Observer(builder: (context) {
-        var tempHistory = _temperatureStore.stateHistory.takeLast(entriesLimit);
-        return TempHistoryChart(data: tempHistory);
-      }),
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 8.0,
+            right: 16.0,
+            top: 16.0,
+            bottom: 8.0,
+          ),
+          child: Observer(builder: (context) {
+            var tempHistory = _temperatureStore.stateHistory.takeLast(
+              _entriesLimit,
+            );
+            return TempHistoryChart(data: tempHistory);
+          }),
+        ),
+        Positioned.fill(
+          child: AnimatedSwitcher(
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+              duration: Durations.medium2,
+              child: switch (_showInfo) {
+                true => SizedBox(
+                    key: Key("_showInfo = true"),
+                    child: ColoredBox(
+                      color: colorScheme.surface,
+                      child: Center(child: const HistoryGraphInfo()),
+                    ),
+                  ),
+                false => SizedBox.shrink(key: Key("_showInfo = false")),
+              }),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Align(
+            alignment: Alignment.topRight,
+            child: Material(
+              type: MaterialType.button,
+              shape: CircleBorder(),
+              clipBehavior: Clip.hardEdge,
+              color: Colors.transparent,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.help,
+                hitTestBehavior: HitTestBehavior.opaque,
+                onEnter: (e) {
+                  setState(() {
+                    _showInfo = true;
+                  });
+                },
+                onExit: (e) {
+                  setState(() {
+                    _showInfo = false;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    MdiIcons.informationBoxOutline,
+                    size: 32,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
