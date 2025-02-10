@@ -30,8 +30,9 @@ class TimeSeries<T> {
   }
 
   List<TimeSeriesViewEntry> aggregate({
-    required AggregationType type,
+    required AggregationType defaultType,
     required AggregationInterval interval,
+    Map<String, AggregationType> typesByField = const {},
     MissingValueHandler? missingValueHandler,
   }) {
     Map<String, List<TimeSeriesEntry<num>>> aggregatedFields = {};
@@ -42,7 +43,7 @@ class TimeSeries<T> {
         data: _data
             .map((e) => TimeSeriesEntry<num>(e.date, accesor(e.value)))
             .toList(),
-        type: type,
+        type: typesByField[field] ?? defaultType,
         interval: interval,
       );
     }
@@ -91,6 +92,8 @@ class TimeSeries<T> {
         AggregationType.max => _max(values),
         AggregationType.min => _min(values),
         AggregationType.sum => _sum(values),
+        AggregationType.first => _first(values),
+        AggregationType.last => _last(values),
       };
 
       if (value == null) {
@@ -141,6 +144,16 @@ class TimeSeries<T> {
   static num? _sum(List<num> values) {
     if (values.isEmpty) return null;
     return values.reduce((a, b) => a + b);
+  }
+
+  static num? _first(List<num> values) {
+    if (values.isEmpty) return null;
+    return values.firstOrNull;
+  }
+
+  static num? _last(List<num> values) {
+    if (values.isEmpty) return null;
+    return values.lastOrNull;
   }
 
   @override
@@ -251,6 +264,8 @@ enum AggregationType {
   max,
   min,
   sum,
+  first,
+  last,
 }
 
 enum TimeUnit {

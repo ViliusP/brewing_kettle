@@ -44,9 +44,12 @@ abstract class _HeaterControllerStateStore with Store {
           "target_temperature": (v) => v.targetTemperature,
         },
       ).aggregate(
-        type: AggregationType.mean,
-        interval: AggregationInterval.seconds(15),
-      );
+          defaultType: AggregationType.mean,
+          interval: AggregationInterval.seconds(15),
+          typesByField: {
+            "power": AggregationType.last,
+            "target_temperature": AggregationType.last,
+          });
 
   @observable
   // ignore: prefer_final_fields
