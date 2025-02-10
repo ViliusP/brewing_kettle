@@ -23,14 +23,17 @@ class TempHistoryTile extends StatelessWidget {
         bottom: 8.0,
       ),
       child: Observer(builder: (context) {
-        return TempHistoryChart(data: _temperatureStore.temperatureHistory);
+        var tempHistory = _temperatureStore.stateHistory.takeLast(100);
+        return TempHistoryChart(
+          data: tempHistory,
+        );
       }),
     );
   }
 }
 
 class TempHistoryChart extends StatelessWidget {
-  final List<TimeseriesViewEntry> data;
+  final List<TimeSeriesViewEntry> data;
 
   const TempHistoryChart({
     super.key,
@@ -40,11 +43,27 @@ class TempHistoryChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
-
     var convertedData = data
-        .takeLast(100)
-        .map((e) => {'date': e.date, 'temperature': e.value ?? 0})
+        .map((e) => {
+              'date': e.date,
+              'temperature': e.value?['current_temperature'] ?? 0,
+              'target_temperature': e.value?['target_temperature'] ?? 0,
+              'power': e.value?['power'] ?? 0,
+            })
         .toList();
+
+    // Graphics library cannot be used with empty data, so it will be added when
+    // provided data is empty.
+    if (data.isEmpty) {
+      convertedData.add(
+        {
+          'date': DateTime.now(),
+          'temperature': 0,
+          'target_temperature': 0,
+          'power': 0,
+        },
+      );
+    }
 
     return Chart(
       padding: (_) => const EdgeInsets.fromLTRB(50, 8, 24, 24),

@@ -16,14 +16,13 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
       (_$isModeChangingComputed ??= Computed<bool>(() => super.isModeChanging,
               name: '_HeaterControllerStateStore.isModeChanging'))
           .value;
-  Computed<List<TimeseriesViewEntry>>? _$temperatureHistoryComputed;
+  Computed<List<TimeSeriesViewEntry>>? _$stateHistoryComputed;
 
   @override
-  List<TimeseriesViewEntry> get temperatureHistory =>
-      (_$temperatureHistoryComputed ??= Computed<List<TimeseriesViewEntry>>(
-              () => super.temperatureHistory,
-              name: '_HeaterControllerStateStore.temperatureHistory'))
-          .value;
+  List<TimeSeriesViewEntry> get stateHistory => (_$stateHistoryComputed ??=
+          Computed<List<TimeSeriesViewEntry>>(() => super.stateHistory,
+              name: '_HeaterControllerStateStore.stateHistory'))
+      .value;
   Computed<double?>? _$currentTemperatureComputed;
 
   @override
@@ -82,20 +81,20 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
     });
   }
 
-  late final _$_temperatureHistoryAtom = Atom(
-      name: '_HeaterControllerStateStore._temperatureHistory',
-      context: context);
+  late final _$_stateHistoryAtom =
+      Atom(name: '_HeaterControllerStateStore._stateHistory', context: context);
 
   @override
-  ObservableList<TimeSeriesEntry> get _temperatureHistory {
-    _$_temperatureHistoryAtom.reportRead();
-    return super._temperatureHistory;
+  ObservableList<TimeSeriesEntry<HeaterControllerState>> get _stateHistory {
+    _$_stateHistoryAtom.reportRead();
+    return super._stateHistory;
   }
 
   @override
-  set _temperatureHistory(ObservableList<TimeSeriesEntry> value) {
-    _$_temperatureHistoryAtom.reportWrite(value, super._temperatureHistory, () {
-      super._temperatureHistory = value;
+  set _stateHistory(
+      ObservableList<TimeSeriesEntry<HeaterControllerState>> value) {
+    _$_stateHistoryAtom.reportWrite(value, super._stateHistory, () {
+      super._stateHistory = value;
     });
   }
 
@@ -201,7 +200,7 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
   String toString() {
     return '''
 isModeChanging: ${isModeChanging},
-temperatureHistory: ${temperatureHistory},
+stateHistory: ${stateHistory},
 currentTemperature: ${currentTemperature},
 status: ${status},
 targetTemperature: ${targetTemperature},

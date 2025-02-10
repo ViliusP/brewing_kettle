@@ -1,41 +1,86 @@
 import 'dart:collection';
 
-class TimeSeries {
-  UnmodifiableListView<TimeSeriesEntry> get data => UnmodifiableListView(
+typedef TimeSeriesAccesor<T> = num Function(T value);
+typedef TimeSeriesAccesors<T> = Map<String, TimeSeriesAccesor<T>>;
+
+class TimeSeries<T> {
+  UnmodifiableListView<TimeSeriesEntry<T>> get data => UnmodifiableListView(
         _data,
       );
 
-  final List<TimeSeriesEntry> _data;
+  final List<TimeSeriesEntry<T>> _data;
+  final TimeSeriesAccesors<T> _accesors;
 
-  TimeSeries() : _data = [];
+  TimeSeries()
+      : _data = [],
+        _accesors = {};
 
-  TimeSeries.from(Iterable<TimeSeriesEntry> iterable)
-      : _data = List<TimeSeriesEntry>.from(iterable);
+  TimeSeries.from(
+    Iterable<TimeSeriesEntry<T>> entries,
+    TimeSeriesAccesors<T> accesors,
+  )   : _data = List<TimeSeriesEntry<T>>.from(entries),
+        _accesors = accesors;
 
-  void add(TimeSeriesEntry entry) {
+  void add(TimeSeriesEntry<T> entry) {
     _data.add(entry);
   }
 
-  void addAll(List<TimeSeriesEntry> entry) {
+  void addAll(List<TimeSeriesEntry<T>> entry) {
     _data.addAll(entry);
   }
 
-  List<TimeseriesViewEntry> aggregate({
+  List<TimeSeriesViewEntry> aggregate({
     required AggregationType type,
     required AggregationInterval interval,
     MissingValueHandler? missingValueHandler,
   }) {
-    final List<TimeseriesViewEntry> aggregated = [];
+    Map<String, List<TimeSeriesEntry<num>>> aggregatedFields = {};
+    for (var accesorEntry in this._accesors.entries) {
+      var field = accesorEntry.key;
+      var accesor = accesorEntry.value;
+      aggregatedFields[field] = _aggregateCollection(
+        data: _data
+            .map((e) => TimeSeriesEntry<num>(e.date, accesor(e.value)))
+            .toList(),
+        type: type,
+        interval: interval,
+      );
+    }
+
+    int length = aggregatedFields.values.firstOrNull?.length ?? 0;
+    List<TimeSeriesViewEntry> aggregatedData = [];
+
+    for (var i in List.generate(length, (i) => i)) {
+      Map<String, num> values = {};
+      for (var key in this._accesors.keys) {
+        values[key] = aggregatedFields[key]!.elementAt(i).value;
+      }
+
+      aggregatedData.add(TimeSeriesViewEntry(
+        aggregatedFields.values.first[i].date,
+        values,
+      ));
+    }
+    return aggregatedData;
+  }
+
+  static List<TimeSeriesEntry<num>> _aggregateCollection({
+    required List<TimeSeriesEntry<num>> data,
+    required AggregationType type,
+    required AggregationInterval interval,
+    MissingValueHandler? missingValueHandler,
+  }) {
+    final List<TimeSeriesEntry<num>> aggregated = [];
     final int intervalInMs = interval.milliseconds;
 
     final Map<int, List<num>> buckets = {};
 
-    for (final entry in _data) {
+    for (final entry in data) {
       final int bucket = entry.date.millisecondsSinceEpoch ~/ intervalInMs;
       if (!buckets.containsKey(bucket)) {
         buckets[bucket] = [];
       }
-      buckets[bucket]!.add(entry.value);
+      buckets[bucket]?.add(entry.value);
     }
 
     for (final bucket in buckets.keys) {
@@ -57,21 +102,21 @@ class TimeSeries {
             throw ArgumentError('Values list cannot be empty');
         }
       }
-      aggregated.add(TimeseriesViewEntry(
+      aggregated.add(TimeSeriesEntry<num>(
         DateTime.fromMillisecondsSinceEpoch(bucket * intervalInMs),
-        value,
+        value!,
       ));
     }
 
     return aggregated;
   }
 
-  num? _mean(List<num> values) {
+  static num? _mean(List<num> values) {
     if (values.isEmpty) return null;
     return (values.reduce((a, b) => (a + b)) / values.length);
   }
 
-  num? _median(List<num> values) {
+  static num? _median(List<num> values) {
     if (values.isEmpty) return null;
     final sorted = List<num>.from(values)..sort();
     final mid = sorted.length ~/ 2;
@@ -83,17 +128,17 @@ class TimeSeries {
     }
   }
 
-  num? _max(List<num> values) {
+  static num? _max(List<num> values) {
     if (values.isEmpty) return null;
     return values.reduce((a, b) => a > b ? a : b);
   }
 
-  num? _min(List<num> values) {
+  static num? _min(List<num> values) {
     if (values.isEmpty) return null;
     return values.reduce((a, b) => a < b ? a : b);
   }
 
-  num? _sum(List<num> values) {
+  static num? _sum(List<num> values) {
     if (values.isEmpty) return null;
     return values.reduce((a, b) => a + b);
   }
@@ -119,11 +164,11 @@ class ValueFillerHandler extends MissingValueHandler {
   ValueFillerHandler(this.value);
 }
 
-class TimeseriesViewEntry {
+class TimeSeriesViewEntry {
   final DateTime date;
-  final num? value;
+  final Map<String, num>? value;
 
-  TimeseriesViewEntry(this.date, [this.value]);
+  TimeSeriesViewEntry(this.date, [this.value]);
 
   @override
   String toString() {
@@ -131,12 +176,10 @@ class TimeseriesViewEntry {
   }
 }
 
-class TimeSeriesEntry implements TimeseriesViewEntry {
-  @override
+class TimeSeriesEntry<T> {
   final DateTime date;
 
-  @override
-  covariant num value;
+  covariant T value;
 
   TimeSeriesEntry(this.date, this.value);
 

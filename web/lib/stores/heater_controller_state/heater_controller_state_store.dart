@@ -35,15 +35,23 @@ abstract class _HeaterControllerStateStore with Store {
       _requestedMode?.toHeaterStatus() != _state?.status;
 
   @computed
-  List<TimeseriesViewEntry> get temperatureHistory =>
-      TimeSeries.from(_temperatureHistory.toList()).aggregate(
+  List<TimeSeriesViewEntry> get stateHistory =>
+      TimeSeries<HeaterControllerState>.from(
+        _stateHistory,
+        {
+          "power": (v) => v.power,
+          "current_temperature": (v) => v.currentTemperature,
+          "target_temperature": (v) => v.targetTemperature,
+        },
+      ).aggregate(
         type: AggregationType.mean,
-        interval: AggregationInterval.seconds(10),
+        interval: AggregationInterval.seconds(15),
       );
 
   @observable
   // ignore: prefer_final_fields
-  ObservableList<TimeSeriesEntry> _temperatureHistory = ObservableList.of([]);
+  ObservableList<TimeSeriesEntry<HeaterControllerState>> _stateHistory =
+      ObservableList.of([]);
 
   @computed
   double? get currentTemperature => _state?.currentTemperature;
@@ -60,7 +68,6 @@ abstract class _HeaterControllerStateStore with Store {
   // -----------------------
   // TARGET TEMPERATURE STATE
   // -----------------------
-
   @computed
   double? get targetTemperature => _state?.targetTemperature;
 
@@ -73,7 +80,6 @@ abstract class _HeaterControllerStateStore with Store {
   // -----------------------
   // POWER STATE
   // -----------------------
-
   @computed
   double? get power => _state?.power;
 
@@ -86,7 +92,6 @@ abstract class _HeaterControllerStateStore with Store {
   // -----------------------
   // ACTIONS
   // -----------------------
-
   @action
   void changeTargetTemperature(double value) {
     if (_webSocketConnectionStore.connectedTo == null) {
@@ -144,10 +149,10 @@ abstract class _HeaterControllerStateStore with Store {
       if (heaterState.status == _requestedMode?.toHeaterStatus()) {
         _requestedMode = null;
       }
-      _temperatureHistory.add(
-        TimeSeriesEntry(
+      _stateHistory.add(
+        TimeSeriesEntry<HeaterControllerState>(
           DateTime.fromMillisecondsSinceEpoch(heaterState.timestamp * 1000),
-          heaterState.currentTemperature,
+          heaterState,
         ),
       );
     }
