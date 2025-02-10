@@ -71,7 +71,7 @@ class _DefaultLayoutState extends State<DefaultLayout> {
             .currentConfiguration
             .uri
             .path;
-        if (currentPath != AppRoute.connection) {
+        if (currentPath != AppRoute.connection.path) {
           context.replaceNamed(AppRoute.main.name);
         }
         break;
