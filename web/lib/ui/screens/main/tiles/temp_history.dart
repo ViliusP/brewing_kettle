@@ -67,14 +67,20 @@ class TempHistoryChart extends StatelessWidget {
 
     return Chart(
       padding: (_) => const EdgeInsets.fromLTRB(50, 8, 24, 24),
-      rebuild: false,
+      // Another quirk of graphics library, if data changes from default to store's,
+      // axes won't rebuild itself.
+      rebuild: data.length == 2 ? true : false,
       data: convertedData,
       variables: {
         'date': Variable(
           accessor: (Map map) => map['date'] as DateTime,
           scale: TimeScale(
-              marginMin: 0,
-              marginMax: 0,
+              min: data.isEmpty
+                  ? DateTime.now().subtract(Duration(hours: 1))
+                  : null,
+              max: data.isEmpty ? DateTime.now() : null,
+              marginMin: data.isNotEmpty ? 0 : null,
+              marginMax: data.isNotEmpty ? 0 : null,
               tickCount: 3,
               formatter: (d) {
                 String hours = d.hour.toString().padLeft(2, '0');
@@ -92,17 +98,58 @@ class TempHistoryChart extends StatelessWidget {
             formatter: (v) => v.toStringAsFixed(1),
           ),
         ),
+        'target_temperature': Variable(
+          accessor: (Map map) => map['target_temperature'] as num,
+          scale: LinearScale(
+            min: 0,
+            max: 105,
+            formatter: (v) => v.toStringAsFixed(1),
+          ),
+        ),
+        'power': Variable(
+          accessor: (Map map) => map['power'] as num,
+          scale: LinearScale(
+            min: 0,
+            max: 100,
+            formatter: (v) => v.toStringAsFixed(1),
+          ),
+        ),
       },
       marks: [
         LineMark(
+          position: Varset('date') * Varset('target_temperature'),
           size: SizeEncode(value: 2),
-          color: ColorEncode(value: colorScheme.inversePrimary),
+          color: ColorEncode(
+            value: colorScheme.error.withAlpha(96),
+          ),
+          shape: ShapeEncode(
+            value: BasicLineShape(smooth: true, dash: [24, 2]),
+          ),
+        ),
+        LineMark(
+          position: Varset('date') * Varset('temperature'),
+          shape: ShapeEncode(value: BasicLineShape(smooth: true)),
+          size: SizeEncode(value: 3),
+          color: ColorEncode(value: colorScheme.outline),
+        ),
+        LineMark(
+          position: Varset('date') * Varset('power'),
+          shape: ShapeEncode(
+            value: BasicLineShape(smooth: true, dash: [12, 2]),
+          ),
+          size: SizeEncode(value: 2),
+          color: ColorEncode(
+            value: colorScheme.inversePrimary,
+          ),
         ),
       ],
       axes: [
         AxisGuide(
           dim: Dim.x,
-          line: PaintStyle(strokeWidth: 1, strokeColor: colorScheme.outline),
+          line: PaintStyle(
+            strokeWidth: 1,
+            strokeColor: colorScheme.outline.withAlpha(128),
+          ),
           label: LabelStyle(
             textStyle: TextTheme.of(context).labelSmall,
             offset: const Offset(0, 7.5),
@@ -110,7 +157,10 @@ class TempHistoryChart extends StatelessWidget {
         ),
         AxisGuide(
           dim: Dim.y,
-          line: PaintStyle(strokeWidth: 1, strokeColor: colorScheme.outline),
+          line: PaintStyle(
+            strokeWidth: 1,
+            strokeColor: colorScheme.outline.withAlpha(128),
+          ),
           labelMapper: (_, index, ___) {
             return switch (index) {
               0 => null,
@@ -149,18 +199,114 @@ class TempHistoryChart extends StatelessWidget {
             GestureType.tapDown,
             GestureType.longPressMoveUpdate
           },
+          clear: {
+            GestureType.longPressEnd,
+          },
           dim: Dim.x,
-        )
+        ),
       },
+      tooltip: TooltipGuide(
+        selections: {'touchMove', 'tooltipMouse'},
+        followPointer: [false, false],
+        // align: Alignment.topLeft,
+        // mark: 0,
+        // variables: [
+        //   'date',
+        //   'temperature',
+        //   'target_temperature',
+        //   'power',
+        // ],
+        renderer: (size, anchor, selectedTuples) {
+          ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+          var values = selectedTuples.entries.firstOrNull?.value;
+          double padding = 6;
+
+          String repr = "";
+          var maybeDate = values?[ControllerStateFields.date];
+          if (maybeDate != null && maybeDate is DateTime) {
+            repr += "Date: ";
+            repr += "${maybeDate.hour}:${maybeDate.minute}:${maybeDate.second}";
+          }
+
+          var maybePower = values?[ControllerStateFields.power];
+          if (maybePower != null && maybePower is num) {
+            repr += "\nPower: ${maybePower.toStringAsFixed(0)}%";
+          }
+
+          var maybeTemperature =
+              values?[ControllerStateFields.currentTemperature];
+          if (maybeTemperature != null && maybeTemperature is num) {
+            repr += "\nTemperature: ${maybeTemperature.toStringAsFixed(0)}%";
+          }
+
+          var targetTemperature =
+              values?[ControllerStateFields.targetTemperature];
+          if (targetTemperature != null && targetTemperature is num) {
+            repr += "\nTarget temperature: ";
+            repr += "${targetTemperature.toStringAsFixed(0)}%";
+          }
+
+          LabelElement tooltipLabelGen(Offset offset, String text) =>
+              LabelElement(
+                defaultAlign: Alignment.topLeft,
+                text: text,
+                anchor: offset,
+                style: LabelStyle(
+                  textStyle: TextStyle(
+                    color: colorScheme.onInverseSurface,
+                    backgroundColor: Colors.transparent,
+                  ),
+                ),
+              );
+
+          var offsetedAncher = anchor.translate(-2 * padding, -2 * padding);
+          var textElement = tooltipLabelGen(
+            offsetedAncher,
+            repr,
+          );
+          var textRect = textElement.getBlock();
+          if (textRect.left.isNegative) {
+            textElement = tooltipLabelGen(
+              offsetedAncher.translate(textRect.left.abs(), 0),
+              repr,
+            );
+          }
+          textRect = textElement.getBlock();
+
+          var rectElement = RectElement(
+            rect: textRect.inflate(padding),
+            borderRadius: BorderRadius.all(Radius.circular(4)),
+            style: PaintStyle(fillColor: colorScheme.inverseSurface),
+          );
+
+          return [rectElement, textElement];
+        },
+      ),
       crosshair: CrosshairGuide(
         labelPaddings: const [8.0, 8.0],
         showLabel: const [true, true],
         followPointer: const [false, false],
         styles: [
-          PaintStyle(strokeColor: Color.fromRGBO(0, 0, 0, 1)),
-          PaintStyle(strokeColor: Color.fromRGBO(0, 0, 0, 1)),
+          PaintStyle(
+            strokeColor: Color.fromRGBO(0, 0, 0, .25),
+            strokeCap: StrokeCap.round,
+            strokeWidth: 3,
+          ),
+          PaintStyle(
+            strokeColor: Color.fromRGBO(0, 0, 0, .25),
+            strokeCap: StrokeCap.round,
+            strokeWidth: 3,
+          ),
         ],
       ),
     );
   }
+}
+
+class ControllerStateFields {
+  static const currentTemperature = "temperature";
+  static const targetTemperature = "target_temperature";
+  static const power = "power";
+  static const date = "date";
 }
