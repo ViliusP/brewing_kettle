@@ -11,45 +11,47 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      primary: true,
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
       child: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 960),
-          child: ConstrainedBox(
-            constraints: BoxConstraints.loose(Size.fromWidth(1600)),
-            child: LayoutBuilder(builder: (context, constraints) {
-              print(constraints);
-              // 960
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                child: StaggeredGrid.count(
-                  crossAxisCount: 5,
-                  mainAxisSpacing: 2,
-                  crossAxisSpacing: 4,
-                  children: [
-                    StaggeredGridTile.count(
-                      crossAxisCellCount: 2,
-                      mainAxisCellCount: 2,
-                      child: DashboardTile(child: CurrentTempTile()),
-                    ),
-                    StaggeredGridTile.count(
-                      crossAxisCellCount: 3,
-                      mainAxisCellCount: 2,
-                      child: DashboardTile(child: HeaterControlTile()),
-                    ),
-                    StaggeredGridTile.count(
-                      crossAxisCellCount: 5,
-                      mainAxisCellCount: 3,
-                      child: DashboardTile(
-                        outlined: true,
-                        child: TempHistoryTile(),
+        child: SingleChildScrollView(
+          primary: true,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 960),
+              child: LayoutBuilder(builder: (context, constraints) {
+                print(constraints);
+                // 960
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  child: StaggeredGrid.count(
+                    crossAxisCount: 5,
+                    mainAxisSpacing: 2,
+                    crossAxisSpacing: 4,
+                    children: [
+                      StaggeredGridTile.count(
+                        crossAxisCellCount: 2,
+                        mainAxisCellCount: 2,
+                        child: DashboardTile(child: CurrentTempTile()),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }),
+                      StaggeredGridTile.count(
+                        crossAxisCellCount: 3,
+                        mainAxisCellCount: 2,
+                        child: DashboardTile(child: HeaterControlTile()),
+                      ),
+                      StaggeredGridTile.count(
+                        crossAxisCellCount: 5,
+                        mainAxisCellCount: 3,
+                        child: DashboardTile(
+                          outlined: true,
+                          child: TempHistoryTile(),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+            ),
           ),
         ),
       ),
