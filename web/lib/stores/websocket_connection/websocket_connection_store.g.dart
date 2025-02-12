@@ -23,13 +23,15 @@ mixin _$WebSocketConnectionStore on _WebSocketConnectionStore, Store {
       (_$connectedToComputed ??= Computed<String?>(() => super.connectedTo,
               name: '_WebSocketConnectionStore.connectedTo'))
           .value;
-  Computed<List<WsInboundMessageSimple>>? _$messagesComputed;
+  Computed<UnmodifiableListView<WsInboundMessageSimple>>? _$messagesComputed;
 
   @override
-  List<WsInboundMessageSimple> get messages => (_$messagesComputed ??=
-          Computed<List<WsInboundMessageSimple>>(() => super.messages,
-              name: '_WebSocketConnectionStore.messages'))
-      .value;
+  UnmodifiableListView<WsInboundMessageSimple> get messages =>
+      (_$messagesComputed ??=
+              Computed<UnmodifiableListView<WsInboundMessageSimple>>(
+                  () => super.messages,
+                  name: '_WebSocketConnectionStore.messages'))
+          .value;
   Computed<String>? _$logsComputed;
 
   @override

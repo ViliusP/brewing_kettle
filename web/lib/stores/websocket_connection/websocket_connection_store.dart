@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:developer';
 import 'dart:io';
 import 'package:brew_kettle_dashboard/core/data/models/store/ws_listener.dart';
@@ -39,7 +40,7 @@ abstract class _WebSocketConnectionStore with Store {
   // ARCHIVE
   // ----------
   @computed
-  List<WsInboundMessageSimple> get messages => _archive.data;
+  UnmodifiableListView<WsInboundMessageSimple> get messages => _archive.data;
 
   @computed
   String get logs => _archive.jsonLog;
