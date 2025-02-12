@@ -131,14 +131,14 @@ class WsInboundMessageJson extends WsInboundMessageSimple {
 }
 
 sealed class WsInboundMessagePayload {
-  WsInboundMessagePayload();
+  const WsInboundMessagePayload();
 
   factory WsInboundMessagePayload.fromJsonMap(
     Map<String, dynamic> json,
     InboundMessageType type,
   ) {
     return switch (type) {
-      InboundMessageType.configuration => DeviceConfiguration.fromJson(json),
+      InboundMessageType.configuration => SystemControllers.fromJson(json),
       InboundMessageType.snapshot => DeviceSnapshot.fromJson(json),
       InboundMessageType.heaterControllerState =>
         HeaterControllerState.fromJson(json),

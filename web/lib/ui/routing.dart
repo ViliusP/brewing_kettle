@@ -3,6 +3,7 @@ import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:brew_kettle_dashboard/ui/layout/default_layout.dart';
 import 'package:brew_kettle_dashboard/ui/screens/connection/connection_sceen.dart';
+import 'package:brew_kettle_dashboard/ui/screens/devices/devices_screen.dart';
 import 'package:brew_kettle_dashboard/ui/screens/main/main_screen.dart';
 import 'package:brew_kettle_dashboard/ui/screens/settings/settings_screen.dart';
 import 'package:brew_kettle_dashboard/ui/screens/test/test_screen.dart';
@@ -19,6 +20,7 @@ enum AppRoute {
   main("/"),
   connection("/connection"),
   settings("/settings"),
+  devices("/devices"),
   test("/test");
 
   const AppRoute(this.path);
@@ -80,6 +82,11 @@ class AppRouter {
               path: AppRoute.settings.path,
               name: AppRoute.settings.name,
               builder: (context, state) => SettingsScreen(),
+            ),
+            GoRoute(
+              path: AppRoute.devices.path,
+              name: AppRoute.devices.name,
+              builder: (context, state) => DevicesScreen(),
             ),
             GoRoute(
               path: AppRoute.test.path,

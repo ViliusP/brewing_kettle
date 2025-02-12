@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'device_configuration_store.dart';
+part of 'devices_info_store.dart';
 
 // **************************************************************************
 // StoreGenerator
@@ -8,33 +8,33 @@ part of 'device_configuration_store.dart';
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
-mixin _$DeviceConfigurationStore on _DeviceConfigurationStore, Store {
+mixin _$DevicesInfoStore on _DevicesInfoStore, Store {
   Computed<bool>? _$waitingResponseComputed;
 
   @override
   bool get waitingResponse =>
       (_$waitingResponseComputed ??= Computed<bool>(() => super.waitingResponse,
-              name: '_DeviceConfigurationStore.waitingResponse'))
+              name: '_DevicesInfoStore.waitingResponse'))
           .value;
 
-  late final _$configurationAtom =
-      Atom(name: '_DeviceConfigurationStore.configuration', context: context);
+  late final _$controllersAtom =
+      Atom(name: '_DevicesInfoStore.controllers', context: context);
 
   @override
-  DeviceConfiguration? get configuration {
-    _$configurationAtom.reportRead();
-    return super.configuration;
+  SystemControllers? get controllers {
+    _$controllersAtom.reportRead();
+    return super.controllers;
   }
 
   @override
-  set configuration(DeviceConfiguration? value) {
-    _$configurationAtom.reportWrite(value, super.configuration, () {
-      super.configuration = value;
+  set controllers(SystemControllers? value) {
+    _$controllersAtom.reportWrite(value, super.controllers, () {
+      super.controllers = value;
     });
   }
 
-  late final _$_waitingResponseAtom = Atom(
-      name: '_DeviceConfigurationStore._waitingResponse', context: context);
+  late final _$_waitingResponseAtom =
+      Atom(name: '_DevicesInfoStore._waitingResponse', context: context);
 
   @override
   bool get _waitingResponse {
@@ -49,35 +49,35 @@ mixin _$DeviceConfigurationStore on _DeviceConfigurationStore, Store {
     });
   }
 
-  late final _$_DeviceConfigurationStoreActionController =
-      ActionController(name: '_DeviceConfigurationStore', context: context);
+  late final _$_DevicesInfoStoreActionController =
+      ActionController(name: '_DevicesInfoStore', context: context);
 
   @override
   void request() {
-    final _$actionInfo = _$_DeviceConfigurationStoreActionController
-        .startAction(name: '_DeviceConfigurationStore.request');
+    final _$actionInfo = _$_DevicesInfoStoreActionController.startAction(
+        name: '_DevicesInfoStore.request');
     try {
       return super.request();
     } finally {
-      _$_DeviceConfigurationStoreActionController.endAction(_$actionInfo);
+      _$_DevicesInfoStoreActionController.endAction(_$actionInfo);
     }
   }
 
   @override
   void _onData(WsInboundMessage<WsInboundMessagePayload> message) {
-    final _$actionInfo = _$_DeviceConfigurationStoreActionController
-        .startAction(name: '_DeviceConfigurationStore._onData');
+    final _$actionInfo = _$_DevicesInfoStoreActionController.startAction(
+        name: '_DevicesInfoStore._onData');
     try {
       return super._onData(message);
     } finally {
-      _$_DeviceConfigurationStoreActionController.endAction(_$actionInfo);
+      _$_DevicesInfoStoreActionController.endAction(_$actionInfo);
     }
   }
 
   @override
   String toString() {
     return '''
-configuration: ${configuration},
+controllers: ${controllers},
 waitingResponse: ${waitingResponse}
     ''';
   }

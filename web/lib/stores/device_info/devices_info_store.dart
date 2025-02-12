@@ -6,16 +6,15 @@ import 'package:brew_kettle_dashboard/core/data/models/websocket/outbound_messag
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:mobx/mobx.dart';
 
-part 'device_configuration_store.g.dart';
+part 'devices_info_store.g.dart';
 
 // ignore: library_private_types_in_public_api
-class DeviceConfigurationStore = _DeviceConfigurationStore
-    with _$DeviceConfigurationStore;
+class DevicesInfoStore = _DevicesInfoStore with _$DevicesInfoStore;
 
-abstract class _DeviceConfigurationStore with Store {
+abstract class _DevicesInfoStore with Store {
   final WebSocketConnectionStore _webSocketConnectionStore;
 
-  _DeviceConfigurationStore({
+  _DevicesInfoStore({
     required WebSocketConnectionStore webSocketConnectionStore,
   }) : _webSocketConnectionStore = webSocketConnectionStore {
     _webSocketConnectionStore.subscribe(StoreWebSocketListener(
@@ -26,7 +25,7 @@ abstract class _DeviceConfigurationStore with Store {
   }
 
   @observable
-  DeviceConfiguration? configuration;
+  SystemControllers? controllers;
 
   @computed
   bool get waitingResponse => _waitingResponse;
@@ -48,9 +47,9 @@ abstract class _DeviceConfigurationStore with Store {
 
   @action
   void _onData(WsInboundMessage message) {
-    if (message.payload is DeviceConfiguration) {
+    if (message.payload is SystemControllers) {
       log("DEVICE_CONFIGURATION_STORE got message");
-      configuration = (message.payload as DeviceConfiguration);
+      controllers = (message.payload as SystemControllers);
     }
   }
 
