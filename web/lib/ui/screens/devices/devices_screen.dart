@@ -14,15 +14,37 @@ class DevicesScreen extends StatelessWidget {
           primary: true,
           child: Center(
             child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 960),
+              constraints: BoxConstraints(maxWidth: 1060),
               child: LayoutBuilder(builder: (context, constraints) {
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   child: Row(
                     children: [
-                      Expanded(child: CommnuicatorControllerInfoCard()),
-                      Padding(padding: EdgeInsets.symmetric(horizontal: 6)),
-                      Expanded(child: HeaterControllerInfoCard()),
+                      Expanded(
+                        child: Card(
+                          elevation: 4,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 32.0,
+                              vertical: 16.0,
+                            ),
+                            child: CommnuicatorControllerInfoCard(),
+                          ),
+                        ),
+                      ),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 8)),
+                      Expanded(
+                        child: Card(
+                          elevation: 4,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 32.0,
+                              vertical: 16.0,
+                            ),
+                            child: HeaterControllerInfoCard(),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 );

@@ -6,6 +6,7 @@ import 'package:brew_kettle_dashboard/stores/device_info/devices_info_store.dart
 import 'package:brew_kettle_dashboard/stores/device_snapshot/device_snapshot_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:brew_kettle_dashboard/ui/screens/devices/greyscale_image.dart';
+import 'package:brew_kettle_dashboard/ui/screens/devices/message_logs_viewer.dart';
 import 'package:brew_kettle_dashboard/utils/pixels.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -32,8 +33,7 @@ class CommnuicatorControllerInfoCard extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(),
+        FilledButton.tonal(
           onPressed: _deviceInfoStore.request,
           child: const Text('Get devices info'),
         ),
@@ -129,6 +129,17 @@ class _MessagesLogPreview extends StatelessWidget {
   final WebSocketConnectionStore _wsConnectionStore =
       getIt<WebSocketConnectionStore>();
 
+  Future<void> _dialogBuilder(BuildContext context) => showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog.fullscreen(
+            child: MessageLogsViewer(
+              data: _wsConnectionStore.logs,
+            ),
+          );
+        },
+      );
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = TextTheme.of(context);
@@ -145,26 +156,45 @@ class _MessagesLogPreview extends StatelessWidget {
 
     return Card.outlined(
       clipBehavior: Clip.hardEdge,
-      child: SizedBox(
-        width: double.maxFinite,
-        child: Observer(builder: (context) {
-          return JsonView.string(
-            _wsConnectionStore.logs,
-            theme: JsonViewTheme(
-              viewType: JsonViewType.base,
-              openIcon: Icon(MdiIcons.plus, size: iconSize),
-              closeIcon: Icon(MdiIcons.close, size: iconSize),
-              separator: Text(": ", style: defaultTextStyle),
-              backgroundColor: colorScheme.surface,
-              defaultTextStyle: defaultTextStyle,
-              keyStyle: TextStyle(color: colorScheme.primary),
-              boolStyle: TextStyle(color: colorScheme.inverseSurface),
-              intStyle: TextStyle(color: colorScheme.inverseSurface),
-              stringStyle: TextStyle(color: colorScheme.inverseSurface),
-              doubleStyle: TextStyle(color: colorScheme.inverseSurface),
+      child: Stack(
+        children: [
+          SizedBox(
+            width: double.maxFinite,
+            child: Observer(builder: (context) {
+              return JsonView.string(
+                _wsConnectionStore.logs,
+                theme: JsonViewTheme(
+                  viewType: JsonViewType.base,
+                  openIcon: Icon(MdiIcons.plus, size: iconSize),
+                  closeIcon: Icon(MdiIcons.close, size: iconSize),
+                  separator: Text(": ", style: defaultTextStyle),
+                  backgroundColor: colorScheme.surface,
+                  defaultTextStyle: defaultTextStyle,
+                  keyStyle: TextStyle(color: colorScheme.primary),
+                  boolStyle: TextStyle(color: colorScheme.inverseSurface),
+                  intStyle: TextStyle(color: colorScheme.inverseSurface),
+                  stringStyle: TextStyle(color: colorScheme.inverseSurface),
+                  doubleStyle: TextStyle(color: colorScheme.inverseSurface),
+                ),
+              );
+            }),
+          ),
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0, top: 8.0),
+              child: Observer(builder: (context) {
+                if (_wsConnectionStore.messages.length <= 3) {
+                  return SizedBox.shrink();
+                }
+                return IconButton.outlined(
+                  onPressed: () => _dialogBuilder(context),
+                  icon: Icon(MdiIcons.scriptTextOutline),
+                );
+              }),
             ),
-          );
-        }),
+          ),
+        ],
       ),
     );
   }
@@ -179,12 +209,9 @@ class _ControllerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(),
+        FilledButton.tonal(
           child: const Text('Send snapshot request'),
-          onPressed: () {
-            _deviceSnapshotStore.request();
-          },
+          onPressed: () => _deviceSnapshotStore.request(),
         ),
         ConstrainedBox(
           constraints: BoxConstraints(minWidth: 128, minHeight: 64),
