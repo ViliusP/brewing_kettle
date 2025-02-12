@@ -50,7 +50,8 @@ class _SliderContainerState extends State<SliderContainer> {
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    final fillPercent = widget.value / (widget.range.end - widget.range.start);
+    var fillPercent = widget.value / (widget.range.end - widget.range.start);
+    fillPercent = fillPercent.clamp(0, 100);
 
     Color color = colorScheme.primary;
     if (widget.decorations.withColorFade) {
