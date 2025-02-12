@@ -1,4 +1,3 @@
-import 'package:brew_kettle_dashboard/utils/color_extensions.dart';
 import 'package:flutter/material.dart';
 
 class SliderContainer extends StatefulWidget {
