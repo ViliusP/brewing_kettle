@@ -18,12 +18,15 @@ class PaginationControl extends StatefulWidget {
   /// - Arrow control buttons tap;
   final void Function(int)? onChanged;
 
+  final Axis axis;
+
   const PaginationControl({
     super.key,
     required this.current,
     required this.section,
     required this.total,
     this.onChanged,
+    this.axis = Axis.horizontal,
   });
 
   @override
@@ -31,7 +34,10 @@ class PaginationControl extends StatefulWidget {
 }
 
 class _PaginationControlState extends State<PaginationControl> {
-  _HorizontalDirection movement = _HorizontalDirection.right;
+  late AxisDirection slideDirection = switch (widget.axis) {
+    Axis.horizontal => AxisDirection.right,
+    Axis.vertical => AxisDirection.down,
+  };
 
   List generatePaginationNumbers() {
     int current = widget.current ?? 1;
@@ -73,54 +79,91 @@ class _PaginationControlState extends State<PaginationControl> {
   void didUpdateWidget(covariant PaginationControl oldWidget) {
     int lastPage = oldWidget.current ?? 1;
     int newPage = widget.current ?? 1;
-    movement = switch (lastPage > newPage) {
-      true => _HorizontalDirection.left,
-      false => _HorizontalDirection.right,
+
+    bool decreased = lastPage > newPage;
+    bool increased = !decreased;
+
+    slideDirection = switch (widget.axis) {
+      Axis.horizontal when decreased => AxisDirection.left,
+      Axis.horizontal when increased => AxisDirection.right,
+      Axis.vertical when decreased => AxisDirection.up,
+      Axis.vertical when increased => AxisDirection.down,
+      // Flutter doesn't know that switch is exhaustively matched after first 4 cases.
+      Axis.horizontal => AxisDirection.right,
+      Axis.vertical => AxisDirection.down,
     };
+
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   Widget build(BuildContext context) {
-    int currentPage = widget.current ?? 1;
-    int firstPage = 1;
-    int previousPage = currentPage - 1;
-    int nextPage = currentPage + 1;
-    int lastPage = widget.total;
+    final int currentPage = widget.current ?? 1;
+    final int firstPage = 1;
+    final int previousPage = currentPage - 1;
+    final int nextPage = currentPage + 1;
+    final int lastPage = widget.total;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      spacing: 4,
-      children: [
-        IconButton.outlined(
-          onPressed: () => _changePage(firstPage),
-          icon: Icon(MdiIcons.pageFirst),
+    final int quartersToTurn = switch (widget.axis) {
+      Axis.horizontal => 0,
+      Axis.vertical => 1,
+    };
+
+    var children = [
+      IconButton.outlined(
+        onPressed: () => _changePage(firstPage),
+        icon: RotatedBox(
+          quarterTurns: quartersToTurn,
+          child: Icon(MdiIcons.pageFirst),
         ),
-        IconButton.outlined(
-          onPressed: () => _changePage(previousPage),
-          icon: Icon(MdiIcons.arrowLeft),
+      ),
+      IconButton.outlined(
+        onPressed: () => _changePage(previousPage),
+        icon: RotatedBox(
+          quarterTurns: quartersToTurn,
+          child: Icon(MdiIcons.arrowLeft),
         ),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-        ...generatePaginationNumbers().map(
-          (i) => _PaginationNumberButton(
-            i,
-            onPressed: (i) => _changePage(i),
-            selected: i == currentPage,
-            slideDirection: movement,
-          ),
+      ),
+      Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+      ...generatePaginationNumbers().map(
+        (i) => _PaginationNumberButton(
+          i,
+          onPressed: (i) => _changePage(i),
+          selected: i == currentPage,
+          slideDirection: slideDirection,
         ),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-        IconButton.outlined(
-          onPressed: () => _changePage(nextPage),
-          icon: Icon(MdiIcons.arrowRight),
+      ),
+      Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+      IconButton.outlined(
+        onPressed: () => _changePage(nextPage),
+        icon: RotatedBox(
+          quarterTurns: quartersToTurn,
+          child: Icon(MdiIcons.arrowRight),
         ),
-        IconButton.outlined(
-          onPressed: () => _changePage(lastPage),
-          icon: Icon(MdiIcons.pageLast),
+      ),
+      IconButton.outlined(
+        onPressed: () => _changePage(lastPage),
+        icon: RotatedBox(
+          quarterTurns: quartersToTurn,
+          child: Icon(MdiIcons.pageLast),
         ),
-      ],
-    );
+      ),
+    ];
+
+    return switch (widget.axis) {
+      Axis.horizontal => Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          spacing: 4,
+          children: children,
+        ),
+      Axis.vertical => Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          spacing: 4,
+          children: children,
+        )
+    };
   }
 }
 
@@ -128,7 +171,7 @@ class _PaginationNumberButton extends StatelessWidget {
   final int number;
   final bool selected;
   final void Function(int value)? onPressed;
-  final _HorizontalDirection? slideDirection;
+  final AxisDirection? slideDirection;
 
   const _PaginationNumberButton(
     this.number, {
@@ -194,8 +237,10 @@ class _PaginationNumberButton extends StatelessWidget {
       child: AnimatedSwitcher(
         transitionBuilder: (Widget child, Animation<double> animation) {
           final Offset begin = switch (slideDirection) {
-            _HorizontalDirection.right => Offset(-2.0, 0),
-            _HorizontalDirection.left => Offset(2, 0),
+            AxisDirection.right => Offset(-2.0, 0),
+            AxisDirection.left => Offset(2, 0),
+            AxisDirection.down => Offset(0, 2),
+            AxisDirection.up => Offset(0, -2),
             null => Offset.zero,
           };
 
@@ -216,9 +261,4 @@ class _PaginationNumberButton extends StatelessWidget {
       ),
     );
   }
-}
-
-enum _HorizontalDirection {
-  left,
-  right;
 }
