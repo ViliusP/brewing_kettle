@@ -5,7 +5,6 @@ class HistoryGraphInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = TextTheme.of(context);
 
     const Duration dataInterval = Duration(seconds: 30);
