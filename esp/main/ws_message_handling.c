@@ -11,6 +11,7 @@
 #include "uart_communication.h"
 #include "uart_messaging.h"
 #include "state.h"
+#include "esp_app_desc.h"
 
 #define COMMON_FIELD_ID "id"
 #define COMMON_FIELD_TYPE "type"
@@ -237,14 +238,19 @@ static esp_err_t get_snapshot_response(cJSON *root, char **data)
 
 static cJSON *device_configuration_json()
 {
-  cJSON *payload = cJSON_CreateObject();
+  cJSON *payload_json = cJSON_CreateObject();
+  cJSON *hardware_info_json = cJSON_CreateObject();
+  cJSON *software_info_json = cJSON_CreateObject();
 
+  // ---------
+  // HARDWARE
+  // ---------
   esp_chip_info_t chip_info;
   uint32_t flash_size;
   esp_chip_info(&chip_info);
 
-  cJSON_AddStringToObject(payload, "chip", CONFIG_IDF_TARGET);
-  cJSON_AddNumberToObject(payload, "cores", chip_info.cores);
+  cJSON_AddStringToObject(hardware_info_json, "chip", CONFIG_IDF_TARGET);
+  cJSON_AddNumberToObject(hardware_info_json, "cores", chip_info.cores);
 
   // Create an array to hold the features
   cJSON *features_array = cJSON_CreateArray();
@@ -267,23 +273,44 @@ static cJSON *device_configuration_json()
     cJSON_AddItemToArray(features_array, cJSON_CreateString("ieee802154"));
   }
 
-  cJSON_AddItemToObject(payload, "features", features_array);
+  cJSON_AddItemToObject(hardware_info_json, "features", features_array);
 
   unsigned major_rev = chip_info.revision / 100;
   unsigned minor_rev = chip_info.revision % 100;
-  cJSON_AddItemToObject(payload, "silicon_revision", cJSON_create_formatted_string("%d.%d", major_rev, minor_rev));
+  cJSON_AddItemToObject(hardware_info_json, "silicon_revision", cJSON_create_formatted_string("%d.%d", major_rev, minor_rev));
 
   if (esp_flash_get_size(NULL, &flash_size) != ESP_OK)
   {
     ESP_LOGW(TAG, "Get flash size failed");
   }
 
-  cJSON_AddNumberToObject(payload, "flash_size", flash_size);
-  cJSON_AddStringToObject(payload, "flash_type", (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
+  cJSON *flash_json = cJSON_CreateObject();
+  cJSON_AddNumberToObject(flash_json, "size", flash_size);
+  cJSON_AddStringToObject(flash_json, "type", (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
+  cJSON_AddItemToObject(hardware_info_json, "flash", flash_json);
 
-  cJSON_AddNumberToObject(payload, "heap_size", esp_get_minimum_free_heap_size());
+  cJSON_AddNumberToObject(hardware_info_json, "heap_size", esp_get_minimum_free_heap_size());
 
-  return payload;
+  // ---------
+  // SOFTWARE
+  // ---------
+  #ifdef ESP_APP_DESC_MAGIC_WORD
+  esp_app_desc_t* app_info = esp_app_get_description();
+  cJSON_AddStringToObject(software_info_json, "project_name", app_info->project_name);
+  cJSON_AddStringToObject(software_info_json, "compile_time", app_info->time);
+  cJSON_AddStringToObject(software_info_json, "compile_date", app_info->date);
+  cJSON_AddStringToObject(software_info_json, "version", app_info->version);
+  cJSON_AddNumberToObject(software_info_json, "secure_version", app_info->secure_version);
+  cJSON_AddStringToObject(software_info_json, "idf_version", app_info->idf_ver);
+  #endif
+
+  // -------
+  // END
+  // -------
+  cJSON_AddItemToObject(payload_json, "hardware", hardware_info_json);
+  cJSON_AddItemToObject(payload_json, "software", software_info_json);
+
+  return payload_json;
 }
 
 static esp_err_t get_configuration_response(cJSON *root, char **data)
