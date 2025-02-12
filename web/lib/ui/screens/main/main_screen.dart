@@ -3,7 +3,6 @@ import 'package:brew_kettle_dashboard/ui/screens/main/tiles/grid_tile.dart';
 import 'package:brew_kettle_dashboard/ui/screens/main/tiles/heater_control.dart';
 import 'package:brew_kettle_dashboard/ui/screens/main/tiles/temp_history.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class MainScreen extends StatelessWidget {
@@ -20,7 +19,6 @@ class MainScreen extends StatelessWidget {
             child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: 960),
               child: LayoutBuilder(builder: (context, constraints) {
-                print(constraints);
                 // 960
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),

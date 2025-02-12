@@ -108,13 +108,15 @@ class _DefaultLayoutState extends State<DefaultLayout> {
 
   void onDestinatationSelected(int index) {
     AppRoute? route = _indexToRoute(index);
+    final config = AppRouter.value.routerDelegate.currentConfiguration;
+    final currentScreen = config.last.route.path;
 
-    if (route != null) {
+    if (route != null && route.path != currentScreen) {
       GoRouter.of(context).goNamed(route.name);
+      setState(() {
+        _selectedIndex = index;
+      });
     }
-    setState(() {
-      _selectedIndex = index;
-    });
   }
 
   @override
