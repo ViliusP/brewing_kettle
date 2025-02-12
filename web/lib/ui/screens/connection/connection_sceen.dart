@@ -31,15 +31,16 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
 
   @override
   void initState() {
-    _networkDevicesReactionDispose = reaction(
-      (_) => _networkScannerStore.records,
-      (_) => setSelectedChip(),
-      fireImmediately: true,
-    );
+    if (!kIsWeb) {
+      _networkDevicesReactionDispose = reaction(
+        (_) => _networkScannerStore.records,
+        (_) => setSelectedChip(),
+        fireImmediately: true,
+      );
+      _ipFormController.addListener(() => setSelectedChip());
 
-    _ipFormController.addListener(() => setSelectedChip());
-
-    _networkScannerStore.start();
+      _networkScannerStore.start();
+    }
     super.initState();
   }
 
@@ -82,50 +83,52 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            SuggestionsRow(
-              trailing: Observer(
-                builder: (_) {
-                  onPressed() => _networkScannerStore.start();
-                  bool loading = _networkScannerStore.state ==
-                      NetworkScannerState.scanning;
+            if (!kIsWeb)
+              SuggestionsRow(
+                trailing: Observer(
+                  builder: (_) {
+                    onPressed() => _networkScannerStore.start();
+                    bool loading = _networkScannerStore.state ==
+                        NetworkScannerState.scanning;
 
-                  return ScanDevicesChip(
-                    onPressed: loading ? null : onPressed,
-                    loading: loading,
-                  );
-                },
-              ),
-              child: Observer(builder: (context) {
-                int length = _networkScannerStore.records.length;
-                return Row(
-                  spacing: 6,
-                  mainAxisSize: MainAxisSize.min,
-                  children: List.generate(length, (i) {
-                    var record = _networkScannerStore.records[i];
-                    var port = record.port;
-
-                    String addressToShow = "${record.hostname}:$port";
-                    String address = "ws://$addressToShow/ws";
-
-                    String tooltip = "${record.internetAddress.address}:$port";
-
-                    return IpSuggestionChip(
-                      onSelected: (selected) {
-                        if (selected) {
-                          _ipFormController.text = address;
-                        } else {
-                          _ipFormController.text = "";
-                        }
-                      },
-                      selected: _selectedChips[i],
-                      tooltip: tooltip,
-                      text: addressToShow,
+                    return ScanDevicesChip(
+                      onPressed: loading ? null : onPressed,
+                      loading: loading,
                     );
-                  }),
-                );
-              }),
-            ),
-            Padding(padding: EdgeInsets.symmetric(vertical: 12)),
+                  },
+                ),
+                child: Observer(builder: (context) {
+                  int length = _networkScannerStore.records.length;
+                  return Row(
+                    spacing: 6,
+                    mainAxisSize: MainAxisSize.min,
+                    children: List.generate(length, (i) {
+                      var record = _networkScannerStore.records[i];
+                      var port = record.port;
+
+                      String addressToShow = "${record.hostname}:$port";
+                      String address = "ws://$addressToShow/ws";
+
+                      String tooltip =
+                          "${record.internetAddress.address}:$port";
+
+                      return IpSuggestionChip(
+                        onSelected: (selected) {
+                          if (selected) {
+                            _ipFormController.text = address;
+                          } else {
+                            _ipFormController.text = "";
+                          }
+                        },
+                        selected: _selectedChips[i],
+                        tooltip: tooltip,
+                        text: addressToShow,
+                      );
+                    }),
+                  );
+                }),
+              ),
+            if (!kIsWeb) Padding(padding: EdgeInsets.symmetric(vertical: 12)),
             TextFormField(
               controller: _ipFormController,
               style: TextStyle(fontSize: 24),

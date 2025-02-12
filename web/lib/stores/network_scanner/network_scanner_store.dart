@@ -37,6 +37,10 @@ abstract class _NetworkScannerStore with Store {
 
   @action
   Future start() async {
+    if (kIsWeb) {
+      log("Network scan isn't supported on web");
+      return;
+    }
     if (_state == NetworkScannerState.scanning) {
       return;
     }
