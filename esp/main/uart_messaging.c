@@ -244,11 +244,11 @@ int send_power_value(float value)
     // Outer map
     err |= cbor_encoder_create_map(&encoder, &map_encoder, 2); // 2 items: type and payload
 
-    // "type": "temperature"
+    // "entity": "power"
     err |= cbor_encode_text_string(&map_encoder, "entity", strlen("entity"));
     err |= cbor_encode_text_string(&map_encoder, "power", strlen("power"));
 
-    // "payload": { "value": temperature }
+    // "payload": { "value": power }
     err |= cbor_encode_text_string(&map_encoder, "payload", strlen("payload"));
     err |= cbor_encoder_create_map(&map_encoder, &payload_encoder, 1); // Payload map
     err |= cbor_encode_text_string(&payload_encoder, "value", strlen("value"));
@@ -285,11 +285,11 @@ int send_set_heater_mode(heater_status_t mode)
     // Outer map
     err |= cbor_encoder_create_map(&encoder, &map_encoder, 2); // 2 items: type and payload
 
-    // "type": "temperature"
+    // "entity": "heater_mode"
     err |= cbor_encode_text_string(&map_encoder, "entity", strlen("entity"));
     err |= cbor_encode_text_string(&map_encoder, "heater_mode", strlen("heater_mode"));
 
-    // "payload": { "value": temperature }
+    // "payload": { "value": heater_mode }
     err |= cbor_encode_text_string(&map_encoder, "payload", strlen("payload"));
     err |= cbor_encoder_create_map(&map_encoder, &payload_encoder, 1); // Payload map
     err |= cbor_encode_text_string(&payload_encoder, "value", strlen("value"));
@@ -326,11 +326,11 @@ int send_set_target_temperature(float value)
     // Outer map
     err |= cbor_encoder_create_map(&encoder, &map_encoder, 2); // 2 items: type and payload
 
-    // "type": "temperature"
+    // "entity": "target_temperature"
     err |= cbor_encode_text_string(&map_encoder, "entity", strlen("entity"));
     err |= cbor_encode_text_string(&map_encoder, "target_temperature", strlen("target_temperature"));
 
-    // "payload": { "value": temperature }
+    // "payload": { "value": target_temperature }
     err |= cbor_encode_text_string(&map_encoder, "payload", strlen("payload"));
     err |= cbor_encoder_create_map(&map_encoder, &payload_encoder, 1); // Payload map
     err |= cbor_encode_text_string(&payload_encoder, "value", strlen("value"));
