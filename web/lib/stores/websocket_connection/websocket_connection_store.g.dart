@@ -9,20 +9,6 @@ part of 'websocket_connection_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$WebSocketConnectionStore on _WebSocketConnectionStore, Store {
-  Computed<List<WsInboundMessageSimple>>? _$messagesComputed;
-
-  @override
-  List<WsInboundMessageSimple> get messages => (_$messagesComputed ??=
-          Computed<List<WsInboundMessageSimple>>(() => super.messages,
-              name: '_WebSocketConnectionStore.messages'))
-      .value;
-  Computed<List<WsInboundMessageSimple>>? _$archiveComputed;
-
-  @override
-  List<WsInboundMessageSimple> get archive => (_$archiveComputed ??=
-          Computed<List<WsInboundMessageSimple>>(() => super.archive,
-              name: '_WebSocketConnectionStore.archive'))
-      .value;
   Computed<WebSocketConnectionStatus>? _$statusComputed;
 
   @override
@@ -37,38 +23,19 @@ mixin _$WebSocketConnectionStore on _WebSocketConnectionStore, Store {
       (_$connectedToComputed ??= Computed<String?>(() => super.connectedTo,
               name: '_WebSocketConnectionStore.connectedTo'))
           .value;
-
-  late final _$_messagesAtom =
-      Atom(name: '_WebSocketConnectionStore._messages', context: context);
+  Computed<List<WsInboundMessageSimple>>? _$messagesComputed;
 
   @override
-  ObservableList<WsInboundMessageSimple> get _messages {
-    _$_messagesAtom.reportRead();
-    return super._messages;
-  }
+  List<WsInboundMessageSimple> get messages => (_$messagesComputed ??=
+          Computed<List<WsInboundMessageSimple>>(() => super.messages,
+              name: '_WebSocketConnectionStore.messages'))
+      .value;
+  Computed<String>? _$logsComputed;
 
   @override
-  set _messages(ObservableList<WsInboundMessageSimple> value) {
-    _$_messagesAtom.reportWrite(value, super._messages, () {
-      super._messages = value;
-    });
-  }
-
-  late final _$_archiveAtom =
-      Atom(name: '_WebSocketConnectionStore._archive', context: context);
-
-  @override
-  ObservableList<WsInboundMessageSimple> get _archive {
-    _$_archiveAtom.reportRead();
-    return super._archive;
-  }
-
-  @override
-  set _archive(ObservableList<WsInboundMessageSimple> value) {
-    _$_archiveAtom.reportWrite(value, super._archive, () {
-      super._archive = value;
-    });
-  }
+  String get logs => (_$logsComputed ??= Computed<String>(() => super.logs,
+          name: '_WebSocketConnectionStore.logs'))
+      .value;
 
   late final _$_statusAtom =
       Atom(name: '_WebSocketConnectionStore._status', context: context);
@@ -99,6 +66,22 @@ mixin _$WebSocketConnectionStore on _WebSocketConnectionStore, Store {
   set _connectedTo(Uri? value) {
     _$_connectedToAtom.reportWrite(value, super._connectedTo, () {
       super._connectedTo = value;
+    });
+  }
+
+  late final _$_archiveAtom =
+      Atom(name: '_WebSocketConnectionStore._archive', context: context);
+
+  @override
+  MessagesArchive get _archive {
+    _$_archiveAtom.reportRead();
+    return super._archive;
+  }
+
+  @override
+  set _archive(MessagesArchive value) {
+    _$_archiveAtom.reportWrite(value, super._archive, () {
+      super._archive = value;
     });
   }
 
@@ -138,10 +121,10 @@ mixin _$WebSocketConnectionStore on _WebSocketConnectionStore, Store {
   @override
   String toString() {
     return '''
-messages: ${messages},
-archive: ${archive},
 status: ${status},
-connectedTo: ${connectedTo}
+connectedTo: ${connectedTo},
+messages: ${messages},
+logs: ${logs}
     ''';
   }
 }

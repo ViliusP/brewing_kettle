@@ -75,6 +75,9 @@ dependencies:
 
   # A grammar of data visualization and Flutter charting library.
   graphic: ^2.5.0
+
+  # Displaying json models in a Flutter widget with customization.
+  flutter_json_view: ^1.1.0
   
 dev_dependencies:
   flutter_test:

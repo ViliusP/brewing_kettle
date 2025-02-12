@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:brew_kettle_dashboard/core/data/models/store/ws_listener.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/connection_status.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
+import 'package:brew_kettle_dashboard/core/data/models/websocket/messages_archive.dart';
 import 'package:mobx/mobx.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -22,18 +23,6 @@ abstract class _WebSocketConnectionStore with Store {
   _WebSocketConnectionStore();
 
   @computed
-  List<WsInboundMessageSimple> get messages => _messages.toList();
-
-  @observable
-  ObservableList<WsInboundMessageSimple> _messages = ObservableList.of([]);
-
-  @computed
-  List<WsInboundMessageSimple> get archive => _archive.toList();
-
-  @observable
-  ObservableList<WsInboundMessageSimple> _archive = ObservableList.of([]);
-
-  @computed
   WebSocketConnectionStatus get status => _status;
 
   @observable
@@ -44,6 +33,18 @@ abstract class _WebSocketConnectionStore with Store {
 
   @observable
   Uri? _connectedTo;
+
+  // ----------
+  // ARCHIVE
+  // ----------
+  @computed
+  List<WsInboundMessageSimple> get messages => _archive.data;
+
+  @computed
+  String get logs => _archive.jsonLog;
+
+  @observable
+  MessagesArchive _archive = MessagesArchive();
 
   @action
   Future connect(Uri address) async {
@@ -120,7 +121,6 @@ abstract class _WebSocketConnectionStore with Store {
       }
     }
 
-    _messages.add(message);
     _archive.add(message);
   }
 
@@ -145,7 +145,7 @@ abstract class _WebSocketConnectionStore with Store {
   void _clean() {
     _channel = null;
     _connectedTo = null;
-    _messages.clear();
+    _archive.clear();
   }
 
   void subscribe(StoreWebSocketListener listener) {

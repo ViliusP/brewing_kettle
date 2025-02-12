@@ -41,6 +41,43 @@ class WsInboundMessageSimple {
       return WsInboundMessageSimple._(data, sender, DateTime.now());
     }
   }
+
+  Map<String, dynamic> get asJsonMap {
+    return {}..addEntries([
+        MapEntry("time", time.toString()),
+        MapEntry("sender", sender.toString()),
+        MapEntry("data", data),
+      ]);
+  }
+
+  WsInboundMessageSimple copyWith({
+    String? data,
+    Uri? sender,
+    DateTime? time,
+  }) {
+    return WsInboundMessageSimple._(
+      data ?? this.data,
+      sender ?? this.sender,
+      time ?? this.time,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is WsInboundMessageSimple &&
+        data == other.data &&
+        sender == other.sender &&
+        time == other.time;
+  }
+
+  @override
+  int get hashCode => Object.hash(data, sender, time);
+
+  @override
+  String toString() {
+    return 'WsInboundMessageSimple{data: $data, sender: $sender, time: $time}'; // Useful for debugging
+  }
 }
 
 class _InboundMessageFields {
@@ -127,6 +164,15 @@ class WsInboundMessageJson extends WsInboundMessageSimple {
         requestID,
       );
     }
+  }
+
+  @override
+  Map<String, dynamic> get asJsonMap {
+    return {}..addEntries([
+        MapEntry("time", time.toString()),
+        MapEntry("sender", sender.toString()),
+        MapEntry("data", _json),
+      ]);
   }
 }
 
