@@ -40,7 +40,14 @@ class _PaginationControlState extends State<PaginationControl> {
       return [];
     }
 
-    int offset = current;
+    int offset;
+    if (section == 1) {
+      offset = current;
+    } else if (section % 2 == 0 || section == 3) {
+      offset = current - 1;
+    } else {
+      offset = current - 2;
+    }
 
     int maxOffset = widget.total - section + 1;
     if (maxOffset < 1) {
