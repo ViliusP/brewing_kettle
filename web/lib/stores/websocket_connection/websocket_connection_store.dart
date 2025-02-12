@@ -5,6 +5,7 @@ import 'package:brew_kettle_dashboard/core/data/models/store/ws_listener.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/connection_status.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/messages_archive.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -55,12 +56,17 @@ abstract class _WebSocketConnectionStore with Store {
 
     log("Connecting to $address");
 
-    _status = WebSocketConnectionStatus.connected;
-    _channel = IOWebSocketChannel.connect(
-      address,
-      pingInterval: Duration(seconds: 5),
-    );
+    _status = WebSocketConnectionStatus.connecting;
+
     try {
+      _channel = switch (kIsWeb) {
+        true => WebSocketChannel.connect(address),
+        _ => IOWebSocketChannel.connect(
+            address,
+            pingInterval: Duration(seconds: 5),
+          ),
+      };
+
       await _channel?.ready;
     } on SocketException catch (e) {
       log("Error occured while connecting to websocket channel ${e.message}");
