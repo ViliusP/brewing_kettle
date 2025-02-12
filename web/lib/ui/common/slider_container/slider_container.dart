@@ -1,3 +1,4 @@
+import 'package:brew_kettle_dashboard/utils/color_extensions.dart';
 import 'package:flutter/material.dart';
 
 class SliderContainer extends StatefulWidget {
@@ -26,6 +27,7 @@ class SliderContainer extends StatefulWidget {
 
 class _SliderContainerState extends State<SliderContainer> {
   bool _dragging = false;
+  bool _hovered = false;
 
   void onGesture(Offset position, BoxConstraints boxConstraints) {
     double dy = position.dy;
@@ -58,8 +60,12 @@ class _SliderContainerState extends State<SliderContainer> {
       color = color.withAlpha((25 + 15 * fillPercent).toInt());
     }
 
+    Color hoverColor = colorScheme.primary.withAlpha(10);
+
     return LayoutBuilder(builder: (context, constraints) {
       return MouseRegion(
+        onEnter: (e) => setState(() => _hovered = true),
+        onExit: (e) => setState(() => _hovered = false),
         cursor: switch (_dragging) {
           true => SystemMouseCursors.grabbing,
           false => SystemMouseCursors.grab,
@@ -84,6 +90,15 @@ class _SliderContainerState extends State<SliderContainer> {
           onVerticalDragCancel: () => setState(() => _dragging = false),
           child: Stack(
             children: [
+              Positioned.fill(
+                child: AnimatedContainer(
+                  color: _hovered
+                      ? hoverColor
+                      : const Color.fromARGB(0, 255, 255, 255),
+                  duration: Durations.long4,
+                  curve: Curves.easeOutQuint,
+                ),
+              ),
               Align(
                 alignment: switch (widget.direction) {
                   AxisDirection.up => Alignment.bottomCenter,
