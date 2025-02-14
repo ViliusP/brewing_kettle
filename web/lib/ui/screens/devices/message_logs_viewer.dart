@@ -51,45 +51,8 @@ class _MessageLogsViewerState extends State<MessageLogsViewer> {
             child: PaginationControl(
               onChanged: (page) => setState(() => currentPage = page),
               current: currentPage,
-              section: maxPageIcons,
-              total: pages,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 4),
-            child: PaginationControl(
-              onChanged: (page) => setState(() => currentPage = page),
-              current: currentPage,
-              section: 5,
-              total: pages,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 4),
-            child: PaginationControl(
-              onChanged: (page) => setState(() => currentPage = page),
-              current: currentPage,
-              section: 1,
-              total: pages,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 4),
-            child: PaginationControl(
-              onChanged: (page) => setState(() => currentPage = page),
-              current: currentPage,
               section: 3,
               total: pages,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 4),
-            child: PaginationControl(
-              onChanged: (page) => setState(() => currentPage = page),
-              current: currentPage,
-              section: 3,
-              total: pages,
-              axis: Axis.vertical,
             ),
           ),
           SizedBox(
