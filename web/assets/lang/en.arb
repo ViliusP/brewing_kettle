@@ -40,5 +40,17 @@
         "type": "String"
       }
     }
+  },
+  "layoutItemHome": "Home",
+  "@layoutItemHome": {
+    "description": "Title for home item in navigation bar"
+  },
+  "layoutItemDevices": "Devices",
+  "@layoutItemDevices": {
+    "description": "Title for devivces item in navigation bar"
+  },
+  "layoutItemSettings": "Settings",
+  "@layoutItemSettings": {
+    "description": "Title for settings item in navigation bar"
   }
 }

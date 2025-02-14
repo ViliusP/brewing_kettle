@@ -142,6 +142,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{theme, select, light {Light} lightMediumContrast {Light - medium contrast} lightHighContrast {Light - high contrast} dark {Dark} darkMediumContrast {Dark - medium contrast} darkHighContrast {Dark - high contrast} other {unknown}}'**
   String pSettingsThemeNames(String theme);
+
+  /// Title for home item in navigation bar
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get layoutItemHome;
+
+  /// Title for devivces item in navigation bar
+  ///
+  /// In en, this message translates to:
+  /// **'Devices'**
+  String get layoutItemDevices;
+
+  /// Title for settings item in navigation bar
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get layoutItemSettings;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

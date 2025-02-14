@@ -56,4 +56,13 @@ class AppLocalizationsLt extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get layoutItemHome => 'Pagrindinis';
+
+  @override
+  String get layoutItemDevices => 'Įrenginiai';
+
+  @override
+  String get layoutItemSettings => 'Nustatymai';
 }

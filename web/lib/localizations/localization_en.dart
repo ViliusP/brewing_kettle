@@ -56,4 +56,13 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get layoutItemHome => 'Home';
+
+  @override
+  String get layoutItemDevices => 'Devices';
+
+  @override
+  String get layoutItemSettings => 'Settings';
 }

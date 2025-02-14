@@ -1,5 +1,6 @@
 import 'package:brew_kettle_dashboard/core/data/models/websocket/connection_status.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
+import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:brew_kettle_dashboard/ui/routing.dart';
 import 'package:brew_kettle_dashboard/utils/enum_extensions.dart';
@@ -121,6 +122,8 @@ class _DefaultLayoutState extends State<DefaultLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: Row(
         children: <Widget>[
@@ -149,17 +152,17 @@ class _DefaultLayoutState extends State<DefaultLayout> {
                       NavigationRailDestination(
                         icon: Icon(MdiIcons.viewDashboardOutline),
                         selectedIcon: Icon(MdiIcons.viewDashboard),
-                        label: Text('Home'),
+                        label: Text(localizations.layoutItemHome),
                       ),
                       NavigationRailDestination(
                         icon: Icon(MdiIcons.cpu32Bit),
                         selectedIcon: Icon(MdiIcons.cpu32Bit),
-                        label: Text('Devices'),
+                        label: Text(localizations.layoutItemDevices),
                       ),
                       NavigationRailDestination(
                         icon: Icon(MdiIcons.cogOutline),
                         selectedIcon: Icon(MdiIcons.cog),
-                        label: Text('Settings'),
+                        label: Text(localizations.layoutItemSettings),
                       ),
                     ],
                   )
