@@ -95,6 +95,66 @@ abstract class AppLocalizations {
     Locale('lt')
   ];
 
+  /// No description provided for @generalIIIIIIIIIIIIIIIIIIIIIIIIIIII.
+  ///
+  /// In en, this message translates to:
+  /// **'----------------------------------------------------'**
+  String get generalIIIIIIIIIIIIIIIIIIIIIIIIIIII;
+
+  /// General label for date information.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get generalDate;
+
+  /// General label for temperature readings.
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature'**
+  String get generalTemperature;
+
+  /// General label for the desired or target temperature.
+  ///
+  /// In en, this message translates to:
+  /// **'Target temperature'**
+  String get generalTargetTemperature;
+
+  /// General label for power consumption or output.
+  ///
+  /// In en, this message translates to:
+  /// **'Power'**
+  String get generalPower;
+
+  /// No description provided for @mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
+  ///
+  /// In en, this message translates to:
+  /// **'----------------------------------------------------'**
+  String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII;
+
+  /// No description provided for @pMainGraphInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Temparature and power graph'**
+  String get pMainGraphInfoTitle;
+
+  /// Information text displayed on the main graph screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows heater data of every {seconds} {seconds, plural, =1{second} other{seconds}} for {hours} {hours, plural, =1{hour} other{hours}}.\nTap on graph points to see concrete values for that time.'**
+  String pMainGraphInfoText(int seconds, num hours);
+
+  /// No description provided for @pMainGraphInfoLegend.
+  ///
+  /// In en, this message translates to:
+  /// **'Line legends'**
+  String get pMainGraphInfoLegend;
+
+  /// No description provided for @settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
+  ///
+  /// In en, this message translates to:
+  /// **'----------------------------------------------------'**
+  String get settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII;
+
   /// Title for settings page, show at top of the page
   ///
   /// In en, this message translates to:
@@ -142,6 +202,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{theme, select, light {Light} lightMediumContrast {Light - medium contrast} lightHighContrast {Light - high contrast} dark {Dark} darkMediumContrast {Dark - medium contrast} darkHighContrast {Dark - high contrast} other {unknown}}'**
   String pSettingsThemeNames(String theme);
+
+  /// No description provided for @layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII.
+  ///
+  /// In en, this message translates to:
+  /// **'----------------------------------------------------'**
+  String get layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII;
 
   /// Title for home item in navigation bar
   ///

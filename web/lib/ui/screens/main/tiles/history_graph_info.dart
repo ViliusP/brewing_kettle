@@ -1,3 +1,4 @@
+import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:flutter/material.dart';
 
 class HistoryGraphInfo extends StatelessWidget {
@@ -5,7 +6,8 @@ class HistoryGraphInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = TextTheme.of(context);
+    final localizations = AppLocalizations.of(context)!;
+    final TextTheme textTheme = TextTheme.of(context);
 
     const Duration dataInterval = Duration(seconds: 30);
     const Duration dataRange = Duration(seconds: 30 * 200);
@@ -13,16 +15,21 @@ class HistoryGraphInfo extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        Text(localizations.pMainGraphInfoTitle, style: textTheme.headlineLarge),
+        Padding(padding: EdgeInsets.symmetric(vertical: 2)),
         Text(
-          "Shows heater data of every ${dataInterval.inSeconds} seconds, for ${dataRange.inHours} hours.",
+          localizations.pMainGraphInfoText(
+            dataInterval.inSeconds,
+            dataRange.inHours,
+          ),
           style: textTheme.bodyLarge,
-        ),
-        Text(
-          "Tap on graph points to see concrete values for that time.",
-          style: textTheme.bodyLarge,
+          textAlign: TextAlign.center,
         ),
         Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-        Text("Line legend:", style: textTheme.headlineLarge),
+        Text(
+          localizations.pMainGraphInfoLegend,
+          style: textTheme.headlineMedium,
+        ),
         Padding(padding: EdgeInsets.symmetric(vertical: 2)),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,

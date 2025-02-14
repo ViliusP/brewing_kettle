@@ -1,5 +1,18 @@
 {
   "@@locale": "lt",
+  "generalIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@generalIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "generalDate": "Data",
+  "generalTemperature": "Temperature",
+  "generalTargetTemperature": "Target temperature",
+  "generalPower": "Power",
+  "mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "pMainGraphInfoTitle": "Temparature and power graph",
+  "pMainGraphInfoText": "Shows heater data of every {seconds} second{seconds, plural, =1{second} other{seconds}} for {hours} hour{hours, plural, =1{hour} other{hours}}.\nTap on graph points to see concrete values for that time.",
+  "pMainGraphInfoLegend": "Line legends",
+  "settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "pSettingsTitle": "Nustatymai",
   "pSettingsSectionGeneralTitle": "Bendri",
   "pSettingsLanguage": "Kalba",
@@ -22,6 +35,8 @@
       }
     }
   },
+  "LAYOUT": "----------------------------------------------------",
+  "@LAYOUT": {},
   "layoutItemHome": "Pagrindinis",
   "layoutItemDevices": "Įrenginiai",
   "layoutItemSettings": "Nustatymai"

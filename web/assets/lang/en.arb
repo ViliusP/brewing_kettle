@@ -1,5 +1,47 @@
 {
   "@@locale": "en",
+  "generalIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@generalIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "generalDate": "Date",
+  "@generalDate": {
+    "description": "General label for date information."
+  },
+  "generalTemperature": "Temperature",
+  "@generalTemperature": {
+    "description": "General label for temperature readings."
+  },
+  "generalTargetTemperature": "Target temperature",
+  "@generalTargetTemperature": {
+    "description": "General label for the desired or target temperature."
+  },
+  "generalPower": "Power",
+  "@generalPower": {
+    "description": "General label for power consumption or output."
+  },
+  "mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "pMainGraphInfoTitle": "Temparature and power graph",
+  "@pMainGraphInfoTitle": {},
+  "pMainGraphInfoText": "Shows heater data of every {seconds} {seconds, plural, =1{second} other{seconds}} for {hours} {hours, plural, =1{hour} other{hours}}.\nTap on graph points to see concrete values for that time.",
+  "@pMainGraphInfoText": {
+    "description": "Information text displayed on the main graph screen.",
+    "placeholders": {
+      "seconds": {
+        "example": "30",
+        "format": "decimalPatternDigits",
+        "type": "int"
+      },
+      "hours": {
+        "example": "24",
+        "format": "decimalPatternDigits",
+        "type": "num"
+      }
+    }
+  },
+  "pMainGraphInfoLegend": "Line legends",
+  "@pMainGraphInfoLegend": {},
+  "settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "pSettingsTitle": "Settings",
   "@pSettingsTitle": {
     "description": "Title for settings page, show at top of the page"
@@ -31,7 +73,7 @@
   "cThemeSelectDialogTitle": "Select theme",
   "@cThemeSelectDialogTitle": {
     "description": "Title for theme select dialog, showed at top of component"
-  },  
+  },
   "pSettingsThemeNames": "{theme, select, light {Light} lightMediumContrast {Light - medium contrast} lightHighContrast {Light - high contrast} dark {Dark} darkMediumContrast {Dark - medium contrast} darkHighContrast {Dark - high contrast} other {unknown}}",
   "@pSettingsThemeNames": {
     "description": "Names for all available themes in application",
@@ -41,6 +83,8 @@
       }
     }
   },
+  "layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "layoutItemHome": "Home",
   "@layoutItemHome": {
     "description": "Title for home item in navigation bar"

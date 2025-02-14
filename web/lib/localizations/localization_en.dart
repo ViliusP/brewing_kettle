@@ -9,6 +9,61 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get generalIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+
+  @override
+  String get generalDate => 'Date';
+
+  @override
+  String get generalTemperature => 'Temperature';
+
+  @override
+  String get generalTargetTemperature => 'Target temperature';
+
+  @override
+  String get generalPower => 'Power';
+
+  @override
+  String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+
+  @override
+  String get pMainGraphInfoTitle => 'Temparature and power graph';
+
+  @override
+  String pMainGraphInfoText(int seconds, num hours) {
+    final intl.NumberFormat secondsNumberFormat = intl.NumberFormat.decimalPatternDigits(
+      locale: localeName,
+      
+    );
+    final String secondsString = secondsNumberFormat.format(seconds);
+    final intl.NumberFormat hoursNumberFormat = intl.NumberFormat.decimalPatternDigits(
+      locale: localeName,
+      
+    );
+    final String hoursString = hoursNumberFormat.format(hours);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: 'seconds',
+      one: 'second',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      hours,
+      locale: localeName,
+      other: 'hours',
+      one: 'hour',
+    );
+    return 'Shows heater data of every $secondsString $_temp0 for $hoursString $_temp1.\nTap on graph points to see concrete values for that time.';
+  }
+
+  @override
+  String get pMainGraphInfoLegend => 'Line legends';
+
+  @override
+  String get settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+
+  @override
   String get pSettingsTitle => 'Settings';
 
   @override
@@ -56,6 +111,9 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
   String get layoutItemHome => 'Home';
