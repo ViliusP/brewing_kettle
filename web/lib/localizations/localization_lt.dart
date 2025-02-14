@@ -15,19 +15,19 @@ class AppLocalizationsLt extends AppLocalizations {
   String get generalDate => 'Data';
 
   @override
-  String get generalTemperature => 'Temperature';
+  String get generalTemperature => 'Temperatūra';
 
   @override
-  String get generalTargetTemperature => 'Target temperature';
+  String get generalTargetTemperature => 'Tikslo temperatūra';
 
   @override
-  String get generalPower => 'Power';
+  String get generalPower => 'Galia';
 
   @override
   String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
-  String get pMainGraphInfoTitle => 'Temparature and power graph';
+  String get pMainGraphInfoTitle => 'Temperatūros ir galios grafikas';
 
   @override
   String pMainGraphInfoText(int seconds, num hours) {
@@ -43,22 +43,22 @@ class AppLocalizationsLt extends AppLocalizations {
     final String hoursString = hoursNumberFormat.format(hours);
 
     String _temp0 = intl.Intl.pluralLogic(
-      seconds,
-      locale: localeName,
-      other: 'seconds',
-      one: 'second',
-    );
-    String _temp1 = intl.Intl.pluralLogic(
       hours,
       locale: localeName,
-      other: 'hours',
-      one: 'hour',
+      other: 'valandų',
+      one: 'valandos',
     );
-    return 'Shows heater data of every $secondsString second$_temp0 for $hoursString hour$_temp1.\nTap on graph points to see concrete values for that time.';
+    String _temp1 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: 'sekundžių',
+      one: 'sekundę',
+    );
+    return 'Grafike rodomi kaitintuvo duomenys $hoursString $_temp0, kas $secondsString $_temp1.\nSpausdami ant grafiko taškų, pamatysite detalesnius to laiko duomenis.';
   }
 
   @override
-  String get pMainGraphInfoLegend => 'Line legends';
+  String get pMainGraphInfoLegend => 'Linijų legenda';
 
   @override
   String get settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';

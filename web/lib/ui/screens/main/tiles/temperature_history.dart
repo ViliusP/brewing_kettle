@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:brew_kettle_dashboard/core/data/models/timeseries/timeseries.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
+import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
 import 'package:brew_kettle_dashboard/ui/screens/main/tiles/history_graph_info.dart';
 import 'package:brew_kettle_dashboard/utils/list_extensions.dart';
@@ -10,14 +11,14 @@ import 'package:flutter_material_design_icons/flutter_material_design_icons.dart
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:graphic/graphic.dart';
 
-class TempHistoryTile extends StatefulWidget {
-  const TempHistoryTile({super.key});
+class TemperatureHistoryTile extends StatefulWidget {
+  const TemperatureHistoryTile({super.key});
 
   @override
-  State<TempHistoryTile> createState() => _TempHistoryTileState();
+  State<TemperatureHistoryTile> createState() => _TemperatureHistoryTileState();
 }
 
-class _TempHistoryTileState extends State<TempHistoryTile> {
+class _TemperatureHistoryTileState extends State<TemperatureHistoryTile> {
   static const _entriesLimit = 100;
 
   final HeaterControllerStateStore _temperatureStore =
@@ -42,7 +43,7 @@ class _TempHistoryTileState extends State<TempHistoryTile> {
             var tempHistory = _temperatureStore.stateHistory.takeLast(
               _entriesLimit,
             );
-            return TempHistoryChart(data: tempHistory);
+            return TemperatureHistoryChart(data: tempHistory);
           }),
         ),
         Positioned.fill(
@@ -77,16 +78,8 @@ class _TempHistoryTileState extends State<TempHistoryTile> {
               child: MouseRegion(
                 cursor: SystemMouseCursors.help,
                 hitTestBehavior: HitTestBehavior.opaque,
-                onEnter: (e) {
-                  setState(() {
-                    _showInfo = true;
-                  });
-                },
-                onExit: (e) {
-                  setState(() {
-                    _showInfo = false;
-                  });
-                },
+                onEnter: (_) => setState(() => _showInfo = true),
+                onExit: (_) => setState(() => _showInfo = false),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Icon(
@@ -103,18 +96,19 @@ class _TempHistoryTileState extends State<TempHistoryTile> {
   }
 }
 
-class TempHistoryChart extends StatelessWidget {
+class TemperatureHistoryChart extends StatelessWidget {
   final List<TimeSeriesViewEntry> data;
 
-  const TempHistoryChart({
+  const TemperatureHistoryChart({
     super.key,
     required this.data,
   });
 
   @override
   Widget build(BuildContext context) {
-    ColorScheme colorScheme = Theme.of(context).colorScheme;
-    TextTheme textTheme = TextTheme.of(context);
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = TextTheme.of(context);
+    final localizations = AppLocalizations.of(context)!;
 
     var convertedData = data
         .map((e) => {
@@ -280,7 +274,7 @@ class TempHistoryChart extends StatelessWidget {
             String repr = "";
             var maybeDate = values?[ControllerStateFields.date];
             if (maybeDate != null && maybeDate is DateTime) {
-              repr += "Date: ";
+              repr += "${localizations.generalDate}: ";
               repr += [maybeDate.hour, maybeDate.minute, maybeDate.second]
                   .map((v) => v.toString().padLeft(2, "0"))
                   .join(":");
@@ -289,19 +283,21 @@ class TempHistoryChart extends StatelessWidget {
             var targetTemperature =
                 values?[ControllerStateFields.targetTemperature];
             if (targetTemperature != null && targetTemperature is num) {
-              repr += "\nTarget temperature: ";
+              repr += "\n${localizations.generalTargetTemperature}: ";
               repr += "${targetTemperature.toStringAsFixed(0)}°C";
             }
 
             var maybeTemperature =
                 values?[ControllerStateFields.currentTemperature];
             if (maybeTemperature != null && maybeTemperature is num) {
-              repr += "\nTemperature: ${maybeTemperature.toStringAsFixed(0)}°C";
+              repr += "\n${localizations.generalTemperature}: ";
+              repr += "${maybeTemperature.toStringAsFixed(0)}°C";
             }
 
             var maybePower = values?[ControllerStateFields.power];
             if (maybePower != null && maybePower is num) {
-              repr += "\nPower: ${maybePower.toStringAsFixed(0)}%";
+              repr += "\n${localizations.generalPower}: ";
+              repr += "${maybePower.toStringAsFixed(0)}%";
             }
 
             LabelElement tooltipLabelGen(Offset offset, String text) =>

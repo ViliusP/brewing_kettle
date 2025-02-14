@@ -45,7 +45,7 @@ class HistoryGraphInfo extends StatelessWidget {
                 ),
               ),
             ),
-            Text("Current temp", style: textTheme.bodyLarge),
+            Text(localizations.generalTemperature, style: textTheme.bodyLarge),
           ],
         ),
         Row(
@@ -62,7 +62,10 @@ class HistoryGraphInfo extends StatelessWidget {
                 ),
               ),
             ),
-            Text("Target temperature", style: textTheme.bodyLarge),
+            Text(
+              localizations.generalTargetTemperature,
+              style: textTheme.bodyLarge,
+            ),
           ],
         ),
         Row(
@@ -79,7 +82,7 @@ class HistoryGraphInfo extends StatelessWidget {
                 ),
               ),
             ),
-            Text("Power", style: textTheme.bodyLarge),
+            Text(localizations.generalPower, style: textTheme.bodyLarge),
           ],
         ),
       ],
