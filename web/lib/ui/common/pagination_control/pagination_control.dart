@@ -249,10 +249,13 @@ class _PaginationNumberButton extends StatelessWidget {
             end: Offset(0, 0),
           ).animate(animation);
 
-          return SlideTransition(
-            key: child.key,
-            position: offset,
-            child: FadeTransition(opacity: animation, child: child),
+          return FadeTransition(
+            opacity: animation,
+            child: SlideTransition(
+              key: child.key,
+              position: offset,
+              child: child,
+            ),
           );
         },
         duration: Durations.short2,
