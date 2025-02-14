@@ -15,7 +15,7 @@ class MessageLogsViewer extends StatefulWidget {
 
 class _MessageLogsViewerState extends State<MessageLogsViewer> {
   final focusNode = FocusNode();
-  static const int maxPageIcons = 4;
+
   int currentPage = 1;
   static const int pages = 10;
 
