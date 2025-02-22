@@ -26,8 +26,8 @@ static const char *TAG = "SCREEN";
 //////////////////// Please update the following configuration according to your LCD spec //////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define LCD_PIXEL_CLOCK_HZ    (400 * 1000)
-#define PIN_NUM_SDA           6
-#define PIN_NUM_SCL           7
+#define PIN_NUM_SDA           2
+#define PIN_NUM_SCL           3
 #define PIN_NUM_RST           -1
 #define I2C_HW_ADDR           0x3C
 
