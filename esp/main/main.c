@@ -18,6 +18,7 @@
 #include "state.h"
 #include "configuration.h"
 #include <esp_sntp.h>
+#include "sd_card.h"
 
 static const char *TAG = "MAIN";
 
@@ -129,7 +130,9 @@ void app_main(void)
     ESP_LOGI(TAG, "Hello, World!");
     ESP_LOGI(TAG, "Boot count: %d", boot_count);
 
+    init_sdcard();
     initialize_display();
+
 
     // ================ state ===================
     app_state_t *app_state = app_state_init();

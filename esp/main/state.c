@@ -1,5 +1,5 @@
 #include "lvgl.h"
-#include "ws_server.h"
+#include "http_server.h"
 #include "esp_log.h"
 #include "display.h"
 #include "uart_communication.h"
