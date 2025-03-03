@@ -14,8 +14,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 part 'websocket_connection_store.g.dart';
 
 // ignore: library_private_types_in_public_api
-class WebSocketConnectionStore = _WebSocketConnectionStore
-    with _$WebSocketConnectionStore;
+class WebSocketConnectionStore = _WebSocketConnectionStore with _$WebSocketConnectionStore;
 
 abstract class _WebSocketConnectionStore with Store {
   final List<StoreWebSocketListener> _listeners = [];
@@ -62,10 +61,7 @@ abstract class _WebSocketConnectionStore with Store {
     try {
       _channel = switch (kIsWeb) {
         true => WebSocketChannel.connect(address),
-        _ => IOWebSocketChannel.connect(
-            address,
-            pingInterval: Duration(seconds: 5),
-          ),
+        _ => IOWebSocketChannel.connect(address, pingInterval: Duration(seconds: 5)),
       };
 
       await _channel?.ready;
@@ -77,10 +73,7 @@ abstract class _WebSocketConnectionStore with Store {
     } on WebSocketChannelException catch (e) {
       _status = WebSocketConnectionStatus.error;
       _clean();
-      log(
-        "Error occured while connecting to websocket channel.",
-        error: e.toString(),
-      );
+      log("Error occured while connecting to websocket channel.", error: e.toString());
       return;
     }
 
@@ -107,10 +100,7 @@ abstract class _WebSocketConnectionStore with Store {
       _clean();
       return;
     }
-    WsInboundMessageSimple message = WsInboundMessageSimple.create(
-      data,
-      _connectedTo!,
-    );
+    WsInboundMessageSimple message = WsInboundMessageSimple.create(data, _connectedTo!);
 
     if (message is WsInboundMessage) {
       for (var listener in _listeners) {
@@ -118,8 +108,7 @@ abstract class _WebSocketConnectionStore with Store {
       }
     }
 
-    if (message is WsInboundMessage &&
-        message.type != InboundMessageType.heaterControllerState) {
+    if (message is WsInboundMessage && message.type != InboundMessageType.heaterControllerState) {
       String msg = "Got data from [$connectedTo]: ${data.toString()}";
       if (msg.length > 75) {
         log("${msg.substring(0, 75)}...");

@@ -357,31 +357,31 @@ class MaterialTheme {
   }
 
   ThemeData theme(ColorScheme colorScheme) => ThemeData(
-        useMaterial3: true,
-        brightness: colorScheme.brightness,
-        colorScheme: colorScheme,
-        textTheme: textTheme.apply(
-          bodyColor: colorScheme.onSurface,
-          displayColor: colorScheme.onSurface,
-        ),
-        scaffoldBackgroundColor: colorScheme.background,
-        canvasColor: colorScheme.surface,
-      );
+    useMaterial3: true,
+    brightness: colorScheme.brightness,
+    colorScheme: colorScheme,
+    textTheme: textTheme.apply(
+      bodyColor: colorScheme.onSurface,
+      displayColor: colorScheme.onSurface,
+    ),
+    scaffoldBackgroundColor: colorScheme.background,
+    canvasColor: colorScheme.surface,
+  );
 
   static TextTheme createTextTheme(
     BuildContext context,
     AppFontFamily font, [
     bool hasWght = true,
   ]) {
-    TextTheme textTheme = Theme.of(context).textTheme.apply(
-          fontFamily: font.name,
-        );
+    TextTheme textTheme = Theme.of(context).textTheme.apply(fontFamily: font.name);
 
     if (!hasWght) {
       return textTheme;
     }
 
-    textTheme = textTheme.apply(fontFamily: font.name).copyWith(
+    textTheme = textTheme
+        .apply(fontFamily: font.name)
+        .copyWith(
           displayLarge: textStyleWeightTransform(textTheme.displayLarge),
           displayMedium: textStyleWeightTransform(textTheme.displayMedium),
           displaySmall: textStyleWeightTransform(textTheme.displaySmall),

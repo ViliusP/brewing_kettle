@@ -15,13 +15,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class StoreModule {
   static Future<void> inject(GetIt getIt) async {
-    Repository repository = Repository(SharedPreferenceHelper(
-      await SharedPreferencesWithCache.create(
-        cacheOptions: SharedPreferencesWithCacheOptions(
-          allowList: PreferenceKey.allowList,
+    Repository repository = Repository(
+      SharedPreferenceHelper(
+        await SharedPreferencesWithCache.create(
+          cacheOptions: SharedPreferencesWithCacheOptions(allowList: PreferenceKey.allowList),
         ),
       ),
-    ));
+    );
 
     final webSocketConnectionStore = WebSocketConnectionStore();
 
@@ -35,9 +35,7 @@ class StoreModule {
     );
 
     getIt.registerSingleton<HeaterControllerStateStore>(
-      HeaterControllerStateStore(
-        webSocketConnectionStore: webSocketConnectionStore,
-      ),
+      HeaterControllerStateStore(webSocketConnectionStore: webSocketConnectionStore),
     );
 
     getIt.registerSingleton<NetworkScannerStore>(NetworkScannerStore());

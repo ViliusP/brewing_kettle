@@ -6,12 +6,7 @@ class AnimatedIdleCircles extends StatefulWidget {
   final double radius;
   final Color? color;
 
-  const AnimatedIdleCircles({
-    super.key,
-    this.radius = 20,
-    this.color,
-    this.count = 5,
-  });
+  const AnimatedIdleCircles({super.key, this.radius = 20, this.color, this.count = 5});
 
   @override
   State<AnimatedIdleCircles> createState() => _AnimatedIdleCirclesState();
@@ -30,9 +25,7 @@ class _AnimatedIdleCirclesState extends State<AnimatedIdleCircles> {
     for (int _ in countIter) {
       _ranges.add(generateRange());
       _durations.add(generateDuration());
-      _directions.add(
-        _random.nextBool() ? VerticalDirection.up : VerticalDirection.down,
-      );
+      _directions.add(_random.nextBool() ? VerticalDirection.up : VerticalDirection.down);
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -56,58 +49,56 @@ class _AnimatedIdleCirclesState extends State<AnimatedIdleCircles> {
   void flipDirection(int index) {
     _directions[index] = switch (_directions[index]) {
       VerticalDirection.up => VerticalDirection.down,
-      VerticalDirection.down => VerticalDirection.up
+      VerticalDirection.down => VerticalDirection.up,
     };
   }
 
   @override
   Widget build(BuildContext context) {
-    final Color color = widget.color ??
-        Theme.of(context).colorScheme.primary.withAlpha(255 ~/ 1.5);
+    final Color color = widget.color ?? Theme.of(context).colorScheme.primary.withAlpha(255 ~/ 1.5);
 
     final double spacing = widget.radius / 4;
     double width = (widget.radius * widget.count);
     width += (widget.count - 1) * spacing;
 
-    return LayoutBuilder(builder: (context, constraints) {
-      double verticalCenter = (constraints.maxHeight - widget.radius) / 2;
-      double horizontalCenter = (constraints.maxWidth - width) / 2;
-      return Stack(
-        fit: StackFit.expand,
-        children: List.generate(widget.count, (index) {
-          double left = horizontalCenter;
-          if (index != 0) left += (widget.radius + spacing) * index;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double verticalCenter = (constraints.maxHeight - widget.radius) / 2;
+        double horizontalCenter = (constraints.maxWidth - width) / 2;
+        return Stack(
+          fit: StackFit.expand,
+          children: List.generate(widget.count, (index) {
+            double left = horizontalCenter;
+            if (index != 0) left += (widget.radius + spacing) * index;
 
-          double top = verticalCenter;
-          top += switch (_directions[index]) {
-            VerticalDirection.up => -_ranges[index] / 2,
-            VerticalDirection.down => _ranges[index] / 2
-          };
+            double top = verticalCenter;
+            top += switch (_directions[index]) {
+              VerticalDirection.up => -_ranges[index] / 2,
+              VerticalDirection.down => _ranges[index] / 2,
+            };
 
-          return AnimatedPositioned(
-            duration: _durations[index],
-            top: top,
-            left: left,
-            curve: Curves.elasticInOut,
-            onEnd: () {
-              setState(() {
-                flipDirection(index);
-                _ranges[index] = generateRange();
-                _durations[index] = generateDuration();
-              });
-            },
-            child: Container(
-              width: widget.radius,
-              height: widget.radius,
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
+            return AnimatedPositioned(
+              duration: _durations[index],
+              top: top,
+              left: left,
+              curve: Curves.elasticInOut,
+              onEnd: () {
+                setState(() {
+                  flipDirection(index);
+                  _ranges[index] = generateRange();
+                  _durations[index] = generateDuration();
+                });
+              },
+              child: Container(
+                width: widget.radius,
+                height: widget.radius,
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
               ),
-            ),
-          );
-        }),
-      );
-    });
+            );
+          }),
+        );
+      },
+    );
   }
 }

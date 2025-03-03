@@ -12,9 +12,8 @@ mixin _$ThemeStore on _ThemeStore, Store {
   Computed<AppTheme>? _$themeComputed;
 
   @override
-  AppTheme get theme => (_$themeComputed ??=
-          Computed<AppTheme>(() => super.theme, name: '_ThemeStore.theme'))
-      .value;
+  AppTheme get theme =>
+      (_$themeComputed ??= Computed<AppTheme>(() => super.theme, name: '_ThemeStore.theme')).value;
 
   late final _$_themeAtom = Atom(name: '_ThemeStore._theme', context: context);
 
@@ -31,13 +30,14 @@ mixin _$ThemeStore on _ThemeStore, Store {
     });
   }
 
-  late final _$_ThemeStoreActionController =
-      ActionController(name: '_ThemeStore', context: context);
+  late final _$_ThemeStoreActionController = ActionController(
+    name: '_ThemeStore',
+    context: context,
+  );
 
   @override
   void changeTheme(AppTheme value) {
-    final _$actionInfo = _$_ThemeStoreActionController.startAction(
-        name: '_ThemeStore.changeTheme');
+    final _$actionInfo = _$_ThemeStoreActionController.startAction(name: '_ThemeStore.changeTheme');
     try {
       return super.changeTheme(value);
     } finally {

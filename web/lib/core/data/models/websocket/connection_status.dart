@@ -42,7 +42,7 @@ enum WebSocketConnectionStatus {
       WebSocketStatus.noStatusReceived => finishedNoStatus,
       WebSocketStatus.reserved1004 || WebSocketStatus.reserved1015 => undefined,
       _ when _errorCloseCodes.contains(value) => finishedWithError,
-      _ => undefined
+      _ => undefined,
     };
   }
 }

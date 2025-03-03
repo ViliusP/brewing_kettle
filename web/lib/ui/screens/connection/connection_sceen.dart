@@ -20,8 +20,7 @@ class ConnectionScreen extends StatefulWidget {
 class _ConnectionScreenState extends State<ConnectionScreen> {
   // ------- STORES -------
   final NetworkScannerStore _networkScannerStore = getIt<NetworkScannerStore>();
-  final WebSocketConnectionStore _wsConnectionStore =
-      getIt<WebSocketConnectionStore>();
+  final WebSocketConnectionStore _wsConnectionStore = getIt<WebSocketConnectionStore>();
 
   final TextEditingController _ipFormController = TextEditingController();
 
@@ -75,10 +74,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 32.0,
-          vertical: 8.0,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
@@ -88,45 +84,42 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
                 trailing: Observer(
                   builder: (_) {
                     onPressed() => _networkScannerStore.start();
-                    bool loading = _networkScannerStore.state ==
-                        NetworkScannerState.scanning;
+                    bool loading = _networkScannerStore.state == NetworkScannerState.scanning;
 
-                    return ScanDevicesChip(
-                      onPressed: loading ? null : onPressed,
-                      loading: loading,
+                    return ScanDevicesChip(onPressed: loading ? null : onPressed, loading: loading);
+                  },
+                ),
+                child: Observer(
+                  builder: (context) {
+                    int length = _networkScannerStore.records.length;
+                    return Row(
+                      spacing: 6,
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(length, (i) {
+                        var record = _networkScannerStore.records[i];
+                        var port = record.port;
+
+                        String addressToShow = "${record.hostname}:$port";
+                        String address = "ws://$addressToShow/ws";
+
+                        String tooltip = "${record.internetAddress.address}:$port";
+
+                        return IpSuggestionChip(
+                          onSelected: (selected) {
+                            if (selected) {
+                              _ipFormController.text = address;
+                            } else {
+                              _ipFormController.text = "";
+                            }
+                          },
+                          selected: _selectedChips[i],
+                          tooltip: tooltip,
+                          text: addressToShow,
+                        );
+                      }),
                     );
                   },
                 ),
-                child: Observer(builder: (context) {
-                  int length = _networkScannerStore.records.length;
-                  return Row(
-                    spacing: 6,
-                    mainAxisSize: MainAxisSize.min,
-                    children: List.generate(length, (i) {
-                      var record = _networkScannerStore.records[i];
-                      var port = record.port;
-
-                      String addressToShow = "${record.hostname}:$port";
-                      String address = "ws://$addressToShow/ws";
-
-                      String tooltip =
-                          "${record.internetAddress.address}:$port";
-
-                      return IpSuggestionChip(
-                        onSelected: (selected) {
-                          if (selected) {
-                            _ipFormController.text = address;
-                          } else {
-                            _ipFormController.text = "";
-                          }
-                        },
-                        selected: _selectedChips[i],
-                        tooltip: tooltip,
-                        text: addressToShow,
-                      );
-                    }),
-                  );
-                }),
               ),
             if (!kIsWeb) Padding(padding: EdgeInsets.symmetric(vertical: 12)),
             TextFormField(
@@ -134,9 +127,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
               style: TextStyle(fontSize: 24),
               keyboardType: TextInputType.url,
               decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(32.0),
-                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
                 labelStyle: TextStyle(fontSize: 20),
                 labelText: "Device IP address",
                 helperText: "For example: \"ws://0.0.0.0:80/ws\"",

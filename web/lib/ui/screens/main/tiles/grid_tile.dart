@@ -4,24 +4,16 @@ class DashboardTile extends StatelessWidget {
   final Widget child;
   final bool outlined;
 
-  const DashboardTile({
-    super.key,
-    required this.child,
-    this.outlined = false,
-  });
+  const DashboardTile({super.key, required this.child, this.outlined = false});
 
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    var shape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(12.0)),
-    );
+    var shape = RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0)));
 
     if (outlined) {
-      shape = shape.copyWith(
-        side: BorderSide(color: colorScheme.outlineVariant, width: 1),
-      );
+      shape = shape.copyWith(side: BorderSide(color: colorScheme.outlineVariant, width: 1));
       return Card.outlined(
         margin: EdgeInsets.symmetric(vertical: 8, horizontal: 2),
         elevation: 0,

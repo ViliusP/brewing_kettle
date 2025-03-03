@@ -4,16 +4,10 @@ class SystemControllers extends WsInboundMessagePayload {
   final DeviceInfo communicator;
   final DeviceInfo heater;
 
-  const SystemControllers({
-    required this.communicator,
-    required this.heater,
-  });
+  const SystemControllers({required this.communicator, required this.heater});
 
   factory SystemControllers.fromJson(Map<String, dynamic> json) {
-    return SystemControllers(
-      heater: DeviceInfo.empty(),
-      communicator: DeviceInfo.fromJson(json),
-    );
+    return SystemControllers(heater: DeviceInfo.empty(), communicator: DeviceInfo.fromJson(json));
   }
 }
 
@@ -21,10 +15,7 @@ class DeviceInfo {
   final DeviceHardwareInfo hardware;
   final DeviceSoftwareInfo software;
 
-  const DeviceInfo({
-    required this.hardware,
-    required this.software,
-  });
+  const DeviceInfo({required this.hardware, required this.software});
 
   const DeviceInfo.empty({
     this.hardware = const DeviceHardwareInfo(),
@@ -177,7 +168,4 @@ enum ChipFeatures {
   ieee802154,
 }
 
-enum FlashType {
-  embedded,
-  external,
-}
+enum FlashType { embedded, external }

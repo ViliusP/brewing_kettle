@@ -44,22 +44,14 @@ class WsInboundMessageSimple {
 
   Map<String, dynamic> get asJsonMap {
     return {}..addEntries([
-        MapEntry("time", time.toString()),
-        MapEntry("sender", sender.toString()),
-        MapEntry("data", data),
-      ]);
+      MapEntry("time", time.toString()),
+      MapEntry("sender", sender.toString()),
+      MapEntry("data", data),
+    ]);
   }
 
-  WsInboundMessageSimple copyWith({
-    String? data,
-    Uri? sender,
-    DateTime? time,
-  }) {
-    return WsInboundMessageSimple._(
-      data ?? this.data,
-      sender ?? this.sender,
-      time ?? this.time,
-    );
+  WsInboundMessageSimple copyWith({String? data, Uri? sender, DateTime? time}) {
+    return WsInboundMessageSimple._(data ?? this.data, sender ?? this.sender, time ?? this.time);
   }
 
   @override
@@ -96,19 +88,10 @@ class WsInboundMessageJson extends WsInboundMessageSimple {
   UnmodifiableMapView<String, dynamic> get json => UnmodifiableMapView(_json);
   final Map<String, dynamic> _json;
 
-  const WsInboundMessageJson._(
-    this._json,
-    String data,
-    Uri sender,
-    DateTime time,
-    this.requestID,
-  ) : super._(data, sender, time);
+  const WsInboundMessageJson._(this._json, String data, Uri sender, DateTime time, this.requestID)
+    : super._(data, sender, time);
 
-  factory WsInboundMessageJson.create(
-    Map<String, dynamic> json,
-    String data,
-    Uri sender,
-  ) {
+  factory WsInboundMessageJson.create(Map<String, dynamic> json, String data, Uri sender) {
     String? requestID;
     bool hasRequestID = json.containsKey(_InboundMessageFields.requestID);
     if (hasRequestID) {
@@ -119,30 +102,16 @@ class WsInboundMessageJson extends WsInboundMessageSimple {
     bool hasPayloadField = json.containsKey(_InboundMessageFields.payload);
 
     if (!(hasPayloadField && hasTypeField)) {
-      return WsInboundMessageJson._(
-        json,
-        data,
-        sender,
-        DateTime.now(),
-        requestID,
-      );
+      return WsInboundMessageJson._(json, data, sender, DateTime.now(), requestID);
     }
 
     final String rawType = json[_InboundMessageFields.type];
     final Map<String, dynamic> rawPayload = json[_InboundMessageFields.payload];
 
     try {
-      final type = InboundMessageType.values.firstWhereOrNull(
-        (m) => m.field == rawType,
-      );
+      final type = InboundMessageType.values.firstWhereOrNull((m) => m.field == rawType);
       if (type == null) {
-        return WsInboundMessageJson._(
-          json,
-          data,
-          sender,
-          DateTime.now(),
-          requestID,
-        );
+        return WsInboundMessageJson._(json, data, sender, DateTime.now(), requestID);
       }
 
       final payload = WsInboundMessagePayload.fromJsonMap(rawPayload, type);
@@ -156,44 +125,33 @@ class WsInboundMessageJson extends WsInboundMessageSimple {
         requestID: requestID,
       );
     } catch (e) {
-      return WsInboundMessageJson._(
-        json,
-        data,
-        sender,
-        DateTime.now(),
-        requestID,
-      );
+      return WsInboundMessageJson._(json, data, sender, DateTime.now(), requestID);
     }
   }
 
   @override
   Map<String, dynamic> get asJsonMap {
     return {}..addEntries([
-        MapEntry("time", time.toString()),
-        MapEntry("sender", sender.toString()),
-        MapEntry("data", _json),
-      ]);
+      MapEntry("time", time.toString()),
+      MapEntry("sender", sender.toString()),
+      MapEntry("data", _json),
+    ]);
   }
 }
 
 sealed class WsInboundMessagePayload {
   const WsInboundMessagePayload();
 
-  factory WsInboundMessagePayload.fromJsonMap(
-    Map<String, dynamic> json,
-    InboundMessageType type,
-  ) {
+  factory WsInboundMessagePayload.fromJsonMap(Map<String, dynamic> json, InboundMessageType type) {
     return switch (type) {
       InboundMessageType.configuration => SystemControllers.fromJson(json),
       InboundMessageType.snapshot => DeviceSnapshot.fromJson(json),
-      InboundMessageType.heaterControllerState =>
-        HeaterControllerState.fromJson(json),
+      InboundMessageType.heaterControllerState => HeaterControllerState.fromJson(json),
     };
   }
 }
 
-class WsInboundMessage<T extends WsInboundMessagePayload>
-    extends WsInboundMessageJson {
+class WsInboundMessage<T extends WsInboundMessagePayload> extends WsInboundMessageJson {
   final InboundMessageType type;
   final T payload;
 

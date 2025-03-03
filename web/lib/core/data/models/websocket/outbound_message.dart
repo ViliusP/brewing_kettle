@@ -14,19 +14,14 @@ class WsOutboundMessage<T extends ControllerMessagePayload> {
   final DateTime time;
   final T? payload;
 
-  WsOutboundMessage({
-    required this.id,
-    required this.type,
-    required this.time,
-    this.payload,
-  });
+  WsOutboundMessage({required this.id, required this.type, required this.time, this.payload});
 
   Map<String, dynamic> get jsonMap => {
-        'id': id,
-        'type': type.field,
-        'time': time.millisecondsSinceEpoch,
-        'payload': payload,
-      };
+    'id': id,
+    'type': type.field,
+    'time': time.millisecondsSinceEpoch,
+    'payload': payload,
+  };
 
   String get jsonString => json.encode(jsonMap);
 }
@@ -43,13 +38,11 @@ class WsOutboundValueMessage extends WsOutboundMessage {
 
   @override
   Map<String, dynamic> get jsonMap => {
-        'id': id,
-        'type': type.field,
-        'time': time.millisecondsSinceEpoch,
-        'payload': {
-          'value': value,
-        },
-      };
+    'id': id,
+    'type': type.field,
+    'time': time.millisecondsSinceEpoch,
+    'payload': {'value': value},
+  };
 
   @override
   String get jsonString => json.encode(jsonMap);
@@ -57,23 +50,11 @@ class WsOutboundValueMessage extends WsOutboundMessage {
 
 class WsMessageComposer {
   static String simpleRequest(OutboundMessageType type) {
-    return WsOutboundMessage(
-      id: Uuid().v4(),
-      type: type,
-      time: DateTime.now(),
-    ).jsonString;
+    return WsOutboundMessage(id: Uuid().v4(), type: type, time: DateTime.now()).jsonString;
   }
 
-  static WsOutboundValueMessage requestStateChangeMessage(
-    OutboundMessageType type,
-    dynamic value,
-  ) {
-    return WsOutboundValueMessage(
-      id: Uuid().v4(),
-      type: type,
-      time: DateTime.now(),
-      value: value,
-    );
+  static WsOutboundValueMessage requestStateChangeMessage(OutboundMessageType type, dynamic value) {
+    return WsOutboundValueMessage(id: Uuid().v4(), type: type, time: DateTime.now(), value: value);
   }
 }
 

@@ -14,14 +14,11 @@ class DeviceSnapshotStore = _DeviceSnapshotStore with _$DeviceSnapshotStore;
 abstract class _DeviceSnapshotStore with Store {
   final WebSocketConnectionStore _webSocketConnectionStore;
 
-  _DeviceSnapshotStore({
-    required WebSocketConnectionStore webSocketConnectionStore,
-  }) : _webSocketConnectionStore = webSocketConnectionStore {
-    _webSocketConnectionStore.subscribe(StoreWebSocketListener(
-      _onData,
-      InboundMessageType.snapshot,
-      "DeviceSnapshotStore",
-    ));
+  _DeviceSnapshotStore({required WebSocketConnectionStore webSocketConnectionStore})
+    : _webSocketConnectionStore = webSocketConnectionStore {
+    _webSocketConnectionStore.subscribe(
+      StoreWebSocketListener(_onData, InboundMessageType.snapshot, "DeviceSnapshotStore"),
+    );
   }
 
   @observable
@@ -36,9 +33,7 @@ abstract class _DeviceSnapshotStore with Store {
   @action
   void request() {
     if (_webSocketConnectionStore.connectedTo != null) {
-      var message = WsMessageComposer.simpleRequest(
-        OutboundMessageType.snapshotGet,
-      );
+      var message = WsMessageComposer.simpleRequest(OutboundMessageType.snapshotGet);
       _webSocketConnectionStore.message(message);
     } else {
       log("Cannot send snapshot request because there is no online channell");

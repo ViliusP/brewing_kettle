@@ -5,9 +5,7 @@ class Repository {
 
   final SharedPreferenceHelper _sharedPrefsHelper;
 
-  Repository(
-    this._sharedPrefsHelper,
-  );
+  Repository(this._sharedPrefsHelper);
 
   SharedPreferenceHelper get sharedPreferences {
     return _sharedPrefsHelper;

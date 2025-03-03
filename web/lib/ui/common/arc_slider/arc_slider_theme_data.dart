@@ -176,10 +176,7 @@ class ArcSliderPainterData implements ArcSliderThemeData {
       disabledInactiveTickMarkColor: scheme.onSurface.withOpacity(0.38),
       // thumb
       thumbColor: scheme.primary,
-      disabledThumbColor: Color.alphaBlend(
-        scheme.onSurface.withOpacity(0.38),
-        scheme.surface,
-      ),
+      disabledThumbColor: Color.alphaBlend(scheme.onSurface.withOpacity(0.38), scheme.surface),
     );
   }
 }

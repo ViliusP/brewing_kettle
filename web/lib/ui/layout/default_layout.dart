@@ -12,18 +12,14 @@ import 'package:mobx/mobx.dart';
 class DefaultLayout extends StatefulWidget {
   final Widget body;
 
-  const DefaultLayout({
-    super.key,
-    required this.body,
-  });
+  const DefaultLayout({super.key, required this.body});
 
   @override
   State<DefaultLayout> createState() => _DefaultLayoutState();
 }
 
 class _DefaultLayoutState extends State<DefaultLayout> {
-  final WebSocketConnectionStore wsConnectionStore =
-      getIt<WebSocketConnectionStore>();
+  final WebSocketConnectionStore wsConnectionStore = getIt<WebSocketConnectionStore>();
 
   int? _selectedIndex;
   late final ReactionDisposer _connectedReaction;
@@ -69,11 +65,7 @@ class _DefaultLayoutState extends State<DefaultLayout> {
       case WebSocketConnectionStatus.connecting:
         break;
       case _:
-        var currentPath = GoRouter.maybeOf(context)
-            ?.routerDelegate
-            .currentConfiguration
-            .uri
-            .path;
+        var currentPath = GoRouter.maybeOf(context)?.routerDelegate.currentConfiguration.uri.path;
         if (currentPath != AppRoute.connection.path) {
           context.replaceNamed(AppRoute.main.name);
         }
@@ -86,8 +78,7 @@ class _DefaultLayoutState extends State<DefaultLayout> {
     final screenName = config.last.route.name;
     final appRoute = AppRoute.values.byNameSafe(screenName ?? "");
 
-    bool isConnected =
-        wsConnectionStore.status == WebSocketConnectionStatus.connected;
+    bool isConnected = wsConnectionStore.status == WebSocketConnectionStatus.connected;
 
     switch (appRoute) {
       case AppRoute.connection when _navigationRailVisible:
@@ -136,37 +127,35 @@ class _DefaultLayoutState extends State<DefaultLayout> {
                 axis: Axis.horizontal,
                 axisAlignment: -1,
                 sizeFactor: animation,
-                child: FadeTransition(
-                  opacity: animation,
-                  child: child,
-                ),
+                child: FadeTransition(opacity: animation, child: child),
               );
             },
-            child: _navigationRailVisible
-                ? NavigationRail(
-                    selectedIndex: _selectedIndex,
-                    groupAlignment: 0,
-                    onDestinationSelected: onDestinatationSelected,
-                    labelType: NavigationRailLabelType.all,
-                    destinations: <NavigationRailDestination>[
-                      NavigationRailDestination(
-                        icon: Icon(MdiIcons.viewDashboardOutline),
-                        selectedIcon: Icon(MdiIcons.viewDashboard),
-                        label: Text(localizations.layoutItemHome),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(MdiIcons.cpu32Bit),
-                        selectedIcon: Icon(MdiIcons.cpu32Bit),
-                        label: Text(localizations.layoutItemDevices),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(MdiIcons.cogOutline),
-                        selectedIcon: Icon(MdiIcons.cog),
-                        label: Text(localizations.layoutItemSettings),
-                      ),
-                    ],
-                  )
-                : null,
+            child:
+                _navigationRailVisible
+                    ? NavigationRail(
+                      selectedIndex: _selectedIndex,
+                      groupAlignment: 0,
+                      onDestinationSelected: onDestinatationSelected,
+                      labelType: NavigationRailLabelType.all,
+                      destinations: <NavigationRailDestination>[
+                        NavigationRailDestination(
+                          icon: Icon(MdiIcons.viewDashboardOutline),
+                          selectedIcon: Icon(MdiIcons.viewDashboard),
+                          label: Text(localizations.layoutItemHome),
+                        ),
+                        NavigationRailDestination(
+                          icon: Icon(MdiIcons.cpu32Bit),
+                          selectedIcon: Icon(MdiIcons.cpu32Bit),
+                          label: Text(localizations.layoutItemDevices),
+                        ),
+                        NavigationRailDestination(
+                          icon: Icon(MdiIcons.cogOutline),
+                          selectedIcon: Icon(MdiIcons.cog),
+                          label: Text(localizations.layoutItemSettings),
+                        ),
+                      ],
+                    )
+                    : null,
           ),
           const VerticalDivider(thickness: 1, width: 1),
           Expanded(child: widget.body),

@@ -61,81 +61,79 @@ class _SliderContainerState extends State<SliderContainer> {
 
     Color hoverColor = colorScheme.primary.withAlpha(10);
 
-    return LayoutBuilder(builder: (context, constraints) {
-      return MouseRegion(
-        onEnter: (e) => setState(() => _hovered = true),
-        onExit: (e) => setState(() => _hovered = false),
-        cursor: switch (_dragging) {
-          true => SystemMouseCursors.grabbing,
-          false => SystemMouseCursors.grab,
-        },
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTapDown: (details) {
-            if (!_dragging) setState(() => _dragging = true);
-            onGesture(details.localPosition, constraints);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return MouseRegion(
+          onEnter: (e) => setState(() => _hovered = true),
+          onExit: (e) => setState(() => _hovered = false),
+          cursor: switch (_dragging) {
+            true => SystemMouseCursors.grabbing,
+            false => SystemMouseCursors.grab,
           },
-          onTapUp: (details) => setState(() => _dragging = false),
-          onTapCancel: () => setState(() => _dragging = false),
-          onVerticalDragUpdate: (details) {
-            if (!_dragging) setState(() => _dragging = true);
-            onGesture(details.localPosition, constraints);
-          },
-          onVerticalDragStart: (details) {
-            if (!_dragging) setState(() => _dragging = true);
-            onGesture(details.localPosition, constraints);
-          },
-          onVerticalDragEnd: (details) => setState(() => _dragging = false),
-          onVerticalDragCancel: () => setState(() => _dragging = false),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: AnimatedContainer(
-                  color: _hovered
-                      ? hoverColor
-                      : const Color.fromARGB(0, 255, 255, 255),
-                  duration: Durations.long4,
-                  curve: Curves.easeOutQuint,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapDown: (details) {
+              if (!_dragging) setState(() => _dragging = true);
+              onGesture(details.localPosition, constraints);
+            },
+            onTapUp: (details) => setState(() => _dragging = false),
+            onTapCancel: () => setState(() => _dragging = false),
+            onVerticalDragUpdate: (details) {
+              if (!_dragging) setState(() => _dragging = true);
+              onGesture(details.localPosition, constraints);
+            },
+            onVerticalDragStart: (details) {
+              if (!_dragging) setState(() => _dragging = true);
+              onGesture(details.localPosition, constraints);
+            },
+            onVerticalDragEnd: (details) => setState(() => _dragging = false),
+            onVerticalDragCancel: () => setState(() => _dragging = false),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: AnimatedContainer(
+                    color: _hovered ? hoverColor : const Color.fromARGB(0, 255, 255, 255),
+                    duration: Durations.long4,
+                    curve: Curves.easeOutQuint,
+                  ),
                 ),
-              ),
-              Align(
-                alignment: switch (widget.direction) {
-                  AxisDirection.up => Alignment.bottomCenter,
-                  AxisDirection.down => Alignment.topCenter,
-                  AxisDirection.right => Alignment.centerLeft,
-                  AxisDirection.left => Alignment.centerRight,
-                },
-                child: AnimatedContainer(
-                  height: switch (widget.direction) {
-                    AxisDirection.up => constraints.maxHeight * fillPercent,
-                    AxisDirection.down => constraints.maxHeight * fillPercent,
-                    AxisDirection.right => null,
-                    AxisDirection.left => null,
+                Align(
+                  alignment: switch (widget.direction) {
+                    AxisDirection.up => Alignment.bottomCenter,
+                    AxisDirection.down => Alignment.topCenter,
+                    AxisDirection.right => Alignment.centerLeft,
+                    AxisDirection.left => Alignment.centerRight,
                   },
-                  width: switch (widget.direction) {
-                    AxisDirection.up => null,
-                    AxisDirection.down => null,
-                    AxisDirection.right => constraints.maxWidth * fillPercent,
-                    AxisDirection.left => constraints.maxWidth * fillPercent,
-                  },
-                  color: color,
-                  duration: Durations.medium1,
-                  curve: Curves.fastEaseInToSlowEaseOut,
+                  child: AnimatedContainer(
+                    height: switch (widget.direction) {
+                      AxisDirection.up => constraints.maxHeight * fillPercent,
+                      AxisDirection.down => constraints.maxHeight * fillPercent,
+                      AxisDirection.right => null,
+                      AxisDirection.left => null,
+                    },
+                    width: switch (widget.direction) {
+                      AxisDirection.up => null,
+                      AxisDirection.down => null,
+                      AxisDirection.right => constraints.maxWidth * fillPercent,
+                      AxisDirection.left => constraints.maxWidth * fillPercent,
+                    },
+                    color: color,
+                    duration: Durations.medium1,
+                    curve: Curves.fastEaseInToSlowEaseOut,
+                  ),
                 ),
-              ),
-              widget.child,
-            ],
+                widget.child,
+              ],
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }
 
 class SliderContainerDecorations {
-  const SliderContainerDecorations({
-    this.withColorFade = true,
-  });
+  const SliderContainerDecorations({this.withColorFade = true});
 
   final bool withColorFade;
 }

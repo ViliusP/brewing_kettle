@@ -97,12 +97,14 @@ abstract class _NetworkScannerStore with Store {
       }
 
       if ([hostname, port, internetAddress, text].nonNulls.length == 4) {
-        results.add(RecordMDNS(
-          hostname: hostname!,
-          port: port!,
-          internetAddress: internetAddress!,
-          text: text!,
-        ));
+        results.add(
+          RecordMDNS(
+            hostname: hostname!,
+            port: port!,
+            internetAddress: internetAddress!,
+            text: text!,
+          ),
+        );
       }
 
       // Reset variables

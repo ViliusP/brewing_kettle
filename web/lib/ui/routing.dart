@@ -11,10 +11,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'root');
-final GlobalKey<NavigatorState> _defaultLayoutNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'default_layout');
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+final GlobalKey<NavigatorState> _defaultLayoutNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'default_layout',
+);
 
 enum AppRoute {
   main("/"),
@@ -94,7 +94,7 @@ class AppRouter {
               builder: (context, state) => TestScreen(),
             ),
           ],
-        )
+        ),
       ],
     );
   }

@@ -41,10 +41,7 @@ abstract class _ThemeStore with Store {
   // ======================
   void _init() async {
     String? prefTheme = _repository.sharedPreferences.theme;
-    _theme = AppTheme.values.firstWhere(
-      (v) => v.name == prefTheme,
-      orElse: () => AppTheme.light,
-    );
+    _theme = AppTheme.values.firstWhere((v) => v.name == prefTheme, orElse: () => AppTheme.light);
   }
 
   void dispose() async {}

@@ -40,8 +40,7 @@ class ArcSlider extends StatefulWidget {
   State<ArcSlider> createState() => _ArcSliderState();
 }
 
-class _ArcSliderState extends State<ArcSlider>
-    with SingleTickerProviderStateMixin {
+class _ArcSliderState extends State<ArcSlider> with SingleTickerProviderStateMixin {
   double _sliderValue = 0.0; // Value between 0 and 100
 
   final double startAngle = 3 * pi / 4;
@@ -58,8 +57,7 @@ class _ArcSliderState extends State<ArcSlider>
       vsync: this,
       duration: const Duration(milliseconds: 200),
     );
-    _handleAnimation =
-        Tween<double>(begin: 10, end: 20).animate(_handleAnimationController);
+    _handleAnimation = Tween<double>(begin: 10, end: 20).animate(_handleAnimationController);
   }
 
   ArcSliderPainterData _painterData(BuildContext context) {
@@ -124,76 +122,78 @@ class _ArcSliderState extends State<ArcSlider>
 
     return AspectRatio(
       aspectRatio: 1,
-      child: LayoutBuilder(builder: (context, constraints) {
-        final arcRect = Rect.fromLTWH(
-          arcWidth / 2,
-          arcWidth / 2,
-          constraints.maxWidth - arcWidth,
-          constraints.maxWidth - arcWidth,
-        );
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final arcRect = Rect.fromLTWH(
+            arcWidth / 2,
+            arcWidth / 2,
+            constraints.maxWidth - arcWidth,
+            constraints.maxWidth - arcWidth,
+          );
 
-        return GestureDetector(
-          onPanUpdate: (details) {
-            _updateSliderValue(details.localPosition, arcRect);
-          },
-          child: Stack(
-            children: [
-              CustomPaint(
-                size: Size.square(constraints.maxWidth),
-                painter: ArcSliderPainter(
-                  arcWidth: 10,
-                  progress: 100,
-                  startAngle: startAngle,
-                  sweepAngle: sweepAngle,
-                  color: painterData.inactiveTrackColor,
+          return GestureDetector(
+            onPanUpdate: (details) {
+              _updateSliderValue(details.localPosition, arcRect);
+            },
+            child: Stack(
+              children: [
+                CustomPaint(
+                  size: Size.square(constraints.maxWidth),
+                  painter: ArcSliderPainter(
+                    arcWidth: 10,
+                    progress: 100,
+                    startAngle: startAngle,
+                    sweepAngle: sweepAngle,
+                    color: painterData.inactiveTrackColor,
+                  ),
                 ),
-              ),
 
-              // CustomPaint(
-              //   size: Size.square(constraints.maxWidth),
-              //   painter: ArcSliderPainter(
-              //     arcWidth: arcWidth,
-              //     progress: widget.value,
-              //     startAngle: startAngle,
-              //     sweepAngle: sweepAngle,
-              //     color: painterData.secondaryActiveTrackColor,
-              //   ),
-              // ),
-              // if (widget.secondaryValue != null)
-              //   CustomPaint(
-              //     size: Size.square(constraints.maxWidth),
-              //     painter: ArcSliderPainter(
-              //       arcWidth: arcWidth,
-              //       progress: widget.secondaryValue!,
-              //       startAngle: startAngle,
-              //       sweepAngle: sweepAngle,
-              //       color: painterData.activeTrackColor,
-              //     ),
-              //   ),
-              // AnimatedBuilder(
-              //   animation: _handleAnimationController,
-              //   builder: (context, child) {
-              //     return CustomPaint(
-              //       size: Size.square(constraints.maxWidth),
-              //       painter: HandlePainter(
-              //         handlePosition: _calculateHandlePosition(
-              //           widget.value,
-              //           arcRect,
-              //         ),
-              //         handleColor: painterData.thumbColor,
-              //         handleSize: _handleAnimation.value,
-              //         handleAngle: startAngle +
-              //             (widget.value - widget.min) /
-              //                 (widget.max - widget.min) *
-              //                 sweepAngle,
-              //       ),
-              //     );
-              //   },
-              // ),
-            ],
-          ),
-        );
-      }),
+                // CustomPaint(
+                //   size: Size.square(constraints.maxWidth),
+                //   painter: ArcSliderPainter(
+                //     arcWidth: arcWidth,
+                //     progress: widget.value,
+                //     startAngle: startAngle,
+                //     sweepAngle: sweepAngle,
+                //     color: painterData.secondaryActiveTrackColor,
+                //   ),
+                // ),
+                // if (widget.secondaryValue != null)
+                //   CustomPaint(
+                //     size: Size.square(constraints.maxWidth),
+                //     painter: ArcSliderPainter(
+                //       arcWidth: arcWidth,
+                //       progress: widget.secondaryValue!,
+                //       startAngle: startAngle,
+                //       sweepAngle: sweepAngle,
+                //       color: painterData.activeTrackColor,
+                //     ),
+                //   ),
+                // AnimatedBuilder(
+                //   animation: _handleAnimationController,
+                //   builder: (context, child) {
+                //     return CustomPaint(
+                //       size: Size.square(constraints.maxWidth),
+                //       painter: HandlePainter(
+                //         handlePosition: _calculateHandlePosition(
+                //           widget.value,
+                //           arcRect,
+                //         ),
+                //         handleColor: painterData.thumbColor,
+                //         handleSize: _handleAnimation.value,
+                //         handleAngle: startAngle +
+                //             (widget.value - widget.min) /
+                //                 (widget.max - widget.min) *
+                //                 sweepAngle,
+                //       ),
+                //     );
+                //   },
+                // ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -219,9 +219,10 @@ class HandlePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = handleColor
-      ..style = PaintingStyle.fill;
+    final paint =
+        Paint()
+          ..color = handleColor
+          ..style = PaintingStyle.fill;
 
     canvas.save();
     canvas.translate(handlePosition.dx, handlePosition.dy);

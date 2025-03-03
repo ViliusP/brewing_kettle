@@ -13,12 +13,13 @@ mixin _$DevicesInfoStore on _DevicesInfoStore, Store {
 
   @override
   bool get waitingResponse =>
-      (_$waitingResponseComputed ??= Computed<bool>(() => super.waitingResponse,
-              name: '_DevicesInfoStore.waitingResponse'))
+      (_$waitingResponseComputed ??= Computed<bool>(
+            () => super.waitingResponse,
+            name: '_DevicesInfoStore.waitingResponse',
+          ))
           .value;
 
-  late final _$controllersAtom =
-      Atom(name: '_DevicesInfoStore.controllers', context: context);
+  late final _$controllersAtom = Atom(name: '_DevicesInfoStore.controllers', context: context);
 
   @override
   SystemControllers? get controllers {
@@ -33,8 +34,10 @@ mixin _$DevicesInfoStore on _DevicesInfoStore, Store {
     });
   }
 
-  late final _$_waitingResponseAtom =
-      Atom(name: '_DevicesInfoStore._waitingResponse', context: context);
+  late final _$_waitingResponseAtom = Atom(
+    name: '_DevicesInfoStore._waitingResponse',
+    context: context,
+  );
 
   @override
   bool get _waitingResponse {
@@ -49,13 +52,16 @@ mixin _$DevicesInfoStore on _DevicesInfoStore, Store {
     });
   }
 
-  late final _$_DevicesInfoStoreActionController =
-      ActionController(name: '_DevicesInfoStore', context: context);
+  late final _$_DevicesInfoStoreActionController = ActionController(
+    name: '_DevicesInfoStore',
+    context: context,
+  );
 
   @override
   void request() {
     final _$actionInfo = _$_DevicesInfoStoreActionController.startAction(
-        name: '_DevicesInfoStore.request');
+      name: '_DevicesInfoStore.request',
+    );
     try {
       return super.request();
     } finally {
@@ -66,7 +72,8 @@ mixin _$DevicesInfoStore on _DevicesInfoStore, Store {
   @override
   void _onData(WsInboundMessage<WsInboundMessagePayload> message) {
     final _$actionInfo = _$_DevicesInfoStoreActionController.startAction(
-        name: '_DevicesInfoStore._onData');
+      name: '_DevicesInfoStore._onData',
+    );
     try {
       return super._onData(message);
     } finally {

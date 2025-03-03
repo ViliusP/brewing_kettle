@@ -24,9 +24,7 @@ class ThemeSelectDialog extends StatelessWidget {
             print(appTheme.name);
             return ListTile(
               selected: currentTheme == appTheme,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
               title: Text(localizations.pSettingsThemeNames(appTheme.name)),
               onTap: () => Navigator.of(context).pop(appTheme),
             );

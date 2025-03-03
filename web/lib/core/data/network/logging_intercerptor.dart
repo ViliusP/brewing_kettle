@@ -77,17 +77,10 @@ class LoggingInterceptor extends Interceptor {
   final JsonDecoder decoder = const JsonDecoder();
   final JsonEncoder encoder = const JsonEncoder.withIndent('  ');
 
-  LoggingInterceptor({
-    this.level = Level.body,
-    this.compact = false,
-    this.logPrint = print,
-  });
+  LoggingInterceptor({this.level = Level.body, this.compact = false, this.logPrint = print});
 
   @override
-  void onRequest(
-    RequestOptions options,
-    RequestInterceptorHandler handler,
-  ) {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     if (level == Level.none) {
       return handler.next(options);
     }
@@ -130,16 +123,15 @@ class LoggingInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(
-    Response response,
-    ResponseInterceptorHandler handler,
-  ) {
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
     if (level == Level.none) {
       return handler.next(response);
     }
 
     logPrint(
-        '<-- ${response.statusCode} ${(response.statusMessage?.isNotEmpty ?? false) ? response.statusMessage : '' '${response.requestOptions.uri}'}');
+      '<-- ${response.statusCode} ${(response.statusMessage?.isNotEmpty ?? false) ? response.statusMessage : ''
+              '${response.requestOptions.uri}'}',
+    );
 
     if (level == Level.basic) {
       return handler.next(response);
@@ -174,10 +166,7 @@ class LoggingInterceptor extends Interceptor {
   }
 
   @override
-  void onError(
-    DioException err,
-    ErrorInterceptorHandler handler,
-  ) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
     if (level == Level.none) {
       return handler.next(err);
     }

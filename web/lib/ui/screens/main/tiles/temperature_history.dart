@@ -21,8 +21,7 @@ class TemperatureHistoryTile extends StatefulWidget {
 class _TemperatureHistoryTileState extends State<TemperatureHistoryTile> {
   static const _entriesLimit = 100;
 
-  final HeaterControllerStateStore _temperatureStore =
-      getIt<HeaterControllerStateStore>();
+  final HeaterControllerStateStore _temperatureStore = getIt<HeaterControllerStateStore>();
 
   bool _showInfo = false;
 
@@ -33,38 +32,31 @@ class _TemperatureHistoryTileState extends State<TemperatureHistoryTile> {
     return Stack(
       children: [
         Padding(
-          padding: const EdgeInsets.only(
-            left: 8.0,
-            right: 16.0,
-            top: 16.0,
-            bottom: 8.0,
+          padding: const EdgeInsets.only(left: 8.0, right: 16.0, top: 16.0, bottom: 8.0),
+          child: Observer(
+            builder: (context) {
+              var tempHistory = _temperatureStore.stateHistory.takeLast(_entriesLimit);
+              return TemperatureHistoryChart(data: tempHistory);
+            },
           ),
-          child: Observer(builder: (context) {
-            var tempHistory = _temperatureStore.stateHistory.takeLast(
-              _entriesLimit,
-            );
-            return TemperatureHistoryChart(data: tempHistory);
-          }),
         ),
         Positioned.fill(
           child: AnimatedSwitcher(
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-              duration: Durations.medium2,
-              child: switch (_showInfo) {
-                true => SizedBox(
-                    key: Key("_showInfo = true"),
-                    child: ColoredBox(
-                      color: colorScheme.surface,
-                      child: Center(child: const HistoryGraphInfo()),
-                    ),
-                  ),
-                false => SizedBox.shrink(key: Key("_showInfo = false")),
-              }),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+            duration: Durations.medium2,
+            child: switch (_showInfo) {
+              true => SizedBox(
+                key: Key("_showInfo = true"),
+                child: ColoredBox(
+                  color: colorScheme.surface,
+                  child: Center(child: const HistoryGraphInfo()),
+                ),
+              ),
+              false => SizedBox.shrink(key: Key("_showInfo = false")),
+            },
+          ),
         ),
         Padding(
           padding: const EdgeInsets.all(4.0),
@@ -82,10 +74,7 @@ class _TemperatureHistoryTileState extends State<TemperatureHistoryTile> {
                 onExit: (_) => setState(() => _showInfo = false),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Icon(
-                    MdiIcons.informationBoxOutline,
-                    size: 32,
-                  ),
+                  child: Icon(MdiIcons.informationBoxOutline, size: 32),
                 ),
               ),
             ),
@@ -99,10 +88,7 @@ class _TemperatureHistoryTileState extends State<TemperatureHistoryTile> {
 class TemperatureHistoryChart extends StatelessWidget {
   final List<TimeSeriesViewEntry> data;
 
-  const TemperatureHistoryChart({
-    super.key,
-    required this.data,
-  });
+  const TemperatureHistoryChart({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -110,26 +96,27 @@ class TemperatureHistoryChart extends StatelessWidget {
     final TextTheme textTheme = TextTheme.of(context);
     final localizations = AppLocalizations.of(context)!;
 
-    var convertedData = data
-        .map((e) => {
-              'date': e.date,
-              'temperature': e.value?['current_temperature'] ?? 0,
-              'target_temperature': e.value?['target_temperature'] ?? 0,
-              'power': e.value?['power'] ?? 0,
-            })
-        .toList();
+    var convertedData =
+        data
+            .map(
+              (e) => {
+                'date': e.date,
+                'temperature': e.value?['current_temperature'] ?? 0,
+                'target_temperature': e.value?['target_temperature'] ?? 0,
+                'power': e.value?['power'] ?? 0,
+              },
+            )
+            .toList();
 
     // Graphics library cannot be used with empty data, so it will be added when
     // provided data is empty.
     if (data.isEmpty) {
-      convertedData.add(
-        {
-          'date': DateTime.now(),
-          'temperature': 0,
-          'target_temperature': 0,
-          'power': 0,
-        },
-      );
+      convertedData.add({
+        'date': DateTime.now(),
+        'temperature': 0,
+        'target_temperature': 0,
+        'power': 0,
+      });
     }
 
     return MouseRegion(
@@ -144,19 +131,18 @@ class TemperatureHistoryChart extends StatelessWidget {
           'date': Variable(
             accessor: (Map map) => map['date'] as DateTime,
             scale: TimeScale(
-                min: data.isEmpty
-                    ? DateTime.now().subtract(Duration(hours: 1))
-                    : null,
-                max: data.isEmpty ? DateTime.now() : null,
-                marginMin: data.isNotEmpty ? 0 : null,
-                marginMax: data.isNotEmpty ? 0 : null,
-                tickCount: 3,
-                formatter: (d) {
-                  String hours = d.hour.toString().padLeft(2, '0');
-                  String minutes = d.minute.toString().padLeft(2, '0');
-                  String seconds = d.second.toString().padLeft(2, '0');
-                  return '$hours:$minutes:$seconds';
-                }),
+              min: data.isEmpty ? DateTime.now().subtract(Duration(hours: 1)) : null,
+              max: data.isEmpty ? DateTime.now() : null,
+              marginMin: data.isNotEmpty ? 0 : null,
+              marginMax: data.isNotEmpty ? 0 : null,
+              tickCount: 3,
+              formatter: (d) {
+                String hours = d.hour.toString().padLeft(2, '0');
+                String minutes = d.minute.toString().padLeft(2, '0');
+                String seconds = d.second.toString().padLeft(2, '0');
+                return '$hours:$minutes:$seconds';
+              },
+            ),
           ),
           'temperature': Variable(
             accessor: (Map map) => map['temperature'] as num,
@@ -169,19 +155,11 @@ class TemperatureHistoryChart extends StatelessWidget {
           ),
           'target_temperature': Variable(
             accessor: (Map map) => map['target_temperature'] as num,
-            scale: LinearScale(
-              min: 0,
-              max: 105,
-              formatter: (v) => v.toStringAsFixed(1),
-            ),
+            scale: LinearScale(min: 0, max: 105, formatter: (v) => v.toStringAsFixed(1)),
           ),
           'power': Variable(
             accessor: (Map map) => map['power'] as num,
-            scale: LinearScale(
-              min: 0,
-              max: 100,
-              formatter: (v) => v.toStringAsFixed(1),
-            ),
+            scale: LinearScale(min: 0, max: 100, formatter: (v) => v.toStringAsFixed(1)),
           ),
         },
         marks: [
@@ -212,10 +190,7 @@ class TemperatureHistoryChart extends StatelessWidget {
               strokeColor: colorScheme.outline.withAlpha(128),
               strokeCap: StrokeCap.round,
             ),
-            label: LabelStyle(
-              textStyle: textTheme.labelMedium,
-              offset: const Offset(0, 7.5),
-            ),
+            label: LabelStyle(textStyle: textTheme.labelMedium, offset: const Offset(0, 7.5)),
           ),
           AxisGuide(
             dim: Dim.y,
@@ -227,40 +202,36 @@ class TemperatureHistoryChart extends StatelessWidget {
             labelMapper: (_, index, ___) {
               return switch (index) {
                 0 => null,
-                _ => LabelStyle(
-                    textStyle: textTheme.labelMedium,
-                    offset: const Offset(-10, 0),
-                  )
+                _ => LabelStyle(textStyle: textTheme.labelMedium, offset: const Offset(-10, 0)),
               };
             },
             tickLineMapper: (_, index, ___) {
               return switch (index) {
                 0 => null,
                 _ => TickLine(
-                    style: PaintStyle(
-                      strokeWidth: 1,
-                      strokeColor: colorScheme.outline,
-                      strokeCap: StrokeCap.round,
-                    ),
-                  )
+                  style: PaintStyle(
+                    strokeWidth: 1,
+                    strokeColor: colorScheme.outline,
+                    strokeCap: StrokeCap.round,
+                  ),
+                ),
               };
             },
             gridMapper: (_, index, __) {
               return switch (index) {
                 0 => null,
                 _ => PaintStyle(
-                    strokeWidth: 1,
-                    strokeColor: colorScheme.outline.withAlpha(35),
-                    strokeCap: StrokeCap.round,
-                  )
+                  strokeWidth: 1,
+                  strokeColor: colorScheme.outline.withAlpha(35),
+                  strokeCap: StrokeCap.round,
+                ),
               };
             },
           ),
         ],
         selections: {
           _ChartSelections.tooltipShow: _ChartSelections.tooltipShowSettings,
-          _ChartSelections.crosshairShow:
-              _ChartSelections.crossHairShowSettings,
+          _ChartSelections.crosshairShow: _ChartSelections.crossHairShowSettings,
         },
         tooltip: TooltipGuide(
           selections: {_ChartSelections.tooltipShow},
@@ -275,20 +246,20 @@ class TemperatureHistoryChart extends StatelessWidget {
             var maybeDate = values?[ControllerStateFields.date];
             if (maybeDate != null && maybeDate is DateTime) {
               repr += "${localizations.generalDate}: ";
-              repr += [maybeDate.hour, maybeDate.minute, maybeDate.second]
-                  .map((v) => v.toString().padLeft(2, "0"))
-                  .join(":");
+              repr += [
+                maybeDate.hour,
+                maybeDate.minute,
+                maybeDate.second,
+              ].map((v) => v.toString().padLeft(2, "0")).join(":");
             }
 
-            var targetTemperature =
-                values?[ControllerStateFields.targetTemperature];
+            var targetTemperature = values?[ControllerStateFields.targetTemperature];
             if (targetTemperature != null && targetTemperature is num) {
               repr += "\n${localizations.generalTargetTemperature}: ";
               repr += "${targetTemperature.toStringAsFixed(0)}°C";
             }
 
-            var maybeTemperature =
-                values?[ControllerStateFields.currentTemperature];
+            var maybeTemperature = values?[ControllerStateFields.currentTemperature];
             if (maybeTemperature != null && maybeTemperature is num) {
               repr += "\n${localizations.generalTemperature}: ";
               repr += "${maybeTemperature.toStringAsFixed(0)}°C";
@@ -300,30 +271,23 @@ class TemperatureHistoryChart extends StatelessWidget {
               repr += "${maybePower.toStringAsFixed(0)}%";
             }
 
-            LabelElement tooltipLabelGen(Offset offset, String text) =>
-                LabelElement(
-                  defaultAlign: Alignment.topLeft,
-                  text: text,
-                  anchor: offset,
-                  style: LabelStyle(
-                    textStyle: textTheme.labelMedium?.copyWith(
-                      color: colorScheme.onInverseSurface,
-                      backgroundColor: Colors.transparent,
-                    ),
-                  ),
-                );
+            LabelElement tooltipLabelGen(Offset offset, String text) => LabelElement(
+              defaultAlign: Alignment.topLeft,
+              text: text,
+              anchor: offset,
+              style: LabelStyle(
+                textStyle: textTheme.labelMedium?.copyWith(
+                  color: colorScheme.onInverseSurface,
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
+            );
 
             var offsetedAncher = anchor.translate(-2 * padding, -2 * padding);
-            var textElement = tooltipLabelGen(
-              offsetedAncher,
-              repr,
-            );
+            var textElement = tooltipLabelGen(offsetedAncher, repr);
             var textRect = textElement.getBlock();
             if (textRect.left.isNegative) {
-              textElement = tooltipLabelGen(
-                offsetedAncher.translate(textRect.left.abs(), 0),
-                repr,
-              );
+              textElement = tooltipLabelGen(offsetedAncher.translate(textRect.left.abs(), 0), repr);
             }
             textRect = textElement.getBlock();
 
@@ -345,9 +309,11 @@ class TemperatureHistoryChart extends StatelessWidget {
             // Date
             (val) {
               if (val is DateTime) {
-                return [val.hour, val.minute, val.second]
-                    .map((v) => v.toString().padLeft(2, "0"))
-                    .join(":");
+                return [
+                  val.hour,
+                  val.minute,
+                  val.second,
+                ].map((v) => v.toString().padLeft(2, "0")).join(":");
               }
               return val.toString();
             },
@@ -416,9 +382,7 @@ class _ChartSelections {
       GestureType.tapDown,
       GestureType.longPressMoveUpdate,
     },
-    clear: {
-      GestureType.mouseExit,
-    },
+    clear: {GestureType.mouseExit},
     nearest: true,
     devices: {PointerDeviceKind.mouse},
     variable: 'date',
@@ -426,15 +390,8 @@ class _ChartSelections {
   );
 
   static final PointSelection tooltipShowSettings = PointSelection(
-    on: {
-      GestureType.scaleUpdate,
-      GestureType.tapDown,
-      GestureType.longPressMoveUpdate,
-    },
-    clear: {
-      GestureType.mouseExit,
-      GestureType.scaleEnd,
-    },
+    on: {GestureType.scaleUpdate, GestureType.tapDown, GestureType.longPressMoveUpdate},
+    clear: {GestureType.mouseExit, GestureType.scaleEnd},
     nearest: true,
     devices: {PointerDeviceKind.mouse},
     variable: 'date',

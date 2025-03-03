@@ -10,20 +10,20 @@ import 'package:mobx/mobx.dart';
 part 'heater_controller_state_store.g.dart';
 
 // ignore: library_private_types_in_public_api
-class HeaterControllerStateStore = _HeaterControllerStateStore
-    with _$HeaterControllerStateStore;
+class HeaterControllerStateStore = _HeaterControllerStateStore with _$HeaterControllerStateStore;
 
 abstract class _HeaterControllerStateStore with Store {
   final WebSocketConnectionStore _webSocketConnectionStore;
 
-  _HeaterControllerStateStore({
-    required WebSocketConnectionStore webSocketConnectionStore,
-  }) : _webSocketConnectionStore = webSocketConnectionStore {
-    _webSocketConnectionStore.subscribe(StoreWebSocketListener(
-      _onData,
-      InboundMessageType.heaterControllerState,
-      "HeaterControllerStateStore",
-    ));
+  _HeaterControllerStateStore({required WebSocketConnectionStore webSocketConnectionStore})
+    : _webSocketConnectionStore = webSocketConnectionStore {
+    _webSocketConnectionStore.subscribe(
+      StoreWebSocketListener(
+        _onData,
+        InboundMessageType.heaterControllerState,
+        "HeaterControllerStateStore",
+      ),
+    );
   }
 
   @observable
@@ -36,25 +36,19 @@ abstract class _HeaterControllerStateStore with Store {
 
   @computed
   List<TimeSeriesViewEntry> get stateHistory =>
-      TimeSeries<HeaterControllerState>.from(
-        _stateHistory,
-        {
-          "power": (v) => v.power,
-          "current_temperature": (v) => v.currentTemperature,
-          "target_temperature": (v) => v.targetTemperature,
-        },
-      ).aggregate(
-          defaultType: AggregationType.mean,
-          interval: AggregationInterval.seconds(15),
-          typesByField: {
-            "power": AggregationType.last,
-            "target_temperature": AggregationType.last,
-          });
+      TimeSeries<HeaterControllerState>.from(_stateHistory, {
+        "power": (v) => v.power,
+        "current_temperature": (v) => v.currentTemperature,
+        "target_temperature": (v) => v.targetTemperature,
+      }).aggregate(
+        defaultType: AggregationType.mean,
+        interval: AggregationInterval.seconds(15),
+        typesByField: {"power": AggregationType.last, "target_temperature": AggregationType.last},
+      );
 
   @observable
   // ignore: prefer_final_fields
-  ObservableList<TimeSeriesEntry<HeaterControllerState>> _stateHistory =
-      ObservableList.of([]);
+  ObservableList<TimeSeriesEntry<HeaterControllerState>> _stateHistory = ObservableList.of([]);
 
   @computed
   double? get currentTemperature => _state?.currentTemperature;
@@ -119,10 +113,7 @@ abstract class _HeaterControllerStateStore with Store {
 
       return;
     }
-    var message = WsMessageComposer.requestStateChangeMessage(
-      OutboundMessageType.powerSet,
-      value,
-    );
+    var message = WsMessageComposer.requestStateChangeMessage(OutboundMessageType.powerSet, value);
     _requestedPower = value;
     _webSocketConnectionStore.message(message.jsonString);
   }

@@ -11,11 +11,5 @@ class StoreWebSocketListener {
   final Function? onError;
   final void Function()? onDone;
 
-  StoreWebSocketListener(
-    this.onData,
-    this.type,
-    this.name, {
-    this.onError,
-    this.onDone,
-  });
+  StoreWebSocketListener(this.onData, this.type, this.name, {this.onError, this.onDone});
 }

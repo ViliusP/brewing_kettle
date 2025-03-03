@@ -20,9 +20,10 @@ class GbFlagPainter extends CustomPainter {
     path1.moveTo(size.width, 0);
     path1.lineTo(0, size.height);
 
-    Paint paint1Stroke = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width * 0.1000000;
+    Paint paint1Stroke =
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = size.width * 0.1000000;
     paint1Stroke.color = Color(0xffffffff).withOpacity(1.0);
     canvas.drawPath(path1, paint1Stroke);
 
@@ -36,9 +37,10 @@ class GbFlagPainter extends CustomPainter {
     path2.moveTo(size.width, 0);
     path2.lineTo(0, size.height);
 
-    Paint paint2Stroke = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width * 0.06666667;
+    Paint paint2Stroke =
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = size.width * 0.06666667;
     paint2Stroke.color = Color(0xffC8102E).withOpacity(1.0);
     canvas.drawPath(path2, paint2Stroke);
 
@@ -52,9 +54,10 @@ class GbFlagPainter extends CustomPainter {
     path3.moveTo(0, size.height * 0.5000000);
     path3.lineTo(size.width, size.height * 0.5000000);
 
-    Paint paint3Stroke = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width * 0.1666667;
+    Paint paint3Stroke =
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = size.width * 0.1666667;
     paint3Stroke.color = Color(0xffffffff).withOpacity(1.0);
     canvas.drawPath(path3, paint3Stroke);
 
@@ -68,9 +71,10 @@ class GbFlagPainter extends CustomPainter {
     path4.moveTo(0, size.height * 0.5000000);
     path4.lineTo(size.width, size.height * 0.5000000);
 
-    Paint paint4Stroke = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width * 0.1000000;
+    Paint paint4Stroke =
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = size.width * 0.1000000;
     paint4Stroke.color = Color(0xffC8102E).withOpacity(1.0);
     canvas.drawPath(path4, paint4Stroke);
 

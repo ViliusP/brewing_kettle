@@ -24,13 +24,7 @@ class HeaterControllerState extends WsInboundMessagePayload {
       (v) => json["status"] == v.jsonValue,
     );
 
-    if ([
-      timestamp,
-      currentTemperature,
-      targetTemperature,
-      power,
-      status,
-    ].contains(null)) {
+    if ([timestamp, currentTemperature, targetTemperature, power, status].contains(null)) {
       throw Exception("Cannot create HeaterControllerState from $json");
     }
 
@@ -56,13 +50,7 @@ class HeaterControllerState extends WsInboundMessagePayload {
   }
 
   @override
-  int get hashCode => Object.hash(
-        timestamp,
-        status,
-        currentTemperature,
-        targetTemperature,
-        power,
-      );
+  int get hashCode => Object.hash(timestamp, status, currentTemperature, targetTemperature, power);
 
   @override
   String toString() {
@@ -92,15 +80,15 @@ enum HeaterMode {
   final String jsonValue;
 
   HeaterStatus toHeaterStatus() => switch (this) {
-        idle => HeaterStatus.idle,
-        heatingManual => HeaterStatus.heatingManual,
-        heatingPid => HeaterStatus.heatingPid,
-      };
+    idle => HeaterStatus.idle,
+    heatingManual => HeaterStatus.heatingManual,
+    heatingPid => HeaterStatus.heatingPid,
+  };
 
   static HeaterMode? fromHeaterStatus(HeaterStatus value) => switch (value) {
-        HeaterStatus.idle => HeaterMode.idle,
-        HeaterStatus.heatingManual => HeaterMode.heatingManual,
-        HeaterStatus.heatingPid => HeaterMode.heatingPid,
-        _ => null,
-      };
+    HeaterStatus.idle => HeaterMode.idle,
+    HeaterStatus.heatingManual => HeaterMode.heatingManual,
+    HeaterStatus.heatingPid => HeaterMode.heatingPid,
+    _ => null,
+  };
 }

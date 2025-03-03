@@ -15,8 +15,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 class SettingsScreen extends StatelessWidget {
   final LocaleStore localeStore = getIt<LocaleStore>();
   final ThemeStore themeStore = getIt<ThemeStore>();
-  final WebSocketConnectionStore wsConnectionStore =
-      getIt<WebSocketConnectionStore>();
+  final WebSocketConnectionStore wsConnectionStore = getIt<WebSocketConnectionStore>();
 
   SettingsScreen({super.key});
 
@@ -25,8 +24,7 @@ class SettingsScreen extends StatelessWidget {
 
     Locale? returnedValue = await showDialog<Locale>(
       context: context,
-      builder: (BuildContext context) =>
-          LanguageSelectDialog(currentLocale: localeStore.locale),
+      builder: (BuildContext context) => LanguageSelectDialog(currentLocale: localeStore.locale),
     );
 
     if (returnedValue != null) localeStore.changeLanguage(returnedValue);
@@ -37,9 +35,7 @@ class SettingsScreen extends StatelessWidget {
 
     AppTheme? returnedValue = await showDialog<AppTheme>(
       context: context,
-      builder: (BuildContext context) => ThemeSelectDialog(
-        currentTheme: themeStore.theme,
-      ),
+      builder: (BuildContext context) => ThemeSelectDialog(currentTheme: themeStore.theme),
     );
 
     if (returnedValue != null) themeStore.changeTheme(returnedValue);
@@ -69,14 +65,12 @@ class SettingsScreen extends StatelessWidget {
                             wsConnectionStore.close();
                           },
                           style: OutlinedButton.styleFrom(
-                              foregroundColor: colorScheme.secondary,
-                              iconColor: colorScheme.secondary,
-                              iconSize: 22,
-                              textStyle: TextStyle(fontSize: 16),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 16,
-                              )),
+                            foregroundColor: colorScheme.secondary,
+                            iconColor: colorScheme.secondary,
+                            iconSize: 22,
+                            textStyle: TextStyle(fontSize: 16),
+                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                          ),
                           label: Text("Atsijungti"),
                           icon: Icon(MdiIcons.logoutVariant),
                         ),
@@ -92,11 +86,12 @@ class SettingsScreen extends StatelessWidget {
                           trailing: SizedBox(
                             height: 20,
                             child: Observer(
-                              builder: (context) => CountryFlag(
-                                code: CountryCode.fromLanguageCode(
-                                  localeStore.locale.languageCode,
-                                ),
-                              ),
+                              builder:
+                                  (context) => CountryFlag(
+                                    code: CountryCode.fromLanguageCode(
+                                      localeStore.locale.languageCode,
+                                    ),
+                                  ),
                             ),
                           ),
                           onTap: () => _languageSelectDialogBuidlder(context),
@@ -105,18 +100,16 @@ class SettingsScreen extends StatelessWidget {
                         SettingsButton(
                           icon: Icon(MdiIcons.palette),
                           trailing: Observer(
-                            builder: (context) => Text(
-                              localizations.pSettingsThemeNames(
-                                themeStore.theme.name,
-                              ),
-                            ),
+                            builder:
+                                (context) =>
+                                    Text(localizations.pSettingsThemeNames(themeStore.theme.name)),
                           ),
                           onTap: () => _themeSelectDialogBuilder(context),
                           child: Text(localizations.pSettingsTheme),
                         ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               );
             },
@@ -132,11 +125,7 @@ class SettingsCard extends StatelessWidget {
 
   final String title;
 
-  const SettingsCard({
-    super.key,
-    required this.title,
-    required this.child,
-  });
+  const SettingsCard({super.key, required this.title, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -154,11 +143,7 @@ class SettingsCard extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(
-                title,
-                style: textTheme.displaySmall,
-                textAlign: TextAlign.left,
-              ),
+              child: Text(title, style: textTheme.displaySmall, textAlign: TextAlign.left),
             ),
             child,
           ],
@@ -174,13 +159,7 @@ class SettingsButton extends StatelessWidget {
   final Widget? trailing;
   final GestureTapCallback? onTap;
 
-  const SettingsButton({
-    super.key,
-    this.onTap,
-    this.trailing,
-    required this.child,
-    this.icon,
-  });
+  const SettingsButton({super.key, this.onTap, this.trailing, required this.child, this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -204,26 +183,18 @@ class SettingsButton extends StatelessWidget {
         }),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 12.0,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           child: Row(
             children: [
               if (icon != null) icon!,
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: DefaultTextStyle(
-                  style: textTheme.bodyLarge ?? TextStyle(),
-                  child: child,
-                ),
+                child: DefaultTextStyle(style: textTheme.bodyLarge ?? TextStyle(), child: child),
               ),
               Spacer(),
               if (trailing != null)
                 DefaultTextStyle(
-                  style: (textTheme.bodyMedium ?? TextStyle()).changeWeight(
-                    FontWeight.w700,
-                  ),
+                  style: (textTheme.bodyMedium ?? TextStyle()).changeWeight(FontWeight.w700),
                   child: trailing!,
                 ),
             ],

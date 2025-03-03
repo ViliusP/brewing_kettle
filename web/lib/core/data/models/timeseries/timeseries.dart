@@ -4,22 +4,16 @@ typedef TimeSeriesAccesor<T> = num Function(T value);
 typedef TimeSeriesAccesors<T> = Map<String, TimeSeriesAccesor<T>>;
 
 class TimeSeries<T> {
-  UnmodifiableListView<TimeSeriesEntry<T>> get data => UnmodifiableListView(
-        _data,
-      );
+  UnmodifiableListView<TimeSeriesEntry<T>> get data => UnmodifiableListView(_data);
 
   final List<TimeSeriesEntry<T>> _data;
   final TimeSeriesAccesors<T> _accesors;
 
-  TimeSeries()
-      : _data = [],
-        _accesors = {};
+  TimeSeries() : _data = [], _accesors = {};
 
-  TimeSeries.from(
-    Iterable<TimeSeriesEntry<T>> entries,
-    TimeSeriesAccesors<T> accesors,
-  )   : _data = List<TimeSeriesEntry<T>>.from(entries),
-        _accesors = accesors;
+  TimeSeries.from(Iterable<TimeSeriesEntry<T>> entries, TimeSeriesAccesors<T> accesors)
+    : _data = List<TimeSeriesEntry<T>>.from(entries),
+      _accesors = accesors;
 
   void add(TimeSeriesEntry<T> entry) {
     _data.add(entry);
@@ -40,9 +34,7 @@ class TimeSeries<T> {
       var field = accesorEntry.key;
       var accesor = accesorEntry.value;
       aggregatedFields[field] = _aggregateCollection(
-        data: _data
-            .map((e) => TimeSeriesEntry<num>(e.date, accesor(e.value)))
-            .toList(),
+        data: _data.map((e) => TimeSeriesEntry<num>(e.date, accesor(e.value))).toList(),
         type: typesByField[field] ?? defaultType,
         interval: interval,
       );
@@ -57,10 +49,7 @@ class TimeSeries<T> {
         values[key] = aggregatedFields[key]!.elementAt(i).value;
       }
 
-      aggregatedData.add(TimeSeriesViewEntry(
-        aggregatedFields.values.first[i].date,
-        values,
-      ));
+      aggregatedData.add(TimeSeriesViewEntry(aggregatedFields.values.first[i].date, values));
     }
     return aggregatedData;
   }
@@ -105,10 +94,9 @@ class TimeSeries<T> {
             throw ArgumentError('Values list cannot be empty');
         }
       }
-      aggregated.add(TimeSeriesEntry<num>(
-        DateTime.fromMillisecondsSinceEpoch(bucket * intervalInMs),
-        value!,
-      ));
+      aggregated.add(
+        TimeSeriesEntry<num>(DateTime.fromMillisecondsSinceEpoch(bucket * intervalInMs), value!),
+      );
     }
 
     return aggregated;
@@ -208,72 +196,37 @@ class AggregationInterval {
 
   const AggregationInterval._(this.unit, [this.value = 1]) : assert(value > 0);
 
-  factory AggregationInterval.seconds([int value = 1]) => AggregationInterval._(
-        TimeUnit.seconds,
-        value,
-      );
+  factory AggregationInterval.seconds([int value = 1]) =>
+      AggregationInterval._(TimeUnit.seconds, value);
 
-  factory AggregationInterval.minutes([int value = 1]) => AggregationInterval._(
-        TimeUnit.minute,
-        value,
-      );
+  factory AggregationInterval.minutes([int value = 1]) =>
+      AggregationInterval._(TimeUnit.minute, value);
 
-  factory AggregationInterval.hours([int value = 1]) => AggregationInterval._(
-        TimeUnit.hour,
-        value,
-      );
+  factory AggregationInterval.hours([int value = 1]) => AggregationInterval._(TimeUnit.hour, value);
 
-  factory AggregationInterval.days([int value = 1]) => AggregationInterval._(
-        TimeUnit.day,
-        value,
-      );
+  factory AggregationInterval.days([int value = 1]) => AggregationInterval._(TimeUnit.day, value);
 
-  factory AggregationInterval.weeks([int value = 1]) => AggregationInterval._(
-        TimeUnit.week,
-        value,
-      );
+  factory AggregationInterval.weeks([int value = 1]) => AggregationInterval._(TimeUnit.week, value);
 
-  factory AggregationInterval.month([int value = 1]) => AggregationInterval._(
-        TimeUnit.month,
-        value,
-      );
+  factory AggregationInterval.month([int value = 1]) =>
+      AggregationInterval._(TimeUnit.month, value);
 
-  factory AggregationInterval.year([int value = 1]) => AggregationInterval._(
-        TimeUnit.year,
-        value,
-      );
+  factory AggregationInterval.year([int value = 1]) => AggregationInterval._(TimeUnit.year, value);
 
   int get milliseconds => switch (unit) {
-        TimeUnit.seconds => value * 1000,
-        TimeUnit.minute => value * 1000 * 60,
-        TimeUnit.hour => value * 1000 * 60 * 60,
-        TimeUnit.day => value * 1000 * 60 * 60 * 24,
-        TimeUnit.week => value * 1000 * 60 * 60 * 24 * 7,
-        TimeUnit.month => value * 1000 * 60 * 60 * 24 * 30,
-        TimeUnit.year => value * 1000 * 60 * 60 * 24 * 365,
-      };
+    TimeUnit.seconds => value * 1000,
+    TimeUnit.minute => value * 1000 * 60,
+    TimeUnit.hour => value * 1000 * 60 * 60,
+    TimeUnit.day => value * 1000 * 60 * 60 * 24,
+    TimeUnit.week => value * 1000 * 60 * 60 * 24 * 7,
+    TimeUnit.month => value * 1000 * 60 * 60 * 24 * 30,
+    TimeUnit.year => value * 1000 * 60 * 60 * 24 * 365,
+  };
 
   @override
-  String toString() =>
-      'Every $value ${unit.toString().split('.').last}${value > 1 ? 's' : ''}';
+  String toString() => 'Every $value ${unit.toString().split('.').last}${value > 1 ? 's' : ''}';
 }
 
-enum AggregationType {
-  mean,
-  median,
-  max,
-  min,
-  sum,
-  first,
-  last,
-}
+enum AggregationType { mean, median, max, min, sum, first, last }
 
-enum TimeUnit {
-  seconds,
-  minute,
-  hour,
-  day,
-  week,
-  month,
-  year,
-}
+enum TimeUnit { seconds, minute, hour, day, week, month, year }

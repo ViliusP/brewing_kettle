@@ -8,15 +8,11 @@ class RetryInterceptor extends Interceptor {
   final RetryOptions options;
   final bool shouldLog;
 
-  RetryInterceptor({
-    required this.dio,
-    RetryOptions? options,
-    this.shouldLog = true,
-  }) : options = options ?? const RetryOptions();
+  RetryInterceptor({required this.dio, RetryOptions? options, this.shouldLog = true})
+    : options = options ?? const RetryOptions();
 
   @override
-  Future<void> onError(
-      DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
     var extra = RetryOptions.fromExtra(err.requestOptions, options);
 
     final shouldRetry = extra.retries > 0 && await options.retryEvaluator(err);
@@ -30,12 +26,12 @@ class RetryInterceptor extends Interceptor {
 
     // Update options to decrease retry count before new try
     extra = extra.copyWith(retries: extra.retries - 1);
-    err.requestOptions.extra = err.requestOptions.extra
-      ..addAll(extra.toExtra());
+    err.requestOptions.extra = err.requestOptions.extra..addAll(extra.toExtra());
 
     if (shouldLog) {
       print(
-          '[${err.requestOptions.uri}] An error occurred during request, trying a again (remaining tries: ${extra.retries}, error: ${err.error})');
+        '[${err.requestOptions.uri}] An error occurred during request, trying a again (remaining tries: ${extra.retries}, error: ${err.error})',
+      );
     }
     // We retry with the updated options
     await dio
@@ -48,8 +44,7 @@ class RetryInterceptor extends Interceptor {
           queryParameters: err.requestOptions.queryParameters,
           options: err.requestOptions.toOptions(),
         )
-        .then((value) => handler.resolve(value),
-            onError: (error) => handler.reject(error));
+        .then((value) => handler.resolve(value), onError: (error) => handler.reject(error));
   }
 }
 
@@ -101,9 +96,7 @@ class RetryOptions {
   }) : _retryEvaluator = retryEvaluator;
 
   factory RetryOptions.noRetry() {
-    return const RetryOptions(
-      retries: 0,
-    );
+    return const RetryOptions(retries: 0);
   }
 
   static const extraKey = 'cache_retry_request';
@@ -117,19 +110,14 @@ class RetryOptions {
     return shouldRetry;
   }
 
-  factory RetryOptions.fromExtra(
-      RequestOptions request, RetryOptions defaultOptions) {
+  factory RetryOptions.fromExtra(RequestOptions request, RetryOptions defaultOptions) {
     return request.extra[extraKey] ?? defaultOptions;
   }
 
-  RetryOptions copyWith({
-    int? retries,
-    Duration? retryInterval,
-  }) =>
-      RetryOptions(
-        retries: retries ?? this.retries,
-        retryInterval: retryInterval ?? this.retryInterval,
-      );
+  RetryOptions copyWith({int? retries, Duration? retryInterval}) => RetryOptions(
+    retries: retries ?? this.retries,
+    retryInterval: retryInterval ?? this.retryInterval,
+  );
 
   Map<String, dynamic> toExtra() => {extraKey: this};
 
@@ -137,9 +125,11 @@ class RetryOptions {
 
   Options mergeIn(Options options) {
     return options.copyWith(
-        extra: <String, dynamic>{}
-          ..addAll(options.extra ?? {})
-          ..addAll(toExtra()));
+      extra:
+          <String, dynamic>{}
+            ..addAll(options.extra ?? {})
+            ..addAll(toExtra()),
+    );
   }
 
   @override

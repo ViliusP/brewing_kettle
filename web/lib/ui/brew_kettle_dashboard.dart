@@ -21,10 +21,7 @@ class BrewKettleDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = MaterialTheme.createTextTheme(
-      context,
-      AppDefaults.font,
-    );
+    TextTheme textTheme = MaterialTheme.createTextTheme(context, AppDefaults.font);
     MaterialTheme materialTheme = MaterialTheme(textTheme);
     return Observer(
       builder: (context) {
@@ -54,18 +51,14 @@ class BrewKettleDashboard extends StatelessWidget {
 class AppScrollBehavior extends MaterialScrollBehavior {
   @override
   Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-        PointerDeviceKind.stylus,
-        PointerDeviceKind.unknown,
-      };
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+    PointerDeviceKind.stylus,
+    PointerDeviceKind.unknown,
+  };
 
   @override
-  Widget buildOverscrollIndicator(
-    BuildContext context,
-    Widget child,
-    ScrollableDetails details,
-  ) {
+  Widget buildOverscrollIndicator(BuildContext context, Widget child, ScrollableDetails details) {
     // When modifying this function, consider modifying the implementation in
     // the base class ScrollBehavior as well.
     switch (getPlatform(context)) {

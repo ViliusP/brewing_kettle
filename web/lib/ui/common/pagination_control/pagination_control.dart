@@ -61,11 +61,7 @@ class _PaginationControlState extends State<PaginationControl> {
     }
 
     offset = offset.clamp(1, maxOffset);
-    return List.generate(
-      section.clamp(0, widget.total),
-      (i) => offset + i,
-      growable: false,
-    );
+    return List.generate(section.clamp(0, widget.total), (i) => offset + i, growable: false);
   }
 
   void _changePage(int value) {
@@ -112,17 +108,11 @@ class _PaginationControlState extends State<PaginationControl> {
     var children = [
       IconButton.outlined(
         onPressed: () => _changePage(firstPage),
-        icon: RotatedBox(
-          quarterTurns: quartersToTurn,
-          child: Icon(MdiIcons.pageFirst),
-        ),
+        icon: RotatedBox(quarterTurns: quartersToTurn, child: Icon(MdiIcons.pageFirst)),
       ),
       IconButton.outlined(
         onPressed: () => _changePage(previousPage),
-        icon: RotatedBox(
-          quarterTurns: quartersToTurn,
-          child: Icon(MdiIcons.arrowLeft),
-        ),
+        icon: RotatedBox(quarterTurns: quartersToTurn, child: Icon(MdiIcons.arrowLeft)),
       ),
       Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
       ...generatePaginationNumbers().map(
@@ -136,33 +126,27 @@ class _PaginationControlState extends State<PaginationControl> {
       Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
       IconButton.outlined(
         onPressed: () => _changePage(nextPage),
-        icon: RotatedBox(
-          quarterTurns: quartersToTurn,
-          child: Icon(MdiIcons.arrowRight),
-        ),
+        icon: RotatedBox(quarterTurns: quartersToTurn, child: Icon(MdiIcons.arrowRight)),
       ),
       IconButton.outlined(
         onPressed: () => _changePage(lastPage),
-        icon: RotatedBox(
-          quarterTurns: quartersToTurn,
-          child: Icon(MdiIcons.pageLast),
-        ),
+        icon: RotatedBox(quarterTurns: quartersToTurn, child: Icon(MdiIcons.pageLast)),
       ),
     ];
 
     return switch (widget.axis) {
       Axis.horizontal => Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          spacing: 4,
-          children: children,
-        ),
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        spacing: 4,
+        children: children,
+      ),
       Axis.vertical => Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          spacing: 4,
-          children: children,
-        )
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        spacing: 4,
+        children: children,
+      ),
     };
   }
 }
@@ -226,9 +210,7 @@ class _PaginationNumberButton extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         padding: EdgeInsets.symmetric(vertical: 16, horizontal: 7),
         minimumSize: Size(48, 36),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radius),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
       ).copyWith(
         backgroundColor: selected ? tonalButtonStyle.backgroundColor : null,
         textStyle: selected ? tonalButtonStyle.textStyle : null,
@@ -251,11 +233,7 @@ class _PaginationNumberButton extends StatelessWidget {
 
           return FadeTransition(
             opacity: animation,
-            child: SlideTransition(
-              key: child.key,
-              position: offset,
-              child: child,
-            ),
+            child: SlideTransition(key: child.key, position: offset, child: child),
           );
         },
         duration: Durations.short2,

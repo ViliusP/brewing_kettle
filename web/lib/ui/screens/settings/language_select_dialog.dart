@@ -29,16 +29,9 @@ class LanguageSelectDialog extends StatelessWidget {
 
             return ListTile(
               selected: currentLocale == locale,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              leading: SizedBox(
-                width: 30,
-                child: CountryFlag(code: code),
-              ),
-              title: Text(
-                localizations.pSettingsInputLanguage(locale.languageCode),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+              leading: SizedBox(width: 30, child: CountryFlag(code: code)),
+              title: Text(localizations.pSettingsInputLanguage(locale.languageCode)),
               onTap: () => Navigator.of(context).pop(locale),
             );
           },

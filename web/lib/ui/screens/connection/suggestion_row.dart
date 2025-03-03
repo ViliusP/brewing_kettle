@@ -5,11 +5,7 @@ class SuggestionsRow extends StatefulWidget {
   final Widget? trailing;
   final Widget child;
 
-  const SuggestionsRow({
-    super.key,
-    required this.child,
-    this.trailing,
-  });
+  const SuggestionsRow({super.key, required this.child, this.trailing});
 
   @override
   State<SuggestionsRow> createState() => _SuggestionsRowState();
@@ -47,10 +43,7 @@ class _SuggestionsRowState extends State<SuggestionsRow> {
     }
   }
 
-  List<ColorStop> colorStops(
-    bool isScrollableToLeft,
-    bool isScrollableToRight,
-  ) {
+  List<ColorStop> colorStops(bool isScrollableToLeft, bool isScrollableToRight) {
     if (isScrollableToLeft && isScrollableToRight) {
       return const [
         ColorStop(stop: 0.0, color: Color.fromARGB(215, 255, 255, 255)),
@@ -84,10 +77,7 @@ class _SuggestionsRowState extends State<SuggestionsRow> {
         Expanded(
           child: FadedEdges(
             axis: Axis.horizontal,
-            colorStops: colorStops(
-              _isScrollableToLeft,
-              _isScrollableToRight,
-            ),
+            colorStops: colorStops(_isScrollableToLeft, _isScrollableToRight),
             child: SingleChildScrollView(
               controller: _suggestionRowScrollController,
               scrollDirection: Axis.horizontal,
@@ -146,11 +136,7 @@ class ScanDevicesChip extends StatelessWidget {
 
   final bool loading;
 
-  const ScanDevicesChip({
-    super.key,
-    this.loading = false,
-    this.onPressed,
-  });
+  const ScanDevicesChip({super.key, this.loading = false, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -160,10 +146,10 @@ class ScanDevicesChip extends StatelessWidget {
         duration: Durations.short3,
         child: switch (loading) {
           true => SizedBox.fromSize(
-              key: ValueKey(true),
-              size: Size.square(12),
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
+            key: ValueKey(true),
+            size: Size.square(12),
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
           false => Icon(MdiIcons.refresh, key: ValueKey(false)),
         },
       ),
@@ -208,12 +194,13 @@ class FadedEdges extends StatelessWidget {
 
     return ShaderMask(
       blendMode: BlendMode.dstOut,
-      shaderCallback: (Rect rect) => LinearGradient(
-        colors: colorStops.map((e) => e.color).toList(),
-        stops: colorStops.map((e) => e.stop).toList(),
-        begin: begin,
-        end: end,
-      ).createShader(rect),
+      shaderCallback:
+          (Rect rect) => LinearGradient(
+            colors: colorStops.map((e) => e.color).toList(),
+            stops: colorStops.map((e) => e.stop).toList(),
+            begin: begin,
+            end: end,
+          ).createShader(rect),
       child: child,
     );
   }
@@ -223,8 +210,5 @@ class ColorStop {
   final double stop;
   final Color color;
 
-  const ColorStop({
-    required this.stop,
-    required this.color,
-  });
+  const ColorStop({required this.stop, required this.color});
 }

@@ -24,12 +24,9 @@ class _MessageLogsViewerState extends State<MessageLogsViewer> {
     TextTheme textTheme = TextTheme.of(context);
     ColorScheme colorScheme = ColorScheme.of(context);
 
-    TextStyle defaultTextStyle = textTheme.bodySmall ??
-        TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: colorScheme.onSurface,
-        );
+    TextStyle defaultTextStyle =
+        textTheme.bodySmall ??
+        TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: colorScheme.onSurface);
 
     double iconSize = (defaultTextStyle.fontSize?.toInt() ?? 17) + 3;
 

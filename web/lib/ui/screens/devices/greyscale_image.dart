@@ -25,9 +25,7 @@ class GrayscaleImage extends StatelessWidget {
         } else if (snapshot.hasError) {
           return Text("Error: ${snapshot.error}");
         } else if (snapshot.hasData) {
-          return CustomPaint(
-            painter: ImagePainter(snapshot.data!),
-          );
+          return CustomPaint(painter: ImagePainter(snapshot.data!));
         } else {
           return Text("Unknown error");
         }
@@ -39,7 +37,8 @@ class GrayscaleImage extends StatelessWidget {
     // Ensure the buffer size matches the expected dimensions
     if (buffer.length != width * height * 4) {
       throw ArgumentError(
-          "Pixel buffer size (${buffer.length}) does not match the image dimensions ${width * height * 4}.");
+        "Pixel buffer size (${buffer.length}) does not match the image dimensions ${width * height * 4}.",
+      );
     }
 
     // Create an image from the ARGB buffer

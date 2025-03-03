@@ -29,15 +29,13 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
   final ButtonTapNotifier _decreaseTapNotifier = ButtonTapNotifier();
 
   void increaseHeatingManual() {
-    double currentPower =
-        _heaterControllerStateStore.requestedPower ?? _defaultPower;
+    double currentPower = _heaterControllerStateStore.requestedPower ?? _defaultPower;
 
     _heaterControllerStateStore.changePower(currentPower + _powerChangeStep);
   }
 
   void decreaseHeatingManual() {
-    double currentPower =
-        _heaterControllerStateStore.requestedPower ?? _defaultPower;
+    double currentPower = _heaterControllerStateStore.requestedPower ?? _defaultPower;
 
     _heaterControllerStateStore.changePower(currentPower - _powerChangeStep);
   }
@@ -51,9 +49,7 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
             if (_heaterControllerStateStore.isModeChanging) {
               return Align(
                 alignment: Alignment.bottomCenter,
-                child: LinearProgressIndicator(
-                  borderRadius: BorderRadius.circular(16),
-                ),
+                child: LinearProgressIndicator(borderRadius: BorderRadius.circular(16)),
               );
             }
             return SizedBox.shrink();
@@ -94,8 +90,7 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                       IconButton(
                         onPressed: switch (_heaterControllerStateStore.status) {
                           HeaterStatus.heatingPid ||
-                          HeaterStatus
-                              .heatingManual => _increaseTapNotifier.notify,
+                          HeaterStatus.heatingManual => _increaseTapNotifier.notify,
                           HeaterStatus.idle => null,
                           HeaterStatus.error => null,
                           HeaterStatus.unknown => null,
@@ -110,9 +105,7 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                           builder: (context) {
                             return _HeaterModeSelect(
                               currentStatus: _heaterControllerStateStore.status,
-                              onSelected:
-                                  (value) => _heaterControllerStateStore
-                                      .changeMode(value),
+                              onSelected: (value) => _heaterControllerStateStore.changeMode(value),
                             );
                           },
                         ),
@@ -120,8 +113,7 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                       IconButton(
                         onPressed: switch (_heaterControllerStateStore.status) {
                           HeaterStatus.heatingPid ||
-                          HeaterStatus
-                              .heatingManual => _decreaseTapNotifier.notify,
+                          HeaterStatus.heatingManual => _decreaseTapNotifier.notify,
                           HeaterStatus.idle => null,
                           HeaterStatus.error => null,
                           HeaterStatus.unknown => null,
@@ -232,15 +224,13 @@ class _ManualControlContentState extends State<_ManualControlContent> {
               Observer(
                 builder: (context) {
                   double? storePower = _heaterControllerStateStore.power;
-                  double? lastRequestedTarget =
-                      _heaterControllerStateStore.requestedPower;
+                  double? lastRequestedTarget = _heaterControllerStateStore.requestedPower;
 
                   String text = storePower?.toStringAsFixed(1) ?? "N/A";
 
                   bool showLabel =
                       _targetPower != lastRequestedTarget ||
-                      (lastRequestedTarget != null &&
-                          lastRequestedTarget != storePower);
+                      (lastRequestedTarget != null && lastRequestedTarget != storePower);
 
                   String badgeTexts = _targetPower.toStringAsFixed(0);
                   return Badge(
@@ -369,17 +359,14 @@ class _PidControlContentState extends State<_PidControlContent> {
               Spacer(),
               Observer(
                 builder: (context) {
-                  double? storeTargetTemp =
-                      _heaterControllerStateStore.targetTemperature;
-                  double? lastRequestedTarget =
-                      _heaterControllerStateStore.requestedTemperature;
+                  double? storeTargetTemp = _heaterControllerStateStore.targetTemperature;
+                  double? lastRequestedTarget = _heaterControllerStateStore.requestedTemperature;
 
                   String text = storeTargetTemp?.toStringAsFixed(1) ?? "N/A";
 
                   bool showLabel =
                       _targetTemp != lastRequestedTarget ||
-                      (lastRequestedTarget != null &&
-                          lastRequestedTarget != storeTargetTemp);
+                      (lastRequestedTarget != null && lastRequestedTarget != storeTargetTemp);
 
                   String badgeTexts = _targetTemp.toStringAsFixed(0);
                   return Badge(
@@ -405,10 +392,7 @@ class _PidControlContentState extends State<_PidControlContent> {
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 4.0),
-                child: Text(
-                  "Tikslo temperatūra",
-                  style: TextTheme.of(context).labelLarge,
-                ),
+                child: Text("Tikslo temperatūra", style: TextTheme.of(context).labelLarge),
               ),
             ),
           ),
@@ -439,10 +423,7 @@ class _IdleStatusContent extends StatelessWidget {
         Expanded(child: AnimatedIdleCircles()),
         Padding(
           padding: const EdgeInsets.only(bottom: 4.0),
-          child: Text(
-            "Ramybės būsena",
-            style: TextTheme.of(context).labelLarge,
-          ),
+          child: Text("Ramybės būsena", style: TextTheme.of(context).labelLarge),
         ),
       ],
     );

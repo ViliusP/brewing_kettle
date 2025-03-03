@@ -13,8 +13,7 @@ class CurrentTempTile extends StatefulWidget {
 }
 
 class _CurrentTempTileState extends State<CurrentTempTile> {
-  final HeaterControllerStateStore _temperatureStore =
-      getIt<HeaterControllerStateStore>();
+  final HeaterControllerStateStore _temperatureStore = getIt<HeaterControllerStateStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -25,21 +24,20 @@ class _CurrentTempTileState extends State<CurrentTempTile> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Observer(builder: (context) {
-                double? temperature = _temperatureStore.currentTemperature;
-                String text = "X.X";
-                if (temperature != null) {
-                  text = temperature.toStringAsFixed(1);
-                }
+              Observer(
+                builder: (context) {
+                  double? temperature = _temperatureStore.currentTemperature;
+                  String text = "X.X";
+                  if (temperature != null) {
+                    text = temperature.toStringAsFixed(1);
+                  }
 
-                return Text(
-                  text,
-                  style: Theme.of(context)
-                      .textTheme
-                      .displayMedium
-                      ?.changeWeight(FontWeight.w800),
-                );
-              }),
+                  return Text(
+                    text,
+                    style: Theme.of(context).textTheme.displayMedium?.changeWeight(FontWeight.w800),
+                  );
+                },
+              ),
               Icon(MdiIcons.temperatureCelsius, size: 54),
             ],
           ),
@@ -49,13 +47,10 @@ class _CurrentTempTileState extends State<CurrentTempTile> {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: const EdgeInsets.only(bottom: 4.0),
-              child: Text(
-                "Temperatūra",
-                style: TextTheme.of(context).labelLarge,
-              ),
+              child: Text("Temperatūra", style: TextTheme.of(context).labelLarge),
             ),
           ),
-        )
+        ),
       ],
     );
   }

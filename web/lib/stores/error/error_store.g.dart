@@ -24,13 +24,14 @@ mixin _$ErrorStore on _ErrorStore, Store {
     });
   }
 
-  late final _$_ErrorStoreActionController =
-      ActionController(name: '_ErrorStore', context: context);
+  late final _$_ErrorStoreActionController = ActionController(
+    name: '_ErrorStore',
+    context: context,
+  );
 
   @override
   void setError(dynamic error) {
-    final _$actionInfo =
-        _$_ErrorStoreActionController.startAction(name: '_ErrorStore.setError');
+    final _$actionInfo = _$_ErrorStoreActionController.startAction(name: '_ErrorStore.setError');
     try {
       return super.setError(error);
     } finally {
@@ -40,8 +41,7 @@ mixin _$ErrorStore on _ErrorStore, Store {
 
   @override
   dynamic error() {
-    final _$actionInfo =
-        _$_ErrorStoreActionController.startAction(name: '_ErrorStore.error');
+    final _$actionInfo = _$_ErrorStoreActionController.startAction(name: '_ErrorStore.error');
     try {
       return super.error();
     } finally {

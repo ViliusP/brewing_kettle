@@ -18,18 +18,12 @@ class HistoryGraphInfo extends StatelessWidget {
         Text(localizations.pMainGraphInfoTitle, style: textTheme.headlineLarge),
         Padding(padding: EdgeInsets.symmetric(vertical: 2)),
         Text(
-          localizations.pMainGraphInfoText(
-            dataInterval.inSeconds,
-            dataRange.inHours,
-          ),
+          localizations.pMainGraphInfoText(dataInterval.inSeconds, dataRange.inHours),
           style: textTheme.bodyLarge,
           textAlign: TextAlign.center,
         ),
         Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-        Text(
-          localizations.pMainGraphInfoLegend,
-          style: textTheme.headlineMedium,
-        ),
+        Text(localizations.pMainGraphInfoLegend, style: textTheme.headlineMedium),
         Padding(padding: EdgeInsets.symmetric(vertical: 2)),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -62,10 +56,7 @@ class HistoryGraphInfo extends StatelessWidget {
                 ),
               ),
             ),
-            Text(
-              localizations.generalTargetTemperature,
-              style: textTheme.bodyLarge,
-            ),
+            Text(localizations.generalTargetTemperature, style: textTheme.bodyLarge),
           ],
         ),
         Row(

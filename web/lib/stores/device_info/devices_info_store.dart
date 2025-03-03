@@ -14,14 +14,11 @@ class DevicesInfoStore = _DevicesInfoStore with _$DevicesInfoStore;
 abstract class _DevicesInfoStore with Store {
   final WebSocketConnectionStore _webSocketConnectionStore;
 
-  _DevicesInfoStore({
-    required WebSocketConnectionStore webSocketConnectionStore,
-  }) : _webSocketConnectionStore = webSocketConnectionStore {
-    _webSocketConnectionStore.subscribe(StoreWebSocketListener(
-      _onData,
-      InboundMessageType.configuration,
-      "DeviceConfigurationStore",
-    ));
+  _DevicesInfoStore({required WebSocketConnectionStore webSocketConnectionStore})
+    : _webSocketConnectionStore = webSocketConnectionStore {
+    _webSocketConnectionStore.subscribe(
+      StoreWebSocketListener(_onData, InboundMessageType.configuration, "DeviceConfigurationStore"),
+    );
   }
 
   @observable
@@ -36,9 +33,7 @@ abstract class _DevicesInfoStore with Store {
   @action
   void request() {
     if (_webSocketConnectionStore.connectedTo != null) {
-      var message = WsMessageComposer.simpleRequest(
-        OutboundMessageType.configurationGet,
-      );
+      var message = WsMessageComposer.simpleRequest(OutboundMessageType.configurationGet);
       _webSocketConnectionStore.message(message);
     } else {
       log("Cannot send configuration request because there is no online channell");

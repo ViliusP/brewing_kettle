@@ -18,25 +18,28 @@ class ArcSliderPainter extends CustomPainter {
   final double progress;
   final Color color;
 
-  final rectPainter = Paint()
-    ..style = PaintingStyle.stroke
-    ..color = Color.fromRGBO(255, 59, 59, 1)
-    ..strokeWidth = 1
-    ..strokeCap = StrokeCap.butt;
+  final rectPainter =
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..color = Color.fromRGBO(255, 59, 59, 1)
+        ..strokeWidth = 1
+        ..strokeCap = StrokeCap.butt;
 
-  final dotsPainter = Paint()
-    ..style = PaintingStyle.stroke
-    ..color = Color.fromRGBO(255, 59, 59, 1)
-    ..strokeWidth = 3
-    ..strokeCap = StrokeCap.round;
+  final dotsPainter =
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..color = Color.fromRGBO(255, 59, 59, 1)
+        ..strokeWidth = 3
+        ..strokeCap = StrokeCap.round;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final arcPainter = Paint()
-      ..style = PaintingStyle.stroke
-      ..color = color
-      ..strokeWidth = 1
-      ..strokeCap = StrokeCap.round;
+    final arcPainter =
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..color = color
+          ..strokeWidth = 1
+          ..strokeCap = StrokeCap.round;
 
     final arcRect = Rect.fromLTWH(
       arcWidth / 2,
@@ -45,12 +48,7 @@ class ArcSliderPainter extends CustomPainter {
       size.height - arcWidth,
     );
 
-    final outerArcRect = Rect.fromLTWH(
-      0,
-      0,
-      size.width,
-      size.height,
-    );
+    final outerArcRect = Rect.fromLTWH(0, 0, size.width, size.height);
 
     final innerArcRect = Rect.fromLTWH(
       arcWidth,
@@ -67,10 +65,8 @@ class ArcSliderPainter extends CustomPainter {
     );
 
     final innerArcEndPoint = Offset(
-      innerArcRect.center.dx +
-          innerDotOffset * math.cos(startAngle + sweepAngle),
-      innerArcRect.center.dy +
-          innerDotOffset * math.sin(startAngle + sweepAngle),
+      innerArcRect.center.dx + innerDotOffset * math.cos(startAngle + sweepAngle),
+      innerArcRect.center.dy + innerDotOffset * math.sin(startAngle + sweepAngle),
     );
 
     Offset canvasCenter = arcRect.center;
@@ -160,19 +156,15 @@ class ArcSliderPainter extends CustomPainter {
     canvas.drawRect(outerArcRect, rectPainter);
     canvas.drawRect(innerArcRect, rectPainter);
 
-    canvas.drawPoints(
-      PointMode.points,
-      [
-        // innerArcStartPoint,
-        // innerArcEndPoint,
-        // outerArcStartPoint,
-        // outerArcEndPoint,
-        // endOuterCornerEndPoint,
-        // middleEndPoint,
-        // endInnerCornerEndPoint,
-      ],
-      dotsPainter,
-    );
+    canvas.drawPoints(PointMode.points, [
+      // innerArcStartPoint,
+      // innerArcEndPoint,
+      // outerArcStartPoint,
+      // outerArcEndPoint,
+      // endOuterCornerEndPoint,
+      // middleEndPoint,
+      // endInnerCornerEndPoint,
+    ], dotsPainter);
     // canvas.drawArc(
     //   arcRect,
     //   startAngle,

@@ -6,8 +6,7 @@ import 'package:brew_kettle_dashboard/utils/list_extensions.dart';
 import 'package:flutter/foundation.dart';
 
 class MessagesArchive {
-  UnmodifiableListView<WsInboundMessageSimple> get data =>
-      UnmodifiableListView(_data);
+  UnmodifiableListView<WsInboundMessageSimple> get data => UnmodifiableListView(_data);
 
   final List<WsInboundMessageSimple> _data = [];
 
@@ -27,9 +26,12 @@ class MessagesArchive {
   String get jsonLog {
     if (_data.isEmpty) return "[]"; // Handle empty list case
 
-    var jsonObjects = _data.takeLast(3).map((e) {
-      return jsonEncode(e.asJsonMap);
-    }).join(",\n");
+    var jsonObjects = _data
+        .takeLast(3)
+        .map((e) {
+          return jsonEncode(e.asJsonMap);
+        })
+        .join(",\n");
     return "[$jsonObjects]";
   }
 
