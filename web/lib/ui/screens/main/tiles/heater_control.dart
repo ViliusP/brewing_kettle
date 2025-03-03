@@ -314,9 +314,7 @@ class _PidControlContentState extends State<_PidControlContent> {
 
   void onStoreTargetTempChange(double? value) {
     if (value != _targetTemp) {
-      setState(() {
-        _targetTemp = value ?? 0;
-      });
+      setState(() => _targetTemp = value ?? 0);
     }
   }
 
@@ -329,9 +327,7 @@ class _PidControlContentState extends State<_PidControlContent> {
   }
 
   void _updateTarget(double value) {
-    setState(() {
-      _targetTemp = value.clamp(0, 100);
-    });
+    setState(() => _targetTemp = value.clamp(0, 100));
 
     // Reset the timer if it's already running
     if (_debounce?.isActive ?? false) {
