@@ -468,7 +468,7 @@ static void http_connections_changed_handler(void *arg, esp_event_base_t event_b
 
 static httpd_handle_t server = NULL; // Declare server handle as static
 
-httpd_handle_t initialize_ws_server(ws_message_handler_t message_handler, ws_client_changed_cb_t ws_client_changed_cb)
+httpd_handle_t initialize_http_server(ws_message_handler_t message_handler, ws_client_changed_cb_t ws_client_changed_cb)
 {
     ESP_LOGI(TAG, "Initializing NVC and TCP/IP stack");
     ESP_ERROR_CHECK(nvs_flash_init());

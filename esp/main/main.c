@@ -19,6 +19,7 @@
 #include "configuration.h"
 #include <esp_sntp.h>
 #include "sd_card.h"
+#include "http_handlers.h"
 
 static const char *TAG = "MAIN";
 
@@ -160,10 +161,13 @@ void app_main(void)
     start_rendering(state_subjects);
     // ==========================================
 
-    // ============== WS_SERVER =================
-    ws_message_handler_t message_handler = create_handler();
+    // ============== HTTP_SERVER =================
+    const size_t count = http_handlers_get_count();
+    const httpd_uri_t *handlers = http_handlers_get_array();
+
+    ws_message_handler_t ws_messages_handler = create_ws_handler();
     ws_client_changed_cb_t ws_client_change_cb = (ws_client_changed_cb_t)&connected_client_data_notify;
-    httpd_handle_t httpd_handle = initialize_ws_server(message_handler, ws_client_change_cb);
+    httpd_handle_t httpd_handle = initialize_http_server(ws_messages_handler, ws_client_change_cb);
     init_ws_observer(state_subjects, httpd_handle);
     // ==========================================
 
