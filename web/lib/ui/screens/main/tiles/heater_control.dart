@@ -32,103 +32,108 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
     double currentPower =
         _heaterControllerStateStore.requestedPower ?? _defaultPower;
 
-    _heaterControllerStateStore.changePower(
-      currentPower + _powerChangeStep,
-    );
+    _heaterControllerStateStore.changePower(currentPower + _powerChangeStep);
   }
 
   void decreaseHeatingManual() {
     double currentPower =
         _heaterControllerStateStore.requestedPower ?? _defaultPower;
 
-    _heaterControllerStateStore.changePower(
-      currentPower - _powerChangeStep,
-    );
+    _heaterControllerStateStore.changePower(currentPower - _powerChangeStep);
   }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Observer(builder: (context) {
-          if (_heaterControllerStateStore.isModeChanging) {
-            return Align(
-              alignment: Alignment.bottomCenter,
-              child: LinearProgressIndicator(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            );
-          }
-          return SizedBox.shrink();
-        }),
+        Observer(
+          builder: (context) {
+            if (_heaterControllerStateStore.isModeChanging) {
+              return Align(
+                alignment: Alignment.bottomCenter,
+                child: LinearProgressIndicator(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              );
+            }
+            return SizedBox.shrink();
+          },
+        ),
         Row(
           children: [
-            Expanded(child: Observer(builder: (context) {
-              return AnimatedSwitcher(
-                duration: Durations.short4,
-                child: switch (_heaterControllerStateStore.status) {
-                  HeaterStatus.heatingPid => _PidControlContent(
-                      increaseNotifier: _increaseTapNotifier,
-                      decreaseNotifier: _decreaseTapNotifier,
-                    ),
-                  HeaterStatus.heatingManual => _ManualControlContent(
-                      increaseNotifier: _increaseTapNotifier,
-                      decreaseNotifier: _decreaseTapNotifier,
-                    ),
-                  HeaterStatus.unknown => _PidControlContent(),
-                  HeaterStatus.idle => _IdleStatusContent(),
-                  HeaterStatus.error => _PidControlContent(),
-                  null => _PidControlContent(),
+            Expanded(
+              child: Observer(
+                builder: (context) {
+                  return AnimatedSwitcher(
+                    duration: Durations.short4,
+                    child: switch (_heaterControllerStateStore.status) {
+                      HeaterStatus.heatingPid => _PidControlContent(
+                        increaseNotifier: _increaseTapNotifier,
+                        decreaseNotifier: _decreaseTapNotifier,
+                      ),
+                      HeaterStatus.heatingManual => _ManualControlContent(
+                        increaseNotifier: _increaseTapNotifier,
+                        decreaseNotifier: _decreaseTapNotifier,
+                      ),
+                      HeaterStatus.unknown => _PidControlContent(),
+                      HeaterStatus.idle => _IdleStatusContent(),
+                      HeaterStatus.error => _PidControlContent(),
+                      null => _PidControlContent(),
+                    },
+                  );
                 },
-              );
-            })),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: Observer(builder: (context) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: switch (_heaterControllerStateStore.status) {
-                        HeaterStatus.heatingPid ||
-                        HeaterStatus.heatingManual =>
-                          _increaseTapNotifier.notify,
-                        HeaterStatus.idle => null,
-                        HeaterStatus.error => null,
-                        HeaterStatus.unknown => null,
-                        null => null,
-                      },
-                      icon: Icon(MdiIcons.arrowUpDropCircleOutline),
-                      iconSize: 60,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: Observer(builder: (context) {
-                        return _HeaterModeSelect(
-                          currentStatus: _heaterControllerStateStore.status,
-                          onSelected: (value) =>
-                              _heaterControllerStateStore.changeMode(
-                            value,
-                          ),
-                        );
-                      }),
-                    ),
-                    IconButton(
-                      onPressed: switch (_heaterControllerStateStore.status) {
-                        HeaterStatus.heatingPid ||
-                        HeaterStatus.heatingManual =>
-                          _decreaseTapNotifier.notify,
-                        HeaterStatus.idle => null,
-                        HeaterStatus.error => null,
-                        HeaterStatus.unknown => null,
-                        null => null,
-                      },
-                      icon: Icon(MdiIcons.arrowDownDropCircleOutline),
-                      iconSize: 60,
-                    )
-                  ],
-                );
-              }),
+              child: Observer(
+                builder: (context) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: switch (_heaterControllerStateStore.status) {
+                          HeaterStatus.heatingPid ||
+                          HeaterStatus
+                              .heatingManual => _increaseTapNotifier.notify,
+                          HeaterStatus.idle => null,
+                          HeaterStatus.error => null,
+                          HeaterStatus.unknown => null,
+                          null => null,
+                        },
+                        icon: Icon(MdiIcons.arrowUpDropCircleOutline),
+                        iconSize: 60,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Observer(
+                          builder: (context) {
+                            return _HeaterModeSelect(
+                              currentStatus: _heaterControllerStateStore.status,
+                              onSelected:
+                                  (value) => _heaterControllerStateStore
+                                      .changeMode(value),
+                            );
+                          },
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: switch (_heaterControllerStateStore.status) {
+                          HeaterStatus.heatingPid ||
+                          HeaterStatus
+                              .heatingManual => _decreaseTapNotifier.notify,
+                          HeaterStatus.idle => null,
+                          HeaterStatus.error => null,
+                          HeaterStatus.unknown => null,
+                          null => null,
+                        },
+                        icon: Icon(MdiIcons.arrowDownDropCircleOutline),
+                        iconSize: 60,
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -224,32 +229,34 @@ class _ManualControlContentState extends State<_ManualControlContent> {
           Row(
             children: [
               Spacer(),
-              Observer(builder: (context) {
-                double? storePower = _heaterControllerStateStore.power;
-                double? lastRequestedTarget =
-                    _heaterControllerStateStore.requestedPower;
+              Observer(
+                builder: (context) {
+                  double? storePower = _heaterControllerStateStore.power;
+                  double? lastRequestedTarget =
+                      _heaterControllerStateStore.requestedPower;
 
-                String text = storePower?.toStringAsFixed(1) ?? "N/A";
+                  String text = storePower?.toStringAsFixed(1) ?? "N/A";
 
-                bool showLabel = _targetPower != lastRequestedTarget ||
-                    (lastRequestedTarget != null &&
-                        lastRequestedTarget != storePower);
+                  bool showLabel =
+                      _targetPower != lastRequestedTarget ||
+                      (lastRequestedTarget != null &&
+                          lastRequestedTarget != storePower);
 
-                String badgeTexts = _targetPower.toStringAsFixed(0);
-                return Badge(
-                  alignment: Alignment.topLeft,
-                  offset: const Offset(-16, 0),
-                  isLabelVisible: showLabel,
-                  label: Text(badgeTexts),
-                  child: Text(
-                    text,
-                    style: Theme.of(context)
-                        .textTheme
-                        .displayMedium
-                        ?.changeWeight(FontWeight.w800),
-                  ),
-                );
-              }),
+                  String badgeTexts = _targetPower.toStringAsFixed(0);
+                  return Badge(
+                    alignment: Alignment.topLeft,
+                    offset: const Offset(-16, 0),
+                    isLabelVisible: showLabel,
+                    label: Text(badgeTexts),
+                    child: Text(
+                      text,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.displayMedium?.changeWeight(FontWeight.w800),
+                    ),
+                  );
+                },
+              ),
               Icon(MdiIcons.percentOutline, size: 54),
               Spacer(),
             ],
@@ -259,13 +266,10 @@ class _ManualControlContentState extends State<_ManualControlContent> {
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 4.0),
-                child: Text(
-                  "Galia",
-                  style: TextTheme.of(context).labelLarge,
-                ),
+                child: Text("Galia", style: TextTheme.of(context).labelLarge),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -363,33 +367,35 @@ class _PidControlContentState extends State<_PidControlContent> {
           Row(
             children: [
               Spacer(),
-              Observer(builder: (context) {
-                double? storeTargetTemp =
-                    _heaterControllerStateStore.targetTemperature;
-                double? lastRequestedTarget =
-                    _heaterControllerStateStore.requestedTemperature;
+              Observer(
+                builder: (context) {
+                  double? storeTargetTemp =
+                      _heaterControllerStateStore.targetTemperature;
+                  double? lastRequestedTarget =
+                      _heaterControllerStateStore.requestedTemperature;
 
-                String text = storeTargetTemp?.toStringAsFixed(1) ?? "N/A";
+                  String text = storeTargetTemp?.toStringAsFixed(1) ?? "N/A";
 
-                bool showLabel = _targetTemp != lastRequestedTarget ||
-                    (lastRequestedTarget != null &&
-                        lastRequestedTarget != storeTargetTemp);
+                  bool showLabel =
+                      _targetTemp != lastRequestedTarget ||
+                      (lastRequestedTarget != null &&
+                          lastRequestedTarget != storeTargetTemp);
 
-                String badgeTexts = _targetTemp.toStringAsFixed(0);
-                return Badge(
-                  alignment: Alignment.topLeft,
-                  offset: const Offset(-16, 0),
-                  isLabelVisible: showLabel,
-                  label: Text(badgeTexts),
-                  child: Text(
-                    text,
-                    style: Theme.of(context)
-                        .textTheme
-                        .displayMedium
-                        ?.changeWeight(FontWeight.w800),
-                  ),
-                );
-              }),
+                  String badgeTexts = _targetTemp.toStringAsFixed(0);
+                  return Badge(
+                    alignment: Alignment.topLeft,
+                    offset: const Offset(-16, 0),
+                    isLabelVisible: showLabel,
+                    label: Text(badgeTexts),
+                    child: Text(
+                      text,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.displayMedium?.changeWeight(FontWeight.w800),
+                    ),
+                  );
+                },
+              ),
               Icon(MdiIcons.temperatureCelsius, size: 54),
               Spacer(),
             ],
@@ -405,7 +411,7 @@ class _PidControlContentState extends State<_PidControlContent> {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -437,7 +443,7 @@ class _IdleStatusContent extends StatelessWidget {
             "Ramybės būsena",
             style: TextTheme.of(context).labelLarge,
           ),
-        )
+        ),
       ],
     );
   }
@@ -447,19 +453,16 @@ class _HeaterModeSelect extends StatelessWidget {
   final HeaterStatus? currentStatus;
   final void Function(HeaterMode)? onSelected;
 
-  const _HeaterModeSelect({
-    this.onSelected,
-    this.currentStatus,
-  });
+  const _HeaterModeSelect({this.onSelected, this.currentStatus});
 
   IconData statusToIcon(HeaterStatus? value) => switch (value) {
-        HeaterStatus.heatingManual => MdiIcons.gasBurner,
-        HeaterStatus.heatingPid => MdiIcons.thermometerAuto,
-        HeaterStatus.idle => MdiIcons.sleep,
-        HeaterStatus.error => MdiIcons.kettleAlertOutline,
-        HeaterStatus.unknown => MdiIcons.helpCircleOutline,
-        null => MdiIcons.dotsHorizontal,
-      };
+    HeaterStatus.heatingManual => MdiIcons.gasBurner,
+    HeaterStatus.heatingPid => MdiIcons.thermometerAuto,
+    HeaterStatus.idle => MdiIcons.sleep,
+    HeaterStatus.error => MdiIcons.kettleAlertOutline,
+    HeaterStatus.unknown => MdiIcons.helpCircleOutline,
+    null => MdiIcons.dotsHorizontal,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -474,22 +477,22 @@ class _HeaterModeSelect extends StatelessWidget {
       icon: Icon(statusToIcon(currentStatus)),
       initialValue: initialValue,
       onSelected: onSelected,
-      itemBuilder: (BuildContext context) => [
-        HeaterMode.idle,
-        HeaterMode.heatingPid,
-        HeaterMode.heatingManual,
-      ]
-          .map((v) => PopupMenuItem<HeaterMode>(
-                value: v,
-                child: Row(
-                  children: [
-                    Icon(statusToIcon(v.toHeaterStatus())),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                    Text(v.jsonValue),
-                  ],
-                ),
-              ))
-          .toList(),
+      itemBuilder:
+          (BuildContext context) =>
+              [HeaterMode.idle, HeaterMode.heatingPid, HeaterMode.heatingManual]
+                  .map(
+                    (v) => PopupMenuItem<HeaterMode>(
+                      value: v,
+                      child: Row(
+                        children: [
+                          Icon(statusToIcon(v.toHeaterStatus())),
+                          Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                          Text(v.jsonValue),
+                        ],
+                      ),
+                    ),
+                  )
+                  .toList(),
     );
   }
 }
