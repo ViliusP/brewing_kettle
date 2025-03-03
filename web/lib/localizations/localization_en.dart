@@ -9,8 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get generalIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
-      '----------------------------------------------------';
+  String get generalIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
   String get generalDate => 'Date';
@@ -25,8 +24,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalPower => 'Power';
 
   @override
-  String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
-      '----------------------------------------------------';
+  String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
   String get pMainGraphInfoTitle => 'Temparature and power graph';
@@ -35,10 +33,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String pMainGraphInfoText(int seconds, num hours) {
     final intl.NumberFormat secondsNumberFormat = intl.NumberFormat.decimalPatternDigits(
       locale: localeName,
+      
     );
     final String secondsString = secondsNumberFormat.format(seconds);
     final intl.NumberFormat hoursNumberFormat = intl.NumberFormat.decimalPatternDigits(
       locale: localeName,
+      
     );
     final String hoursString = hoursNumberFormat.format(hours);
 
@@ -48,7 +48,12 @@ class AppLocalizationsEn extends AppLocalizations {
       other: 'seconds',
       one: 'second',
     );
-    String _temp1 = intl.Intl.pluralLogic(hours, locale: localeName, other: 'hours', one: 'hour');
+    String _temp1 = intl.Intl.pluralLogic(
+      hours,
+      locale: localeName,
+      other: 'hours',
+      one: 'hour',
+    );
     return 'Shows heater data of every $secondsString $_temp0 for $hoursString $_temp1.\nTap on graph points to see concrete values for that time.';
   }
 
@@ -56,8 +61,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pMainGraphInfoLegend => 'Line legends';
 
   @override
-  String get settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
-      '----------------------------------------------------';
+  String get settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
   String get pSettingsTitle => 'Settings';
@@ -73,12 +77,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String pSettingsInputLanguage(String locale) {
-    String _temp0 = intl.Intl.selectLogic(locale, {
-      'lt': 'Lithuanian',
-      'en': 'English',
-      'lv': 'Latvian',
-      'other': 'unknown',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      locale,
+      {
+        'lt': 'Lithuanian',
+        'en': 'English',
+        'lv': 'Latvian',
+        'other': 'unknown',
+      },
+    );
     return '$_temp0';
   }
 
@@ -90,21 +97,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String pSettingsThemeNames(String theme) {
-    String _temp0 = intl.Intl.selectLogic(theme, {
-      'light': 'Light',
-      'lightMediumContrast': 'Light - medium contrast',
-      'lightHighContrast': 'Light - high contrast',
-      'dark': 'Dark',
-      'darkMediumContrast': 'Dark - medium contrast',
-      'darkHighContrast': 'Dark - high contrast',
-      'other': 'unknown',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      theme,
+      {
+        'light': 'Light',
+        'lightMediumContrast': 'Light - medium contrast',
+        'lightHighContrast': 'Light - high contrast',
+        'dark': 'Dark',
+        'darkMediumContrast': 'Dark - medium contrast',
+        'darkHighContrast': 'Dark - high contrast',
+        'other': 'unknown',
+      },
+    );
     return '$_temp0';
   }
 
   @override
-  String get layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
-      '----------------------------------------------------';
+  String get layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
   String get layoutItemHome => 'Home';

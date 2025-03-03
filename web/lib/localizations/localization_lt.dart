@@ -9,8 +9,7 @@ class AppLocalizationsLt extends AppLocalizations {
   AppLocalizationsLt([String locale = 'lt']) : super(locale);
 
   @override
-  String get generalIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
-      '----------------------------------------------------';
+  String get generalIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
   String get generalDate => 'Data';
@@ -25,8 +24,7 @@ class AppLocalizationsLt extends AppLocalizations {
   String get generalPower => 'Galia';
 
   @override
-  String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
-      '----------------------------------------------------';
+  String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
   String get pMainGraphInfoTitle => 'Temperatūros ir galios grafikas';
@@ -35,10 +33,12 @@ class AppLocalizationsLt extends AppLocalizations {
   String pMainGraphInfoText(int seconds, num hours) {
     final intl.NumberFormat secondsNumberFormat = intl.NumberFormat.decimalPatternDigits(
       locale: localeName,
+      
     );
     final String secondsString = secondsNumberFormat.format(seconds);
     final intl.NumberFormat hoursNumberFormat = intl.NumberFormat.decimalPatternDigits(
       locale: localeName,
+      
     );
     final String hoursString = hoursNumberFormat.format(hours);
 
@@ -61,8 +61,7 @@ class AppLocalizationsLt extends AppLocalizations {
   String get pMainGraphInfoLegend => 'Linijų legenda';
 
   @override
-  String get settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
-      '----------------------------------------------------';
+  String get settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
   String get pSettingsTitle => 'Nustatymai';
@@ -78,12 +77,15 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String pSettingsInputLanguage(String locale) {
-    String _temp0 = intl.Intl.selectLogic(locale, {
-      'lt': 'Lietuvių',
-      'en': 'Anglų',
-      'lv': 'Latvių',
-      'other': 'nežinoma',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      locale,
+      {
+        'lt': 'Lietuvių',
+        'en': 'Anglų',
+        'lv': 'Latvių',
+        'other': 'nežinoma',
+      },
+    );
     return '$_temp0';
   }
 
@@ -95,21 +97,23 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String pSettingsThemeNames(String theme) {
-    String _temp0 = intl.Intl.selectLogic(theme, {
-      'light': 'Šviesi',
-      'lightMediumContrast': 'Šviesi - vidutinio kontrasto',
-      'lightHighContrast': 'Šviesi - didelio kontrasto',
-      'dark': 'Tamsi',
-      'darkMediumContrast': 'Tamsi - vidutinio kontrasto',
-      'darkHighContrast': 'Tamsi - didelio kontrasto',
-      'other': 'nežinoma tema',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      theme,
+      {
+        'light': 'Šviesi',
+        'lightMediumContrast': 'Šviesi - vidutinio kontrasto',
+        'lightHighContrast': 'Šviesi - didelio kontrasto',
+        'dark': 'Tamsi',
+        'darkMediumContrast': 'Tamsi - vidutinio kontrasto',
+        'darkHighContrast': 'Tamsi - didelio kontrasto',
+        'other': 'nežinoma tema',
+      },
+    );
     return '$_temp0';
   }
 
   @override
-  String get layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
-      '----------------------------------------------------';
+  String get layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
   String get layoutItemHome => 'Pagrindinis';
