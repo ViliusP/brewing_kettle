@@ -291,18 +291,18 @@ static cJSON *device_configuration_json()
 
   cJSON_AddNumberToObject(hardware_info_json, "heap_size", esp_get_minimum_free_heap_size());
 
-  // ---------
-  // SOFTWARE
-  // ---------
-  #ifdef ESP_APP_DESC_MAGIC_WORD
-  esp_app_desc_t* app_info = esp_app_get_description();
+// ---------
+// SOFTWARE
+// ---------
+#ifdef ESP_APP_DESC_MAGIC_WORD
+  esp_app_desc_t *app_info = esp_app_get_description();
   cJSON_AddStringToObject(software_info_json, "project_name", app_info->project_name);
   cJSON_AddStringToObject(software_info_json, "compile_time", app_info->time);
   cJSON_AddStringToObject(software_info_json, "compile_date", app_info->date);
   cJSON_AddStringToObject(software_info_json, "version", app_info->version);
   cJSON_AddNumberToObject(software_info_json, "secure_version", app_info->secure_version);
   cJSON_AddStringToObject(software_info_json, "idf_version", app_info->idf_ver);
-  #endif
+#endif
 
   // -------
   // END
@@ -674,7 +674,7 @@ void init_ws_observer(state_subjects_t *state_subjects, httpd_handle_t httpd_han
   lv_subject_add_observer(&state_subjects->heater_controller_state, heater_controller_state_handler, httpd_handle);
 }
 
-ws_message_handler_t create_handler()
+ws_message_handler_t create_ws_handler(void)
 {
   return (ws_message_handler_t)&handle_message;
 }
