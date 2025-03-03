@@ -1,20 +1,20 @@
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
-import 'package:brew_kettle_dashboard/stores/device_info/devices_info_store.dart';
+import 'package:brew_kettle_dashboard/stores/device_info/system_info_store.dart';
 import 'package:flutter/material.dart';
 
 class HeaterControllerInfoCard extends StatelessWidget {
   HeaterControllerInfoCard({super.key});
 
-  final DevicesInfoStore _deviceInfoStore = getIt<DevicesInfoStore>();
+  final SystemInfoStore _deviceInfoStore = getIt<SystemInfoStore>();
   final FocusNode _focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = TextTheme.of(context);
-    DeviceInfo? device = _deviceInfoStore.controllers?.heater;
-    DeviceHardwareInfo? hardware = device?.hardware;
-    DeviceSoftwareInfo? software = device?.software;
+    DeviceInfo? info = _deviceInfoStore.info?.heater;
+    DeviceHardwareInfo? hardware = info?.hardware;
+    DeviceSoftwareInfo? software = info?.software;
 
     return SelectableRegion(
       focusNode: _focusNode,

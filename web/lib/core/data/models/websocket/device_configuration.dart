@@ -1,13 +1,13 @@
 part of 'inbound_message.dart';
 
-class SystemControllers extends WsInboundMessagePayload {
+class SystemInfo extends WsInboundMessagePayload {
   final DeviceInfo communicator;
   final DeviceInfo heater;
 
-  const SystemControllers({required this.communicator, required this.heater});
+  const SystemInfo({required this.communicator, required this.heater});
 
-  factory SystemControllers.fromJson(Map<String, dynamic> json) {
-    return SystemControllers(heater: DeviceInfo.empty(), communicator: DeviceInfo.fromJson(json));
+  factory SystemInfo.fromJson(Map<String, dynamic> json) {
+    return SystemInfo(heater: DeviceInfo.empty(), communicator: DeviceInfo.fromJson(json));
   }
 }
 

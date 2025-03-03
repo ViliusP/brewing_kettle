@@ -13,22 +13,19 @@ mixin _$NetworkScannerStore on _NetworkScannerStore, Store {
 
   @override
   List<RecordMDNS> get records =>
-      (_$recordsComputed ??= Computed<List<RecordMDNS>>(
-            () => super.records,
-            name: '_NetworkScannerStore.records',
-          ))
+      (_$recordsComputed ??= Computed<List<RecordMDNS>>(() => super.records,
+              name: '_NetworkScannerStore.records'))
           .value;
   Computed<NetworkScannerState>? _$stateComputed;
 
   @override
   NetworkScannerState get state =>
-      (_$stateComputed ??= Computed<NetworkScannerState>(
-            () => super.state,
-            name: '_NetworkScannerStore.state',
-          ))
+      (_$stateComputed ??= Computed<NetworkScannerState>(() => super.state,
+              name: '_NetworkScannerStore.state'))
           .value;
 
-  late final _$_recordsAtom = Atom(name: '_NetworkScannerStore._records', context: context);
+  late final _$_recordsAtom =
+      Atom(name: '_NetworkScannerStore._records', context: context);
 
   @override
   List<RecordMDNS> get _records {
@@ -43,7 +40,8 @@ mixin _$NetworkScannerStore on _NetworkScannerStore, Store {
     });
   }
 
-  late final _$_stateAtom = Atom(name: '_NetworkScannerStore._state', context: context);
+  late final _$_stateAtom =
+      Atom(name: '_NetworkScannerStore._state', context: context);
 
   @override
   NetworkScannerState get _state {
@@ -58,7 +56,8 @@ mixin _$NetworkScannerStore on _NetworkScannerStore, Store {
     });
   }
 
-  late final _$startAsyncAction = AsyncAction('_NetworkScannerStore.start', context: context);
+  late final _$startAsyncAction =
+      AsyncAction('_NetworkScannerStore.start', context: context);
 
   @override
   Future<dynamic> start() {

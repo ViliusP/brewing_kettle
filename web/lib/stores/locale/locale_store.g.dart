@@ -12,11 +12,12 @@ mixin _$LocaleStore on _LocaleStore, Store {
   Computed<Locale>? _$localeComputed;
 
   @override
-  Locale get locale =>
-      (_$localeComputed ??= Computed<Locale>(() => super.locale, name: '_LocaleStore.locale'))
-          .value;
+  Locale get locale => (_$localeComputed ??=
+          Computed<Locale>(() => super.locale, name: '_LocaleStore.locale'))
+      .value;
 
-  late final _$_localeAtom = Atom(name: '_LocaleStore._locale', context: context);
+  late final _$_localeAtom =
+      Atom(name: '_LocaleStore._locale', context: context);
 
   @override
   Locale get _locale {
@@ -31,16 +32,13 @@ mixin _$LocaleStore on _LocaleStore, Store {
     });
   }
 
-  late final _$_LocaleStoreActionController = ActionController(
-    name: '_LocaleStore',
-    context: context,
-  );
+  late final _$_LocaleStoreActionController =
+      ActionController(name: '_LocaleStore', context: context);
 
   @override
   void changeLanguage(Locale locale) {
     final _$actionInfo = _$_LocaleStoreActionController.startAction(
-      name: '_LocaleStore.changeLanguage',
-    );
+        name: '_LocaleStore.changeLanguage');
     try {
       return super.changeLanguage(locale);
     } finally {

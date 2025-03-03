@@ -13,76 +13,60 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
 
   @override
   bool get isModeChanging =>
-      (_$isModeChangingComputed ??= Computed<bool>(
-            () => super.isModeChanging,
-            name: '_HeaterControllerStateStore.isModeChanging',
-          ))
+      (_$isModeChangingComputed ??= Computed<bool>(() => super.isModeChanging,
+              name: '_HeaterControllerStateStore.isModeChanging'))
           .value;
   Computed<List<TimeSeriesViewEntry>>? _$stateHistoryComputed;
 
   @override
-  List<TimeSeriesViewEntry> get stateHistory =>
-      (_$stateHistoryComputed ??= Computed<List<TimeSeriesViewEntry>>(
-            () => super.stateHistory,
-            name: '_HeaterControllerStateStore.stateHistory',
-          ))
-          .value;
+  List<TimeSeriesViewEntry> get stateHistory => (_$stateHistoryComputed ??=
+          Computed<List<TimeSeriesViewEntry>>(() => super.stateHistory,
+              name: '_HeaterControllerStateStore.stateHistory'))
+      .value;
   Computed<double?>? _$currentTemperatureComputed;
 
   @override
-  double? get currentTemperature =>
-      (_$currentTemperatureComputed ??= Computed<double?>(
-            () => super.currentTemperature,
-            name: '_HeaterControllerStateStore.currentTemperature',
-          ))
-          .value;
+  double? get currentTemperature => (_$currentTemperatureComputed ??=
+          Computed<double?>(() => super.currentTemperature,
+              name: '_HeaterControllerStateStore.currentTemperature'))
+      .value;
   Computed<HeaterStatus?>? _$statusComputed;
 
   @override
   HeaterStatus? get status =>
-      (_$statusComputed ??= Computed<HeaterStatus?>(
-            () => super.status,
-            name: '_HeaterControllerStateStore.status',
-          ))
+      (_$statusComputed ??= Computed<HeaterStatus?>(() => super.status,
+              name: '_HeaterControllerStateStore.status'))
           .value;
   Computed<double?>? _$targetTemperatureComputed;
 
   @override
-  double? get targetTemperature =>
-      (_$targetTemperatureComputed ??= Computed<double?>(
-            () => super.targetTemperature,
-            name: '_HeaterControllerStateStore.targetTemperature',
-          ))
-          .value;
+  double? get targetTemperature => (_$targetTemperatureComputed ??=
+          Computed<double?>(() => super.targetTemperature,
+              name: '_HeaterControllerStateStore.targetTemperature'))
+      .value;
   Computed<double?>? _$requestedTemperatureComputed;
 
   @override
-  double? get requestedTemperature =>
-      (_$requestedTemperatureComputed ??= Computed<double?>(
-            () => super.requestedTemperature,
-            name: '_HeaterControllerStateStore.requestedTemperature',
-          ))
-          .value;
+  double? get requestedTemperature => (_$requestedTemperatureComputed ??=
+          Computed<double?>(() => super.requestedTemperature,
+              name: '_HeaterControllerStateStore.requestedTemperature'))
+      .value;
   Computed<double?>? _$powerComputed;
 
   @override
-  double? get power =>
-      (_$powerComputed ??= Computed<double?>(
-            () => super.power,
-            name: '_HeaterControllerStateStore.power',
-          ))
-          .value;
+  double? get power => (_$powerComputed ??= Computed<double?>(() => super.power,
+          name: '_HeaterControllerStateStore.power'))
+      .value;
   Computed<double?>? _$requestedPowerComputed;
 
   @override
-  double? get requestedPower =>
-      (_$requestedPowerComputed ??= Computed<double?>(
-            () => super.requestedPower,
-            name: '_HeaterControllerStateStore.requestedPower',
-          ))
-          .value;
+  double? get requestedPower => (_$requestedPowerComputed ??= Computed<double?>(
+          () => super.requestedPower,
+          name: '_HeaterControllerStateStore.requestedPower'))
+      .value;
 
-  late final _$_stateAtom = Atom(name: '_HeaterControllerStateStore._state', context: context);
+  late final _$_stateAtom =
+      Atom(name: '_HeaterControllerStateStore._state', context: context);
 
   @override
   HeaterControllerState? get _state {
@@ -97,10 +81,8 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
     });
   }
 
-  late final _$_stateHistoryAtom = Atom(
-    name: '_HeaterControllerStateStore._stateHistory',
-    context: context,
-  );
+  late final _$_stateHistoryAtom =
+      Atom(name: '_HeaterControllerStateStore._stateHistory', context: context);
 
   @override
   ObservableList<TimeSeriesEntry<HeaterControllerState>> get _stateHistory {
@@ -109,16 +91,15 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
   }
 
   @override
-  set _stateHistory(ObservableList<TimeSeriesEntry<HeaterControllerState>> value) {
+  set _stateHistory(
+      ObservableList<TimeSeriesEntry<HeaterControllerState>> value) {
     _$_stateHistoryAtom.reportWrite(value, super._stateHistory, () {
       super._stateHistory = value;
     });
   }
 
   late final _$_requestedModeAtom = Atom(
-    name: '_HeaterControllerStateStore._requestedMode',
-    context: context,
-  );
+      name: '_HeaterControllerStateStore._requestedMode', context: context);
 
   @override
   HeaterMode? get _requestedMode {
@@ -134,9 +115,8 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
   }
 
   late final _$_requestedTemperatureAtom = Atom(
-    name: '_HeaterControllerStateStore._requestedTemperature',
-    context: context,
-  );
+      name: '_HeaterControllerStateStore._requestedTemperature',
+      context: context);
 
   @override
   double? get _requestedTemperature {
@@ -146,15 +126,14 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
 
   @override
   set _requestedTemperature(double? value) {
-    _$_requestedTemperatureAtom.reportWrite(value, super._requestedTemperature, () {
+    _$_requestedTemperatureAtom.reportWrite(value, super._requestedTemperature,
+        () {
       super._requestedTemperature = value;
     });
   }
 
   late final _$_requestedPowerAtom = Atom(
-    name: '_HeaterControllerStateStore._requestedPower',
-    context: context,
-  );
+      name: '_HeaterControllerStateStore._requestedPower', context: context);
 
   @override
   double? get _requestedPower {
@@ -169,16 +148,14 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
     });
   }
 
-  late final _$_HeaterControllerStateStoreActionController = ActionController(
-    name: '_HeaterControllerStateStore',
-    context: context,
-  );
+  late final _$_HeaterControllerStateStoreActionController =
+      ActionController(name: '_HeaterControllerStateStore', context: context);
 
   @override
   void changeTargetTemperature(double value) {
-    final _$actionInfo = _$_HeaterControllerStateStoreActionController.startAction(
-      name: '_HeaterControllerStateStore.changeTargetTemperature',
-    );
+    final _$actionInfo =
+        _$_HeaterControllerStateStoreActionController.startAction(
+            name: '_HeaterControllerStateStore.changeTargetTemperature');
     try {
       return super.changeTargetTemperature(value);
     } finally {
@@ -188,9 +165,8 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
 
   @override
   void changePower(double value) {
-    final _$actionInfo = _$_HeaterControllerStateStoreActionController.startAction(
-      name: '_HeaterControllerStateStore.changePower',
-    );
+    final _$actionInfo = _$_HeaterControllerStateStoreActionController
+        .startAction(name: '_HeaterControllerStateStore.changePower');
     try {
       return super.changePower(value);
     } finally {
@@ -200,9 +176,8 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
 
   @override
   void changeMode(HeaterMode value) {
-    final _$actionInfo = _$_HeaterControllerStateStoreActionController.startAction(
-      name: '_HeaterControllerStateStore.changeMode',
-    );
+    final _$actionInfo = _$_HeaterControllerStateStoreActionController
+        .startAction(name: '_HeaterControllerStateStore.changeMode');
     try {
       return super.changeMode(value);
     } finally {
@@ -212,9 +187,8 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
 
   @override
   void _onData(WsInboundMessage<WsInboundMessagePayload> message) {
-    final _$actionInfo = _$_HeaterControllerStateStoreActionController.startAction(
-      name: '_HeaterControllerStateStore._onData',
-    );
+    final _$actionInfo = _$_HeaterControllerStateStoreActionController
+        .startAction(name: '_HeaterControllerStateStore._onData');
     try {
       return super._onData(message);
     } finally {

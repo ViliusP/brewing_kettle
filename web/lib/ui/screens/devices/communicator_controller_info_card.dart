@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
-import 'package:brew_kettle_dashboard/stores/device_info/devices_info_store.dart';
+import 'package:brew_kettle_dashboard/stores/device_info/system_info_store.dart';
 import 'package:brew_kettle_dashboard/stores/device_snapshot/device_snapshot_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:brew_kettle_dashboard/ui/screens/devices/greyscale_image.dart';
@@ -17,7 +17,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 class CommnuicatorControllerInfoCard extends StatelessWidget {
   CommnuicatorControllerInfoCard({super.key});
 
-  final DevicesInfoStore _deviceInfoStore = getIt<DevicesInfoStore>();
+  final SystemInfoStore _systemInfoStore = getIt<SystemInfoStore>();
 
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
@@ -25,16 +25,16 @@ class CommnuicatorControllerInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = TextTheme.of(context);
-    DeviceInfo? device = _deviceInfoStore.controllers?.communicator;
-    DeviceHardwareInfo? hardware = device?.hardware;
-    DeviceSoftwareInfo? software = device?.software;
+    DeviceInfo? communicatorInfo = _systemInfoStore.info?.communicator;
+    DeviceHardwareInfo? hardware = communicatorInfo?.hardware;
+    DeviceSoftwareInfo? software = communicatorInfo?.software;
 
     return Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         FilledButton.tonal(
-          onPressed: _deviceInfoStore.request,
+          onPressed: _systemInfoStore.request,
           child: const Text('Get devices info'),
         ),
         SelectableRegion(

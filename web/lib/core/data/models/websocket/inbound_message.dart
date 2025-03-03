@@ -144,7 +144,7 @@ sealed class WsInboundMessagePayload {
 
   factory WsInboundMessagePayload.fromJsonMap(Map<String, dynamic> json, InboundMessageType type) {
     return switch (type) {
-      InboundMessageType.configuration => SystemControllers.fromJson(json),
+      InboundMessageType.configuration => SystemInfo.fromJson(json),
       InboundMessageType.snapshot => DeviceSnapshot.fromJson(json),
       InboundMessageType.heaterControllerState => HeaterControllerState.fromJson(json),
     };
