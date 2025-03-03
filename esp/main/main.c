@@ -10,7 +10,7 @@
 #include "freertos/task.h"
 #include "lvgl.h"
 #include "display.h"
-#include "ws_server.h"
+#include "http_server.h"
 #include "uart_communication.h"
 #include "esp_system.h"
 #include "ws_message_handling.h"

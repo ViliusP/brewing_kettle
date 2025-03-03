@@ -1,13 +1,13 @@
 #include <esp_log.h>
 #include <esp_http_server.h>
 #include "cJSON.h"
-#include "ws_server.h"
+#include "http_server.h"
 #include "lvgl.h"
 #include <mbedtls/base64.h>
 #include "esp_chip_info.h"
 #include "esp_flash.h"
 #include "utilities.h"
-#include "ws_server.h"
+#include "http_server.h"
 #include "uart_communication.h"
 #include "uart_messaging.h"
 #include "state.h"
@@ -33,7 +33,7 @@
 #define HEATER_MODE_PID_JSON "heating_pid"
 #define HEATER_MODE_MANUAL_JSON "heating_manual"
 
-static const char *TAG = "WS_SERVER_HANDLER";
+static const char *TAG = "WS_MESSAGE_HANDLER";
 
 typedef enum
 {

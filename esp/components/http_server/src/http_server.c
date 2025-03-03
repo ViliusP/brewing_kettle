@@ -11,11 +11,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <lwip/sockets.h>
-#include "ws_server.h"
+#include "http_server.h"
 #include <esp_http_server.h>
 #include "sntp.h"
 
-static const char *TAG = "WS_SERVER";
+static const char *TAG = "HTTP_SERVER";
 static const size_t max_clients = 4;
 
 /*
