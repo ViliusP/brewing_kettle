@@ -1,7 +1,6 @@
 import 'package:brew_kettle_dashboard/constants/app.dart';
 import 'package:brew_kettle_dashboard/constants/theme.dart';
 import 'package:brew_kettle_dashboard/core/data/repository/repository.dart';
-import 'package:brew_kettle_dashboard/stores/error/error_store.dart';
 import 'package:mobx/mobx.dart';
 
 part 'theme_store.g.dart';
@@ -11,8 +10,6 @@ class ThemeStore = _ThemeStore with _$ThemeStore;
 
 abstract class _ThemeStore with Store {
   final Repository _repository;
-
-  final ErrorStore errorStore = ErrorStore();
 
   _ThemeStore(Repository repository) : _repository = repository {
     _init();

@@ -1,6 +1,5 @@
 import 'package:brew_kettle_dashboard/core/data/repository/repository.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
-import 'package:brew_kettle_dashboard/stores/error/error_store.dart';
 import 'package:flutter/rendering.dart';
 import 'package:mobx/mobx.dart';
 
@@ -11,8 +10,6 @@ class LocaleStore = _LocaleStore with _$LocaleStore;
 
 abstract class _LocaleStore with Store {
   final Repository _repository;
-
-  final ErrorStore errorStore = ErrorStore();
 
   _LocaleStore(Repository repository) : _repository = repository {
     _init();
