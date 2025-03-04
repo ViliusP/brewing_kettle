@@ -24,6 +24,18 @@ class AppLocalizationsLt extends AppLocalizations {
   String get generalPower => 'Galia';
 
   @override
+  String get generalError => 'Klaida';
+
+  @override
+  String get generalInfo => 'Informacija';
+
+  @override
+  String get generalSuccess => 'Įvykdyta';
+
+  @override
+  String get generalWarning => 'Įspėjimas';
+
+  @override
   String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override

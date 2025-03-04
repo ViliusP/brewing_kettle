@@ -24,6 +24,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalPower => 'Power';
 
   @override
+  String get generalError => 'Error';
+
+  @override
+  String get generalInfo => 'Info';
+
+  @override
+  String get generalSuccess => 'Success';
+
+  @override
+  String get generalWarning => 'Warning';
+
+  @override
   String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override

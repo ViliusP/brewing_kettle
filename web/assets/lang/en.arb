@@ -18,6 +18,22 @@
   "@generalPower": {
     "description": "General label for power consumption or output."
   },
+  "generalError": "Error",
+  "@generalError": {
+    "description": "General label for error, for example used in toast messages."
+  },
+  "generalInfo": "Info",
+  "@generalInfo": {
+    "description": "General label for info, for example used in toast messages."
+  },
+  "generalSuccess": "Success",
+  "@generalSuccess": {
+    "description": "General label for success, for example used in toast messages."
+  },
+  "generalWarning": "Warning",
+  "@generalWarning": {
+    "description": "General label for warning, for example used in toast messages."
+  },
   "mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "pMainGraphInfoTitle": "Temparature and power graph",

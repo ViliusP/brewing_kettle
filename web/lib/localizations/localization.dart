@@ -125,6 +125,30 @@ abstract class AppLocalizations {
   /// **'Power'**
   String get generalPower;
 
+  /// General label for error, for example used in toast messages.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get generalError;
+
+  /// General label for info, for example used in toast messages.
+  ///
+  /// In en, this message translates to:
+  /// **'Info'**
+  String get generalInfo;
+
+  /// General label for success, for example used in toast messages.
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get generalSuccess;
+
+  /// General label for warning, for example used in toast messages.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning'**
+  String get generalWarning;
+
   /// No description provided for @mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///
   /// In en, this message translates to:
