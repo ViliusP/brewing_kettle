@@ -149,6 +149,18 @@ abstract class AppLocalizations {
   /// **'Warning'**
   String get generalWarning;
 
+  /// No description provided for @exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII.
+  ///
+  /// In en, this message translates to:
+  /// **'----------------------------------------------------'**
+  String get exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII;
+
+  /// Message of unexpected error.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown error occurred.'**
+  String get exceptionUnknown;
+
   /// No description provided for @mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///
   /// In en, this message translates to:

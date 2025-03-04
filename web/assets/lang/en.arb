@@ -34,14 +34,10 @@
   "@generalWarning": {
     "description": "General label for warning, for example used in toast messages."
   },
-  "errorsIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
-  "@errorsIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
-  "errorUnimplemented": "Functionality is not implemented yet.",
-  "@errorUnimplemented": {
-    "description": "Error message for unimplemented functionality."
-  },
-  "errorUnknown": "Unknown error occurred.",
-  "@errorUnknown": {
+  "exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "exceptionUnknown": "Unknown error occurred.",
+  "@exceptionUnknown": {
     "description": "Message of unexpected error."
   },
   "mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",

@@ -36,6 +36,12 @@ class AppLocalizationsLt extends AppLocalizations {
   String get generalWarning => 'Įspėjimas';
 
   @override
+  String get exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+
+  @override
+  String get exceptionUnknown => 'Įvyko nežinoma klaida.';
+
+  @override
   String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override

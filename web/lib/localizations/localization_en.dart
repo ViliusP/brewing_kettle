@@ -36,6 +36,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalWarning => 'Warning';
 
   @override
+  String get exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+
+  @override
+  String get exceptionUnknown => 'Unknown error occurred.';
+
+  @override
   String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
