@@ -73,6 +73,10 @@ class _DefaultLayoutState extends State<DefaultLayout> {
     }
   }
 
+  void onErrorOccured() {
+    AppSnackabar.error(context, "hello world");
+  }
+
   void onRouteChange() {
     final config = AppRouter.value.routerDelegate.currentConfiguration;
     final screenName = config.last.route.name;
