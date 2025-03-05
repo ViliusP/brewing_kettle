@@ -6,9 +6,8 @@ import 'package:brew_kettle_dashboard/core/data/models/store/ws_listener.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/connection_status.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/messages_archive.dart';
-import 'package:flutter/foundation.dart';
+import 'package:brew_kettle_dashboard/core/data/repository/repository.dart';
 import 'package:mobx/mobx.dart';
-import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 part 'websocket_connection_store.g.dart';
@@ -17,11 +16,11 @@ part 'websocket_connection_store.g.dart';
 class WebSocketConnectionStore = _WebSocketConnectionStore with _$WebSocketConnectionStore;
 
 abstract class _WebSocketConnectionStore with Store {
+  final Repository _repository;
+
   final List<StoreWebSocketListener> _listeners = [];
 
-  WebSocketChannel? _channel;
-
-  _WebSocketConnectionStore();
+  _WebSocketConnectionStore(Repository repository) : _repository = repository;
 
   @computed
   WebSocketConnectionStatus get status => _status;
@@ -49,7 +48,7 @@ abstract class _WebSocketConnectionStore with Store {
 
   @action
   Future connect(Uri address) async {
-    if (_channel != null) {
+    if (_repository.webSocketConnection.isConnected) {
       log("Connecting failed. There is active connection to server, please close it first");
       return;
     }
@@ -59,12 +58,12 @@ abstract class _WebSocketConnectionStore with Store {
     _status = WebSocketConnectionStatus.connecting;
 
     try {
-      _channel = switch (kIsWeb) {
-        true => WebSocketChannel.connect(address),
-        _ => IOWebSocketChannel.connect(address, pingInterval: Duration(seconds: 5)),
-      };
-
-      await _channel?.ready;
+      await _repository.webSocketConnection.connect(
+        address: address,
+        onData: _onData,
+        onError: _onError,
+        onDone: _onDone,
+      );
     } on SocketException catch (e) {
       log("Error occured while connecting to websocket channel ${e.message}");
       _status = WebSocketConnectionStatus.error;
@@ -80,21 +79,20 @@ abstract class _WebSocketConnectionStore with Store {
     _status = WebSocketConnectionStatus.connected;
     log("Connection successful");
 
-    _channel!.stream.listen(_onData, onError: _onError, onDone: _onDone);
     _connectedTo = address;
   }
 
   @action
   void close([int code = WebSocketStatus.normalClosure, String? reason]) {
     log("Closing connection with $_connectedTo. Code $code. Reason $reason");
-    _channel?.sink.close(code, reason);
+    _repository.webSocketConnection.close(code, reason);
     _clean();
     _status = WebSocketConnectionStatus.fromCloseCode(code);
   }
 
   @action
   void _onData(dynamic data) {
-    if (_connectedTo == null || _channel == null) {
+    if (!_repository.webSocketConnection.isConnected) {
       log("Unexpected: got message when connection is null");
       _status = WebSocketConnectionStatus.finishedNoStatus;
       _clean();
@@ -134,17 +132,12 @@ abstract class _WebSocketConnectionStore with Store {
     close(WebSocketStatus.normalClosure);
   }
 
-  void message(String value) {
-    _channel?.sink.add(value);
-  }
+  void message(String value) => _repository.webSocketConnection.message(value);
+
+  void subscribe(StoreWebSocketListener listener) => _listeners.add(listener);
 
   void _clean() {
-    _channel = null;
     _connectedTo = null;
     _archive.clear();
-  }
-
-  void subscribe(StoreWebSocketListener listener) {
-    _listeners.add(listener);
   }
 }

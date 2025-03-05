@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:brew_kettle_dashboard/core/data/repository/repository.dart';
+import 'package:brew_kettle_dashboard/core/data/repository/websocket_connection_repository.dart';
 import 'package:brew_kettle_dashboard/core/data/storages/sharedpref/preferences.dart';
 import 'package:brew_kettle_dashboard/core/data/storages/sharedpref/shared_preference_helper.dart';
 import 'package:brew_kettle_dashboard/stores/device_info/devices_info_store.dart';
@@ -16,7 +17,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class StoreModule {
   static Future<void> inject(GetIt getIt) async {
     Repository repository = Repository(
-      SharedPreferenceHelper(
+      webSocketConnection: WebSocketConnectionRepository(),
+      sharedPreferences: SharedPreferenceHelper(
         await SharedPreferencesWithCache.create(
           cacheOptions: SharedPreferencesWithCacheOptions(allowList: PreferenceKey.allowList),
         ),
@@ -26,7 +28,7 @@ class StoreModule {
     final ExceptionStore exceptionStore = ExceptionStore();
     getIt.registerSingleton<ExceptionStore>(exceptionStore);
 
-    final webSocketConnectionStore = WebSocketConnectionStore();
+    final webSocketConnectionStore = WebSocketConnectionStore(repository);
 
     getIt.registerSingleton<WebSocketConnectionStore>(webSocketConnectionStore);
     getIt.registerSingleton<DevicesInfoStore>(
