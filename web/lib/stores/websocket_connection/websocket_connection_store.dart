@@ -2,13 +2,14 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:developer';
 import 'dart:io';
+import 'package:brew_kettle_dashboard/core/data/models/app_exceptions/app_exception.dart';
 import 'package:brew_kettle_dashboard/core/data/models/store/ws_listener.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/connection_status.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/messages_archive.dart';
 import 'package:brew_kettle_dashboard/core/data/repository/repository.dart';
+import 'package:brew_kettle_dashboard/stores/exception/exception_store.dart';
 import 'package:mobx/mobx.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 part 'websocket_connection_store.g.dart';
 
@@ -17,10 +18,15 @@ class WebSocketConnectionStore = _WebSocketConnectionStore with _$WebSocketConne
 
 abstract class _WebSocketConnectionStore with Store {
   final Repository _repository;
+  final ExceptionStore _exceptionStore;
 
   final List<StoreWebSocketListener> _listeners = [];
 
-  _WebSocketConnectionStore(Repository repository) : _repository = repository;
+  _WebSocketConnectionStore({
+    required Repository repository,
+    required ExceptionStore exceptionStore,
+  }) : _repository = repository,
+       _exceptionStore = exceptionStore;
 
   @computed
   WebSocketConnectionStatus get status => _status;
@@ -47,19 +53,19 @@ abstract class _WebSocketConnectionStore with Store {
   MessagesArchive _archive = MessagesArchive();
 
   @action
-  Future connect(Uri address) async {
+  Future connect(Uri baseUri) async {
     if (_repository.webSocketConnection.isConnected) {
       log("Connecting failed. There is active connection to server, please close it first");
       return;
     }
 
-    log("Connecting to $address");
+    log("Connecting to $baseUri");
 
     _status = WebSocketConnectionStatus.connecting;
 
     try {
       await _repository.webSocketConnection.connect(
-        address: address,
+        baseUri: baseUri,
         onData: _onData,
         onError: _onError,
         onDone: _onDone,
@@ -75,14 +81,13 @@ abstract class _WebSocketConnectionStore with Store {
           _exceptionStore.push(e);
           break;
       }
-      _exceptionStore.push(e);
       _clean();
       return;
     }
     _status = WebSocketConnectionStatus.connected;
     log("Connection successful");
 
-    _connectedTo = address;
+    _connectedTo = baseUri;
   }
 
   @action

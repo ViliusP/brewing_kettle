@@ -6,6 +6,7 @@ import 'package:brew_kettle_dashboard/core/data/storages/sharedpref/preferences.
 import 'package:brew_kettle_dashboard/core/data/storages/sharedpref/shared_preference_helper.dart';
 import 'package:brew_kettle_dashboard/stores/device_info/devices_info_store.dart';
 import 'package:brew_kettle_dashboard/stores/device_snapshot/device_snapshot_store.dart';
+import 'package:brew_kettle_dashboard/stores/exception/exception_store.dart';
 import 'package:brew_kettle_dashboard/stores/locale/locale_store.dart';
 import 'package:brew_kettle_dashboard/stores/network_scanner/network_scanner_store.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
@@ -28,7 +29,10 @@ class StoreModule {
     final ExceptionStore exceptionStore = ExceptionStore();
     getIt.registerSingleton<ExceptionStore>(exceptionStore);
 
-    final webSocketConnectionStore = WebSocketConnectionStore(repository);
+    final webSocketConnectionStore = WebSocketConnectionStore(
+      repository: repository,
+      exceptionStore: exceptionStore,
+    );
 
     getIt.registerSingleton<WebSocketConnectionStore>(webSocketConnectionStore);
     getIt.registerSingleton<DevicesInfoStore>(
