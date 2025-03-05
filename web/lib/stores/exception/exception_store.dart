@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:brew_kettle_dashboard/core/data/models/app_exception/app_exception.dart';
+import 'package:brew_kettle_dashboard/core/data/models/app_exceptions/app_exception.dart';
 import 'package:mobx/mobx.dart';
 
 part 'exception_store.g.dart';
