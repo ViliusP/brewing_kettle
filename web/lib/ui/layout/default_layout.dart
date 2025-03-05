@@ -4,7 +4,7 @@ import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/exception/exception_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
-import 'package:brew_kettle_dashboard/ui/common/snackbar/snackabar.dart';
+import 'package:brew_kettle_dashboard/ui/common/snackbar/snackbar.dart';
 import 'package:brew_kettle_dashboard/ui/routing.dart';
 import 'package:brew_kettle_dashboard/utils/enum_extensions.dart';
 import 'package:flutter/material.dart';
