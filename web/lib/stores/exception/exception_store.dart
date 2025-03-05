@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:brew_kettle_dashboard/core/data/models/app_exception/app_exception.dart';
 import 'package:mobx/mobx.dart';
 
@@ -12,27 +14,18 @@ abstract class _ExceptionStore with Store {
   // ===================
   // store variables:
   // ===================
-  @observable
-  ObservableList<AppException> _exceptions = ObservableList.of([]);
+  final StreamController<AppException> _streamController = StreamController<AppException>();
 
-  @computed
-  int get count => _exceptions.length;
+  late ObservableStream<AppException> stream = ObservableStream(_streamController.stream);
 
   // =============
   // actions:
   // =============
-
-  /// Returns first error and removes it from the list.
-  @action
-  AppException? pop() {
-    if (_exceptions.isEmpty) return null;
-    dynamic error = _exceptions.first;
-    _exceptions.removeAt(0);
-    return error;
-  }
-
   @action
   void push(Exception exception) {
-    _exceptions.add(AppException.of(exception));
+    if (_streamController.isPaused || _streamController.isClosed) {
+      return;
+    }
+    _streamController.add(AppException.of(exception));
   }
 }

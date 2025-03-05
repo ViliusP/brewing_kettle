@@ -14,12 +14,12 @@ enum _AppSnackBarType {
   final IconData icon;
   final ToastificationType toastType;
 
-  String localizedTitle(BuildContext context) {
+  String localizedTitle(AppLocalizations localizations) {
     return switch (this) {
-      _AppSnackBarType.error => AppLocalizations.of(context)!.generalError,
-      _AppSnackBarType.info => AppLocalizations.of(context)!.generalInfo,
-      _AppSnackBarType.success => AppLocalizations.of(context)!.generalSuccess,
-      _AppSnackBarType.warning => AppLocalizations.of(context)!.generalWarning,
+      _AppSnackBarType.error => localizations.generalError,
+      _AppSnackBarType.info => localizations.generalInfo,
+      _AppSnackBarType.success => localizations.generalSuccess,
+      _AppSnackBarType.warning => localizations.generalWarning,
     };
   }
 }
@@ -48,7 +48,7 @@ class AppSnackabar {
   }) {
     Toastification().show(
       context: context,
-      title: Text(type.localizedTitle(context)),
+      title: Text(type.localizedTitle(AppLocalizations.of(context)!)),
       description: Text(message),
       type: type.toastType,
       style: ToastificationStyle.flat,

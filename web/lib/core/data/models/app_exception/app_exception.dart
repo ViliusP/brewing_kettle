@@ -1,17 +1,17 @@
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 
-enum ErrorType { unimplemented, unknown }
+enum ExceptionType { unknown }
 
 class AppException implements Exception {
   final Exception? _inner;
   final String message;
-  final ErrorType type;
+  final ExceptionType type;
 
-  AppException({required this.message, this.type = ErrorType.unknown}) : _inner = null;
+  AppException({required this.message, this.type = ExceptionType.unknown}) : _inner = null;
 
   AppException.of(Exception exception)
     : message = exception.toString(),
-      type = ErrorType.unknown,
+      type = ExceptionType.unknown,
       _inner = exception;
 
   @override
@@ -19,8 +19,8 @@ class AppException implements Exception {
 
   String toLocalizedMessage(AppLocalizations localizations) {
     return switch (type) {
-      ErrorType.unimplemented => localizations.errorUnimplemented,
-      ErrorType.unknown => '${localizations.errorUnknown} ($message)',
+      // ExceptionType.unimplemented => localizations.errorUnimplemented,
+      ExceptionType.unknown => '${localizations.exceptionUnknown} ($message)',
     };
   }
 }
