@@ -372,7 +372,7 @@ static httpd_handle_t start_ws_server(ws_uri_handler_user_ctx_t *ws_uri_handler_
     }
 
     httpd_uri_t ws = {
-        .uri = "/ws",
+        .uri = "/ws_1",
         .method = HTTP_GET,
         .handler = ws_handler,
         .user_ctx = ws_uri_handler_user_ctx,
