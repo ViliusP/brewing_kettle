@@ -23,6 +23,9 @@ class StoreModule {
       ),
     );
 
+    final ExceptionStore exceptionStore = ExceptionStore();
+    getIt.registerSingleton<ExceptionStore>(exceptionStore);
+
     final webSocketConnectionStore = WebSocketConnectionStore();
 
     getIt.registerSingleton<WebSocketConnectionStore>(webSocketConnectionStore);

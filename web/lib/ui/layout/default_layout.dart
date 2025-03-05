@@ -1,7 +1,10 @@
+import 'package:brew_kettle_dashboard/core/data/models/app_exceptions/app_exception.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/connection_status.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
+import 'package:brew_kettle_dashboard/stores/exception/exception_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
+import 'package:brew_kettle_dashboard/ui/common/snackbar/snackabar.dart';
 import 'package:brew_kettle_dashboard/ui/routing.dart';
 import 'package:brew_kettle_dashboard/utils/enum_extensions.dart';
 import 'package:flutter/material.dart';
@@ -20,18 +23,26 @@ class DefaultLayout extends StatefulWidget {
 
 class _DefaultLayoutState extends State<DefaultLayout> {
   final WebSocketConnectionStore wsConnectionStore = getIt<WebSocketConnectionStore>();
+  final ExceptionStore exceptionStore = getIt<ExceptionStore>();
+
+  late final ReactionDisposer _connectionStatusReaction;
+  late final ReactionDisposer _onErrorReaction;
 
   int? _selectedIndex;
-  late final ReactionDisposer _connectedReaction;
   bool _navigationRailVisible = true;
 
   @override
   void initState() {
     onRouteChange();
-    _connectedReaction = reaction(
+    _connectionStatusReaction = reaction(
       (_) => wsConnectionStore.status,
       (status) => handleConnectionStatus(status),
       fireImmediately: true,
+    );
+    _onErrorReaction = reaction(
+      (_) => exceptionStore.stream.value,
+      (exception) => onExceptionOccured(exception),
+      fireImmediately: false,
     );
     AppRouter.value.routerDelegate.addListener(onRouteChange);
     super.initState();
@@ -73,8 +84,10 @@ class _DefaultLayoutState extends State<DefaultLayout> {
     }
   }
 
-  void onErrorOccured() {
-    AppSnackabar.error(context, "hello world");
+  void onExceptionOccured(AppException? exception) {
+    if (exception == null) return;
+    AppLocalizations localizations = AppLocalizations.of(context)!;
+    AppSnackabar.error(context, exception.toLocalizedMessage(localizations));
   }
 
   void onRouteChange() {
@@ -171,7 +184,8 @@ class _DefaultLayoutState extends State<DefaultLayout> {
   @override
   void dispose() {
     AppRouter.value.routerDelegate.removeListener(onRouteChange);
-    _connectedReaction.call();
+    _connectionStatusReaction.call();
+    _onErrorReaction.call();
     super.dispose();
   }
 }
