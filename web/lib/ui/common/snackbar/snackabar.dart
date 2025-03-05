@@ -49,7 +49,7 @@ class AppSnackabar {
     Toastification().show(
       context: context,
       title: Text(type.localizedTitle(AppLocalizations.of(context)!)),
-      description: Text(message),
+      description: SelectableText(message),
       type: type.toastType,
       style: ToastificationStyle.flat,
       autoCloseDuration: const Duration(seconds: 5),
