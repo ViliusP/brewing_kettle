@@ -42,6 +42,18 @@ class AppLocalizationsLt extends AppLocalizations {
   String get exceptionUnknown => 'Įvyko nežinoma klaida.';
 
   @override
+  String get exceptionFailedToConnectToDevice => 'Nepavyko prisijungti prie įrenginio.';
+
+  @override
+  String get exceptionDeviceConnectionTimeout => 'Nepavyko prisijungti prie įrenginio. Patikrinkite įrenginį ar pateiktą adresą.';
+
+  @override
+  String get exceptionAddressLookupFailed => 'Nepavyko prisijungti prie įrenginio. Patikrinkite interneto ryšį ar pateiktą įrenginio adresą.';
+
+  @override
+  String get exceptionConnectionRefused => 'Nepavyko prisijungti prie įrenginio. Patikrinkite pateiktą įrenginio adresą.';
+
+  @override
   String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override

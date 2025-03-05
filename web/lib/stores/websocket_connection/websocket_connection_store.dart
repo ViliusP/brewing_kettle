@@ -64,18 +64,21 @@ abstract class _WebSocketConnectionStore with Store {
         onError: _onError,
         onDone: _onDone,
       );
-    } on SocketException catch (e) {
-      log("Error occured while connecting to websocket channel ${e.message}");
+    } on Exception catch (e) {
+      log("Error occured while connecting to websocket channel ${e.toString()}");
       _status = WebSocketConnectionStatus.error;
+      switch (e) {
+        case TimeoutException e:
+          _exceptionStore.push(AppException(e, type: ExceptionType.websocketConnectionTimeout));
+          break;
+        default:
+          _exceptionStore.push(e);
+          break;
+      }
+      _exceptionStore.push(e);
       _clean();
-      return;
-    } on WebSocketChannelException catch (e) {
-      _status = WebSocketConnectionStatus.error;
-      _clean();
-      log("Error occured while connecting to websocket channel.", error: e.toString());
       return;
     }
-
     _status = WebSocketConnectionStatus.connected;
     log("Connection successful");
 

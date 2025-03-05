@@ -42,6 +42,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exceptionUnknown => 'Unknown error occurred.';
 
   @override
+  String get exceptionFailedToConnectToDevice => 'Failed to connect to device.';
+
+  @override
+  String get exceptionDeviceConnectionTimeout => 'Failed to connect to the device. Please check device or provided address';
+
+  @override
+  String get exceptionAddressLookupFailed => 'Failed to connect to device. Bad address provided for kettle device.';
+
+  @override
+  String get exceptionConnectionRefused => 'Failed to connect to device. Device refused connection. Please check your provided address.';
+
+  @override
   String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override

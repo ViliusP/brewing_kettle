@@ -40,6 +40,22 @@
   "@exceptionUnknown": {
     "description": "Message of unexpected error."
   },
+  "exceptionFailedToConnectToDevice": "Failed to connect to device.",
+  "@exceptionFailedToConnectToDevice": {
+    "description": "Generic device connection fail exception."
+  },
+  "exceptionDeviceConnectionTimeout": "Failed to connect to the device. Please check device or provided address",
+  "@exceptionDeviceConnectionTimeout": {
+    "description": "Exception message when timeout happened when connecting to device."
+  },
+  "exceptionAddressLookupFailed": "Failed to connect to device. Bad address provided for kettle device.",
+  "@exceptionAddressLookupFailed": {
+    "description": "Exception message when provided address is not valid and cannot be looked up."
+  },
+  "exceptionConnectionRefused": "Failed to connect to device. Device refused connection. Please check your provided address.",
+  "@exceptionConnectionRefused": {
+    "description": "Exception message when provided address is partly good, but refuse to establish connection."
+  },
   "mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "pMainGraphInfoTitle": "Temparature and power graph",

@@ -161,6 +161,30 @@ abstract class AppLocalizations {
   /// **'Unknown error occurred.'**
   String get exceptionUnknown;
 
+  /// Generic device connection fail exception.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to connect to device.'**
+  String get exceptionFailedToConnectToDevice;
+
+  /// Exception message when timeout happened when connecting to device.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to connect to the device. Please check device or provided address'**
+  String get exceptionDeviceConnectionTimeout;
+
+  /// Exception message when provided address is not valid and cannot be looked up.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to connect to device. Bad address provided for kettle device.'**
+  String get exceptionAddressLookupFailed;
+
+  /// Exception message when provided address is partly good, but refuse to establish connection.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to connect to device. Device refused connection. Please check your provided address.'**
+  String get exceptionConnectionRefused;
+
   /// No description provided for @mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///
   /// In en, this message translates to:
