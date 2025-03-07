@@ -134,7 +134,6 @@ void app_main(void)
     init_sdcard();
     initialize_display();
 
-
     // ================ state ===================
     app_state_t *app_state = app_state_init();
     state_subjects_t *state_subjects = init_state_subjects(app_state);
@@ -162,12 +161,12 @@ void app_main(void)
     // ==========================================
 
     // ============== HTTP_SERVER =================
-    const size_t count = http_handlers_get_count();
-    const httpd_uri_t *handlers = http_handlers_get_array();
+    const size_t handlers_count = http_handlers_get_count();
+    const httpd_uri_t *http_handlers = http_handlers_get_array();
 
     ws_message_handler_t ws_messages_handler = create_ws_handler();
     ws_client_changed_cb_t ws_client_change_cb = (ws_client_changed_cb_t)&connected_client_data_notify;
-    httpd_handle_t httpd_handle = initialize_http_server(ws_messages_handler, ws_client_change_cb);
+    httpd_handle_t httpd_handle = initialize_http_server(http_handlers, handlers_count, ws_messages_handler, ws_client_change_cb);
     init_ws_observer(state_subjects, httpd_handle);
     // ==========================================
 

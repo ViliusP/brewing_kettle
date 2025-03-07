@@ -1,9 +1,7 @@
 #include <esp_wifi.h>
 #include <esp_event.h>
 #include <esp_log.h>
-#include <esp_system.h>
 #include <nvs_flash.h>
-#include <sys/param.h>
 #include "esp_netif.h"
 #include "keep_alive.h"
 #include "mdns_service.h"
@@ -39,6 +37,8 @@ typedef struct
 {
     httpd_handle_t server;
     ws_uri_handler_user_ctx_t *ws_uri_handler_user_ctx;
+    const httpd_uri_t *http_handlers;
+    size_t handlers_count;
 } esp_connect_event_args_t;
 
 typedef struct
@@ -352,7 +352,7 @@ bool check_client_alive_cb(wss_keep_alive_t h, int fd)
     return false;
 }
 
-static httpd_handle_t start_ws_server(ws_uri_handler_user_ctx_t *ws_uri_handler_user_ctx)
+static httpd_handle_t start_ws_server(ws_uri_handler_user_ctx_t *ws_uri_handler_user_ctx, const httpd_uri_t *http_handlers, size_t handlers_count)
 {
     // Prepare keep-alive engine
     wss_keep_alive_config_t keep_alive_config = KEEP_ALIVE_CONFIG_DEFAULT();
@@ -363,6 +363,7 @@ static httpd_handle_t start_ws_server(ws_uri_handler_user_ctx_t *ws_uri_handler_
 
     // Start the httpd server
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
+    config.uri_match_fn = httpd_uri_match_wildcard;
     httpd_handle_t server = NULL;
 
     if (httpd_start(&server, &config) != ESP_OK)
@@ -379,9 +380,12 @@ static httpd_handle_t start_ws_server(ws_uri_handler_user_ctx_t *ws_uri_handler_
         .is_websocket = true};
 
     // Set URI handlers
-
     httpd_register_uri_handler(server, &ws);
     wss_keep_alive_set_user_ctx(keep_alive, server);
+
+    for (size_t i = 0; i < handlers_count; i++) {
+        httpd_register_uri_handler(server, &http_handlers[i]);
+    }
 
     return server;
 }
@@ -416,11 +420,14 @@ static void connect_handler(void *arg, esp_event_base_t event_base,
     ESP_LOGI(TAG, "Succesfully connected to AP");
     esp_connect_event_args_t *args = (esp_connect_event_args_t *)arg;
     ws_uri_handler_user_ctx_t *handlers = args->ws_uri_handler_user_ctx;
+    const httpd_uri_t *http_handlers = args->http_handlers;
+    size_t handlers_count = args->handlers_count;
+
     initialize_sntp();
     if (args && args->server == NULL)
     {
         ESP_LOGI(TAG, "Starting WebSocket server");
-        args->server = start_ws_server(handlers);
+        args->server = start_ws_server(handlers, http_handlers, handlers_count);
     }
 }
 
@@ -468,7 +475,7 @@ static void http_connections_changed_handler(void *arg, esp_event_base_t event_b
 
 static httpd_handle_t server = NULL; // Declare server handle as static
 
-httpd_handle_t initialize_http_server(ws_message_handler_t message_handler, ws_client_changed_cb_t ws_client_changed_cb)
+httpd_handle_t initialize_http_server(const httpd_uri_t *http_handlers, size_t handlers_count, ws_message_handler_t ws_message_handler, ws_client_changed_cb_t ws_client_changed_cb)
 {
     ESP_LOGI(TAG, "Initializing NVC and TCP/IP stack");
     ESP_ERROR_CHECK(nvs_flash_init());
@@ -488,10 +495,10 @@ httpd_handle_t initialize_http_server(ws_message_handler_t message_handler, ws_c
         return NULL;
     }
 
-    ws_uri_handler_user_ctx->message_handler = message_handler;
+    ws_uri_handler_user_ctx->message_handler = ws_message_handler;
     ws_uri_handler_user_ctx->ws_client_connected_handler = ws_client_changed_cb;
 
-    server = start_ws_server(ws_uri_handler_user_ctx);
+    server = start_ws_server(ws_uri_handler_user_ctx, http_handlers, handlers_count);
 
     if (server == NULL)
     {
@@ -510,6 +517,8 @@ httpd_handle_t initialize_http_server(ws_message_handler_t message_handler, ws_c
 
     connect_event_args->server = server;
     connect_event_args->ws_uri_handler_user_ctx = ws_uri_handler_user_ctx;
+    connect_event_args->http_handlers = http_handlers;
+    connect_event_args->handlers_count = handlers_count;
 
     ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, connect_handler, connect_event_args));
     ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, WIFI_EVENT_STA_DISCONNECTED, disconnect_handler, connect_event_args));

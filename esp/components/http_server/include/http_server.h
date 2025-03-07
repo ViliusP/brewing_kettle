@@ -7,6 +7,6 @@ typedef esp_err_t (*ws_message_handler_t)(httpd_ws_frame_t *frame, char **data);
 
 esp_err_t send_ws_message(httpd_handle_t server_handle, const char *message);
 
-httpd_handle_t initialize_http_server(ws_message_handler_t message_handler, ws_client_changed_cb_t ws_client_changed_cb);
+httpd_handle_t initialize_http_server(const httpd_uri_t *http_handlers, size_t handlers_count, ws_message_handler_t ws_message_handler, ws_client_changed_cb_t ws_client_changed_cb);
 
 
