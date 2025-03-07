@@ -54,6 +54,32 @@ class AppLocalizationsLt extends AppLocalizations {
   String get exceptionConnectionRefused => 'Nepavyko prisijungti prie įrenginio. Patikrinkite pateiktą įrenginio adresą.';
 
   @override
+  String get exceptionHttpConnectionTimeout => 'Laikas užklausai į įrenginio serverį baigėsi. Patikrinkite tinklo ryšį.';
+
+  @override
+  String get exceptionHttpSendTimeout => 'Laikas užklausai į įrenginio serverį baigėsi. Patikrinkite tinklo ryšį.';
+
+  @override
+  String get exceptionHttpReceiveTimeout => 'Laikas užklausai gauti iš įrenginio serverio baigėsi. Patikrinkite tinklo ryšį.';
+
+  @override
+  String get exceptionHttpBadCertificate => 'Užklausa nepavyko. Blogas sertifikatas buvo pateiktas serveriui. Ši klaida neturėjo nutikti. Apie tai praneškite programinės įrangos kurėjams.';
+
+  @override
+  String exceptionHttpBadResponse(String code) {
+    return 'Netikėtas atsakas iš įrenginio serverio ($code). Užklausa nepavyko. Ši klaida neturėjo nutikti. Apie tai praneškite programinės įrangos kurėjams.';
+  }
+
+  @override
+  String get exceptionHttpCancel => 'Užklausa buvo atšaukta. Ši klaida neturėjo nutikti. Apie tai praneškite programinės įrangos kurėjams.';
+
+  @override
+  String get exceptionHttpConnectionError => 'Nepavyko prisijungti prie įrenginio serverio. Patikrinkite tinklo ryšį.';
+
+  @override
+  String get exceptionHttpUnknown => 'Įvyko netikėta tinklo problema. Tai gali būti interneto ryšio arba įrenginio serverio sutrikimai.';
+
+  @override
   String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override

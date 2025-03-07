@@ -54,6 +54,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exceptionConnectionRefused => 'Failed to connect to device. Device refused connection. Please check your provided address.';
 
   @override
+  String get exceptionHttpConnectionTimeout => 'Request to device\'s server timed out. Please check your internet connection.';
+
+  @override
+  String get exceptionHttpSendTimeout => 'Request to device\'s server timed out. Please check your internet connection.';
+
+  @override
+  String get exceptionHttpReceiveTimeout => 'Request to device\'s server timed out. Please check your internet connection.';
+
+  @override
+  String get exceptionHttpBadCertificate => 'Request failed. Bad certificate provided for device\'s server. This should not happen.';
+
+  @override
+  String exceptionHttpBadResponse(String code) {
+    return 'Unexpected response ($code). Request failed. This should not happen.';
+  }
+
+  @override
+  String get exceptionHttpCancel => 'Request was cancelled. This should not happenn.';
+
+  @override
+  String get exceptionHttpConnectionError => 'Failed to connect to device\'s server. Please check your internet connection.';
+
+  @override
+  String get exceptionHttpUnknown => 'Unexpected network error occurred. There may be a problem with your internet connection or device\'s server.';
+
+  @override
   String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override

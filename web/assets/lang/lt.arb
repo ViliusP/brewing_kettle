@@ -17,6 +17,23 @@
   "exceptionDeviceConnectionTimeout": "Nepavyko prisijungti prie įrenginio. Patikrinkite įrenginį ar pateiktą adresą.",
   "exceptionAddressLookupFailed": "Nepavyko prisijungti prie įrenginio. Patikrinkite interneto ryšį ar pateiktą įrenginio adresą.",
   "exceptionConnectionRefused": "Nepavyko prisijungti prie įrenginio. Patikrinkite pateiktą įrenginio adresą.",
+  "exceptionHttpConnectionTimeout": "Laikas užklausai į įrenginio serverį baigėsi. Patikrinkite tinklo ryšį.",
+  "exceptionHttpSendTimeout": "Laikas užklausai į įrenginio serverį baigėsi. Patikrinkite tinklo ryšį.",
+  "exceptionHttpReceiveTimeout": "Laikas užklausai gauti iš įrenginio serverio baigėsi. Patikrinkite tinklo ryšį.",
+  "exceptionHttpBadCertificate": "Užklausa nepavyko. Blogas sertifikatas buvo pateiktas serveriui. Ši klaida neturėjo nutikti. Apie tai praneškite programinės įrangos kurėjams.",
+  "exceptionHttpBadResponse": "Netikėtas atsakas iš įrenginio serverio ({code}). Užklausa nepavyko. Ši klaida neturėjo nutikti. Apie tai praneškite programinės įrangos kurėjams.",
+  "@exceptionHttpBadResponse": {
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "description": "HTTP response code",
+        "example": "400"
+      }
+    }
+  },
+  "exceptionHttpCancel": "Užklausa buvo atšaukta. Ši klaida neturėjo nutikti. Apie tai praneškite programinės įrangos kurėjams.",
+  "exceptionHttpConnectionError": "Nepavyko prisijungti prie įrenginio serverio. Patikrinkite tinklo ryšį.",
+  "exceptionHttpUnknown": "Įvyko netikėta tinklo problema. Tai gali būti interneto ryšio arba įrenginio serverio sutrikimai.",
   "mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "pMainGraphInfoTitle": "Temperatūros ir galios grafikas",

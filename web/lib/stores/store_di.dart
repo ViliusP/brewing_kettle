@@ -1,10 +1,13 @@
 import 'dart:async';
 
+import 'package:brew_kettle_dashboard/core/data/network/kettle_api/system_info_api.dart';
+import 'package:brew_kettle_dashboard/core/data/network/kettle_client.dart';
 import 'package:brew_kettle_dashboard/core/data/repository/repository.dart';
+import 'package:brew_kettle_dashboard/core/data/repository/system_info_repository.dart';
 import 'package:brew_kettle_dashboard/core/data/repository/websocket_connection_repository.dart';
 import 'package:brew_kettle_dashboard/core/data/storages/sharedpref/preferences.dart';
 import 'package:brew_kettle_dashboard/core/data/storages/sharedpref/shared_preference_helper.dart';
-import 'package:brew_kettle_dashboard/stores/device_info/devices_info_store.dart';
+import 'package:brew_kettle_dashboard/stores/device_info/system_info_store.dart';
 import 'package:brew_kettle_dashboard/stores/device_snapshot/device_snapshot_store.dart';
 import 'package:brew_kettle_dashboard/stores/exception/exception_store.dart';
 import 'package:brew_kettle_dashboard/stores/locale/locale_store.dart';
@@ -17,8 +20,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class StoreModule {
   static Future<void> inject(GetIt getIt) async {
+    KettleClient kettleClient = KettleClient();
+
     Repository repository = Repository(
-      webSocketConnection: WebSocketConnectionRepository(),
+      systemInfo: SystemInfoRepository(SystemInfoApi(client: kettleClient)),
+      webSocketConnection: WebSocketConnectionRepository(kettleClient),
       sharedPreferences: SharedPreferenceHelper(
         await SharedPreferencesWithCache.create(
           cacheOptions: SharedPreferencesWithCacheOptions(allowList: PreferenceKey.allowList),
@@ -35,8 +41,8 @@ class StoreModule {
     );
 
     getIt.registerSingleton<WebSocketConnectionStore>(webSocketConnectionStore);
-    getIt.registerSingleton<DevicesInfoStore>(
-      DevicesInfoStore(webSocketConnectionStore: webSocketConnectionStore),
+    getIt.registerSingleton<SystemInfoStore>(
+      SystemInfoStore(repository: repository, errorStore: exceptionStore),
     );
 
     getIt.registerSingleton<DeviceSnapshotStore>(

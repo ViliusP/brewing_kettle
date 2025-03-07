@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:brew_kettle_dashboard/core/data/network/kettle_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -9,10 +10,12 @@ const String _channelPath = "ws_1";
 const Duration _connectTimeout = Duration(seconds: 5);
 
 class WebSocketConnectionRepository {
+  final KettleClient _kettleClient;
+
   WebSocketChannel? _channel;
   bool get isConnected => _channel != null;
 
-  WebSocketConnectionRepository();
+  WebSocketConnectionRepository(this._kettleClient);
 
   Future connect({
     required Uri baseUri,
@@ -21,6 +24,12 @@ class WebSocketConnectionRepository {
     void Function()? onDone,
   }) async {
     final uri = baseUri.replace(path: _channelPath);
+    final String origin = switch (baseUri.scheme) {
+      "ws" => "http://${baseUri.host}:${baseUri.port}",
+      "wss" => "https://${baseUri.host}:${baseUri.port}",
+      _ => throw ArgumentError("Base URI scheme must be either 'ws' or 'wss'", baseUri.scheme),
+    };
+
     try {
       if (kIsWeb) {
         _channel = WebSocketChannel.connect(uri);
@@ -38,6 +47,7 @@ class WebSocketConnectionRepository {
         );
         await _channel?.ready;
       }
+      _kettleClient.setBaseUrl(origin);
 
       _channel!.stream.listen(
         onData,
@@ -66,5 +76,6 @@ class WebSocketConnectionRepository {
 
   void _clean() {
     _channel = null;
+    _kettleClient.setBaseUrl(null);
   }
 }

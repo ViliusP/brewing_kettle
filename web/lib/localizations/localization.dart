@@ -185,6 +185,54 @@ abstract class AppLocalizations {
   /// **'Failed to connect to device. Device refused connection. Please check your provided address.'**
   String get exceptionConnectionRefused;
 
+  /// Exception message when timeout happened when connecting to server.
+  ///
+  /// In en, this message translates to:
+  /// **'Request to device\'s server timed out. Please check your internet connection.'**
+  String get exceptionHttpConnectionTimeout;
+
+  /// Exception message when timeout happened when connecting to server.
+  ///
+  /// In en, this message translates to:
+  /// **'Request to device\'s server timed out. Please check your internet connection.'**
+  String get exceptionHttpSendTimeout;
+
+  /// Exception message when timeout happened when connecting to server.
+  ///
+  /// In en, this message translates to:
+  /// **'Request to device\'s server timed out. Please check your internet connection.'**
+  String get exceptionHttpReceiveTimeout;
+
+  /// Exception message when bad certificate is provided for server.
+  ///
+  /// In en, this message translates to:
+  /// **'Request failed. Bad certificate provided for device\'s server. This should not happen.'**
+  String get exceptionHttpBadCertificate;
+
+  /// Exception message when bad response is received from server.
+  ///
+  /// In en, this message translates to:
+  /// **'Unexpected response ({code}). Request failed. This should not happen.'**
+  String exceptionHttpBadResponse(String code);
+
+  /// Exception message when request was cancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Request was cancelled. This should not happenn.'**
+  String get exceptionHttpCancel;
+
+  /// Exception message when connection error happened.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to connect to device\'s server. Please check your internet connection.'**
+  String get exceptionHttpConnectionError;
+
+  /// Exception message when unexpected error happened.
+  ///
+  /// In en, this message translates to:
+  /// **'Unexpected network error occurred. There may be a problem with your internet connection or device\'s server.'**
+  String get exceptionHttpUnknown;
+
   /// No description provided for @mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///
   /// In en, this message translates to:

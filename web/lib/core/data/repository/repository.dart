@@ -1,21 +1,18 @@
+import 'package:brew_kettle_dashboard/core/data/repository/system_info_repository.dart';
 import 'package:brew_kettle_dashboard/core/data/repository/websocket_connection_repository.dart';
 import 'package:brew_kettle_dashboard/core/data/storages/sharedpref/shared_preference_helper.dart';
 
 class Repository {
   const Repository({
     required SharedPreferenceHelper sharedPreferences,
+    required SystemInfoRepository systemInfo,
     required WebSocketConnectionRepository webSocketConnection,
   }) : _sharedPreferences = sharedPreferences,
        _webSocketConnection = webSocketConnection,
-  // Sub repos
+       _systemInfo = systemInfo;
 
-  final SharedPreferenceHelper _sharedPrefsHelper;
-
-  Repository(this._sharedPrefsHelper);
-
-  SharedPreferenceHelper get sharedPreferences {
-    return _sharedPrefsHelper;
-  }
+  final SystemInfoRepository _systemInfo;
+  SystemInfoRepository get systemInfo => _systemInfo;
 
   final SharedPreferenceHelper _sharedPreferences;
   SharedPreferenceHelper get sharedPreferences => _sharedPreferences;

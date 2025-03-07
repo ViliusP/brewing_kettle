@@ -56,6 +56,45 @@
   "@exceptionConnectionRefused": {
     "description": "Exception message when provided address is partly good, but refuse to establish connection."
   },
+  "exceptionHttpConnectionTimeout": "Request to device's server timed out. Please check your internet connection.",
+  "@exceptionHttpConnectionTimeout": {
+    "description": "Exception message when timeout happened when connecting to server."
+  },
+  "exceptionHttpSendTimeout": "Request to device's server timed out. Please check your internet connection.",
+  "@exceptionHttpSendTimeout": {
+    "description": "Exception message when timeout happened when connecting to server."
+  },
+  "exceptionHttpReceiveTimeout": "Request to device's server timed out. Please check your internet connection.",
+  "@exceptionHttpReceiveTimeout": {
+    "description": "Exception message when timeout happened when connecting to server."
+  },
+  "exceptionHttpBadCertificate": "Request failed. Bad certificate provided for device's server. This should not happen.",
+  "@exceptionHttpBadCertificate": {
+    "description": "Exception message when bad certificate is provided for server."
+  },
+  "exceptionHttpBadResponse": "Unexpected response ({code}). Request failed. This should not happen.",
+  "@exceptionHttpBadResponse": {
+    "description": "Exception message when bad response is received from server.",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "description": "HTTP response code",
+        "example": "400"
+      }
+    }
+  },
+  "exceptionHttpCancel": "Request was cancelled. This should not happenn.",
+  "@exceptionHttpCancel": {
+    "description": "Exception message when request was cancelled."
+  },
+  "exceptionHttpConnectionError": "Failed to connect to device's server. Please check your internet connection.",
+  "@exceptionHttpConnectionError": {
+    "description": "Exception message when connection error happened."
+  }, 
+  "exceptionHttpUnknown": "Unexpected network error occurred. There may be a problem with your internet connection or device's server.",
+  "@exceptionHttpUnknown": {
+    "description": "Exception message when unexpected error happened."
+  },
   "mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "pMainGraphInfoTitle": "Temparature and power graph",
