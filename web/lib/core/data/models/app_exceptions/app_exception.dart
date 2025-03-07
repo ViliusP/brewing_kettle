@@ -65,7 +65,7 @@ class AppException implements Exception {
       ),
       DioExceptionType.badResponse => AppException(
         exception,
-        type: ExceptionType.httpUnknown,
+        type: ExceptionType.httpBadResponse,
         data: {"code": exception.response?.statusCode.toString() ?? "000"},
       ),
       DioExceptionType.cancel => AppException(exception, type: ExceptionType.httpCancel),
