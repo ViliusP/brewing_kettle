@@ -10,6 +10,7 @@
 #define MAX_DUTY (1 << LEDC_RESOLUTION) - 1; // 8191
 
 esp_err_t set_ssr_duty(float duty_percent);
+uint32_t get_ssr_duty(void);
 void init_ssr(int gpio_num);
 
 #endif // PERIPHERALS_H_
