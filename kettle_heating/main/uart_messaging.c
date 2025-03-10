@@ -158,8 +158,8 @@ void handle_set_power_data(CborValue *value)
     {
         cbor_value_get_float(value, &power);
     }
-
-    app_state->power = power;
+    
+    app_state->requested_power = power;
     app_state->status = HEATER_STATUS_HEATING_MANUAL;
     uart_send_state(*app_state);
 }

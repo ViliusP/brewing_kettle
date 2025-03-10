@@ -13,7 +13,10 @@ esp_err_t set_ssr_duty(float duty_percent)
 
     // Calculate absolute duty value
     const uint32_t max_duty = (1 << ((uint32_t)LEDC_RESOLUTION)) - 1;
+    
     uint32_t duty = (uint32_t)((duty_percent / 100.0f) * max_duty);
+
+    ESP_LOGI(TAG, "Max duty: %lu, duty_perecent: %f, duty: %lu", max_duty, duty_percent, duty);
 
     // Set and activate new duty cycle
     esp_err_t err = ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, duty);
@@ -28,6 +31,11 @@ esp_err_t set_ssr_duty(float duty_percent)
         ESP_LOGE(TAG, "Error occured while updating LEDC duty: %s", esp_err_to_name(err));
     }
     return err;
+}
+
+uint32_t get_ssr_duty(void) {
+    uint32_t duty = ledc_get_duty(LEDC_MODE, LEDC_CHANNEL);
+    return duty;
 }
 
 void init_ssr(int gpio_num)

@@ -18,6 +18,7 @@ typedef struct
     float current_temp;
     float target_temp;
     float power;
+    float requested_power;
 } app_state_t;
 
 app_state_t init_state();

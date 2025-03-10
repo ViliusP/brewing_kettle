@@ -14,7 +14,7 @@ void app_main(void)
     ESP_LOGI(TAG, "Hello, World!");
 
     app_state_t app_state = init_state();
-
+    float current_ssr_power = 0.0f;
     // ================ SSR ====================================
     init_ssr(SSR_GPIO);
     // =========================================================
@@ -60,26 +60,43 @@ void app_main(void)
     // // Step 3: Run PID with anti-windup
     // ESP_LOGI("PID", "Switching to PID control...");
     // =======================================================
-
+    
     while (1)
     {
         if (app_state.status == HEATER_STATUS_HEATING_MANUAL)
         {
-            ESP_LOGI(TAG, "| manual | current_temp: %.2f, target_temp: %.2f, power: %.2f", app_state.current_temp, app_state.target_temp, app_state.power);
-            set_ssr_duty(app_state.power);
+            if(app_state.requested_power != current_ssr_power) {
+                esp_err_t err = set_ssr_duty(app_state.requested_power);
+                if(err == ESP_OK) {
+                    current_ssr_power = app_state.requested_power;
+                    app_state.power = app_state.requested_power;
+                } else {
+                    ESP_LOGW(TAG, "Failed to set SSR duty: %s", esp_err_to_name(err));
+                }
+            }
+            ESP_LOGI(TAG, "| manual | current_temp: %.2f, target_temp: %.2f, power: %.2f%%", app_state.current_temp, app_state.target_temp, app_state.power);
         }
 
         if (app_state.status == HEATER_STATUS_HEATING_PID)
         {
-            ESP_LOGI(TAG, "| pid | current_temp: %.2f, target_temp: %.2f, power: %.2f", app_state.current_temp, app_state.target_temp, app_state.power);
             float pid_power = 0; // pid_update(&pid, app_state.current_temp);
             app_state.power = pid_power;
-            set_ssr_duty(pid_power);
+            esp_err_t err = set_ssr_duty(pid_power);
+            ESP_LOGI(TAG, "| pid | current_temp: %.2f, target_temp: %.2f, power: %.2f%%", app_state.current_temp, app_state.target_temp, app_state.power);
         }
 
         if (app_state.status == HEATER_STATUS_IDLE)
         {
-            ESP_LOGI(TAG, "| idle | current_temp: %.2f, target_temp: %.2f, power: %.2f", app_state.current_temp, app_state.target_temp, app_state.power);
+            if(current_ssr_power != 0.0f) {
+                esp_err_t err = set_ssr_duty(0.0f);
+                if(err == ESP_OK) {
+                    current_ssr_power = 0.0f;
+                    app_state.power = current_ssr_power;
+                } else {
+                    ESP_LOGW(TAG, "Failed to set SSR duty: %s", esp_err_to_name(err));
+                }
+            }
+            ESP_LOGI(TAG, "| idle | current_temp: %.2f, target_temp: %.2f, power: %.2f%%", app_state.current_temp, app_state.target_temp, app_state.power);
         }
 
         esp_err_t ret = get_temperature(ds18b20_handle, &app_state.current_temp);
@@ -90,7 +107,7 @@ void app_main(void)
         }
         else
         {
-            ESP_LOGE(TAG, "Failed to read temperature");
+            ESP_LOGW(TAG, "Failed to read temperature");
         }
         vTaskDelay(pdMS_TO_TICKS(pid.sample_time_sec * 2000));
     }
