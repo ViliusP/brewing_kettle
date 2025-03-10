@@ -6,7 +6,7 @@
 #define LEDC_MODE LEDC_LOW_SPEED_MODE
 #define LEDC_CHANNEL LEDC_CHANNEL_0
 #define LEDC_RESOLUTION LEDC_TIMER_13_BIT    // 8192 steps
-#define PWM_FREQUENCY 4000                   // 1Hz (for AC SSR) or higher for DC SSR
+#define PWM_FREQUENCY 60                  
 #define MAX_DUTY (1 << LEDC_RESOLUTION) - 1; // 8191
 
 esp_err_t set_ssr_duty(float duty_percent);
