@@ -25,6 +25,9 @@ const char *heater_status_human_string(heater_status_t state)
     case HEATER_STATUS_HEATING_PID:
         return "Heater works in PID mode";
 
+    case HEATER_STATUS_AUTOTUNE_PID:
+        return "Heater works in PID autotune mode";
+
     case HEATER_STATUS_ERROR:
         return "Heater controller has error(s)";
     
@@ -47,6 +50,9 @@ const char *heater_status_string(heater_status_t state)
     case HEATER_STATUS_HEATING_PID:
         return "HEATER_STATUS_HEATING_PID";
 
+    case HEATER_STATUS_AUTOTUNE_PID:
+        return "HEATER_STATUS_AUTOTUNE_PID";
+
     case HEATER_STATUS_ERROR:
         return "HEATER_STATUS_ERROR";
 
@@ -68,6 +74,9 @@ const char *heater_status_json_string(heater_status_t state)
 
     case HEATER_STATUS_HEATING_PID:
         return "heating_pid";
+
+    case HEATER_STATUS_AUTOTUNE_PID:
+        return "autotune_pid";
 
     case HEATER_STATUS_ERROR:
         return "error";

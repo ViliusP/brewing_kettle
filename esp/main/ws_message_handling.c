@@ -27,6 +27,7 @@
 
 #define HEATER_MODE_IDLE_JSON "idle"
 #define HEATER_MODE_PID_JSON "heating_pid"
+#define HEATER_MODE_AUTOTUNE_PID_JSON "autotune_pid"
 #define HEATER_MODE_MANUAL_JSON "heating_manual"
 
 static const char *TAG = "WS_MESSAGE_HANDLER";
@@ -133,6 +134,10 @@ heater_status_t heater_status_by_str(const char *value)
   if (strcmp(value, HEATER_MODE_MANUAL_JSON) == 0)
   {
     return HEATER_STATUS_HEATING_MANUAL;
+  }
+  if (strcmp(value, HEATER_MODE_AUTOTUNE_PID_JSON) == 0)
+  {
+    return HEATER_STATUS_AUTOTUNE_PID;
   }
   return HEATER_STATUS_UNKNOWN;
 }
@@ -379,12 +384,6 @@ static esp_err_t handle_message(httpd_ws_frame_t *frame, char **data)
     break;
   case MESSAGE_SET_HEATER_MODE:
     heater_status_t heater_status = parse_heater_mode(root);
-    if (heater_status == HEATER_STATUS_UNKNOWN)
-    {
-      ESP_LOGW(TAG, "Couldn't parse heater status from 'MESSAGE_SET_HEATER_MODE'");
-      cJSON_Delete(root);
-      return ESP_OK;
-    }
     send_set_heater_mode(heater_status);
     cJSON_Delete(root);
     return ESP_OK;
