@@ -1,6 +1,7 @@
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/stores/device_info/system_info_store.dart';
+import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
 import 'package:flutter/material.dart';
 
 class HeaterControllerInfoCard extends StatelessWidget {
@@ -38,7 +39,6 @@ class HeaterControllerInfoCard extends StatelessWidget {
           Text("IDF version ${software?.idfVersion}", style: textTheme.bodyMedium),
           Text("Compile time ${software?.compileTime}", style: textTheme.bodyMedium),
           Divider(),
-          Divider(),
           Text("PID", style: textTheme.titleMedium),
           _PidSection(),
         ],
@@ -48,7 +48,10 @@ class HeaterControllerInfoCard extends StatelessWidget {
 }
 
 class _PidSection extends StatelessWidget {
-  const _PidSection();
+  final HeaterControllerStateStore _heaterControllerStateStore =
+      getIt<HeaterControllerStateStore>();
+
+  _PidSection();
 
   @override
   Widget build(BuildContext context) {
@@ -70,11 +73,19 @@ class _PidSection extends StatelessWidget {
           ),
         ),
         Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-        ElevatedButton(
+        OutlinedButton(
           onPressed: () {
             print("Not implemented");
           },
           child: Text("Pakeist"),
+        ),
+        Padding(padding: EdgeInsets.symmetric(vertical: 8)),
+        TextFormField(
+          decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Tune duration (s)"),
+        ),
+        OutlinedButton(
+          onPressed: () => _heaterControllerStateStore.changeMode(HeaterMode.autotunePid),
+          child: Text("PID autotune"),
         ),
       ],
     );

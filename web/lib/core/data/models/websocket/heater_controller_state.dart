@@ -62,6 +62,7 @@ enum HeaterStatus {
   idle("idle"),
   heatingManual("heating_manual"),
   heatingPid("heating_pid"),
+  autotunePid("autotune_pid"),
   error("error"),
   unknown("unknown");
 
@@ -73,7 +74,8 @@ enum HeaterStatus {
 enum HeaterMode {
   idle("idle"),
   heatingManual("heating_manual"),
-  heatingPid("heating_pid");
+  heatingPid("heating_pid"),
+  autotunePid("autotune_pid");
 
   const HeaterMode(this.jsonValue);
 
@@ -83,12 +85,14 @@ enum HeaterMode {
     idle => HeaterStatus.idle,
     heatingManual => HeaterStatus.heatingManual,
     heatingPid => HeaterStatus.heatingPid,
+    autotunePid => HeaterStatus.autotunePid,
   };
 
   static HeaterMode? fromHeaterStatus(HeaterStatus value) => switch (value) {
     HeaterStatus.idle => HeaterMode.idle,
     HeaterStatus.heatingManual => HeaterMode.heatingManual,
     HeaterStatus.heatingPid => HeaterMode.heatingPid,
+    HeaterStatus.autotunePid => HeaterMode.autotunePid,
     _ => null,
   };
 }

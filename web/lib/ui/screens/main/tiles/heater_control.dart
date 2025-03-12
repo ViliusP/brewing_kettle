@@ -67,6 +67,7 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                         increaseNotifier: _increaseTapNotifier,
                         decreaseNotifier: _decreaseTapNotifier,
                       ),
+                      HeaterStatus.autotunePid => _PidAutotuneContent(),
                       HeaterStatus.heatingManual => _ManualControlContent(
                         increaseNotifier: _increaseTapNotifier,
                         decreaseNotifier: _decreaseTapNotifier,
@@ -91,10 +92,12 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                         onPressed: switch (_heaterControllerStateStore.status) {
                           HeaterStatus.heatingPid ||
                           HeaterStatus.heatingManual => _increaseTapNotifier.notify,
+                          HeaterStatus.autotunePid => null,
                           HeaterStatus.idle => null,
                           HeaterStatus.error => null,
                           HeaterStatus.unknown => null,
                           null => null,
+                          // TODO: Handle this case.
                         },
                         icon: Icon(MdiIcons.arrowUpDropCircleOutline),
                         iconSize: 60,
@@ -115,6 +118,7 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                           HeaterStatus.heatingPid ||
                           HeaterStatus.heatingManual => _decreaseTapNotifier.notify,
                           HeaterStatus.idle => null,
+                          HeaterStatus.autotunePid => null,
                           HeaterStatus.error => null,
                           HeaterStatus.unknown => null,
                           null => null,
@@ -409,6 +413,15 @@ class _PidControlContentState extends State<_PidControlContent> {
   }
 }
 
+class _PidAutotuneContent extends StatelessWidget {
+  const _PidAutotuneContent();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text("Autotuning..."));
+  }
+}
+
 class _IdleStatusContent extends StatelessWidget {
   const _IdleStatusContent();
 
@@ -438,7 +451,9 @@ class _HeaterModeSelect extends StatelessWidget {
     HeaterStatus.idle => MdiIcons.sleep,
     HeaterStatus.error => MdiIcons.kettleAlertOutline,
     HeaterStatus.unknown => MdiIcons.helpCircleOutline,
+    HeaterStatus.autotunePid => MdiIcons.progressWrench,
     null => MdiIcons.dotsHorizontal,
+    // TODO: Handle this case.
   };
 
   @override
