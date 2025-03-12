@@ -81,6 +81,22 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
     });
   }
 
+  late final _$_isModeChangingAtom = Atom(
+      name: '_HeaterControllerStateStore._isModeChanging', context: context);
+
+  @override
+  bool get _isModeChanging {
+    _$_isModeChangingAtom.reportRead();
+    return super._isModeChanging;
+  }
+
+  @override
+  set _isModeChanging(bool value) {
+    _$_isModeChangingAtom.reportWrite(value, super._isModeChanging, () {
+      super._isModeChanging = value;
+    });
+  }
+
   late final _$_stateHistoryAtom =
       Atom(name: '_HeaterControllerStateStore._stateHistory', context: context);
 
