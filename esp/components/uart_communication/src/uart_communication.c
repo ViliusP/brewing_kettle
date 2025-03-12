@@ -234,12 +234,12 @@ int uart_send_message(uart_message_t *msg)
 
 void start_uart_task(rx_task_callback_t rx_task_callback)
 {
-    xTaskCreate(rx_task, "uart_rx_task", RX_BUF_SIZE * 2, rx_task_callback, configMAX_PRIORITIES - 1, NULL);
+    xTaskCreate(rx_task, "uart_rx_task", RX_BUF_SIZE * 3, rx_task_callback, configMAX_PRIORITIES - 1, NULL);
 }
 
 void initialize_uart(uart_config_t uart_config, int tx_pin, int rx_pin)
 {
-    uart_driver_install(UART_NUM_1, RX_BUF_SIZE * 2, 0, 0, NULL, 0);
+    uart_driver_install(UART_NUM_1, RX_BUF_SIZE * 3, 0, 0, NULL, 0);
     uart_param_config(UART_NUM_1, &uart_config);
     uart_set_pin(UART_NUM_1, tx_pin, rx_pin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 }
