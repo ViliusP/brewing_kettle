@@ -16,8 +16,6 @@ esp_err_t set_ssr_duty(float duty_percent)
     
     uint32_t duty = (uint32_t)((duty_percent / 100.0f) * max_duty);
 
-    ESP_LOGI(TAG, "Max duty: %lu, duty_perecent: %f, duty: %lu", max_duty, duty_percent, duty);
-
     // Set and activate new duty cycle
     esp_err_t err = ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, duty);
     if (err != ESP_OK)
