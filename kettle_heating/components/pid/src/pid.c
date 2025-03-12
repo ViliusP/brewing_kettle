@@ -2,7 +2,7 @@
 #include "esp_check.h"
 #include "pid.h"
 #include <stdbool.h>
-#include <math.h>  
+#include <math.h>
 #include "freertos/FreeRTOS.h"
 
 static const char *TAG = "PID";
@@ -22,7 +22,6 @@ void pid_init(pid_controller_t *pid, float Kp, float Ki, float Kd, float setpoin
 
 float pid_update(pid_controller_t *pid, float process_variable)
 {
-    // Calculate error
     float error = pid->setpoint - process_variable;
 
     // Proportional term
@@ -35,39 +34,29 @@ float pid_update(pid_controller_t *pid, float process_variable)
     // Derivative term
     float derivative = pid->Kd * (error - pid->prev_error) / pid->sample_time_sec;
 
-    // Compute raw output (before clamping)
-    pid->last_output = proportional + integral + derivative;
+    // Calculate raw output
+    float output = proportional + integral + derivative;
+    pid->last_output = output; // Store unclamped value
 
-    // Clamp output and apply anti-windup
-    float clamped_output = pid->last_output;
-    if (clamped_output > pid->output_max)
-    {
-        clamped_output = pid->output_max;
-    }
-    else if (clamped_output < pid->output_min)
-    {
-        clamped_output = pid->output_min;
-    }
+    // Apply clamping
+    output = fmaxf(pid->output_min, fminf(output, pid->output_max));
 
-    // Back-calculation anti-windup: Adjust integral term
-    float output_diff = clamped_output - pid->last_output;
-    pid->integral += pid->integral_anti_windup * output_diff;
+    // Anti-windup (back-calculation)
+    pid->integral += (output - pid->last_output) * pid->integral_anti_windup;
 
-    // Save previous error
     pid->prev_error = error;
-
-    return clamped_output;
+    return output;
 }
 
-void apply_ziegler_nichols(pid_controller_t *pid, pid_auto_tune_t *tuner) {
-    // Ziegler-Nichols PID tuning rules
-    pid->Kp = 0.6f * tuner->Ku;
-    pid->Ki = 1.2f * tuner->Ku / tuner->Tu;
-    pid->Kd = 0.075f * tuner->Ku * tuner->Tu;
+void apply_ziegler_nichols(pid_controller_t *pid, pid_auto_tune_t *tuner)
+{
+    pid->Kp = fmaxf(0.6f * tuner->Ku, 0);
+    pid->Ki = fmaxf(1.2f * tuner->Ku / tuner->Tu, 0);
+    pid->Kd = fmaxf(0.075f * tuner->Ku * tuner->Tu, 0);
 }
 
-
-void pid_auto_tune(pid_auto_tune_t *tuner, float process_variable) {
+void pid_auto_tune(pid_auto_tune_t *tuner, float process_variable)
+{
     static bool relay_state = false;
     static float last_pv = 0.0f;
     static uint32_t peak_count = 0;
@@ -75,9 +64,12 @@ void pid_auto_tune(pid_auto_tune_t *tuner, float process_variable) {
     static float amplitude_sum = 0.0f;
 
     // Toggle relay based on process variable and hysteresis
-    if (process_variable > tuner->setpoint + tuner->hysteresis) {
+    if (process_variable > tuner->setpoint + tuner->hysteresis)
+    {
         relay_state = false;
-    } else if (process_variable < tuner->setpoint - tuner->hysteresis) {
+    }
+    else if (process_variable < tuner->setpoint - tuner->hysteresis)
+    {
         relay_state = true;
     }
 
@@ -86,10 +78,12 @@ void pid_auto_tune(pid_auto_tune_t *tuner, float process_variable) {
 
     // Detect peaks (simplified logic)
     if ((process_variable > last_pv && process_variable > tuner->setpoint) ||
-        (process_variable < last_pv && process_variable < tuner->setpoint)) {
-        if (peak_count < 2) {
+        (process_variable < last_pv && process_variable < tuner->setpoint))
+    {
+        if (peak_count < 2)
+        {
             peak_times[peak_count] = xTaskGetTickCount() * portTICK_PERIOD_MS / 1000.0f;
-            amplitude_sum += fabsf(process_variable - tuner->setpoint);  // Use fabsf for floats
+            amplitude_sum += fabsf(process_variable - tuner->setpoint); // Use fabsf for floats
             peak_count++;
         }
     }
@@ -97,7 +91,8 @@ void pid_auto_tune(pid_auto_tune_t *tuner, float process_variable) {
     last_pv = process_variable;
 
     // Calculate Ku and Tu after 2 oscillations
-    if (peak_count >= 2) {
+    if (peak_count >= 2)
+    {
         tuner->Tu = peak_times[1] - peak_times[0];
         float avg_amplitude = amplitude_sum / 2.0f;
         tuner->Ku = (4.0f * (tuner->output_high - tuner->output_low)) / (M_PI * avg_amplitude);
