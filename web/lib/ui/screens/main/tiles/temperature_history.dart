@@ -233,6 +233,7 @@ class TemperatureHistoryChart extends StatelessWidget {
           _ChartSelections.tooltipShow: _ChartSelections.tooltipShowSettings,
           _ChartSelections.crosshairShow: _ChartSelections.crossHairShowSettings,
         },
+        // TODO: fix tooltip when top data point is selected.
         tooltip: TooltipGuide(
           selections: {_ChartSelections.tooltipShow},
           followPointer: [false, false],
