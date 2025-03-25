@@ -1,6 +1,8 @@
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:flutter/material.dart';
 
+// TODO: skip null values:
+// https://github.com/entronad/graphic/issues/122
 class HistoryGraphInfo extends StatelessWidget {
   const HistoryGraphInfo({super.key});
 
