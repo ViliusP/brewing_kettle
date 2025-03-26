@@ -18,7 +18,7 @@
 #include "state.h"
 #include "configuration.h"
 #include <esp_sntp.h>
-#include "sd_card.h"
+#include "storage.h"
 #include "http_handlers.h"
 #include "sdmmc_cmd.h"
 
@@ -148,7 +148,7 @@ void app_main(void)
     start_rendering(state_subjects);
     // ==========================================
 
-    // ================ SDCARD ===================
+    // ================ STORAGE ===================
     sdmmc_card_t *card;
     esp_err_t ret = init_sdcard(&sdcard_bus_cfg, &card);
     if (ret != ESP_OK)

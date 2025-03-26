@@ -5,12 +5,12 @@
 #include "sdmmc_cmd.h"
 #include <sys/stat.h>
 #include <stdbool.h>
-#include "sd_card.h"
+#include "storage.h"
 
 #define EXAMPLE_MAX_CHAR_SIZE 64
 
 
-static const char *TAG = "SD_CARD";
+static const char *TAG = "FILESYSTEM.SD_CARD";
 
 #define MOUNT_POINT "/sdcard"
 
