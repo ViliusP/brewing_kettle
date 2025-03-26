@@ -137,7 +137,16 @@ void app_main(void)
     state_subjects_t *state_subjects = init_state_subjects(app_state);
     // ==========================================
 
+    // ================= UI =====================
     initialize_display();
+
+    // Install matrix keyboard driver
+    matrix_kbd_handle_t kbd = NULL;
+    matrix_kbd_install(&kbd_config, &kbd);
+    add_keypad_input(keypad_read, kbd);
+
+    start_rendering(state_subjects);
+    // ==========================================
 
     // ================ SDCARD ===================
     sdmmc_card_t *card;
@@ -152,24 +161,20 @@ void app_main(void)
     rx_task_callback_t uart_message_handler = init_uart_message_handler(state_subjects);
     initialize_uart(uart_config, UART_TX_PIN, UART_RX_PIN);
     start_uart_task(uart_message_handler);
-    // ==========================================
 
-    // ================ keyboard ===================
-    // Install matrix keyboard driver
-    matrix_kbd_handle_t kbd = NULL;
-    matrix_kbd_install(&kbd_config, &kbd);
-    // Register keyboard input event handler
-    // matrix_kbd_register_event_handler(kbd, example_matrix_kbd_event_handler, NULL);
-    // // // Keyboard start to work
-    // matrix_kbd_start(kbd);
-    // ==========================================
-
-    // ================= UI =====================
-    add_keypad_input(keypad_read, kbd);
-    start_rendering(state_subjects);
     // ==========================================
 
     // ============== HTTP_SERVER =================
+    wifi_credentials_t credentials;
+    if (ret == ESP_OK && card != NULL && file_exists(wifi_config_file) && read_credentials("credentials.txt", &credentials) == 0)
+    {
+
+        ESP_LOGI(TAG, "Username: %s, Password: %s\n", credentials.username, credentials.password);
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Reading credentials from SD card failed, trying to read from SPIFFS");
+    }
     const size_t handlers_count = http_handlers_get_count();
     const httpd_uri_t *http_handlers = http_handlers_get_array();
 

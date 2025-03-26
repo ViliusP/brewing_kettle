@@ -175,15 +175,16 @@ void app_state_deinit(void)
 void change_status(app_state_t *app_state, app_status_t status)
 {
     app_state->status = status;
-    lv_subject_notify(&state_subjects.app_status);
+    lv_subject_set_int(&state_subjects.app_status, app_state->status);
     return;
 }
 
 state_subjects_t *init_state_subjects(app_state_t *app_state)
 {
-    ESP_LOGI(TAG, "Initializing state subjects with heater controller state at address: %p", (void *)app_state->heater_controller_state);
+    ESP_LOGD(TAG, "Initializing state subjects with heater controller state at address: %p", (void *)app_state->heater_controller_state);
     lv_subject_init_pointer(&state_subjects.heater_controller_state, app_state->heater_controller_state);
     lv_subject_init_pointer(&state_subjects.connected_clients, NULL);
+    lv_subject_init_int(&state_subjects.app_status, app_state->status);
 
     return &state_subjects;
 }

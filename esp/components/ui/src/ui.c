@@ -12,12 +12,13 @@ LV_FONT_DECLARE(font_mdi_14)
 
 static const char *TAG = "SCREEN.UI";
 
-const char *menu_labels[] = {CONNECTION_SYMBOL " status", "control", "connections", "messages", "something"};
+const char *menu_labels[] = {CONNECTION_SYMBOL " status", "connection", "hello world", "messages", "something"};
 
 typedef enum
 {
     PAGE_MAIN_MENU = 0,
     PAGE_STATUS = 1,
+    PAGE_CONNECTION,
 } page_id_t;
 
 typedef struct push_page_args_t
@@ -219,13 +220,20 @@ lv_obj_t *compose_main_menu(lv_obj_t *parent, lv_fragment_manager_t *manager)
         lv_obj_add_style(btn, &style_btn_default, LV_STATE_DEFAULT);
         lv_obj_add_style(btn, &style_btn_default, LV_STATE_FOCUSED);
         lv_obj_add_style(btn, &style_btn_focused, LV_STATE_FOCUSED);
+        
         switch (i)
         {
         case 0:
-            static push_page_args_t args;
-            args.manager = manager;
-            args.page_id = PAGE_STATUS;
-            lv_obj_add_event_cb(btn, menu_button_cb, LV_EVENT_CLICKED, &args);
+            static push_page_args_t args0;
+            args0.manager = manager;
+            args0.page_id = PAGE_STATUS;
+            lv_obj_add_event_cb(btn, menu_button_cb, LV_EVENT_CLICKED, &args0);
+            break;
+        case 1:
+            static push_page_args_t args1;
+            args1.manager = manager;
+            args1.page_id = PAGE_CONNECTION;
+            lv_obj_add_event_cb(btn, menu_button_cb, LV_EVENT_CLICKED, &args1);
             break;
         default:
             break;
@@ -270,8 +278,11 @@ static lv_obj_t *nav_fragment_create(lv_fragment_t *self, lv_obj_t *parent)
     case PAGE_MAIN_MENU:
         return compose_main_menu(parent, manager);
     case PAGE_STATUS:
-        ESP_LOGD(TAG, "Creating status_page fragment");
+        ESP_LOGD(TAG, "Creating PAGE_STATUS fragment");
         return compose_status_page(parent, manager, state_subjects);
+    case PAGE_CONNECTION:
+        ESP_LOGD(TAG, "Creating PAGE_CONNECTION fragment");
+        return compose_connection_page(parent, manager, state_subjects);
     default:
         return compose_unknown_page(parent, manager);
     }
@@ -294,6 +305,7 @@ void set_first_page(lv_fragment_manager_t *manager, page_id_t page_id)
 
 void compose_ui(lv_display_t *disp, state_subjects_t *arg_state_subjects)
 {
+    
     state_subjects = arg_state_subjects;
     // lv_obj_t *p = lv_obj_create(lv_screen_active());
     // lv_obj_remove_style_all(p);

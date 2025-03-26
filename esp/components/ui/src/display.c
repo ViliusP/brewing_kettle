@@ -224,7 +224,6 @@ esp_err_t initialize_display(void) {
 
     ESP_LOGI(TAG, "Create LVGL task");
     xTaskCreate(lvgl_port_task, "LVGL", LVGL_TASK_STACK_SIZE, NULL, LVGL_TASK_PRIORITY, NULL);
-
     return ESP_OK;
 }
 

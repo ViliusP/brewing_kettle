@@ -3,8 +3,12 @@
 #include <sys/stat.h>
 #include "esp_vfs_fat.h"
 #include "sdmmc_cmd.h"
+#include <sys/stat.h>
+#include <stdbool.h>
+#include "sd_card.h"
 
 #define EXAMPLE_MAX_CHAR_SIZE 64
+
 
 static const char *TAG = "SD_CARD";
 
@@ -12,6 +16,8 @@ static const char *TAG = "SD_CARD";
 
 // Pin assignments of sd card module
 #define PIN_NUM_CS GPIO_NUM_1
+
+
 
 static esp_err_t sd_write_file(const char *path, char *data)
 {
@@ -27,6 +33,50 @@ static esp_err_t sd_write_file(const char *path, char *data)
     ESP_LOGI(TAG, "File written");
 
     return ESP_OK;
+}
+
+int read_credentials(const char *filename, wifi_credentials_t *credentials) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("Error opening file");
+        return 1; // Error
+    }
+
+    // Read username (first line)
+    if (!fgets(credentials->username, sizeof(credentials->username), file)) {
+        if (feof(file)) {
+            fprintf(stderr, "Error: File is empty (missing username)\n");
+        } else {
+            perror("Read error");
+        }
+        fclose(file);
+        return 1;
+    }
+
+    // Read password (second line)
+    if (!fgets(credentials->password, sizeof(credentials->password), file)) {
+        if (feof(file)) {
+            fprintf(stderr, "Error: Missing password line\n");
+        } else {
+            perror("Read error");
+        }
+        fclose(file);
+        return 1;
+    }
+
+    fclose(file);
+
+    // Remove newline characters (works for both Unix and Windows line endings)
+    credentials->username[strcspn(credentials->username, "\r\n")] = '\0';
+    credentials->password[strcspn(credentials->password, "\r\n")] = '\0';
+
+    return 0; // Success
+}
+
+bool file_exists(const char *path)
+{
+    struct stat buffer;
+    return (stat(path, &buffer) == 0);
 }
 
 static esp_err_t sd_read_file(const char *path)

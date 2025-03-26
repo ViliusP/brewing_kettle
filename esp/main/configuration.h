@@ -25,6 +25,9 @@ const matrix_kbd_config_t kbd_config = {
     .debounce_ms = 20,
 };
 
+// SD CARD
+#define wifi_config_file "/sdcard/wifi.txt"
+
 #define PIN_NUM_MISO GPIO_NUM_6
 #define PIN_NUM_MOSI GPIO_NUM_4
 #define PIN_NUM_CLK GPIO_NUM_5
