@@ -150,8 +150,14 @@ void app_main(void)
 
     // ================ STORAGE ===================
     sdmmc_card_t *card;
-    esp_err_t ret = init_sdcard(&sdcard_bus_cfg, &card);
-    if (ret != ESP_OK)
+    esp_err_t sdcard_init_ret = init_sdcard(&sdcard_bus_cfg, &card);
+    if (sdcard_init_ret != ESP_OK)
+    {
+        change_status(app_state, APP_STATUS_ERROR_SDCARD_INIT);
+    }
+
+    esp_err_t spiffs_init_ret = init_spiffs();
+    if (spiffs_init_ret != ESP_OK)
     {
         change_status(app_state, APP_STATUS_ERROR_SDCARD_INIT);
     }
@@ -166,14 +172,19 @@ void app_main(void)
 
     // ============== HTTP_SERVER =================
     wifi_credentials_t credentials;
-    if (ret == ESP_OK && card != NULL && file_exists(wifi_config_file) && read_credentials("credentials.txt", &credentials) == 0)
+    if (sdcard_init_ret == ESP_OK && card != NULL && file_exists(sdcard_wifi_config_file) && read_credentials(sdcard_wifi_config_file, &credentials) == 0)
     {
 
         ESP_LOGI(TAG, "Username: %s, Password: %s\n", credentials.username, credentials.password);
     }
-    else
+    else if (spiffs_init_ret == ESP_OK && file_exists(spiffs_wifi_config_file) && read_credentials(spiffs_wifi_config_file, &credentials) == 0)
     {
         ESP_LOGI(TAG, "Reading credentials from SD card failed, trying to read from SPIFFS");
+        ESP_LOGI(TAG, "Username: %s, Password: %s\n", credentials.username, credentials.password);
+    }
+    else
+    {
+        ESP_LOGE(TAG, "Reading credentials from SD card and spiffs failed");
     }
     const size_t handlers_count = http_handlers_get_count();
     const httpd_uri_t *http_handlers = http_handlers_get_array();

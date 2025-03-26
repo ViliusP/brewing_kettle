@@ -210,24 +210,6 @@ esp_err_t init_sdcard(const spi_bus_config_t *bus_cfg, sdmmc_card_t **card)
 //         return;
 //     }
 
-//     // Format FATFS
-// #ifdef CONFIG_EXAMPLE_FORMAT_SD_CARD
-//     ret = esp_vfs_fat_sdcard_format(mount_point, card);
-//     if (ret != ESP_OK)
-//     {
-//         ESP_LOGE(TAG, "Failed to format FATFS (%s)", esp_err_to_name(ret));
-//         return;
-//     }
-
-//     if (stat(file_foo, &st) == 0)
-//     {
-//         ESP_LOGI(TAG, "file still exists");
-//         return;
-//     }
-//     else
-//     {
-//         ESP_LOGI(TAG, "file doesnt exist, format done");
-//     }
 // #endif // CONFIG_EXAMPLE_FORMAT_SD_CARD
 
 //     const char *file_nihao = MOUNT_POINT "/nihao.txt";

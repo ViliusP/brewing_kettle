@@ -35,6 +35,8 @@ int read_credentials(const char *filename, wifi_credentials_t *credentials);
  */
 esp_err_t init_sdcard(const spi_bus_config_t *bus_cfg, sdmmc_card_t **card);
 
+esp_err_t init_spiffs();
+
 bool file_exists(const char *path);
 
 #ifdef __cplusplus
