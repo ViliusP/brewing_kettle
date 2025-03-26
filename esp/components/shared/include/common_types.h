@@ -47,14 +47,26 @@ typedef struct
     size_t client_count;
 } client_info_data_t;
 
+typedef enum
+{
+    APP_STATUS_OK,
+    APP_STATUS_INITIALIZING,
+    APP_STATUS_ERROR_SDCARD_INIT,
+    APP_STATUS_ERROR_WIFI_CREDENTIALS,
+    APP_STATUS_ERROR_WIFI_CONNECT,
+    APP_STATUS_UNKNOWN,
+} app_status_t;
+
 typedef struct
 {
+    app_status_t status;
     heater_controller_state_t *heater_controller_state;
     client_info_data_t *connected_clients;
 } app_state_t;
 
 typedef struct
 {
+    lv_subject_t app_status;
     lv_subject_t heater_controller_state;
     lv_subject_t connected_clients;
 } state_subjects_t;

@@ -30,7 +30,7 @@ const char *heater_status_human_string(heater_status_t state)
 
     case HEATER_STATUS_ERROR:
         return "Heater controller has error(s)";
-    
+
     case HEATER_STATUS_UNKNOWN:
         return "Probably parsing error occured: heater status unknown";
     }
@@ -145,6 +145,7 @@ app_state_t *app_state_init(void)
 
     // Initialize global app state
     app_state = (app_state_t){
+        .status = APP_STATUS_INITIALIZING,
         .heater_controller_state = heater_state,
         .connected_clients = clients};
 
@@ -169,6 +170,13 @@ void app_state_deinit(void)
         free(app_state.connected_clients);
         app_state.connected_clients = NULL;
     }
+}
+
+void change_status(app_state_t *app_state, app_status_t status)
+{
+    app_state->status = status;
+    lv_subject_notify(&state_subjects.app_status);
+    return;
 }
 
 state_subjects_t *init_state_subjects(app_state_t *app_state)

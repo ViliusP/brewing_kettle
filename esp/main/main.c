@@ -20,6 +20,7 @@
 #include <esp_sntp.h>
 #include "sd_card.h"
 #include "http_handlers.h"
+#include "sdmmc_cmd.h"
 
 static const char *TAG = "MAIN";
 
@@ -131,12 +132,20 @@ void app_main(void)
     ESP_LOGI(TAG, "Hello, World!");
     ESP_LOGI(TAG, "Boot count: %d", boot_count);
 
-    init_sdcard();
-    initialize_display();
-
     // ================ state ===================
     app_state_t *app_state = app_state_init();
     state_subjects_t *state_subjects = init_state_subjects(app_state);
+    // ==========================================
+
+    initialize_display();
+
+    // ================ SDCARD ===================
+    sdmmc_card_t *card;
+    esp_err_t ret = init_sdcard(&sdcard_bus_cfg, &card);
+    if (ret != ESP_OK)
+    {
+        change_status(app_state, APP_STATUS_ERROR_SDCARD_INIT);
+    }
     // ==========================================
 
     // ================ UART ===================

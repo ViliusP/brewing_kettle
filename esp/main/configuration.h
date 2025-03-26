@@ -1,5 +1,6 @@
 #include "driver/uart.h"
 #include "driver/gpio.h"
+#include "driver/spi_common.h"
 
 // UART
 #define UART_BAUD_RATE 115200
@@ -22,4 +23,17 @@ const matrix_kbd_config_t kbd_config = {
     .nr_row_gpios = 3,
     .nr_col_gpios = 3,
     .debounce_ms = 20,
+};
+
+#define PIN_NUM_MISO GPIO_NUM_6
+#define PIN_NUM_MOSI GPIO_NUM_4
+#define PIN_NUM_CLK GPIO_NUM_5
+
+const spi_bus_config_t sdcard_bus_cfg = {
+    .mosi_io_num = PIN_NUM_MOSI,
+    .miso_io_num = PIN_NUM_MISO,
+    .sclk_io_num = PIN_NUM_CLK,
+    .quadwp_io_num = -1,
+    .quadhd_io_num = -1,
+    .max_transfer_sz = 4000,
 };
