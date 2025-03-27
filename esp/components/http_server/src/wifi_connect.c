@@ -290,7 +290,7 @@ static esp_err_t connect(const char *ssid, const char *password)
         return wifi_sta_do_connect(wifi_config, true);
     } else {
         ESP_LOGI(TAG, "SSID or password is empty, trying to connect to the last known network");
-        ESP_LOGE(TAG, "NOT IMPLEMENTED!!!");
+        esp_wifi_get_config(WIFI_IF_STA, &wifi_config);
     }
     return wifi_sta_do_connect(wifi_config, true);
 }
