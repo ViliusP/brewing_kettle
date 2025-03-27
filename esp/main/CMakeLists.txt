@@ -1,2 +1,5 @@
-idf_component_register(SRCS "main.c" "ui/screen_init.c" "ui/lvgl_demo_ui.c"
-                        INCLUDE_DIRS "." "ui")
+idf_component_register(SRCS "ws_message_handling.c" "uart_messaging.c" "main.c" "state.c" "http_handlers.c"
+                       INCLUDE_DIRS "."
+                       REQUIRES shared ui matrix_keyboard http_server storage uart_communication spi_flash mbedtls  esp_app_format
+                       )
+
