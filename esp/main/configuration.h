@@ -27,7 +27,6 @@ const matrix_kbd_config_t kbd_config = {
 
 // STORAGE
 #define sdcard_wifi_config_file "/sdcard/wifi.txt"
-#define spiffs_wifi_config_file "/spiffs/wifi.txt"
 
 #define PIN_NUM_MISO GPIO_NUM_6
 #define PIN_NUM_MOSI GPIO_NUM_4

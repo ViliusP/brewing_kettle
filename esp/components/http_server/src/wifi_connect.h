@@ -12,7 +12,7 @@ extern "C" {
  *
  * @return ESP_OK on successful connection
  */
-esp_err_t wifi_connect(void);
+esp_err_t wifi_connect(const char *ssid, const char *password);
 
 /**
  * De-initializes Wi-Fi

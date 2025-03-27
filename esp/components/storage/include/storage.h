@@ -11,7 +11,7 @@ extern "C" {
 #define MAX_PASSWORD_LENGTH 256
 
 /**
- * @brief Type defined for matrix keyboard handle
+ * @brief Type defined for wifi credentials - username and password
  *
  */
 typedef struct {

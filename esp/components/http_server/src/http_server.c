@@ -475,17 +475,36 @@ static void http_connections_changed_handler(void *arg, esp_event_base_t event_b
 
 static httpd_handle_t server = NULL; // Declare server handle as static
 
+
+esp_err_t start_wifi(const char *ssid, const char *password) {
+    ESP_LOGI(TAG, "Initializing NVC and TCP/IP stack");
+    esp_err_t ret = nvs_flash_init();
+    if(ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to initialize NVC flash");
+        return ret;
+    }
+   
+    ret = esp_netif_init();
+    if(ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to initialize TCP/IP stack flash");
+        return ret;
+    }
+    ret = esp_event_loop_create_default();
+    if(ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to initialize event loop");
+        return ret;
+    }
+    ESP_LOGI(TAG, "Connecting to WIFI");
+    ret = wifi_connect(ssid, password);
+    if(ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to connect to WIFI");
+    }
+    return ret;
+}
+
 httpd_handle_t initialize_http_server(const httpd_uri_t *http_handlers, size_t handlers_count, ws_message_handler_t ws_message_handler, ws_client_changed_cb_t ws_client_changed_cb)
 {
-    ESP_LOGI(TAG, "Initializing NVC and TCP/IP stack");
-    ESP_ERROR_CHECK(nvs_flash_init());
-    ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
-
-    ESP_LOGI(TAG, "Connecting to WIFI");
-    ESP_ERROR_CHECK(wifi_connect());
-
-    ESP_LOGI(TAG, "Start MDNS service");
+    ESP_LOGI(TAG, "Starting MDNS service");
     start_mdns_service();
 
     ws_uri_handler_user_ctx_t *ws_uri_handler_user_ctx = malloc(sizeof(ws_uri_handler_user_ctx_t));

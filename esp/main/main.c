@@ -156,11 +156,6 @@ void app_main(void)
         change_status(app_state, APP_STATUS_ERROR_SDCARD_INIT);
     }
 
-    esp_err_t spiffs_init_ret = init_spiffs();
-    if (spiffs_init_ret != ESP_OK)
-    {
-        change_status(app_state, APP_STATUS_ERROR_SDCARD_INIT);
-    }
     // ==========================================
 
     // ================ UART ===================
@@ -174,25 +169,28 @@ void app_main(void)
     wifi_credentials_t credentials;
     if (sdcard_init_ret == ESP_OK && card != NULL && file_exists(sdcard_wifi_config_file) && read_credentials(sdcard_wifi_config_file, &credentials) == 0)
     {
-
-        ESP_LOGI(TAG, "Username: %s, Password: %s\n", credentials.username, credentials.password);
-    }
-    else if (spiffs_init_ret == ESP_OK && file_exists(spiffs_wifi_config_file) && read_credentials(spiffs_wifi_config_file, &credentials) == 0)
-    {
-        ESP_LOGI(TAG, "Reading credentials from SD card failed, trying to read from SPIFFS");
         ESP_LOGI(TAG, "Username: %s, Password: %s\n", credentials.username, credentials.password);
     }
     else
     {
-        ESP_LOGE(TAG, "Reading credentials from SD card and spiffs failed");
+        change_status(app_state, APP_STATUS_ERROR_SDCARD_INIT);
+        ESP_LOGE(TAG, "Reading credentials from SD card failed");
     }
     const size_t handlers_count = http_handlers_get_count();
     const httpd_uri_t *http_handlers = http_handlers_get_array();
 
     ws_message_handler_t ws_messages_handler = create_ws_handler();
     ws_client_changed_cb_t ws_client_change_cb = (ws_client_changed_cb_t)&connected_client_data_notify;
-    httpd_handle_t httpd_handle = initialize_http_server(http_handlers, handlers_count, ws_messages_handler, ws_client_change_cb);
-    init_ws_observer(state_subjects, httpd_handle);
+    esp_err_t ret = start_wifi(credentials.username, credentials.password);
+    if(ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to connect to WIFI, will not start HTTP server");
+        change_status(app_state, APP_STATUS_ERROR_WIFI_CONNECT);
+    } else {
+        httpd_handle_t httpd_handle = initialize_http_server(http_handlers, handlers_count, ws_messages_handler, ws_client_change_cb);
+        init_ws_observer(state_subjects, httpd_handle);
+        change_status(app_state, APP_STATUS_OK);
+    }
+
     // ==========================================
 
     /// DO NOT DELETE
