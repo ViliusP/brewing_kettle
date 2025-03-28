@@ -18,9 +18,9 @@ class CommnuicatorControllerInfoCard extends StatelessWidget {
   CommnuicatorControllerInfoCard({super.key});
 
   final SystemInfoStore _systemInfoStore = getIt<SystemInfoStore>();
+  final DeviceSnapshotStore _deviceSnapshotStore = getIt<DeviceSnapshotStore>();
 
   final FocusNode _focusNode1 = FocusNode();
-  final FocusNode _focusNode2 = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -33,45 +33,49 @@ class CommnuicatorControllerInfoCard extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        FilledButton.tonal(
-          onPressed: _systemInfoStore.request,
-          child: const Text('Get devices info'),
-        ),
         SelectableRegion(
           focusNode: _focusNode1,
           selectionControls: materialTextSelectionControls,
           child: Column(
             children: [
               Text("Komunikacijos kontroleris", style: textTheme.titleLarge),
-              Text("chip ${hardware?.chip}", style: textTheme.bodyMedium),
-              Text("cores ${hardware?.cores}", style: textTheme.bodyMedium),
-              Text("Features ${hardware?.features}", style: textTheme.bodyMedium),
-              Text("flash size ${hardware?.flash.size} (bytes)", style: textTheme.bodyMedium),
-              Text("flash type ${hardware?.flash.type} ", style: textTheme.bodyMedium),
-              Text("Silicon revision ${hardware?.siliconRevision}", style: textTheme.bodyMedium),
-              Text("Heap size ${hardware?.minimumHeapSize} (bytes)", style: textTheme.bodyMedium),
-            ],
-          ),
-        ),
-        Divider(),
-        SelectableRegion(
-          focusNode: _focusNode2,
-          selectionControls: materialTextSelectionControls,
-          child: Column(
-            children: [
-              Text("Project name ${software?.projectName}", style: textTheme.bodyMedium),
+              Text("${hardware?.chip}", style: textTheme.bodyLarge),
+              Padding(padding: EdgeInsets.symmetric(vertical: 2)),
               Text("Version ${software?.version}", style: textTheme.bodyMedium),
               Text("Secure version ${software?.secureVersion}", style: textTheme.bodyMedium),
-              Text("IDF version ${software?.idfVersion}", style: textTheme.bodyMedium),
               Text("Compile time ${software?.compileTime}", style: textTheme.bodyMedium),
             ],
           ),
         ),
+        Padding(padding: EdgeInsets.symmetric(vertical: 4)),
         Divider(),
-        Text("Ekranas", style: textTheme.titleLarge),
+        Padding(padding: EdgeInsets.symmetric(vertical: 4)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Ekranas vaizdas", style: textTheme.titleLarge),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 4)),
+            SizedBox.square(
+              dimension: 28,
+              child: IconButton.outlined(
+                onPressed: () => _deviceSnapshotStore.request(),
+                icon: Icon(MdiIcons.refresh),
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(0),
+                iconSize: 18,
+                tooltip: 'Send snapshot request',
+              ),
+            ),
+          ],
+        ),
+        Padding(padding: EdgeInsets.symmetric(vertical: 4)),
         _ControllerScreen(),
+        Padding(padding: EdgeInsets.symmetric(vertical: 4)),
         Divider(),
+        Padding(padding: EdgeInsets.symmetric(vertical: 4)),
         Text("Komunikacijos išrašas", style: textTheme.titleLarge),
+        Padding(padding: EdgeInsets.symmetric(vertical: 4)),
+
         _MessagesLogPreview(),
       ],
     );
@@ -140,6 +144,7 @@ class _MessagesLogPreview extends StatelessWidget {
                   return IconButton.outlined(
                     onPressed: () => _dialogBuilder(context),
                     icon: Icon(MdiIcons.scriptTextOutline),
+                    tooltip: "Show all messages",
                   );
                 },
               ),
@@ -160,10 +165,6 @@ class _ControllerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        FilledButton.tonal(
-          child: const Text('Send snapshot request'),
-          onPressed: () => _deviceSnapshotStore.request(),
-        ),
         ConstrainedBox(
           constraints: BoxConstraints(minWidth: 128, minHeight: 64),
           child: Observer(
@@ -181,7 +182,11 @@ class _ControllerScreen extends StatelessWidget {
                   height: _deviceSnapshotStore.snapshot!.height!,
                 );
               }
-              return SizedBox.shrink();
+              return Container(
+                width: 128,
+                height: 64,
+                decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+              );
             },
           ),
         ),
