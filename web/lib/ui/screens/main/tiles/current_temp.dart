@@ -1,4 +1,5 @@
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
+import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
 import 'package:brew_kettle_dashboard/utils/textstyle_extensions.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,8 @@ class _CurrentTempTileState extends State<CurrentTempTile> {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations localizations = AppLocalizations.of(context)!;
+
     return Column(
       children: [
         Spacer(),
@@ -47,7 +50,10 @@ class _CurrentTempTileState extends State<CurrentTempTile> {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: const EdgeInsets.only(bottom: 4.0),
-              child: Text("Temperatūra", style: TextTheme.of(context).labelLarge),
+              child: Text(
+                localizations.generalTemperature,
+                style: TextTheme.of(context).labelLarge,
+              ),
             ),
           ),
         ),
