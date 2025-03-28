@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
+import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
 import 'package:brew_kettle_dashboard/ui/common/idle_circles/idle_circles.dart';
 import 'package:brew_kettle_dashboard/ui/common/slider_container/slider_container.dart';
@@ -97,7 +98,6 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                           HeaterStatus.error => null,
                           HeaterStatus.unknown => null,
                           null => null,
-                          // TODO: Handle this case.
                         },
                         icon: Icon(MdiIcons.arrowUpDropCircleOutline),
                         iconSize: 60,
@@ -213,6 +213,8 @@ class _ManualControlContentState extends State<_ManualControlContent> {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+
     return SliderContainer(
       direction: AxisDirection.up,
       onChanged: _updateTarget,
@@ -260,7 +262,7 @@ class _ManualControlContentState extends State<_ManualControlContent> {
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 4.0),
-                child: Text("Galia", style: TextTheme.of(context).labelLarge),
+                child: Text(appLocalizations.generalPower, style: TextTheme.of(context).labelLarge),
               ),
             ),
           ),
@@ -345,6 +347,8 @@ class _PidControlContentState extends State<_PidControlContent> {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations localizations = AppLocalizations.of(context)!;
+
     return SliderContainer(
       direction: AxisDirection.up,
       onChanged: _updateTarget,
@@ -392,7 +396,10 @@ class _PidControlContentState extends State<_PidControlContent> {
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 4.0),
-                child: Text("Tikslo temperatūra", style: TextTheme.of(context).labelLarge),
+                child: Text(
+                  localizations.generalTargetTemperature,
+                  style: TextTheme.of(context).labelLarge,
+                ),
               ),
             ),
           ),
@@ -453,7 +460,6 @@ class _HeaterModeSelect extends StatelessWidget {
     HeaterStatus.unknown => MdiIcons.helpCircleOutline,
     HeaterStatus.autotunePid => MdiIcons.progressWrench,
     null => MdiIcons.dotsHorizontal,
-    // TODO: Handle this case.
   };
 
   @override
