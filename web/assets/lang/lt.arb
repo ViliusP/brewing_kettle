@@ -1,0 +1,71 @@
+{
+  "@@locale": "lt",
+  "generalIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@generalIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "generalDate": "Data",
+  "generalTemperature": "Temperatūra",
+  "generalTargetTemperature": "Tikslo temperatūra",
+  "generalPower": "Galia",
+  "generalError": "Klaida",
+  "generalInfo": "Informacija",
+  "generalSuccess": "Įvykdyta",
+  "generalWarning": "Įspėjimas",
+  "exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "exceptionUnknown": "Įvyko nežinoma klaida.",
+  "exceptionFailedToConnectToDevice": "Nepavyko prisijungti prie įrenginio.",
+  "exceptionDeviceConnectionTimeout": "Nepavyko prisijungti prie įrenginio. Patikrinkite įrenginį ar pateiktą adresą.",
+  "exceptionAddressLookupFailed": "Nepavyko prisijungti prie įrenginio. Patikrinkite interneto ryšį ar pateiktą įrenginio adresą.",
+  "exceptionConnectionRefused": "Nepavyko prisijungti prie įrenginio. Patikrinkite pateiktą įrenginio adresą.",
+  "exceptionHttpConnectionTimeout": "Laikas užklausai į įrenginio serverį baigėsi. Patikrinkite tinklo ryšį.",
+  "exceptionHttpSendTimeout": "Laikas užklausai į įrenginio serverį baigėsi. Patikrinkite tinklo ryšį.",
+  "exceptionHttpReceiveTimeout": "Laikas užklausai gauti iš įrenginio serverio baigėsi. Patikrinkite tinklo ryšį.",
+  "exceptionHttpBadCertificate": "Užklausa nepavyko. Blogas sertifikatas buvo pateiktas serveriui. Ši klaida neturėjo nutikti. Apie tai praneškite programinės įrangos kurėjams.",
+  "exceptionHttpBadResponse": "Netikėtas atsakas iš įrenginio serverio ({code}). Užklausa nepavyko. Ši klaida neturėjo nutikti. Apie tai praneškite programinės įrangos kurėjams.",
+  "@exceptionHttpBadResponse": {
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "description": "HTTP response code",
+        "example": "400"
+      }
+    }
+  },
+  "exceptionHttpCancel": "Užklausa buvo atšaukta. Ši klaida neturėjo nutikti. Apie tai praneškite programinės įrangos kurėjams.",
+  "exceptionHttpConnectionError": "Nepavyko prisijungti prie įrenginio serverio. Patikrinkite tinklo ryšį.",
+  "exceptionHttpUnknown": "Įvyko netikėta tinklo problema. Tai gali būti interneto ryšio arba įrenginio serverio sutrikimai.",
+  "mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "pMainGraphInfoTitle": "Temperatūros ir galios grafikas",
+  "pMainGraphInfoText": "Grafike rodomi kaitintuvo duomenys {hours} {hours, plural, =1{valandos} other{valandų}}, kas {seconds} {seconds, plural, =1{sekundę} other{sekundžių}}.\nSpausdami ant grafiko taškų, pamatysite detalesnius to laiko duomenis.",
+  "pMainGraphInfoLegend": "Linijų legenda",
+  "settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "pSettingsTitle": "Nustatymai",
+  "pSettingsSectionGeneralTitle": "Bendri",
+  "pSettingsLanguage": "Kalba",
+  "cLanguageSelectDialogTitle": "Pasirinkite kalbą",
+  "pSettingsInputLanguage": "{locale, select, lt {Lietuvių} en {Anglų} lv {Latvių} other {nežinoma}}",
+  "@pSettingsInputLanguage": {
+    "placeholders": {
+      "locale": {
+        "type": "String"
+      }
+    }
+  },
+  "pSettingsTheme": "Tema",
+  "cThemeSelectDialogTitle": "Pasirinkite temą",
+  "pSettingsThemeNames": "{theme, select, light {Šviesi} lightMediumContrast {Šviesi - vidutinio kontrasto} lightHighContrast {Šviesi - didelio kontrasto} dark {Tamsi} darkMediumContrast {Tamsi - vidutinio kontrasto} darkHighContrast {Tamsi - didelio kontrasto} other {nežinoma tema}}",
+  "@pSettingsThemeNames": {
+    "placeholders": {
+      "theme": {
+        "type": "String"
+      }
+    }
+  },
+  "layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "layoutItemHome": "Pagrindinis",
+  "layoutItemDevices": "Įrenginiai",
+  "layoutItemSettings": "Nustatymai"
+}

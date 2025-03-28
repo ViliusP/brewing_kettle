@@ -1,0 +1,177 @@
+{
+  "@@locale": "en",
+  "generalIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@generalIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "generalDate": "Date",
+  "@generalDate": {
+    "description": "General label for date information."
+  },
+  "generalTemperature": "Temperature",
+  "@generalTemperature": {
+    "description": "General label for temperature readings."
+  },
+  "generalTargetTemperature": "Target temperature",
+  "@generalTargetTemperature": {
+    "description": "General label for the desired or target temperature."
+  },
+  "generalPower": "Power",
+  "@generalPower": {
+    "description": "General label for power consumption or output."
+  },
+  "generalError": "Error",
+  "@generalError": {
+    "description": "General label for error, for example used in toast messages."
+  },
+  "generalInfo": "Info",
+  "@generalInfo": {
+    "description": "General label for info, for example used in toast messages."
+  },
+  "generalSuccess": "Success",
+  "@generalSuccess": {
+    "description": "General label for success, for example used in toast messages."
+  },
+  "generalWarning": "Warning",
+  "@generalWarning": {
+    "description": "General label for warning, for example used in toast messages."
+  },
+  "exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "exceptionUnknown": "Unknown error occurred.",
+  "@exceptionUnknown": {
+    "description": "Message of unexpected error."
+  },
+  "exceptionFailedToConnectToDevice": "Failed to connect to device.",
+  "@exceptionFailedToConnectToDevice": {
+    "description": "Generic device connection fail exception."
+  },
+  "exceptionDeviceConnectionTimeout": "Failed to connect to the device. Please check device or provided address",
+  "@exceptionDeviceConnectionTimeout": {
+    "description": "Exception message when timeout happened when connecting to device."
+  },
+  "exceptionAddressLookupFailed": "Failed to connect to device. Bad address provided for kettle device.",
+  "@exceptionAddressLookupFailed": {
+    "description": "Exception message when provided address is not valid and cannot be looked up."
+  },
+  "exceptionConnectionRefused": "Failed to connect to device. Device refused connection. Please check your provided address.",
+  "@exceptionConnectionRefused": {
+    "description": "Exception message when provided address is partly good, but refuse to establish connection."
+  },
+  "exceptionHttpConnectionTimeout": "Request to device's server timed out. Please check your internet connection.",
+  "@exceptionHttpConnectionTimeout": {
+    "description": "Exception message when timeout happened when connecting to server."
+  },
+  "exceptionHttpSendTimeout": "Request to device's server timed out. Please check your internet connection.",
+  "@exceptionHttpSendTimeout": {
+    "description": "Exception message when timeout happened when connecting to server."
+  },
+  "exceptionHttpReceiveTimeout": "Request to device's server timed out. Please check your internet connection.",
+  "@exceptionHttpReceiveTimeout": {
+    "description": "Exception message when timeout happened when connecting to server."
+  },
+  "exceptionHttpBadCertificate": "Request failed. Bad certificate provided for device's server. This should not happen.",
+  "@exceptionHttpBadCertificate": {
+    "description": "Exception message when bad certificate is provided for server."
+  },
+  "exceptionHttpBadResponse": "Unexpected response ({code}). Request failed. This should not happen.",
+  "@exceptionHttpBadResponse": {
+    "description": "Exception message when bad response is received from server.",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "description": "HTTP response code",
+        "example": "400"
+      }
+    }
+  },
+  "exceptionHttpCancel": "Request was cancelled. This should not happenn.",
+  "@exceptionHttpCancel": {
+    "description": "Exception message when request was cancelled."
+  },
+  "exceptionHttpConnectionError": "Failed to connect to device's server. Please check your internet connection.",
+  "@exceptionHttpConnectionError": {
+    "description": "Exception message when connection error happened."
+  }, 
+  "exceptionHttpUnknown": "Unexpected network error occurred. There may be a problem with your internet connection or device's server.",
+  "@exceptionHttpUnknown": {
+    "description": "Exception message when unexpected error happened."
+  },
+  "mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "pMainGraphInfoTitle": "Temparature and power graph",
+  "@pMainGraphInfoTitle": {},
+  "pMainGraphInfoText": "Shows heater data of every {seconds} {seconds, plural, =1{second} other{seconds}} for {hours} {hours, plural, =1{hour} other{hours}}.\nTap on graph points to see concrete values for that time.",
+  "@pMainGraphInfoText": {
+    "description": "Information text displayed on the main graph screen.",
+    "placeholders": {
+      "seconds": {
+        "example": "30",
+        "format": "decimalPatternDigits",
+        "type": "int"
+      },
+      "hours": {
+        "example": "24",
+        "format": "decimalPatternDigits",
+        "type": "num"
+      }
+    }
+  },
+  "pMainGraphInfoLegend": "Line legends",
+  "@pMainGraphInfoLegend": {},
+  "settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "pSettingsTitle": "Settings",
+  "@pSettingsTitle": {
+    "description": "Title for settings page, show at top of the page"
+  },
+  "pSettingsSectionGeneralTitle": "General",
+  "@pSettingsSectionGeneralTitle": {
+    "description": "Title for general section at settings page"
+  },
+  "pSettingsLanguage": "Language",
+  "@pSettingsLanguage": {
+    "description": "Setting name for language"
+  },
+  "cLanguageSelectDialogTitle": "Select language",
+  "@cLanguageSelectDialogTitle": {
+    "description": "Title for language select dialog, showed at top of component"
+  },
+  "pSettingsInputLanguage": "{locale, select, lt {Lithuanian} en {English} lv {Latvian} other {unknown}}",
+  "@pSettingsInputLanguage": {
+    "placeholders": {
+      "locale": {
+        "type": "String"
+      }
+    }
+  },
+  "pSettingsTheme": "Theme",
+  "@pSettingsTheme": {
+    "description": "Setting name for the current theme change"
+  },
+  "cThemeSelectDialogTitle": "Select theme",
+  "@cThemeSelectDialogTitle": {
+    "description": "Title for theme select dialog, showed at top of component"
+  },
+  "pSettingsThemeNames": "{theme, select, light {Light} lightMediumContrast {Light - medium contrast} lightHighContrast {Light - high contrast} dark {Dark} darkMediumContrast {Dark - medium contrast} darkHighContrast {Dark - high contrast} other {unknown}}",
+  "@pSettingsThemeNames": {
+    "description": "Names for all available themes in application",
+    "placeholders": {
+      "theme": {
+        "type": "String"
+      }
+    }
+  },
+  "layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "layoutItemHome": "Home",
+  "@layoutItemHome": {
+    "description": "Title for home item in navigation bar"
+  },
+  "layoutItemDevices": "Devices",
+  "@layoutItemDevices": {
+    "description": "Title for devivces item in navigation bar"
+  },
+  "layoutItemSettings": "Settings",
+  "@layoutItemSettings": {
+    "description": "Title for settings item in navigation bar"
+  }
+}
