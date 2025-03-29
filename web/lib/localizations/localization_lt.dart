@@ -36,6 +36,9 @@ class AppLocalizationsLt extends AppLocalizations {
   String get generalWarning => 'Įspėjimas';
 
   @override
+  String get generalVersion => 'Versija';
+
+  @override
   String get exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
@@ -115,6 +118,45 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get pMainGraphInfoLegend => 'Linijų legenda';
+
+  @override
+  String get devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+
+  @override
+  String get devicesCommunicationController => 'Komunikacijos valdiklis';
+
+  @override
+  String get devicesSecureVersion => 'Saugi versija';
+
+  @override
+  String get devicesCompileTime => 'Kompiliavimo laikas';
+
+  @override
+  String get devicesScreenshot => 'Ekrano vaizdas';
+
+  @override
+  String get devicesScreenshotRefreshTooltip => 'Atnaujinti ekrano vaizdą';
+
+  @override
+  String get devicesCommunicationLog => 'Komunikacijos išrašas';
+
+  @override
+  String get devicesShowMoreLogTooltip => 'Parodyti visas žinutes';
+
+  @override
+  String get devicesHeaterController => 'Virintuvo valdiklis';
+
+  @override
+  String get devicesPid => 'PID reguliatorius';
+
+  @override
+  String get devicesPidProportionalGain => 'Perdavimo koeficientas';
+
+  @override
+  String get devicesPidIntegralGain => 'Integruojančios grandies laiko konstanta';
+
+  @override
+  String get devicesPidDerivativeGain => 'Diferencijuojančios grandies laiko konstanta';
 
   @override
   String get settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';

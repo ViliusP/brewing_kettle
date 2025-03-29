@@ -34,6 +34,10 @@
   "@generalWarning": {
     "description": "General label for warning, for example used in toast messages."
   },
+  "generalVersion": "Version",
+  "@generalVersion": {
+    "description": "General label for version, for example used in about page."
+  },
   "exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "exceptionUnknown": "Unknown error occurred.",
@@ -117,6 +121,56 @@
   },
   "pMainGraphInfoLegend": "Line legends",
   "@pMainGraphInfoLegend": {},
+  "devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "devicesCommunicationController": "Communication controller",
+  "@devicesCommunicationController": {
+    "description": "Title for communication controller in devices screen"
+  },
+  "devicesSecureVersion": "Secure version",
+  "@devicesSecureVersion": {
+    "description": "Secure version label in in devices screen"
+  },
+  "devicesCompileTime": "Compile time",
+  "@devicesCompileTime": {
+    "description": "Compile time label in in devices screen"
+  },
+  "devicesScreenshot": "Device screenshot",
+  "@devicesScreenshot": {
+    "description": "Device screenshot label in communication controller section"
+  },
+  "devicesScreenshotRefreshTooltip": "Refresh screenshot",
+  "@devicesScreenshotRefreshTooltip": {
+    "description": "Tooltip for refresh screenshot button"
+  },
+  "devicesCommunicationLog": "Communication log",
+  "@devicesCommunicationLog": {
+    "description": "Communication log label in communication controller section"
+  },
+  "devicesShowMoreLogTooltip": "Show all log messages",
+  "@devicesShowMoreLogTooltip": {
+    "description": "Tooltip for show more log messages button"
+  },
+  "devicesHeaterController": "Heater controller",
+  "@devicesHeaterController": {
+    "description": "Title for heater controller in devices screen"
+  },
+  "devicesPid": "PID",
+  "@devicesPid": {
+    "description": "Title for PID in heater controller section"
+  },
+  "devicesPidProportionalGain": "Proportional gain",
+  "@devicesPidProportionalGain": {
+    "description": "Label for proportional gain in PID form"
+  },
+  "devicesPidIntegralGain": "Integral gain",
+  "@devicesPidIntegralGain": {
+    "description": "Label for integral gain in PID form"
+  },
+  "devicesPidDerivativeGain": "Derivative gain",
+  "@devicesPidDerivativeGain": {
+    "description": "Label for derivative gain in PID form"
+  },
   "settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "pSettingsTitle": "Settings",

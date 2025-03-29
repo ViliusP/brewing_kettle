@@ -149,6 +149,12 @@ abstract class AppLocalizations {
   /// **'Warning'**
   String get generalWarning;
 
+  /// General label for version, for example used in about page.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get generalVersion;
+
   /// No description provided for @exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///
   /// In en, this message translates to:
@@ -256,6 +262,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Line legends'**
   String get pMainGraphInfoLegend;
+
+  /// No description provided for @devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
+  ///
+  /// In en, this message translates to:
+  /// **'----------------------------------------------------'**
+  String get devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII;
+
+  /// Title for communication controller in devices screen
+  ///
+  /// In en, this message translates to:
+  /// **'Communication controller'**
+  String get devicesCommunicationController;
+
+  /// Secure version label in in devices screen
+  ///
+  /// In en, this message translates to:
+  /// **'Secure version'**
+  String get devicesSecureVersion;
+
+  /// Compile time label in in devices screen
+  ///
+  /// In en, this message translates to:
+  /// **'Compile time'**
+  String get devicesCompileTime;
+
+  /// Device screenshot label in communication controller section
+  ///
+  /// In en, this message translates to:
+  /// **'Device screenshot'**
+  String get devicesScreenshot;
+
+  /// Tooltip for refresh screenshot button
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh screenshot'**
+  String get devicesScreenshotRefreshTooltip;
+
+  /// Communication log label in communication controller section
+  ///
+  /// In en, this message translates to:
+  /// **'Communication log'**
+  String get devicesCommunicationLog;
+
+  /// Tooltip for show more log messages button
+  ///
+  /// In en, this message translates to:
+  /// **'Show all log messages'**
+  String get devicesShowMoreLogTooltip;
+
+  /// Title for heater controller in devices screen
+  ///
+  /// In en, this message translates to:
+  /// **'Heater controller'**
+  String get devicesHeaterController;
+
+  /// Title for PID in heater controller section
+  ///
+  /// In en, this message translates to:
+  /// **'PID'**
+  String get devicesPid;
+
+  /// Label for proportional gain in PID form
+  ///
+  /// In en, this message translates to:
+  /// **'Proportional gain'**
+  String get devicesPidProportionalGain;
+
+  /// Label for integral gain in PID form
+  ///
+  /// In en, this message translates to:
+  /// **'Integral gain'**
+  String get devicesPidIntegralGain;
+
+  /// Label for derivative gain in PID form
+  ///
+  /// In en, this message translates to:
+  /// **'Derivative gain'**
+  String get devicesPidDerivativeGain;
 
   /// No description provided for @settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///

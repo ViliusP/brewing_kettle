@@ -36,6 +36,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalWarning => 'Warning';
 
   @override
+  String get generalVersion => 'Version';
+
+  @override
   String get exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
@@ -115,6 +118,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pMainGraphInfoLegend => 'Line legends';
+
+  @override
+  String get devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+
+  @override
+  String get devicesCommunicationController => 'Communication controller';
+
+  @override
+  String get devicesSecureVersion => 'Secure version';
+
+  @override
+  String get devicesCompileTime => 'Compile time';
+
+  @override
+  String get devicesScreenshot => 'Device screenshot';
+
+  @override
+  String get devicesScreenshotRefreshTooltip => 'Refresh screenshot';
+
+  @override
+  String get devicesCommunicationLog => 'Communication log';
+
+  @override
+  String get devicesShowMoreLogTooltip => 'Show all log messages';
+
+  @override
+  String get devicesHeaterController => 'Heater controller';
+
+  @override
+  String get devicesPid => 'PID';
+
+  @override
+  String get devicesPidProportionalGain => 'Proportional gain';
+
+  @override
+  String get devicesPidIntegralGain => 'Integral gain';
+
+  @override
+  String get devicesPidDerivativeGain => 'Derivative gain';
 
   @override
   String get settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
