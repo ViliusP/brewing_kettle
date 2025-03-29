@@ -43,6 +43,8 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Stack(
       children: [
         Observer(
@@ -82,6 +84,7 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                 },
               ),
             ),
+            VerticalDivider(width: 0, color: colorScheme.outlineVariant.withAlpha(255 ~/ 2)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: Observer(
