@@ -84,7 +84,11 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                 },
               ),
             ),
-            VerticalDivider(width: 0, color: colorScheme.outlineVariant.withAlpha(255 ~/ 2)),
+            VerticalDivider(
+              width: 0,
+              color: colorScheme.outlineVariant.withAlpha(255 ~/ 2),
+              thickness: 2,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: Observer(
