@@ -74,7 +74,7 @@ class CommnuicatorControllerInfoCard extends StatelessWidget {
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(0),
                 iconSize: 18,
-                tooltip: 'Send snapshot request',
+                tooltip: localizations.devicesScreenshotRefreshTooltip,
               ),
             ),
           ],
