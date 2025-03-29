@@ -94,12 +94,7 @@ class _PidSection extends StatelessWidget {
           ),
         ),
         Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-        OutlinedButton(
-          onPressed: () {
-            print("Not implemented");
-          },
-          child: Text("Pakeist"),
-        ),
+        OutlinedButton(onPressed: null, child: Text(localizations.generalChange)),
         // Padding(padding: EdgeInsets.symmetric(vertical: 8)),
         // TextFormField(
         //   decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Tune duration (s)"),
