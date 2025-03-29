@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
+import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/device_info/system_info_store.dart';
 import 'package:brew_kettle_dashboard/stores/device_snapshot/device_snapshot_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
@@ -24,26 +25,36 @@ class CommnuicatorControllerInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = TextTheme.of(context);
-    DeviceInfo? communicatorInfo = _systemInfoStore.info?.communicator;
-    DeviceHardwareInfo? hardware = communicatorInfo?.hardware;
-    DeviceSoftwareInfo? software = communicatorInfo?.software;
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
+    final TextTheme textTheme = TextTheme.of(context);
+    final DeviceInfo? communicatorInfo = _systemInfoStore.info?.communicator;
+    final DeviceHardwareInfo? hardware = communicatorInfo?.hardware;
+    final DeviceSoftwareInfo? software = communicatorInfo?.software;
 
     return Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        Text(localizations.devicesCommunicationController, style: textTheme.titleLarge),
         SelectableRegion(
           focusNode: _focusNode1,
           selectionControls: materialTextSelectionControls,
           child: Column(
             children: [
-              Text("Komunikacijos kontroleris", style: textTheme.titleLarge),
               Text("${hardware?.chip}", style: textTheme.bodyLarge),
               Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-              Text("Version ${software?.version}", style: textTheme.bodyMedium),
-              Text("Secure version ${software?.secureVersion}", style: textTheme.bodyMedium),
-              Text("Compile time ${software?.compileTime}", style: textTheme.bodyMedium),
+              Text(
+                "${localizations.generalVersion} ${software?.version}",
+                style: textTheme.bodyMedium,
+              ),
+              Text(
+                "${localizations.devicesSecureVersion} ${software?.secureVersion}",
+                style: textTheme.bodyMedium,
+              ),
+              Text(
+                "${localizations.devicesCompileTime} ${software?.compileTime}",
+                style: textTheme.bodyMedium,
+              ),
             ],
           ),
         ),
@@ -53,7 +64,7 @@ class CommnuicatorControllerInfoCard extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Ekranas vaizdas", style: textTheme.titleLarge),
+            Text(localizations.devicesScreenshot, style: textTheme.titleLarge),
             Padding(padding: EdgeInsets.symmetric(horizontal: 4)),
             SizedBox.square(
               dimension: 28,
@@ -73,7 +84,7 @@ class CommnuicatorControllerInfoCard extends StatelessWidget {
         Padding(padding: EdgeInsets.symmetric(vertical: 4)),
         Divider(),
         Padding(padding: EdgeInsets.symmetric(vertical: 4)),
-        Text("Komunikacijos išrašas", style: textTheme.titleLarge),
+        Text(localizations.devicesCommunicationLog, style: textTheme.titleLarge),
         Padding(padding: EdgeInsets.symmetric(vertical: 4)),
 
         _MessagesLogPreview(),
@@ -96,8 +107,9 @@ class _MessagesLogPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = TextTheme.of(context);
-    ColorScheme colorScheme = ColorScheme.of(context);
+    final TextTheme textTheme = TextTheme.of(context);
+    final ColorScheme colorScheme = ColorScheme.of(context);
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
 
     TextStyle defaultTextStyle =
         textTheme.bodySmall ??
@@ -144,7 +156,7 @@ class _MessagesLogPreview extends StatelessWidget {
                   return IconButton.outlined(
                     onPressed: () => _dialogBuilder(context),
                     icon: Icon(MdiIcons.scriptTextOutline),
-                    tooltip: "Show all messages",
+                    tooltip: localizations.devicesShowMoreLogTooltip,
                   );
                 },
               ),

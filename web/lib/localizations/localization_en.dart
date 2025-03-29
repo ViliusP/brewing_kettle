@@ -39,6 +39,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalVersion => 'Version';
 
   @override
+  String get generalSave => 'Save';
+
+  @override
+  String get generalChange => 'Change';
+
+  @override
   String get exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override

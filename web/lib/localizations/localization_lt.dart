@@ -39,6 +39,12 @@ class AppLocalizationsLt extends AppLocalizations {
   String get generalVersion => 'Versija';
 
   @override
+  String get generalSave => 'Išsaugoti';
+
+  @override
+  String get generalChange => 'Pakeisti';
+
+  @override
   String get exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
@@ -141,7 +147,7 @@ class AppLocalizationsLt extends AppLocalizations {
   String get devicesCommunicationLog => 'Komunikacijos išrašas';
 
   @override
-  String get devicesShowMoreLogTooltip => 'Parodyti visas žinutes';
+  String get devicesShowMoreLogTooltip => 'Rodyti visas žinutes';
 
   @override
   String get devicesHeaterController => 'Virintuvo valdiklis';

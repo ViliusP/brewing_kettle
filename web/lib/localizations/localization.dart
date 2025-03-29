@@ -155,6 +155,18 @@ abstract class AppLocalizations {
   /// **'Version'**
   String get generalVersion;
 
+  /// General label for save action, for example used in buttons.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get generalSave;
+
+  /// General label for change action, for example used in buttons.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get generalChange;
+
   /// No description provided for @exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///
   /// In en, this message translates to:

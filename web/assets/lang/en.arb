@@ -38,6 +38,14 @@
   "@generalVersion": {
     "description": "General label for version, for example used in about page."
   },
+  "generalSave": "Save",
+  "@generalSave": {
+    "description": "General label for save action, for example used in buttons."
+  },
+  "generalChange": "Change",
+  "@generalChange": {
+    "description": "General label for change action, for example used in buttons."
+  },
   "exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "exceptionUnknown": "Unknown error occurred.",
