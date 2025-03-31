@@ -13,6 +13,7 @@ import 'package:brew_kettle_dashboard/stores/exception/exception_store.dart';
 import 'package:brew_kettle_dashboard/stores/locale/locale_store.dart';
 import 'package:brew_kettle_dashboard/stores/network_scanner/network_scanner_store.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
+import 'package:brew_kettle_dashboard/stores/pid/pid_store.dart';
 import 'package:brew_kettle_dashboard/stores/theme/theme_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:get_it/get_it.dart';
@@ -52,6 +53,7 @@ class StoreModule {
     getIt.registerSingleton<HeaterControllerStateStore>(
       HeaterControllerStateStore(webSocketConnectionStore: webSocketConnectionStore),
     );
+    getIt.registerSingleton<PidStore>(PidStore(webSocketConnectionStore: webSocketConnectionStore));
 
     getIt.registerSingleton<NetworkScannerStore>(NetworkScannerStore());
     getIt.registerSingleton<LocaleStore>(LocaleStore(repository));

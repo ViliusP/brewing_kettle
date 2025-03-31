@@ -2,8 +2,11 @@ import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/device_info/system_info_store.dart';
-import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
+import 'package:brew_kettle_dashboard/stores/pid/pid_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:mobx/mobx.dart';
 
 class HeaterControllerInfoCard extends StatelessWidget {
   HeaterControllerInfoCard({super.key});
@@ -52,7 +55,7 @@ class HeaterControllerInfoCard extends StatelessWidget {
           Divider(),
           Padding(padding: EdgeInsets.symmetric(vertical: 4)),
           Text(localizations.devicesPid, style: textTheme.titleLarge),
-          Padding(padding: EdgeInsets.symmetric(vertical: 4)),
+          Padding(padding: EdgeInsets.symmetric(vertical: 8)),
           _PidSection(),
         ],
       ),
@@ -60,50 +63,242 @@ class HeaterControllerInfoCard extends StatelessWidget {
   }
 }
 
-class _PidSection extends StatelessWidget {
-  final HeaterControllerStateStore _heaterControllerStateStore =
-      getIt<HeaterControllerStateStore>();
+class _PidSection extends StatefulWidget {
+  const _PidSection();
 
-  _PidSection();
+  @override
+  State<_PidSection> createState() => _PidSectionState();
+}
+
+class _PidSectionState extends State<_PidSection> {
+  final PidStore pidStore = getIt<PidStore>();
+
+  final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController pidKpController = TextEditingController();
+  final TextEditingController pidKiController = TextEditingController();
+  final TextEditingController pidKdController = TextEditingController();
+
+  bool showResetKpButton = false;
+  bool showResetKiButton = false;
+  bool showResetKdButton = false;
+
+  late final storeKpReactionDispose = reaction((_) => pidStore.proportional, (val) {
+    bool lastShowResetKpButton = showResetKpButton;
+    showResetKpButton = pidStore.proportional.toString() != pidKpController.text;
+    if (lastShowResetKpButton != showResetKpButton) setState(() {});
+  });
+  late final storeKiReactionDispose = reaction((_) => pidStore.integral, (val) {
+    bool lastShowResetKiButton = showResetKiButton;
+    showResetKiButton = pidStore.integral.toString() != pidKiController.text;
+    if (lastShowResetKiButton != showResetKiButton) setState(() {});
+  });
+  late final storeKdReactionDispose = reaction((_) => pidStore.derivative, (val) {
+    bool lastShowResetKdButton = showResetKdButton;
+    showResetKdButton = pidStore.derivative.toString() != pidKdController.text;
+    if (lastShowResetKdButton != showResetKdButton) setState(() {});
+  });
+
+  @override
+  void initState() {
+    // Proportional
+    pidKpController.addListener(() {
+      bool lastShowResetKpButton = showResetKpButton;
+      String storeTextValue = pidStore.integral.toString();
+      if (pidStore.proportional == null) {
+        storeTextValue = "";
+      }
+      showResetKpButton = storeTextValue != pidKpController.text;
+      if (lastShowResetKpButton != showResetKpButton) {
+        setState(() {});
+      }
+    });
+    // Integral
+    pidKiController.addListener(() {
+      bool lastShowResetKiButton = showResetKiButton;
+      String storeTextValue = pidStore.integral.toString();
+      if (pidStore.integral == null) {
+        storeTextValue = "";
+      }
+      showResetKiButton = storeTextValue != pidKiController.text;
+      if (lastShowResetKiButton != showResetKiButton) {
+        setState(() {});
+      }
+    });
+    // Derivative
+    pidKdController.addListener(() {
+      bool lastShowResetKdButton = showResetKdButton;
+      String storeTextValue = pidStore.derivative.toString();
+      if (pidStore.derivative == null) {
+        storeTextValue = "";
+      }
+      showResetKdButton = storeTextValue != pidKdController.text;
+      if (lastShowResetKdButton != showResetKdButton) {
+        setState(() {});
+      }
+    });
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (pidStore.proportional != null) {
+        pidKpController.value = TextEditingValue(text: pidStore.proportional.toString());
+      }
+      if (pidStore.integral != null) {
+        pidKiController.value = TextEditingValue(text: pidStore.integral.toString());
+      }
+      if (pidStore.derivative != null) {
+        pidKdController.value = TextEditingValue(text: pidStore.derivative.toString());
+      }
+    });
+    super.initState();
+  }
+
+  FormFieldValidator<String>? pidConstantsValidator = (value) {
+    if (value == null || value.isEmpty) {
+      return "Field required (TODO localize)";
+    }
+    if (double.tryParse(value) == null) {
+      return "Field must be number (TODO localize)";
+    }
+    return null;
+  };
 
   @override
   Widget build(BuildContext context) {
     final AppLocalizations localizations = AppLocalizations.of(context)!;
 
-    return Column(
-      children: [
-        TextFormField(
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: localizations.devicesPidProportionalGain,
+    return Form(
+      key: _formKey,
+      autovalidateMode: AutovalidateMode.onUnfocus,
+      child: Column(
+        children: [
+          SizedBox(
+            height: 76,
+            child: TextFormField(
+              keyboardType: TextInputType.number,
+              controller: pidKpController,
+              validator: pidConstantsValidator,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                suffixIcon: Padding(
+                  padding: const EdgeInsets.only(right: 4.0),
+                  child: AnimatedSwitcher(
+                    duration: Durations.short2,
+                    child:
+                        showResetKpButton
+                            ? IconButton(
+                              key: ValueKey<String>("icon_button_1"),
+                              onPressed: () {
+                                pidKpController.value = TextEditingValue(
+                                  text: pidStore.proportional.toString(),
+                                );
+                              },
+                              icon: Icon(MdiIcons.redoVariant),
+                              iconSize: 18,
+                            )
+                            : SizedBox(key: ValueKey<String>("sized_box_1")),
+                  ),
+                ),
+                labelText: localizations.devicesPidProportionalGain,
+              ),
+            ),
           ),
-        ),
-        Padding(padding: EdgeInsets.symmetric(vertical: 4)),
-        TextFormField(
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: localizations.devicesPidIntegralGain,
+          SizedBox(
+            height: 76,
+            child: TextFormField(
+              keyboardType: TextInputType.number,
+              controller: pidKiController,
+              validator: pidConstantsValidator,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                suffixIcon: Padding(
+                  padding: const EdgeInsets.only(right: 4.0),
+                  child: AnimatedSwitcher(
+                    duration: Durations.short2,
+                    child:
+                        showResetKiButton
+                            ? IconButton(
+                              key: ValueKey("icon_button_2"),
+                              onPressed: () {
+                                pidKiController.value = TextEditingValue(
+                                  text: pidStore.integral.toString(),
+                                );
+                              },
+                              icon: Icon(MdiIcons.redoVariant),
+                              iconSize: 18,
+                            )
+                            : SizedBox(key: ValueKey("sized_box_2")),
+                  ),
+                ),
+                labelText: localizations.devicesPidIntegralGain,
+              ),
+            ),
           ),
-        ),
-        Padding(padding: EdgeInsets.symmetric(vertical: 4)),
-        TextFormField(
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            // errorText: "Error text",
-            labelText: localizations.devicesPidDerivativeGain,
+          SizedBox(
+            height: 76,
+            child: TextFormField(
+              keyboardType: TextInputType.number,
+              controller: pidKdController,
+              validator: pidConstantsValidator,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                suffixIcon: Padding(
+                  padding: const EdgeInsets.only(right: 4.0),
+                  child: AnimatedSwitcher(
+                    duration: Durations.short2,
+                    child:
+                        showResetKdButton
+                            ? IconButton(
+                              key: ValueKey("icon_button_3"),
+                              onPressed: () {
+                                pidKdController.value = TextEditingValue(
+                                  text: pidStore.derivative.toString(),
+                                );
+                              },
+                              icon: Icon(MdiIcons.redoVariant),
+                              iconSize: 18,
+                            )
+                            : SizedBox(key: ValueKey("sized_box_3")),
+                  ),
+                ),
+                labelText: localizations.devicesPidDerivativeGain,
+              ),
+            ),
           ),
-        ),
-        Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-        OutlinedButton(onPressed: null, child: Text(localizations.generalChange)),
-        // Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-        // TextFormField(
-        //   decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Tune duration (s)"),
-        // ),
-        // OutlinedButton(
-        //   onPressed: () => _heaterControllerStateStore.changeMode(HeaterMode.autotunePid),
-        //   child: Text("PID autotune"),
-        // ),
-      ],
+          Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+          OutlinedButton(
+            onPressed: () {
+              if (_formKey.currentState?.validate() == true) {
+                pidStore.changeConstants(
+                  proportional: double.parse(pidKpController.text),
+                  integral: double.parse(pidKiController.text),
+                  derivative: double.parse(pidKdController.text),
+                );
+              }
+            },
+            child: Text(localizations.generalChange),
+          ),
+          // Padding(padding: EdgeInsets.symmetric(vertical: 8)),
+          // TextFormField(
+          //   decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Tune duration (s)"),
+          // ),
+          // OutlinedButton(
+          //   onPressed: () => _heaterControllerStateStore.changeMode(HeaterMode.autotunePid),
+          //   child: Text("PID autotune"),
+          // ),
+        ],
+      ),
     );
+  }
+
+  @override
+  void dispose() {
+    pidKpController.dispose();
+    pidKiController.dispose();
+    pidKdController.dispose();
+
+    storeKpReactionDispose();
+    storeKiReactionDispose();
+    storeKdReactionDispose();
+    super.dispose();
   }
 }
