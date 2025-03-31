@@ -191,9 +191,11 @@ class _PidSectionState extends State<_PidSection> {
                           ? IconButton(
                             key: ValueKey<String>("icon_button_1"),
                             onPressed: () {
-                              pidKpController.value = TextEditingValue(
-                                text: pidStore.proportional.toString(),
-                              );
+                              String textToSet = pidStore.proportional.toString();
+                              if (pidStore.proportional == null) {
+                                textToSet = "";
+                              }
+                              pidKpController.value = TextEditingValue(text: textToSet);
                             },
                             icon: Icon(MdiIcons.redoVariant),
                             iconSize: 18,
@@ -221,9 +223,11 @@ class _PidSectionState extends State<_PidSection> {
                           ? IconButton(
                             key: ValueKey("icon_button_2"),
                             onPressed: () {
-                              pidKiController.value = TextEditingValue(
-                                text: pidStore.integral.toString(),
-                              );
+                              String textToSet = pidStore.integral.toString();
+                              if (pidStore.integral == null) {
+                                textToSet = "";
+                              }
+                              pidKiController.value = TextEditingValue(text: textToSet);
                             },
                             icon: Icon(MdiIcons.redoVariant),
                             iconSize: 18,
@@ -251,9 +255,11 @@ class _PidSectionState extends State<_PidSection> {
                           ? IconButton(
                             key: ValueKey("icon_button_3"),
                             onPressed: () {
-                              pidKdController.value = TextEditingValue(
-                                text: pidStore.derivative.toString(),
-                              );
+                              String textToSet = pidStore.derivative.toString();
+                              if (pidStore.derivative == null) {
+                                textToSet = "";
+                              }
+                              pidKdController.value = TextEditingValue(text: textToSet);
                             },
                             icon: Icon(MdiIcons.redoVariant),
                             iconSize: 18,
