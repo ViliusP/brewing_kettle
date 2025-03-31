@@ -7,6 +7,7 @@ import 'package:brew_kettle_dashboard/stores/pid/pid_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 
 class HeaterControllerInfoCard extends StatelessWidget {
@@ -271,17 +272,24 @@ class _PidSectionState extends State<_PidSection> {
             ),
           ),
           Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-          OutlinedButton(
-            onPressed: () {
-              if (_formKey.currentState?.validate() == true) {
-                pidStore.changeConstants(
-                  proportional: double.parse(pidKpController.text),
-                  integral: double.parse(pidKiController.text),
-                  derivative: double.parse(pidKdController.text),
-                );
-              }
+          Observer(
+            builder: (context) {
+              return OutlinedButton(
+                onPressed:
+                    pidStore.isConstantsChanging
+                        ? null
+                        : () {
+                          if (_formKey.currentState?.validate() == true) {
+                            pidStore.changeConstants(
+                              proportional: double.parse(pidKpController.text),
+                              integral: double.parse(pidKiController.text),
+                              derivative: double.parse(pidKdController.text),
+                            );
+                          }
+                        },
+                child: Text(localizations.generalChange),
+              );
             },
-            child: Text(localizations.generalChange),
           ),
           // Padding(padding: EdgeInsets.symmetric(vertical: 8)),
           // TextFormField(
