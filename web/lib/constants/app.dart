@@ -6,6 +6,11 @@ class AppConstants {
 
   static const String appName = "Brew Kettle Dashboard";
   static const String font = "Roboto";
+
+  // System-specific maximum values (adjust based on your requirements)
+  static const double maxProportional = 100.0;
+  static const double maxIntegral = 50.0;
+  static const double maxDerivative = 50.0;
 }
 
 class AppDefaults {

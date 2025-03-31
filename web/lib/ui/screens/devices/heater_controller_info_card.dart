@@ -1,3 +1,4 @@
+import 'package:brew_kettle_dashboard/constants/app.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
@@ -12,7 +13,6 @@ class HeaterControllerInfoCard extends StatelessWidget {
   HeaterControllerInfoCard({super.key});
 
   final SystemInfoStore _deviceInfoStore = getIt<SystemInfoStore>();
-  final FocusNode _focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -22,43 +22,39 @@ class HeaterControllerInfoCard extends StatelessWidget {
     final DeviceHardwareInfo? hardware = info?.hardware;
     final DeviceSoftwareInfo? software = info?.software;
 
-    return SelectableRegion(
-      focusNode: _focusNode,
-      selectionControls: materialTextSelectionControls,
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text(localizations.devicesHeaterController, style: textTheme.titleLarge),
-          SelectableRegion(
-            selectionControls: materialTextSelectionControls,
-            child: Column(
-              children: [
-                Text("${hardware?.chip}", style: textTheme.bodyLarge),
-                Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                Text(
-                  "${localizations.generalVersion} ${software?.version}",
-                  style: textTheme.bodyMedium,
-                ),
-                Text(
-                  "${localizations.devicesSecureVersion} ${software?.secureVersion}",
-                  style: textTheme.bodyMedium,
-                ),
-                Text(
-                  "${localizations.devicesCompileTime} ${software?.compileTime}",
-                  style: textTheme.bodyMedium,
-                ),
-              ],
-            ),
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(localizations.devicesHeaterController, style: textTheme.titleLarge),
+        SelectableRegion(
+          selectionControls: materialTextSelectionControls,
+          child: Column(
+            children: [
+              Text("${hardware?.chip}", style: textTheme.bodyLarge),
+              Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+              Text(
+                "${localizations.generalVersion} ${software?.version}",
+                style: textTheme.bodyMedium,
+              ),
+              Text(
+                "${localizations.devicesSecureVersion} ${software?.secureVersion}",
+                style: textTheme.bodyMedium,
+              ),
+              Text(
+                "${localizations.devicesCompileTime} ${software?.compileTime}",
+                style: textTheme.bodyMedium,
+              ),
+            ],
           ),
-          Padding(padding: EdgeInsets.symmetric(vertical: 4)),
-          Divider(),
-          Padding(padding: EdgeInsets.symmetric(vertical: 4)),
-          Text(localizations.devicesPid, style: textTheme.titleLarge),
-          Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-          _PidSection(),
-        ],
-      ),
+        ),
+        Padding(padding: EdgeInsets.symmetric(vertical: 4)),
+        Divider(),
+        Padding(padding: EdgeInsets.symmetric(vertical: 4)),
+        Text(localizations.devicesPid, style: textTheme.titleLarge),
+        Padding(padding: EdgeInsets.symmetric(vertical: 8)),
+        _PidSection(),
+      ],
     );
   }
 }
@@ -152,15 +148,22 @@ class _PidSectionState extends State<_PidSection> {
     super.initState();
   }
 
-  FormFieldValidator<String>? pidConstantsValidator = (value) {
+  String? pidConstantsValidator(String? value, double maxValue) {
     if (value == null || value.isEmpty) {
       return "Field required (TODO localize)";
     }
-    if (double.tryParse(value) == null) {
+    double? maybeNumber = double.tryParse(value);
+    if (maybeNumber == null) {
       return "Field must be number (TODO localize)";
     }
+    if (maybeNumber < 0) {
+      return "Field must be positive (TODO localize)";
+    }
+    if (maybeNumber > maxValue) {
+      return "Field must be less than $maxValue (TODO localize)";
+    }
     return null;
-  };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -171,100 +174,97 @@ class _PidSectionState extends State<_PidSection> {
       autovalidateMode: AutovalidateMode.onUnfocus,
       child: Column(
         children: [
-          SizedBox(
-            height: 76,
-            child: TextFormField(
-              keyboardType: TextInputType.number,
-              controller: pidKpController,
-              validator: pidConstantsValidator,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                suffixIcon: Padding(
-                  padding: const EdgeInsets.only(right: 4.0),
-                  child: AnimatedSwitcher(
-                    duration: Durations.short2,
-                    child:
-                        showResetKpButton
-                            ? IconButton(
-                              key: ValueKey<String>("icon_button_1"),
-                              onPressed: () {
-                                pidKpController.value = TextEditingValue(
-                                  text: pidStore.proportional.toString(),
-                                );
-                              },
-                              icon: Icon(MdiIcons.redoVariant),
-                              iconSize: 18,
-                            )
-                            : SizedBox(key: ValueKey<String>("sized_box_1")),
-                  ),
+          TextFormField(
+            keyboardType: TextInputType.number,
+            controller: pidKpController,
+            validator: (value) => pidConstantsValidator(value, AppConstants.maxProportional),
+            decoration: InputDecoration(
+              helperText:
+                  "Value must be lower than ${AppConstants.maxProportional} (TODO localize)",
+              border: OutlineInputBorder(),
+              suffixIcon: Padding(
+                padding: const EdgeInsets.only(right: 4.0),
+                child: AnimatedSwitcher(
+                  duration: Durations.short2,
+                  child:
+                      showResetKpButton
+                          ? IconButton(
+                            key: ValueKey<String>("icon_button_1"),
+                            onPressed: () {
+                              pidKpController.value = TextEditingValue(
+                                text: pidStore.proportional.toString(),
+                              );
+                            },
+                            icon: Icon(MdiIcons.redoVariant),
+                            iconSize: 18,
+                          )
+                          : SizedBox(key: ValueKey<String>("sized_box_1")),
                 ),
-                labelText: localizations.devicesPidProportionalGain,
               ),
+              labelText: localizations.devicesPidProportionalGain,
             ),
           ),
-          SizedBox(
-            height: 76,
-            child: TextFormField(
-              keyboardType: TextInputType.number,
-              controller: pidKiController,
-              validator: pidConstantsValidator,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                suffixIcon: Padding(
-                  padding: const EdgeInsets.only(right: 4.0),
-                  child: AnimatedSwitcher(
-                    duration: Durations.short2,
-                    child:
-                        showResetKiButton
-                            ? IconButton(
-                              key: ValueKey("icon_button_2"),
-                              onPressed: () {
-                                pidKiController.value = TextEditingValue(
-                                  text: pidStore.integral.toString(),
-                                );
-                              },
-                              icon: Icon(MdiIcons.redoVariant),
-                              iconSize: 18,
-                            )
-                            : SizedBox(key: ValueKey("sized_box_2")),
-                  ),
+          Padding(padding: EdgeInsets.symmetric(vertical: 4)),
+          TextFormField(
+            keyboardType: TextInputType.number,
+            controller: pidKiController,
+            validator: (value) => pidConstantsValidator(value, AppConstants.maxIntegral),
+            decoration: InputDecoration(
+              helperText: "Value must be lower than ${AppConstants.maxIntegral} (TODO localize)",
+              border: OutlineInputBorder(),
+              suffixIcon: Padding(
+                padding: const EdgeInsets.only(right: 4.0),
+                child: AnimatedSwitcher(
+                  duration: Durations.short2,
+                  child:
+                      showResetKiButton
+                          ? IconButton(
+                            key: ValueKey("icon_button_2"),
+                            onPressed: () {
+                              pidKiController.value = TextEditingValue(
+                                text: pidStore.integral.toString(),
+                              );
+                            },
+                            icon: Icon(MdiIcons.redoVariant),
+                            iconSize: 18,
+                          )
+                          : SizedBox(key: ValueKey("sized_box_2")),
                 ),
-                labelText: localizations.devicesPidIntegralGain,
               ),
+              labelText: localizations.devicesPidIntegralGain,
             ),
           ),
-          SizedBox(
-            height: 76,
-            child: TextFormField(
-              keyboardType: TextInputType.number,
-              controller: pidKdController,
-              validator: pidConstantsValidator,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                suffixIcon: Padding(
-                  padding: const EdgeInsets.only(right: 4.0),
-                  child: AnimatedSwitcher(
-                    duration: Durations.short2,
-                    child:
-                        showResetKdButton
-                            ? IconButton(
-                              key: ValueKey("icon_button_3"),
-                              onPressed: () {
-                                pidKdController.value = TextEditingValue(
-                                  text: pidStore.derivative.toString(),
-                                );
-                              },
-                              icon: Icon(MdiIcons.redoVariant),
-                              iconSize: 18,
-                            )
-                            : SizedBox(key: ValueKey("sized_box_3")),
-                  ),
+          Padding(padding: EdgeInsets.symmetric(vertical: 4)),
+          TextFormField(
+            keyboardType: TextInputType.number,
+            controller: pidKdController,
+            validator: (value) => pidConstantsValidator(value, AppConstants.maxDerivative),
+            decoration: InputDecoration(
+              helperText: "Value must be lower than ${AppConstants.maxDerivative} (TODO localize)",
+              border: OutlineInputBorder(),
+              suffixIcon: Padding(
+                padding: const EdgeInsets.only(right: 4.0),
+                child: AnimatedSwitcher(
+                  duration: Durations.short2,
+                  child:
+                      showResetKdButton
+                          ? IconButton(
+                            key: ValueKey("icon_button_3"),
+                            onPressed: () {
+                              pidKdController.value = TextEditingValue(
+                                text: pidStore.derivative.toString(),
+                              );
+                            },
+                            icon: Icon(MdiIcons.redoVariant),
+                            iconSize: 18,
+                          )
+                          : SizedBox(key: ValueKey("sized_box_3")),
                 ),
-                labelText: localizations.devicesPidDerivativeGain,
               ),
+              labelText: localizations.devicesPidDerivativeGain,
             ),
           ),
-          Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+          Padding(padding: EdgeInsets.symmetric(vertical: 8)),
           OutlinedButton(
             onPressed: () {
               if (_formKey.currentState?.validate() == true) {
