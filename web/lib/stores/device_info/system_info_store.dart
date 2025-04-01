@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
+import 'package:brew_kettle_dashboard/core/data/models/api/device_configuration.dart';
 import 'package:brew_kettle_dashboard/core/data/repository/repository.dart';
 import 'package:brew_kettle_dashboard/stores/exception/exception_store.dart';
 import 'package:mobx/mobx.dart';

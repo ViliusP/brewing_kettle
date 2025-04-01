@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
+import 'package:brew_kettle_dashboard/core/data/models/api/device_configuration.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/device_info/system_info_store.dart';

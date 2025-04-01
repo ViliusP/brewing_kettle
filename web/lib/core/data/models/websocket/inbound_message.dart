@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:brew_kettle_dashboard/utils/string_extensions.dart';
 import 'package:collection/collection.dart';
 
-part 'device_configuration.dart';
 part 'device_snapshot.dart';
 part 'message_simple_value.dart';
 part 'heater_controller_state.dart';
@@ -144,7 +143,6 @@ sealed class WsInboundMessagePayload {
 
   factory WsInboundMessagePayload.fromJsonMap(Map<String, dynamic> json, InboundMessageType type) {
     return switch (type) {
-      InboundMessageType.configuration => SystemInfo.fromJson(json),
       InboundMessageType.snapshot => DeviceSnapshot.fromJson(json),
       InboundMessageType.heaterControllerState => HeaterControllerState.fromJson(json),
     };
@@ -167,7 +165,6 @@ class WsInboundMessage<T extends WsInboundMessagePayload> extends WsInboundMessa
 }
 
 enum InboundMessageType {
-  configuration("configuration"),
   snapshot("snapshot"),
   heaterControllerState("heater_controller_state");
 
