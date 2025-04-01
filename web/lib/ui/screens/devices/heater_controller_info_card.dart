@@ -207,7 +207,7 @@ class _PidSectionState extends State<_PidSection> {
               labelText: localizations.devicesPidProportionalGain,
             ),
           ),
-          Padding(padding: EdgeInsets.symmetric(vertical: 4)),
+          Padding(padding: EdgeInsets.symmetric(vertical: 6)),
           TextFormField(
             keyboardType: TextInputType.number,
             controller: pidKiController,
@@ -239,7 +239,7 @@ class _PidSectionState extends State<_PidSection> {
               labelText: localizations.devicesPidIntegralGain,
             ),
           ),
-          Padding(padding: EdgeInsets.symmetric(vertical: 4)),
+          Padding(padding: EdgeInsets.symmetric(vertical: 6)),
           TextFormField(
             keyboardType: TextInputType.number,
             controller: pidKdController,
