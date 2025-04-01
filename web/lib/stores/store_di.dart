@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:brew_kettle_dashboard/core/data/network/kettle_api/pid_api.dart';
 import 'package:brew_kettle_dashboard/core/data/network/kettle_api/system_info_api.dart';
 import 'package:brew_kettle_dashboard/core/data/network/kettle_client.dart';
+import 'package:brew_kettle_dashboard/core/data/repository/pid_repository.dart';
 import 'package:brew_kettle_dashboard/core/data/repository/repository.dart';
 import 'package:brew_kettle_dashboard/core/data/repository/system_info_repository.dart';
 import 'package:brew_kettle_dashboard/core/data/repository/websocket_connection_repository.dart';
@@ -25,6 +27,8 @@ class StoreModule {
 
     Repository repository = Repository(
       systemInfo: SystemInfoRepository(SystemInfoApi(client: kettleClient)),
+      pidRepository: PidRepository(PidApi(client: kettleClient)),
+
       webSocketConnection: WebSocketConnectionRepository(kettleClient),
       sharedPreferences: SharedPreferenceHelper(
         await SharedPreferencesWithCache.create(
@@ -53,7 +57,13 @@ class StoreModule {
     getIt.registerSingleton<HeaterControllerStateStore>(
       HeaterControllerStateStore(webSocketConnectionStore: webSocketConnectionStore),
     );
-    getIt.registerSingleton<PidStore>(PidStore(webSocketConnectionStore: webSocketConnectionStore));
+    getIt.registerSingleton<PidStore>(
+      PidStore(
+        webSocketConnectionStore: webSocketConnectionStore,
+        repository: repository,
+        exceptionStore: exceptionStore,
+      ),
+    );
 
     getIt.registerSingleton<NetworkScannerStore>(NetworkScannerStore());
     getIt.registerSingleton<LocaleStore>(LocaleStore(repository));

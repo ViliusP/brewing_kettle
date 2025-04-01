@@ -1,4 +1,4 @@
-import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
+import 'package:brew_kettle_dashboard/core/data/models/api/device_configuration.dart';
 import 'package:brew_kettle_dashboard/core/data/network/kettle_api/system_info_api.dart';
 
 class SystemInfoRepository {

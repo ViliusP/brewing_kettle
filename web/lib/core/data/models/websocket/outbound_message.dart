@@ -56,19 +56,6 @@ class WsMessageComposer {
   static WsOutboundValueMessage requestStateChangeMessage(OutboundMessageType type, dynamic value) {
     return WsOutboundValueMessage(id: Uuid().v4(), type: type, time: DateTime.now(), value: value);
   }
-
-  static WsOutboundValueMessage changePidConstantsMessage({
-    required double proportional,
-    required double integral,
-    required double derivative,
-  }) {
-    return WsOutboundValueMessage(
-      id: Uuid().v4(),
-      type: OutboundMessageType.pidConstantsSet,
-      time: DateTime.now(),
-      value: {'proportional': proportional, 'integral': integral, 'derivative': derivative},
-    );
-  }
 }
 
 enum OutboundMessageType {

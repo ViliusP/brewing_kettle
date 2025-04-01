@@ -1,11 +1,9 @@
-part of 'inbound_message.dart';
-
 /// Represents the PID constants (Proportional, Integral, Derivative) used in
 /// control systems, received as part of a WebSocket inbound message.
 ///
 /// These constants determine the behavior of a PID controller and must all be
 /// valid non-null double values.
-class PidConstants extends WsInboundMessagePayload {
+class PidConstants {
   final double proportional;
   final double integral;
   final double derivative;

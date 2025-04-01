@@ -7,7 +7,6 @@ part 'device_configuration.dart';
 part 'device_snapshot.dart';
 part 'message_simple_value.dart';
 part 'heater_controller_state.dart';
-part 'pid_constants.dart';
 
 /// Represents an inbound message received via WebSocket.
 ///
@@ -148,7 +147,6 @@ sealed class WsInboundMessagePayload {
       InboundMessageType.configuration => SystemInfo.fromJson(json),
       InboundMessageType.snapshot => DeviceSnapshot.fromJson(json),
       InboundMessageType.heaterControllerState => HeaterControllerState.fromJson(json),
-      InboundMessageType.pidConstants => PidConstants.fromJson(json),
     };
   }
 }
@@ -171,8 +169,7 @@ class WsInboundMessage<T extends WsInboundMessagePayload> extends WsInboundMessa
 enum InboundMessageType {
   configuration("configuration"),
   snapshot("snapshot"),
-  heaterControllerState("heater_controller_state"),
-  pidConstants("pid_constants");
+  heaterControllerState("heater_controller_state");
 
   const InboundMessageType([this._field]);
 
