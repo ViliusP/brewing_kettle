@@ -92,10 +92,31 @@ static cJSON *device_configuration_json()
   return payload_json;
 }
 
+static cJSON *system_info_json()
+{
+  cJSON *payload_json = cJSON_CreateObject();
+  cJSON *communicator_info_json = device_configuration_json();
+  cJSON *heater_info_json = cJSON_CreateObject();
+
+  cJSON_AddItemToObject(payload_json, "communicator", communicator_info_json);
+  cJSON_AddItemToObject(payload_json, "heater", heater_info_json);
+
+  return payload_json;
+}
+
 static esp_err_t get_system_info_handler(httpd_req_t *req)
 {
     ESP_LOGI(TAG, "Got request: GET /api/v1/system-info");
     httpd_resp_set_type(req, "application/json");
+
+    cJSON *response_root = system_info_json();
+    const char *sys_info = cJSON_Print(response_root);
+    httpd_resp_sendstr(req, sys_info);
+    free((void *)sys_info);
+    cJSON_Delete(response_root);
+    return ESP_OK;
+}
+
 
     cJSON *response_root = device_configuration_json();
     const char *sys_info = cJSON_Print(response_root);
