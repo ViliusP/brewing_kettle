@@ -1,11 +1,25 @@
 part of 'inbound_message.dart';
 
+/// Represents system information containing both communicator and heater device details.
 class SystemInfo extends WsInboundMessagePayload {
+  /// Information about the communication device.
   final DeviceInfo communicator;
+
+  /// Detailed information about the heater device.
   final HeaterDeviceInfo heater;
 
+  /// Creates a [SystemInfo] instance with required device information.
   const SystemInfo({required this.communicator, required this.heater});
 
+  /// Parses [SystemInfo] from JSON data according to the device communication protocol.
+  ///
+  /// Expected JSON structure:
+  /// ```json
+  /// {
+  ///   "communicator": {...},
+  ///   "heater": {...}
+  /// }
+  /// ```
   factory SystemInfo.fromJson(Map<String, dynamic> json) {
     var heaterJson = json["heater"];
     var communicatorJson = json["communicator"];
@@ -28,17 +42,28 @@ class SystemInfo extends WsInboundMessagePayload {
   int get hashCode => Object.hash(communicator, heater);
 }
 
+/// Base class for device information containing hardware and software details.
 class DeviceInfo {
+  /// Hardware specifications of the device.
   final DeviceHardwareInfo hardware;
+
+  /// Software/firmware information of the device.
   final DeviceSoftwareInfo software;
 
+  /// Creates a [DeviceInfo] instance with required hardware/software details.
   const DeviceInfo({required this.hardware, required this.software});
 
+  /// Empty/default device information instance.
+  ///
+  /// Useful for initialization or error states.
   const DeviceInfo.empty({
     this.hardware = const DeviceHardwareInfo(),
     this.software = const DeviceSoftwareInfo(),
   });
 
+  /// Parses [DeviceInfo] from JSON data.
+  ///
+  /// Handles missing/malformed hardware/software data by falling back to defaults.
   factory DeviceInfo.fromJson(Map<String, dynamic> json) {
     var hardwareJson = json["hardware"];
     var hardwareInfo = const DeviceHardwareInfo();
@@ -67,15 +92,23 @@ class DeviceInfo {
   int get hashCode => Object.hash(hardware, software);
 }
 
+/// Specialized device information for heater devices.
+///
+/// Implements [DeviceInfo] with heater-specific software details.
 class HeaterDeviceInfo implements DeviceInfo {
   @override
   final DeviceHardwareInfo hardware;
 
+  /// Heater-specific software information including PID constants.
   @override
   final HeaterDeviceSoftwareInfo software;
 
+  /// Creates a [HeaterDeviceInfo] instance with heater-specific details.
   const HeaterDeviceInfo({required this.software, required this.hardware});
 
+  /// Parses [HeaterDeviceInfo] from JSON data.
+  ///
+  /// Uses specialized parser for heater-specific software information.
   factory HeaterDeviceInfo.fromJson(Map<String, dynamic> json) {
     var hardwareJson = json["hardware"];
     var hardwareInfo = const DeviceHardwareInfo();
@@ -104,18 +137,27 @@ class HeaterDeviceInfo implements DeviceInfo {
   int get hashCode => Object.hash(hardware, software);
 }
 
+/// Detailed hardware specifications for a device.
 class DeviceHardwareInfo {
+  /// Chip model/version information.
   final String? chip;
+
+  /// Number of processing cores.
   final int? cores;
+
+  /// Set of supported hardware features.
   final Set<ChipFeatures> features;
+
+  /// Silicon revision identifier.
   final String? siliconRevision;
 
-  // In bytes
+  /// Flash memory information (in bytes).
   final FlashInfo flash;
 
-  // In bytes
+  /// Minimum heap size requirement (in bytes).
   final int? minimumHeapSize;
 
+  /// Creates a [DeviceHardwareInfo] instance.
   const DeviceHardwareInfo({
     this.chip,
     this.cores,
@@ -125,6 +167,9 @@ class DeviceHardwareInfo {
     this.minimumHeapSize,
   });
 
+  /// Parses [DeviceHardwareInfo] from JSON data
+  ///
+  /// Gracefully handles missing data and malformed feature entries
   factory DeviceHardwareInfo.fromJson(Map<String, dynamic> json) {
     final String? chip = json["chip"];
     final int? cores = json["cores"];
@@ -173,22 +218,24 @@ class DeviceHardwareInfo {
   int get hashCode => Object.hash(chip, cores, features, siliconRevision, flash, minimumHeapSize);
 }
 
+/// Base software/firmware information for a device.
 class DeviceSoftwareInfo {
-  /// Application version
+  /// Application version string.
   final String? version;
 
   /// Secure version
   final int? secureVersion;
 
-  /// IDF version
+  /// Underlying framework version (e.g., IDF version).
   final String? idfVersion;
 
-  /// Project name
+  /// Name of the deployed project/application.
   final String? projectName;
 
-  /// Compile date + time
+  /// Combined compile date and time string.
   final String? compileTime;
 
+  /// Creates a [DeviceSoftwareInfo] instance.
   const DeviceSoftwareInfo({
     this.projectName,
     this.version,
@@ -197,6 +244,9 @@ class DeviceSoftwareInfo {
     this.compileTime,
   });
 
+  /// Parses [DeviceSoftwareInfo] from JSON data.
+  ///
+  /// Combines separate date/time fields from the source JSON.
   factory DeviceSoftwareInfo.fromJson(Map<String, dynamic> json) {
     final String? projectName = json["project_name"];
     final String? version = json["version"];
@@ -229,12 +279,20 @@ class DeviceSoftwareInfo {
   int get hashCode => Object.hash(version, secureVersion, idfVersion, projectName, compileTime);
 }
 
+/// Flash memory configuration details.
 class FlashInfo {
+  /// Total size in bytes.
   final int? size;
+
+  /// Type of flash memory.
   final FlashType? type;
 
+  /// Creates a [FlashInfo] instance.
   const FlashInfo({this.size, this.type});
 
+  /// Parses [FlashInfo] from JSON data.
+  ///
+  /// Handles unknown flash types by returning null.
   factory FlashInfo.fromJson(Map<String, dynamic> json) {
     final int? size = json["size"];
 
@@ -259,9 +317,12 @@ class FlashInfo {
   int get hashCode => Object.hash(size, type);
 }
 
+/// Heater-specific software information extending base device software.
 class HeaterDeviceSoftwareInfo extends DeviceSoftwareInfo {
+  /// PID control constants for temperature regulation.
   final PidConstants? pidConstants;
 
+  /// Creates [HeaterDeviceSoftwareInfo] with optional PID constants.
   const HeaterDeviceSoftwareInfo({
     this.pidConstants,
     super.projectName,
@@ -271,6 +332,9 @@ class HeaterDeviceSoftwareInfo extends DeviceSoftwareInfo {
     super.compileTime,
   });
 
+  /// Parses [HeaterDeviceSoftwareInfo] from JSON data.
+  ///
+  /// Includes parsing of PID constants if present.
   factory HeaterDeviceSoftwareInfo.fromJson(Map<String, dynamic> json) {
     final String? projectName = json["project_name"];
     final String? version = json["version"];
@@ -279,6 +343,7 @@ class HeaterDeviceSoftwareInfo extends DeviceSoftwareInfo {
     final String? compileTime = json["compile_time"];
     final String? compileDate = json["compile_date"];
 
+    // Parse PID constants if available
     PidConstants? pidConstants;
     if (json["pid_constants"] is Map<String, dynamic>) {
       pidConstants = PidConstants.fromJson(json["pid_constants"] as Map<String, dynamic>);
@@ -311,6 +376,7 @@ class HeaterDeviceSoftwareInfo extends DeviceSoftwareInfo {
       Object.hash(version, secureVersion, idfVersion, projectName, compileTime, pidConstants);
 }
 
+/// Enumeration of supported chip features.
 enum ChipFeatures {
   /// Wifi
   wifi,
@@ -325,4 +391,11 @@ enum ChipFeatures {
   ieee802154,
 }
 
-enum FlashType { embedded, external }
+/// Enumeration of flash memory types.
+enum FlashType {
+  /// Built-in/internal flash memory
+  embedded,
+
+  /// External flash chip
+  external,
+}
