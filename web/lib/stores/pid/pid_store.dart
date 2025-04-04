@@ -52,14 +52,14 @@ abstract class _PidStore with Store {
   // ACTIONS
   // -----------------------
   @action
-  void changeConstants({
+  Future changeConstants({
     required double proportional,
     required double integral,
     required double derivative,
-  }) {
+  }) async {
     _isConstantsChanging = true;
     try {
-      _repository.pid.changeConstants(
+      _pidConstants = await _repository.pid.changeConstants(
         proportional: proportional,
         integral: integral,
         derivative: derivative,

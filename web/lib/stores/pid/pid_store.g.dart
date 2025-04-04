@@ -70,25 +70,22 @@ mixin _$PidStore on _PidStore, Store {
     });
   }
 
-  late final _$_PidStoreActionController =
-      ActionController(name: '_PidStore', context: context);
+  late final _$changeConstantsAsyncAction =
+      AsyncAction('_PidStore.changeConstants', context: context);
 
   @override
-  void changeConstants(
+  Future<dynamic> changeConstants(
       {required double proportional,
       required double integral,
       required double derivative}) {
-    final _$actionInfo = _$_PidStoreActionController.startAction(
-        name: '_PidStore.changeConstants');
-    try {
-      return super.changeConstants(
-          proportional: proportional,
-          integral: integral,
-          derivative: derivative);
-    } finally {
-      _$_PidStoreActionController.endAction(_$actionInfo);
-    }
+    return _$changeConstantsAsyncAction.run(() => super.changeConstants(
+        proportional: proportional,
+        integral: integral,
+        derivative: derivative));
   }
+
+  late final _$_PidStoreActionController =
+      ActionController(name: '_PidStore', context: context);
 
   @override
   void _onData(WsInboundMessage<WsInboundMessagePayload> message) {

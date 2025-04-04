@@ -19,15 +19,19 @@ class PidConstants {
   ///
   /// Throws an exception if any of the required fields are missing or null
   factory PidConstants.fromJson(Map<String, dynamic> json) {
-    final double? proportional = json["proportional"];
-    final double? integral = json["integral"];
-    final double? derivative = json["derivative"];
+    final num? proportional = json["proportional"];
+    final num? integral = json["integral"];
+    final num? derivative = json["derivative"];
 
     if ([proportional, integral, derivative].contains(null)) {
       throw Exception("Cannot create PidConstants from $json");
     }
 
-    return PidConstants(proportional: proportional!, integral: integral!, derivative: derivative!);
+    return PidConstants(
+      proportional: proportional!.toDouble(),
+      integral: integral!.toDouble(),
+      derivative: derivative!.toDouble(),
+    );
   }
 
   /// Equality operator compares all PID constants for value equality
