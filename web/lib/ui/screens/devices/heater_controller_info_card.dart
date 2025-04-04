@@ -93,11 +93,7 @@ class _PidSectionState extends State<_PidSection> {
 
     pidKpController.addListener(() {
       bool lastShowResetKpButton = showResetKpButton;
-      String storeTextValue = pidStore.proportional.toString();
-      if (pidStore.proportional == null) {
-        storeTextValue = "";
-      }
-      showResetKpButton = storeTextValue != pidKpController.text;
+      showResetKpButton = pidStore.proportional != double.tryParse(pidKpController.text);
       if (lastShowResetKpButton != showResetKpButton) {
         setState(() {});
       }
@@ -110,11 +106,7 @@ class _PidSectionState extends State<_PidSection> {
 
     pidKiController.addListener(() {
       bool lastShowResetKiButton = showResetKiButton;
-      String storeTextValue = pidStore.integral.toString();
-      if (pidStore.integral == null) {
-        storeTextValue = "";
-      }
-      showResetKiButton = storeTextValue != pidKiController.text;
+      showResetKiButton = pidStore.integral != double.tryParse(pidKiController.text);
       if (lastShowResetKiButton != showResetKiButton) {
         setState(() {});
       }
@@ -127,11 +119,7 @@ class _PidSectionState extends State<_PidSection> {
 
     pidKdController.addListener(() {
       bool lastShowResetKdButton = showResetKdButton;
-      String storeTextValue = pidStore.derivative.toString();
-      if (pidStore.derivative == null) {
-        storeTextValue = "";
-      }
-      showResetKdButton = storeTextValue != pidKdController.text;
+      showResetKdButton = pidStore.derivative != double.tryParse(pidKdController.text);
       if (lastShowResetKdButton != showResetKdButton) {
         setState(() {});
       }
