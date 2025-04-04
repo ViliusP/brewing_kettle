@@ -3,12 +3,14 @@
 #include "common_types.h"
 #include "esp_log.h"
 
-#define PID_NAMESPACE "pid_config"
+#define PID_NAMESPACE "nvs"
 #define PID_KP_KEY "kp"
 #define PID_KI_KEY "ki"
 #define PID_KD_KEY "kd"
 
-const pid_constants_t PID_DEFAULTS = {1.0f, 0.0f, 0.0f};
+#define PID_DEFAULT_KP 1.0f
+#define PID_DEFAULT_KI 0.0f
+#define PID_DEFAULT_KD 0.0f
 
 esp_err_t save_pid_settings(const pid_constants_t *pid)
 {
@@ -35,12 +37,12 @@ esp_err_t save_pid_settings(const pid_constants_t *pid)
 
 esp_err_t load_pid_settings(pid_constants_t *pid)
 {
+    pid->derivative = PID_DEFAULT_KD;
+    pid->integral = PID_DEFAULT_KI;
+    pid->proportional = PID_DEFAULT_KP;    
+    
     nvs_handle_t handle;
-    esp_err_t err;
-
-    *pid = PID_DEFAULTS; // Start with defaults
-
-    err = nvs_open(PID_NAMESPACE, NVS_READONLY, &handle);
+    esp_err_t err = nvs_open(PID_NAMESPACE, NVS_READWRITE, &handle);
     if (err != ESP_OK)
         return err;
 

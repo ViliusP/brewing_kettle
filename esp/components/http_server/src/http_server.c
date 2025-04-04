@@ -478,13 +478,8 @@ static httpd_handle_t server = NULL; // Declare server handle as static
 
 esp_err_t start_wifi(const char *ssid, const char *password) {
     ESP_LOGI(TAG, "Initializing NVC and TCP/IP stack");
-    esp_err_t ret = nvs_flash_init();
-    if(ret != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to initialize NVC flash");
-        return ret;
-    }
-   
-    ret = esp_netif_init();
+    
+    esp_err_t ret = esp_netif_init();
     if(ret != ESP_OK) {
         ESP_LOGE(TAG, "Failed to initialize TCP/IP stack flash");
         return ret;

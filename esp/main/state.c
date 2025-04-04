@@ -6,6 +6,7 @@
 #include "utilities.h"
 #include "cbor.h"
 #include "state.h"
+#include "storage.h"
 
 static const char *TAG = "STATE";
 
@@ -143,11 +144,35 @@ app_state_t *app_state_init(void)
         .clients_info = NULL,
         .client_count = 0};
 
+    // ======================================
+    // --------------- PID ------------------
+    // ======================================
+
+    pid_constants_t *pid_constants = malloc(sizeof(pid_constants_t));
+    if (!pid_constants)
+    {
+        free(heater_state);
+        free(clients);
+        ESP_LOGE(TAG, "Failed to allocate PID constants");
+        return NULL;
+    }
+
+    esp_err_t err = load_pid_settings(pid_constants);
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Failed to load PID settings: %s", esp_err_to_name(err));
+        return NULL;
+    }
+
+    ESP_LOGI(TAG, "PID settings loaded: Kp: %f, Ki: %f, Kd: %f", pid_constants->proportional, pid_constants->integral, pid_constants->derivative);
+
     // Initialize global app state
     app_state = (app_state_t){
         .status = APP_STATUS_INITIALIZING,
         .heater_controller_state = heater_state,
-        .connected_clients = clients};
+        .connected_clients = clients,
+        .pid_constants = pid_constants,
+    };
 
     return &app_state;
 }
@@ -184,6 +209,7 @@ state_subjects_t *init_state_subjects(app_state_t *app_state)
     ESP_LOGD(TAG, "Initializing state subjects with heater controller state at address: %p", (void *)app_state->heater_controller_state);
     lv_subject_init_pointer(&state_subjects.heater_controller_state, app_state->heater_controller_state);
     lv_subject_init_pointer(&state_subjects.connected_clients, NULL);
+    lv_subject_init_pointer(&state_subjects.pid_constants, app_state->pid_constants);
     lv_subject_init_int(&state_subjects.app_status, app_state->status);
 
     return &state_subjects;

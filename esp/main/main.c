@@ -21,6 +21,7 @@
 #include "storage.h"
 #include "http_handlers.h"
 #include "sdmmc_cmd.h"
+#include "nvs_flash.h"
 
 static const char *TAG = "MAIN";
 
@@ -131,6 +132,9 @@ void app_main(void)
     ++boot_count;
     ESP_LOGI(TAG, "Hello, World!");
     ESP_LOGI(TAG, "Boot count: %d", boot_count);
+
+    ESP_LOGI(TAG, "Initializing NVS"); 
+    ESP_ERROR_CHECK(nvs_flash_init());
 
     // ================ state ===================
     app_state_t *app_state = app_state_init();

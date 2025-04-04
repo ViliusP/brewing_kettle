@@ -81,6 +81,7 @@ typedef struct
 {
     lv_subject_t app_status;
     lv_subject_t heater_controller_state;
+    lv_subject_t pid_constants;
     lv_subject_t connected_clients;
 } state_subjects_t;
 
