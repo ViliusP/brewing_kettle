@@ -80,28 +80,20 @@ class _PidSectionState extends State<_PidSection> {
   bool showResetKiButton = false;
   bool showResetKdButton = false;
 
-  late final storeKpReactionDispose = reaction((_) => pidStore.proportional, (val) {
-    bool lastShowResetKpButton = showResetKpButton;
-    showResetKpButton = pidStore.proportional.toString() != pidKpController.text;
-    if (lastShowResetKpButton != showResetKpButton) setState(() {});
-  });
-  late final storeKiReactionDispose = reaction((_) => pidStore.integral, (val) {
-    bool lastShowResetKiButton = showResetKiButton;
-    showResetKiButton = pidStore.integral.toString() != pidKiController.text;
-    if (lastShowResetKiButton != showResetKiButton) setState(() {});
-  });
-  late final storeKdReactionDispose = reaction((_) => pidStore.derivative, (val) {
-    bool lastShowResetKdButton = showResetKdButton;
-    showResetKdButton = pidStore.derivative.toString() != pidKdController.text;
-    if (lastShowResetKdButton != showResetKdButton) setState(() {});
-  });
+  ReactionDisposer? storeKpReactionDispose;
+  ReactionDisposer? storeKiReactionDispose;
+  ReactionDisposer? storeKdReactionDispose;
 
   @override
   void initState() {
     // Proportional
+    storeKpReactionDispose = reaction((_) => pidStore.proportional, (val) {
+      pidKpController.value = TextEditingValue(text: pidStore.proportional.toString());
+    });
+
     pidKpController.addListener(() {
       bool lastShowResetKpButton = showResetKpButton;
-      String storeTextValue = pidStore.integral.toString();
+      String storeTextValue = pidStore.proportional.toString();
       if (pidStore.proportional == null) {
         storeTextValue = "";
       }
@@ -110,7 +102,12 @@ class _PidSectionState extends State<_PidSection> {
         setState(() {});
       }
     });
+
     // Integral
+    storeKiReactionDispose = reaction((_) => pidStore.integral, (val) {
+      pidKiController.value = TextEditingValue(text: pidStore.integral.toString());
+    });
+
     pidKiController.addListener(() {
       bool lastShowResetKiButton = showResetKiButton;
       String storeTextValue = pidStore.integral.toString();
@@ -122,7 +119,12 @@ class _PidSectionState extends State<_PidSection> {
         setState(() {});
       }
     });
+
     // Derivative
+    storeKdReactionDispose = reaction((_) => pidStore.derivative, (val) {
+      pidKdController.value = TextEditingValue(text: pidStore.derivative.toString());
+    });
+
     pidKdController.addListener(() {
       bool lastShowResetKdButton = showResetKdButton;
       String storeTextValue = pidStore.derivative.toString();
@@ -310,9 +312,9 @@ class _PidSectionState extends State<_PidSection> {
     pidKiController.dispose();
     pidKdController.dispose();
 
-    storeKpReactionDispose();
-    storeKiReactionDispose();
-    storeKdReactionDispose();
+    storeKpReactionDispose?.call();
+    storeKiReactionDispose?.call();
+    storeKdReactionDispose?.call();
     super.dispose();
   }
 }
