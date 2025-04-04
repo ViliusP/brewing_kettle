@@ -29,7 +29,7 @@ class SystemInfo {
 
     var heaterJson = json["heater"];
     HeaterDeviceInfo heater = const HeaterDeviceInfo.empty();
-    if (communicatorJson is Map<String, dynamic>) {
+    if (heaterJson is Map<String, dynamic>) {
       heater = HeaterDeviceInfo.fromJson(heaterJson);
     }
     return SystemInfo(heater: heater, communicator: communicator);
@@ -329,12 +329,8 @@ class FlashInfo {
 
 /// Heater-specific software information extending base device software.
 class HeaterDeviceSoftwareInfo extends DeviceSoftwareInfo {
-  /// PID control constants for temperature regulation.
-  final PidConstants? pidConstants;
-
   /// Creates [HeaterDeviceSoftwareInfo] with optional PID constants.
   const HeaterDeviceSoftwareInfo({
-    this.pidConstants,
     super.projectName,
     super.version,
     super.secureVersion,
@@ -353,19 +349,12 @@ class HeaterDeviceSoftwareInfo extends DeviceSoftwareInfo {
     final String? compileTime = json["compile_time"];
     final String? compileDate = json["compile_date"];
 
-    // Parse PID constants if available
-    PidConstants? pidConstants;
-    if (json["pid_constants"] is Map<String, dynamic>) {
-      pidConstants = PidConstants.fromJson(json["pid_constants"] as Map<String, dynamic>);
-    }
-
     return HeaterDeviceSoftwareInfo(
       projectName: projectName,
       version: version,
       secureVersion: secureVersion,
       idfVersion: idfVersion,
       compileTime: "$compileDate $compileTime",
-      pidConstants: pidConstants,
     );
   }
 
@@ -378,12 +367,10 @@ class HeaterDeviceSoftwareInfo extends DeviceSoftwareInfo {
           secureVersion == other.secureVersion &&
           idfVersion == other.idfVersion &&
           projectName == other.projectName &&
-          compileTime == other.compileTime &&
-          pidConstants == other.pidConstants;
+          compileTime == other.compileTime;
 
   @override
-  int get hashCode =>
-      Object.hash(version, secureVersion, idfVersion, projectName, compileTime, pidConstants);
+  int get hashCode => Object.hash(version, secureVersion, idfVersion, projectName, compileTime);
 }
 
 /// Enumeration of supported chip features.
