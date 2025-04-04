@@ -13,12 +13,13 @@
 
 static const char *TAG = "HTTP_HANDLERS";
 
-typedef struct {
-  lv_subject_t *pid_constants;
-} HttpHandlerContext;
+typedef struct
+{
+  state_subjects_t *state_subjects;
+} http_handler_context_t;
 
-static HttpHandlerContext context = {
-  .pid_constants = NULL // To be initialized
+static http_handler_context_t context = {
+    .state_subjects = NULL // To be initialized
 };
 
 static esp_err_t hello_world_handler(httpd_req_t *req)
@@ -27,7 +28,7 @@ static esp_err_t hello_world_handler(httpd_req_t *req)
   return ESP_OK;
 }
 
-static cJSON *device_configuration_json()
+static cJSON *compose_communicator_configuration_json()
 {
   cJSON *payload_json = cJSON_CreateObject();
 
@@ -105,47 +106,6 @@ static cJSON *device_configuration_json()
   return payload_json;
 }
 
-static cJSON *system_info_json()
-{
-  cJSON *payload_json = cJSON_CreateObject();
-  cJSON *communicator_info_json = device_configuration_json();
-  cJSON *heater_info_json = cJSON_CreateObject();
-
-  cJSON_AddItemToObject(payload_json, "communicator", communicator_info_json);
-  cJSON_AddItemToObject(payload_json, "heater", heater_info_json);
-
-  return payload_json;
-}
-
-static esp_err_t get_system_info_handler(httpd_req_t *req)
-{
-    ESP_LOGI(TAG, "Got request: GET /api/v1/system-info");
-    httpd_resp_set_type(req, "application/json");
-
-    cJSON *response_root = system_info_json();
-    const char *sys_info = cJSON_Print(response_root);
-    httpd_resp_sendstr(req, sys_info);
-    free((void *)sys_info);
-    cJSON_Delete(response_root);
-    return ESP_OK;
-}
-
-
-    cJSON *response_root = device_configuration_json();
-    const char *sys_info = cJSON_Print(response_root);
-    httpd_resp_sendstr(req, sys_info);
-    free((void *)sys_info);
-    cJSON_Delete(response_root);
-    return ESP_OK;
-}
-
-static esp_err_t any_uri_handler(httpd_req_t *req)
-{
-  ESP_LOGW(TAG, "Got unexpected request: %d %s", req->method, req->uri);
-  httpd_resp_send_404(req);
-  return ESP_OK;
-}
-
 // Helper function to create PID response JSON
 static cJSON *compose_pid_constants_json(const pid_constants_t *pid)
 {
@@ -160,9 +120,111 @@ static cJSON *compose_pid_constants_json(const pid_constants_t *pid)
   return response;
 }
 
-static esp_err_t get_pid_constants_handler(httpd_req_t *req)
+static cJSON *compose_heater_configuration_json()
 {
-  ESP_LOGI(TAG, "Got request: GET /api/v1/pid");
+  cJSON *payload_json = cJSON_CreateObject();
+
+  cJSON *hardware_info_json = cJSON_CreateObject();
+  cJSON *software_info_json = cJSON_CreateObject();
+
+  // ---------
+  // HARDWARE
+  // ---------
+  esp_chip_info_t chip_info;
+  uint32_t flash_size;
+  esp_chip_info(&chip_info);
+
+  cJSON_AddStringToObject(hardware_info_json, "chip", "unknown chip");
+  cJSON_AddNumberToObject(hardware_info_json, "cores", -1);
+
+  // Create an array to hold the features
+  cJSON *features_array = cJSON_CreateArray();
+
+  // // Add features to the array
+  // if (chip_info.features & CHIP_FEATURE_WIFI_BGN)
+  // {
+  //   cJSON_AddItemToArray(features_array, cJSON_CreateString("wifi"));
+  // }
+  // if (chip_info.features & CHIP_FEATURE_BT)
+  // {
+  //   cJSON_AddItemToArray(features_array, cJSON_CreateString("bt"));
+  // }
+  // if (chip_info.features & CHIP_FEATURE_BLE)
+  // {
+  //   cJSON_AddItemToArray(features_array, cJSON_CreateString("ble"));
+  // }
+  // if (chip_info.features & CHIP_FEATURE_IEEE802154)
+  // {
+  //   cJSON_AddItemToArray(features_array, cJSON_CreateString("ieee802154"));
+  // }
+
+  cJSON_AddItemToObject(hardware_info_json, "features", features_array);
+
+  unsigned major_rev = -1 / 100;
+  unsigned minor_rev = -1 % 100;
+  cJSON_AddItemToObject(hardware_info_json, "silicon_revision", cJSON_create_formatted_string("%d.%d", major_rev, minor_rev));
+
+  // if (esp_flash_get_size(NULL, &flash_size) != ESP_OK)
+  // {
+  //   ESP_LOGW(TAG, "Get flash size failed");
+  // }
+
+  cJSON *flash_json = cJSON_CreateObject();
+  cJSON_AddNumberToObject(flash_json, "size", -1);
+  cJSON_AddStringToObject(flash_json, "type", "embedded");
+  cJSON_AddItemToObject(hardware_info_json, "flash", flash_json);
+
+  cJSON_AddNumberToObject(hardware_info_json, "heap_size", -1);
+
+// ---------
+// SOFTWARE
+// ---------
+#ifdef ESP_APP_DESC_MAGIC_WORD
+  esp_app_desc_t *app_info = esp_app_get_description();
+  cJSON_AddStringToObject(software_info_json, "project_name", "TODO");
+  cJSON_AddStringToObject(software_info_json, "compile_time", "TODO");
+  cJSON_AddStringToObject(software_info_json, "compile_date", "TODO");
+  cJSON_AddStringToObject(software_info_json, "version", "TODO");
+  cJSON_AddNumberToObject(software_info_json, "secure_version", "TODO");
+  cJSON_AddStringToObject(software_info_json, "idf_version", "TODO");
+#endif
+  // -------
+  // END
+  // -------
+  cJSON_AddItemToObject(payload_json, "hardware", hardware_info_json);
+  cJSON_AddItemToObject(payload_json, "software", software_info_json);
+
+  return payload_json;
+}
+
+static cJSON *system_info_json()
+{
+  cJSON *payload_json = cJSON_CreateObject();
+  cJSON *communicator_info_json = compose_communicator_configuration_json();
+  cJSON *heater_info_json = compose_heater_configuration_json();
+
+  cJSON_AddItemToObject(payload_json, "communicator", communicator_info_json);
+  cJSON_AddItemToObject(payload_json, "heater", heater_info_json);
+
+  return payload_json;
+}
+
+static esp_err_t get_system_info_handler(httpd_req_t *req)
+{
+  ESP_LOGI(TAG, "Got request: GET /api/v1/system-info");
+  httpd_resp_set_type(req, "application/json");
+
+  cJSON *response_root = system_info_json();
+  const char *sys_info = cJSON_Print(response_root);
+  httpd_resp_sendstr(req, sys_info);
+  free((void *)sys_info);
+  cJSON_Delete(response_root);
+  return ESP_OK;
+}
+
+static esp_err_t get_history_list_handler(httpd_req_t *req)
+{
+  ESP_LOGI(TAG, "Got request: GET /api/v1/history");
   httpd_resp_set_type(req, "application/json");
 
   // cJSON *response_root = device_configuration_json();
@@ -170,7 +232,75 @@ static esp_err_t get_pid_constants_handler(httpd_req_t *req)
   // httpd_resp_sendstr(req, sys_info);
   // free((void *)sys_info);
   // cJSON_Delete(response_root);
+  httpd_resp_send_err(req, HTTPD_501_METHOD_NOT_IMPLEMENTED, "Not implemented");
+  return ESP_OK;
+}
+
+static esp_err_t get_history_handler(httpd_req_t *req)
+{
+  ESP_LOGI(TAG, "Got request: GET /api/v1/history/?");
+  httpd_resp_set_type(req, "application/json");
+
+  // cJSON *response_root = device_configuration_json();
+  // const char *sys_info = cJSON_Print(response_root);
+  // httpd_resp_sendstr(req, sys_info);
+  // free((void *)sys_info);
+  // cJSON_Delete(response_root);
+
+  httpd_resp_send_err(req, HTTPD_501_METHOD_NOT_IMPLEMENTED, "Not implemented");
+  return ESP_OK;
+}
+
+static esp_err_t any_uri_handler(httpd_req_t *req)
+{
+  ESP_LOGW(TAG, "Got unexpected request: %d %s", req->method, req->uri);
   httpd_resp_send_404(req);
+  return ESP_OK;
+}
+
+static esp_err_t get_pid_constants_handler(httpd_req_t *req)
+{
+  ESP_LOGI(TAG, "Got request: GET /api/v1/pid");
+  httpd_resp_set_type(req, "application/json");
+
+  // Get PID subject from user context
+  http_handler_context_t *user_context = (http_handler_context_t *)req->user_ctx;
+  if (user_context == NULL)
+  {
+    ESP_LOGE(TAG, "No user_context provided in user context");
+    httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Internal error, no user_context was provided for handler");
+    return ESP_OK;
+  }
+
+  pid_constants_t *current_pid_constants = (pid_constants_t *)lv_subject_get_pointer(&user_context->state_subjects->pid_constants);
+  if (current_pid_constants == NULL)
+  {
+    ESP_LOGE(TAG, "No PID constants found, initialize the PID constants first");
+    httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Internal error, no PID constants found");
+    return ESP_OK;
+  }
+
+  cJSON *response_json = compose_pid_constants_json(current_pid_constants);
+  if (!response_json)
+  {
+    httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Could not compose JSON response");
+    return ESP_OK;
+  }
+
+  const char *response_str = cJSON_PrintUnformatted(response_json);
+  if (!response_str)
+  {
+    cJSON_Delete(response_json);
+    httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Could not create JSON string response");
+    return ESP_OK;
+  }
+
+  httpd_resp_sendstr(req, response_str);
+
+  // Cleanup
+  free((void *)response_str);
+  cJSON_Delete(response_json);
+
   return ESP_OK;
 }
 
@@ -274,9 +404,9 @@ static esp_err_t patch_pid_constants_handler(httpd_req_t *req)
       snprintf(error_msg, sizeof(error_msg), "Integral must be a number");
       has_errors = true;
     }
-    else if (cJSON_GetNumberValue(integral) <= 0)
+    else if (cJSON_GetNumberValue(integral) < 0)
     {
-      snprintf(error_msg, sizeof(error_msg), "Integral must be positive");
+      snprintf(error_msg, sizeof(error_msg), "Integral must be non negative");
       has_errors = true;
     }
   }
@@ -288,9 +418,9 @@ static esp_err_t patch_pid_constants_handler(httpd_req_t *req)
       snprintf(error_msg, sizeof(error_msg), "Derivative must be a number");
       has_errors = true;
     }
-    else if (cJSON_GetNumberValue(derivative) <= 0)
+    else if (cJSON_GetNumberValue(derivative) < 0)
     {
-      snprintf(error_msg, sizeof(error_msg), "Derivative must be positive");
+      snprintf(error_msg, sizeof(error_msg), "Derivative must be non negative");
       has_errors = true;
     }
   }
