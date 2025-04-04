@@ -2,6 +2,7 @@
 
 #include "driver/spi_common.h"
 #include "sdmmc_cmd.h"
+#include "common_types.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,6 +39,9 @@ esp_err_t init_sdcard(const spi_bus_config_t *bus_cfg, sdmmc_card_t **card);
 esp_err_t init_spiffs();
 
 bool file_exists(const char *path);
+
+esp_err_t save_pid_settings(const pid_constants_t *pid);
+esp_err_t load_pid_settings(pid_constants_t *pid);
 
 #ifdef __cplusplus
 }

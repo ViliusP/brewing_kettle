@@ -41,6 +41,18 @@ typedef struct
     float power;
 } heater_controller_state_t;
 
+
+/* PID controller constants
+ These are the PID constants used in the heater controller
+ The values are set to 1.0, 0.0, 0.0 respectively by default, and should be set by the user
+ through the web interface or other means */
+typedef struct
+{
+    float proportional;
+    float integral;
+    float derivative;
+} pid_constants_t;
+
 typedef struct
 {
     ws_client_info_t *clients_info;
@@ -61,6 +73,7 @@ typedef struct
 {
     app_status_t status;
     heater_controller_state_t *heater_controller_state;
+    pid_constants_t *pid_constants;
     client_info_data_t *connected_clients;
 } app_state_t;
 

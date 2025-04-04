@@ -5,9 +5,10 @@
 
 /**
  * @brief Get pointer to HTTP handlers array
+ * @param state_subjects Pointer to the state subjects used to initialize the handlers
  * @return Const pointer to statically allocated array of HTTP handlers
  */
-const httpd_uri_t *http_handlers_get_array(void);
+const httpd_uri_t *init_http_handlers(state_subjects_t *state_subjects);
 
 /**
  * @brief Get number of HTTP handlers

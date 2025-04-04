@@ -177,7 +177,7 @@ void app_main(void)
         ESP_LOGE(TAG, "Reading credentials from SD card failed");
     }
     const size_t handlers_count = http_handlers_get_count();
-    const httpd_uri_t *http_handlers = http_handlers_get_array();
+    const httpd_uri_t *http_handlers = init_http_handlers(state_subjects);
 
     ws_message_handler_t ws_messages_handler = create_ws_handler();
     ws_client_changed_cb_t ws_client_change_cb = (ws_client_changed_cb_t)&connected_client_data_notify;
