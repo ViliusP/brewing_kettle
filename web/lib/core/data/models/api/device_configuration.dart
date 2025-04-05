@@ -1,5 +1,3 @@
-import 'package:brew_kettle_dashboard/core/data/models/api/pid_constants.dart';
-
 /// Represents system information containing both communicator and heater device details.
 class SystemInfo {
   /// Information about the communication device.

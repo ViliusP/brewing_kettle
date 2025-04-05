@@ -36,6 +36,12 @@ mixin _$PidStore on _PidStore, Store {
           Computed<bool>(() => super.isConstantsChanging,
               name: '_PidStore.isConstantsChanging'))
       .value;
+  Computed<bool>? _$isEmptyComputed;
+
+  @override
+  bool get isEmpty => (_$isEmptyComputed ??=
+          Computed<bool>(() => super.isEmpty, name: '_PidStore.isEmpty'))
+      .value;
 
   late final _$_pidConstantsAtom =
       Atom(name: '_PidStore._pidConstants', context: context);
@@ -68,6 +74,14 @@ mixin _$PidStore on _PidStore, Store {
         () {
       super._isConstantsChanging = value;
     });
+  }
+
+  late final _$getConstantsAsyncAction =
+      AsyncAction('_PidStore.getConstants', context: context);
+
+  @override
+  Future<dynamic> getConstants() {
+    return _$getConstantsAsyncAction.run(() => super.getConstants());
   }
 
   late final _$changeConstantsAsyncAction =
@@ -104,7 +118,8 @@ mixin _$PidStore on _PidStore, Store {
 proportional: ${proportional},
 integral: ${integral},
 derivative: ${derivative},
-isConstantsChanging: ${isConstantsChanging}
+isConstantsChanging: ${isConstantsChanging},
+isEmpty: ${isEmpty}
     ''';
   }
 }

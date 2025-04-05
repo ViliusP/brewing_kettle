@@ -17,4 +17,6 @@ class PidRepository {
       derivative: derivative,
     );
   }
+
+  Future<PidConstants> getConstants() async => _pidApi.getConstants();
 }

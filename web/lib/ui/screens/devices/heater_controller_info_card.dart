@@ -86,6 +86,10 @@ class _PidSectionState extends State<_PidSection> {
 
   @override
   void initState() {
+    if (pidStore.isEmpty && !pidStore.isConstantsChanging) {
+      pidStore.getConstants();
+    }
+
     // Proportional
     storeKpReactionDispose = reaction((_) => pidStore.proportional, (val) {
       pidKpController.value = TextEditingValue(text: pidStore.proportional.toString());

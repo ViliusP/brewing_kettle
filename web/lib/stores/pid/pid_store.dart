@@ -30,27 +30,57 @@ abstract class _PidStore with Store {
     // );
   }
 
+  /// The PID constants of the PID controller.
+  ///
+  /// This is a [_pidConstants] object that contains the proportional, integral, and derivative constants.
+  /// The [_pidConstants] are fetched from the server when the store is created.
+  /// The [_pidConstants] are updated when the user changes them.
+  /// The [_pidConstants] are also updated when the server sends a signal to update constants.
   @observable
   PidConstants? _pidConstants;
 
+  /// The proportional constant of the PID controller.
   @computed
   double? get proportional => _pidConstants?.proportional;
 
+  /// The integral constant of the PID controller.
   @computed
   double? get integral => _pidConstants?.integral;
 
+  /// The derivative constant of the PID controller.
   @computed
   double? get derivative => _pidConstants?.derivative;
 
   @observable
   bool _isConstantsChanging = false;
 
+  /// True if the store is in the process of fetching or changing constants.
   @computed
   bool get isConstantsChanging => _isConstantsChanging;
+
+  /// True if the store is empty, meaning that no constants have been fetched yet.
+  @computed
+  bool get isEmpty => _pidConstants == null;
 
   // -----------------------
   // ACTIONS
   // -----------------------
+  @action
+  Future getConstants() async {
+    _isConstantsChanging = true;
+    try {
+      _pidConstants = await _repository.pid.getConstants();
+    } on Exception catch (exception) {
+      _exceptionStore.push(exception);
+      log('Exception occured on requesting PID constants: $exception');
+    } catch (err) {
+      log('Error occured on requesting PID constants: $err');
+      rethrow;
+    } finally {
+      _isConstantsChanging = false;
+    }
+  }
+
   @action
   Future changeConstants({
     required double proportional,
