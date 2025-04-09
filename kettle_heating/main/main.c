@@ -24,6 +24,7 @@ static void update_ssr_power(float new_power, float *current_power, app_state_t 
 static void handle_manual_mode(app_state_t *state, float *current_ssr_power);
 static void handle_pid_mode(pid_controller_t *pid, app_state_t *state, float *current_ssr_power);
 static void handle_idle_mode(app_state_t *state, float *current_ssr_power);
+static void handle_waiting_configuration_mode(app_state_t *state, pid_controller_t *pid);
 static void handle_autotune_mode(pid_controller_t *pid, pid_auto_tune_t *tuner,
                                  app_state_t *state, bool *auto_tune_in_progress,
                                  TickType_t *tune_start_time);
@@ -62,12 +63,6 @@ void app_main(void)
         .setpoint = AUTOTUNE_SETPOINT,
         .output = 0.0f,
     };
-    // 1. Kp=25.0f, Ki=20.0f, Kd=0.0f | 2.5 celsius overshoot (up)
-    // 2. Kp=25.0f, Ki=15.0f, Kd=0.5f | 2.2 celsius overshoot (up)
-    // 3. Kp=22.5f, Ki=15.0f, Kd=0.5f | 2.2 celsius overshoot (up)
-    // 4. Kp=22.5f, Ki=15.0f, Kd=0.0f | 2.2 celsius overshoot (up)
-    pid_init(&pid, 15.0f, 30.0f, 0.0f, tuner.setpoint, 1.0f, 0.0f, 100.0f);
-
     while (1)
     {
 
@@ -85,6 +80,9 @@ void app_main(void)
         // State machine
         switch (app_state.status)
         {
+        case HEATER_STATUS_WAITING_CONFIG:
+            handle_waiting_configuration_mode(&app_state, &pid);
+            break;
         case HEATER_STATUS_HEATING_MANUAL:
             handle_manual_mode(&app_state, &current_ssr_power);
             break;
@@ -140,6 +138,15 @@ static void handle_manual_mode(app_state_t *state, float *current_ssr_power)
 
 static void handle_pid_mode(pid_controller_t *pid, app_state_t *state, float *current_ssr_power)
 {
+    if (pid->Kd != state->pid_coefficients->Kd ||
+        pid->Kp != state->pid_coefficients->Kp ||
+        pid->Ki != state->pid_coefficients->Ki)
+    {
+        ESP_LOGI(TAG, "PID coefficients changed, reinitializing PID controller");
+        pid_init(pid, state->pid_coefficients->Kp, state->pid_coefficients->Ki,
+                 state->pid_coefficients->Kd, 0.0f, 1.0f, 0.0f, 100.0f);
+    }
+
     if (state->target_temp > 0.0f)
     {
         pid_update_setpoint(pid, state->target_temp);
@@ -186,4 +193,17 @@ static void handle_autotune_mode(pid_controller_t *pid, pid_auto_tune_t *tuner,
     ESP_LOGI(TAG, "| AUTOTUNE | Remaining: %lus | Temp: %.2f°C, Power: %.2f%%",
              (AUTOTUNE_DURATION_MS - pdTICKS_TO_MS(elapsed_ticks)) / 1000,
              state->current_temp, state->power);
+}
+
+static void handle_waiting_configuration_mode(app_state_t *state, pid_controller_t *pid)
+{
+    ESP_LOGI(TAG, "| WAITING CONFIG | Temp: %.2f°C, Power: %.2f%%",
+             state->current_temp, state->power);
+    if (state->pid_coefficients != NULL)
+    {
+        pid_init(pid, state->pid_coefficients->Kp, state->pid_coefficients->Ki, state->pid_coefficients->Kd, 0.0f, 1.0f, 0.0f, 100.0f);
+        // Configuration received, transition to idle.
+        state->status = HEATER_STATUS_IDLE;
+        ESP_LOGI(TAG, "Configuration loaded!");
+    }
 }
