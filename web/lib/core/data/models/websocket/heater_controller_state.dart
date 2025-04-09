@@ -20,9 +20,13 @@ class HeaterControllerState extends WsInboundMessagePayload {
     final num? currentTemperature = json["current_temperature"];
     final num? targetTemperature = json["target_temperature"];
     final num? power = json["power"];
-    final HeaterStatus? status = HeaterStatus.values.firstWhereOrNull(
+    HeaterStatus? status = HeaterStatus.values.firstWhereOrNull(
       (v) => json["status"] == v.jsonValue,
     );
+
+    if (status == null && json["status"] != null) {
+      status = HeaterStatus.unknown;
+    }
 
     if ([timestamp, currentTemperature, targetTemperature, power, status].contains(null)) {
       throw Exception("Cannot create HeaterControllerState from $json");
