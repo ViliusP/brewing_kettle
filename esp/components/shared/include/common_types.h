@@ -25,6 +25,7 @@ typedef struct ws_client_info_t
 
 typedef enum
 {
+    HEATER_STATUS_WAITING_CONFIG,
     HEATER_STATUS_IDLE,
     HEATER_STATUS_HEATING_MANUAL,
     HEATER_STATUS_HEATING_PID,

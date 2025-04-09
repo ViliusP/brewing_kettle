@@ -17,6 +17,9 @@ const char *heater_status_human_string(heater_status_t state)
 {
     switch (state)
     {
+    case HEATER_STATUS_WAITING_CONFIG:
+        return "Heater is waiting for configuration";
+
     case HEATER_STATUS_IDLE:
         return "Heater is in idle state";
 
@@ -42,6 +45,9 @@ const char *heater_status_string(heater_status_t state)
 {
     switch (state)
     {
+    case HEATER_STATUS_WAITING_CONFIG:
+        return "HEATER_STATUS_WAITING_CONFIG";
+
     case HEATER_STATUS_IDLE:
         return "HEATER_STATUS_IDLE";
 
@@ -67,6 +73,9 @@ const char *heater_status_json_string(heater_status_t state)
 {
     switch (state)
     {
+    case HEATER_STATUS_WAITING_CONFIG:
+        return "waiting_config";
+    
     case HEATER_STATUS_IDLE:
         return "idle";
 
