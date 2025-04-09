@@ -164,7 +164,7 @@ void handle_pid_constants_data(CborValue *payload) {
     }
     if (!cbor_value_is_float(&proportional_value) && !cbor_value_is_double(&proportional_value))
     {
-        ESP_LOGE(TAG, "CBOR: value in pid constants data not a float or double");
+        ESP_LOGE(TAG, "CBOR: value in PID constants data not a float or double");
         return;
     }
 
@@ -190,7 +190,7 @@ void handle_pid_constants_data(CborValue *payload) {
     }
     if (!cbor_value_is_float(&integral_value) && !cbor_value_is_double(&integral_value))
     {
-        ESP_LOGE(TAG, "CBOR: value in pid constants data not a float or double");
+        ESP_LOGE(TAG, "CBOR: value in PID constants data not a float or double");
         return;
     }
     float integral;
@@ -215,7 +215,7 @@ void handle_pid_constants_data(CborValue *payload) {
     }
     if (!cbor_value_is_float(&derivative_value) && !cbor_value_is_double(&derivative_value))
     {
-        ESP_LOGE(TAG, "CBOR: value in pid constants data not a float or double");
+        ESP_LOGE(TAG, "CBOR: value in PID constants data not a float or double");
         return;
     }
     float derivative;
@@ -229,7 +229,7 @@ void handle_pid_constants_data(CborValue *payload) {
     {
         cbor_value_get_float(&derivative_value, &derivative);
     }
-    // -------------------- set pid constants --------------------
+    // -------------------- set PID constants --------------------
     if (app_state->pid_constants == NULL) {
         pid_constants_t *constants = malloc(sizeof(pid_constants_t));
         app_state->pid_constants = constants;
@@ -240,7 +240,7 @@ void handle_pid_constants_data(CborValue *payload) {
         app_state->status = HEATER_STATUS_IDLE;
     }
 
-    ESP_LOGI(TAG, "pid constants updated: P=%.2f, I=%.2f, D=%.2f", proportional, integral, derivative);
+    ESP_LOGI(TAG, "PID constants updated: P=%.2f, I=%.2f, D=%.2f", proportional, integral, derivative);
 
     uart_send_state(*app_state);
 }
