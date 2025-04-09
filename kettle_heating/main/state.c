@@ -12,7 +12,7 @@ app_state_t init_state()
         .current_temp = ABSOLUTE_ZERO,
         .target_temp = ABSOLUTE_ZERO,
         .power = 0,
-        .pid_coefficients = NULL,
+        .pid_constants = NULL,
         .requested_power = 0,
     };
     return state;

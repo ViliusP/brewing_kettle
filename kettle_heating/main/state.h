@@ -15,10 +15,10 @@ typedef enum
 } heater_status_t;
 
 typedef struct {
-    float Kp;
-    float Ki;
-    float Kd;
-} pid_coefficients_t;
+    float proportional;
+    float integral;
+    float derivative;
+} pid_constants_t;
 
 typedef struct
 {
@@ -27,7 +27,7 @@ typedef struct
     float target_temp;
     float power;
     float requested_power;
-    pid_coefficients_t *pid_coefficients;
+    pid_constants_t *pid_constants;
 } app_state_t;
 
 app_state_t init_state();

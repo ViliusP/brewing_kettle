@@ -138,13 +138,12 @@ static void handle_manual_mode(app_state_t *state, float *current_ssr_power)
 
 static void handle_pid_mode(pid_controller_t *pid, app_state_t *state, float *current_ssr_power)
 {
-    if (pid->Kd != state->pid_coefficients->Kd ||
-        pid->Kp != state->pid_coefficients->Kp ||
-        pid->Ki != state->pid_coefficients->Ki)
+    if (pid->Kp != state->pid_constants->proportional || pid->Ki != state->pid_constants->integral ||
+        pid->Kd != state->pid_constants->derivative)
     {
         ESP_LOGI(TAG, "PID coefficients changed, reinitializing PID controller");
-        pid_init(pid, state->pid_coefficients->Kp, state->pid_coefficients->Ki,
-                 state->pid_coefficients->Kd, 0.0f, 1.0f, 0.0f, 100.0f);
+        pid_init(pid, state->pid_constants->proportional, state->pid_constants->integral,
+                 state->pid_constants->derivative, 0.0f, 1.0f, 0.0f, 100.0f);
     }
 
     if (state->target_temp > 0.0f)
@@ -199,9 +198,9 @@ static void handle_waiting_configuration_mode(app_state_t *state, pid_controller
 {
     ESP_LOGI(TAG, "| WAITING CONFIG | Temp: %.2f°C, Power: %.2f%%",
              state->current_temp, state->power);
-    if (state->pid_coefficients != NULL)
+    if (state->pid_constants != NULL)
     {
-        pid_init(pid, state->pid_coefficients->Kp, state->pid_coefficients->Ki, state->pid_coefficients->Kd, 0.0f, 1.0f, 0.0f, 100.0f);
+        pid_init(pid, state->pid_constants->proportional, state->pid_constants->integral, state->pid_constants->derivative, 0.0f, 1.0f, 0.0f, 100.0f);
         // Configuration received, transition to idle.
         state->status = HEATER_STATUS_IDLE;
         ESP_LOGI(TAG, "Configuration loaded!");

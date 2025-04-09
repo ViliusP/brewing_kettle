@@ -6,9 +6,10 @@
 
 #define ENTITY_BUFFER_SIZE 64
 
-void handle_target_temperature_data(CborValue *value);
-void handle_heater_mode_data(CborValue *value);
-void handle_set_power_data(CborValue *value);
+void handle_target_temperature_data(CborValue *payload);
+void handle_heater_mode_data(CborValue *payload);
+void handle_set_power_data(CborValue *payload);
+void handle_pid_constants_data(CborValue *payload);
 
 typedef void (*entity_handler_t)(CborValue *);
 
@@ -27,7 +28,7 @@ entity_handler_map_t entity_handlers[] = {
     {"target_temperature", handle_target_temperature_data},
     {"heater_mode", handle_heater_mode_data},
     {"power", handle_set_power_data},
-
+    {"pid_constants", handle_pid_constants_data},
     // ... more entities
 };
 
@@ -123,65 +124,188 @@ int uart_send_state(app_state_t app_state)
     return uart_send_message(&msg_to_send);
 }
 
-void handle_heater_mode_data(CborValue *value)
+void handle_heater_mode_data(CborValue *payload)
 {
-    if (!cbor_value_is_unsigned_integer(value))
+    CborValue value;
+
+    esp_err_t err = cbor_value_map_find_value(payload, "value", &value);
+    if (err != CborNoError)
+    {
+        ESP_LOGE(TAG, "CBOR: value in payload not found: %s", cbor_error_string(err));
+        return;
+    }
+
+    if (!cbor_value_is_unsigned_integer(&value))
     {
         ESP_LOGE(TAG, "CBOR: value in heater_mode data is not unsigned integer");
         return;
     }
 
     uint64_t mode;
-    cbor_value_get_uint64(value, &mode);
+    cbor_value_get_uint64(&value, &mode);
 
-    app_state->status = mode;
-    app_state->power = 0.0f;
+    if (app_state->status != HEATER_STATUS_WAITING_CONFIG)
+    {
+        app_state->status = mode;
+        app_state->power = 0.0f;
+    }
+
     uart_send_state(*app_state);
 }
 
-void handle_set_power_data(CborValue *value)
+void handle_pid_constants_data(CborValue *payload) {
+    // -------------------- proportional --------------------
+    CborValue proportional_value;
+    esp_err_t err = cbor_value_map_find_value(payload, "proportional", &proportional_value);
+    if (err != CborNoError)
+    {
+        ESP_LOGE(TAG, "CBOR: proportional constant in payload not found: %s", cbor_error_string(err));
+        return;
+    }
+    if (!cbor_value_is_float(&proportional_value) && !cbor_value_is_double(&proportional_value))
+    {
+        ESP_LOGE(TAG, "CBOR: value in pid constants data not a float or double");
+        return;
+    }
+
+    float proportional;
+    if (cbor_value_is_double(&proportional_value))
+    {
+        double proportional_d;
+        cbor_value_get_double(&proportional_value, &proportional_d);
+        proportional = (double)proportional_d;
+    }
+    else
+    {
+        cbor_value_get_float(&proportional_value, &proportional);
+    }
+
+    // -------------------- integral --------------------
+    CborValue integral_value;
+    err = cbor_value_map_find_value(payload, "integral", &integral_value);
+    if (err != CborNoError)
+    {
+        ESP_LOGE(TAG, "CBOR: integral constant in payload not found: %s", cbor_error_string(err));
+        return;
+    }
+    if (!cbor_value_is_float(&integral_value) && !cbor_value_is_double(&integral_value))
+    {
+        ESP_LOGE(TAG, "CBOR: value in pid constants data not a float or double");
+        return;
+    }
+    float integral;
+    if (cbor_value_is_double(&integral_value))
+    {
+        double integral_d;
+        cbor_value_get_double(&integral_value, &integral_d);
+        integral = (double)integral_d;
+    }
+    else
+    {
+        cbor_value_get_float(&integral_value, &integral);
+    }
+    
+    // -------------------- derivative --------------------
+    CborValue derivative_value;
+    err = cbor_value_map_find_value(payload, "derivative", &derivative_value);
+    if (err != CborNoError)
+    {
+        ESP_LOGE(TAG, "CBOR: derivative constant in payload not found: %s", cbor_error_string(err));
+        return;
+    }
+    if (!cbor_value_is_float(&derivative_value) && !cbor_value_is_double(&derivative_value))
+    {
+        ESP_LOGE(TAG, "CBOR: value in pid constants data not a float or double");
+        return;
+    }
+    float derivative;
+    if (cbor_value_is_double(&derivative_value))
+    {
+        double derivative_d;
+        cbor_value_get_double(&derivative_value, &derivative_d);
+        derivative = (double)derivative_d;
+    }
+    else
+    {
+        cbor_value_get_float(&derivative_value, &derivative);
+    }
+    // -------------------- set pid constants --------------------
+    if (app_state->pid_constants == NULL) {
+        pid_constants_t *constants = malloc(sizeof(pid_constants_t));
+        app_state->pid_constants = constants;
+    } {
+        app_state->pid_constants->proportional = proportional;
+        app_state->pid_constants->integral = integral;
+        app_state->pid_constants->derivative = derivative;
+        app_state->status = HEATER_STATUS_IDLE;
+    }
+
+    ESP_LOGI(TAG, "pid constants updated: P=%.2f, I=%.2f, D=%.2f", proportional, integral, derivative);
+
+    uart_send_state(*app_state);
+}
+
+void handle_set_power_data(CborValue *payload)
 {
-    if (!cbor_value_is_float(value) && !cbor_value_is_double(value))
+    CborValue value;
+
+    esp_err_t err = cbor_value_map_find_value(payload, "value", &value);
+    if (err != CborNoError)
+    {
+        ESP_LOGE(TAG, "CBOR: value in payload not found: %s", cbor_error_string(err));
+        return;
+    }
+
+    if (!cbor_value_is_float(&value) && !cbor_value_is_double(&value))
     {
         ESP_LOGE(TAG, "CBOR: value in set_power data not a float or double");
         return;
     }
 
     float power;
-    if (cbor_value_is_double(value))
+    if (cbor_value_is_double(&value))
     {
         double power_d;
-        cbor_value_get_double(value, &power_d);
+        cbor_value_get_double(&value, &power_d);
         power = (double)power_d;
     }
     else
     {
-        cbor_value_get_float(value, &power);
+        cbor_value_get_float(&value, &power);
     }
-    
+
     app_state->requested_power = power;
     app_state->status = HEATER_STATUS_HEATING_MANUAL;
     uart_send_state(*app_state);
 }
 
-void handle_target_temperature_data(CborValue *value)
+void handle_target_temperature_data(CborValue *payload)
 {
-    if (!cbor_value_is_float(value) && !cbor_value_is_double(value))
+    CborValue value;
+
+    esp_err_t err = cbor_value_map_find_value(payload, "value", &value);
+    if (err != CborNoError)
+    {
+        ESP_LOGE(TAG, "CBOR: value in payload not found: %s", cbor_error_string(err));
+        return;
+    }
+
+    if (!cbor_value_is_float(&value) && !cbor_value_is_double(&value))
     {
         ESP_LOGE(TAG, "CBOR: value is not a float or double");
         return;
     }
 
     double temperature;
-    if (cbor_value_is_float(value))
+    if (cbor_value_is_float(&value))
     {
         float temp_f;
-        cbor_value_get_float(value, &temp_f);
+        cbor_value_get_float(&value, &temp_f);
         temperature = (double)temp_f;
     }
     else
     {
-        cbor_value_get_double(value, &temperature);
+        cbor_value_get_double(&value, &temperature);
     }
 
     app_state->target_temp = temperature;
@@ -263,17 +387,8 @@ void uart_message_handler(const uint8_t *data, int len)
                 return;
             }
 
-            CborValue value_value; // Get the "value" from the payload
-
-            err = cbor_value_map_find_value(&payload_value, "value", &value_value);
-            if (err != CborNoError)
-            {
-                ESP_LOGE(TAG, "CBOR: value not found: %s", cbor_error_string(err));
-                return;
-            }
-
-            entity_handlers[i].handler_function(&value_value); // Pass the "value" CborValue
-            return;                                            // Found and handled, exit the loop
+            entity_handlers[i].handler_function(&payload_value); // Pass the "value" CborValue
+            return;                                              // Found and handled, exit the loop
         }
     }
 
