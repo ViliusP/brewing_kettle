@@ -119,6 +119,16 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                             return _HeaterModeSelect(
                               currentStatus: _heaterControllerStateStore.status,
                               onSelected: (value) => _heaterControllerStateStore.changeMode(value),
+                              enabled: switch (_heaterControllerStateStore.status) {
+                                HeaterStatus.idle => true,
+                                HeaterStatus.heatingPid => true,
+                                HeaterStatus.heatingManual => true,
+                                HeaterStatus.error => true,
+                                HeaterStatus.unknown => true,
+                                HeaterStatus.autotunePid => false,
+                                HeaterStatus.waitingConfiguration => false,
+                                null => false,
+                              },
                             );
                           },
                         ),
@@ -304,7 +314,8 @@ class _WaitingConfigurationStatusContent extends StatelessWidget {
     return Column(
       children: [
         Spacer(),
-        Row(children: [Spacer(), Icon(MdiIcons.helpRhombus, size: 54), Spacer()]),
+        Row(children: [Spacer(), Icon(MdiIcons.lanPending, size: 54), Spacer()]),
+        Padding(padding: EdgeInsets.symmetric(vertical: 4)),
         Text(
           "Laukiama, kol bus sukonfigūruotas virintuvo valdiklis. Tai turėtų užtrukti kelias sekundes.",
           style: textTheme.bodyLarge,
@@ -335,6 +346,7 @@ class _UnknownStatusContent extends StatelessWidget {
       children: [
         Spacer(),
         Row(children: [Spacer(), Icon(MdiIcons.helpRhombus, size: 54), Spacer()]),
+        Padding(padding: EdgeInsets.symmetric(vertical: 4)),
         Text(
           "Įvyko klaida - virintuvo valdiklio būsena nežinoma, pabandykite perkrauti aplikaciją ir abu valdiklius.",
           style: textTheme.bodyLarge,
@@ -365,6 +377,7 @@ class _ErrorStatusContent extends StatelessWidget {
       children: [
         Spacer(),
         Row(children: [Spacer(), Icon(MdiIcons.alertCircleOutline, size: 54), Spacer()]),
+        Padding(padding: EdgeInsets.symmetric(vertical: 4)),
         Text(
           "Įvyko klaida virintuvo valdiklyje, pabandykite perkraukite valdiklius.",
           style: textTheme.bodyLarge,
@@ -551,8 +564,9 @@ class _IdleStatusContent extends StatelessWidget {
 class _HeaterModeSelect extends StatelessWidget {
   final HeaterStatus? currentStatus;
   final void Function(HeaterMode)? onSelected;
+  final bool enabled;
 
-  const _HeaterModeSelect({this.onSelected, this.currentStatus});
+  const _HeaterModeSelect({this.onSelected, this.currentStatus, this.enabled = true});
 
   IconData statusToIcon(HeaterStatus? value) => switch (value) {
     HeaterStatus.heatingManual => MdiIcons.gasBurner,
@@ -561,7 +575,7 @@ class _HeaterModeSelect extends StatelessWidget {
     HeaterStatus.error => MdiIcons.kettleAlertOutline,
     HeaterStatus.unknown => MdiIcons.helpCircleOutline,
     HeaterStatus.autotunePid => MdiIcons.progressWrench,
-    HeaterStatus.waitingConfiguration => MdiIcons.lanConnect,
+    HeaterStatus.waitingConfiguration => MdiIcons.lanPending,
     null => MdiIcons.dotsHorizontal,
   };
 
@@ -573,11 +587,13 @@ class _HeaterModeSelect extends StatelessWidget {
     }
 
     return PopupMenuButton<HeaterMode>(
-      iconSize: 36,
+      iconSize: 28,
+      padding: EdgeInsets.all(8),
       tooltip: "Kaitinimo būdas ${initialValue?.jsonValue}",
       icon: Icon(statusToIcon(currentStatus)),
       initialValue: initialValue,
       onSelected: onSelected,
+      enabled: enabled,
       itemBuilder:
           (BuildContext context) =>
               [HeaterMode.idle, HeaterMode.heatingPid, HeaterMode.heatingManual]
