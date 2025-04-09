@@ -75,10 +75,12 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                         increaseNotifier: _increaseTapNotifier,
                         decreaseNotifier: _decreaseTapNotifier,
                       ),
-                      HeaterStatus.unknown => _PidControlContent(),
                       HeaterStatus.idle => _IdleStatusContent(),
-                      HeaterStatus.error => _PidControlContent(),
-                      null => _PidControlContent(),
+                      HeaterStatus.error => _ErrorStatusContent(),
+                      HeaterStatus.unknown => _UnknownStatusContent(),
+                      HeaterStatus.waitingConfiguration => _WaitingConfigurationStatusContent(),
+                      null => _UnknownStatusContent(),
+                      // TODO: Handle this case.
                     },
                   );
                 },
@@ -104,6 +106,7 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                           HeaterStatus.idle => null,
                           HeaterStatus.error => null,
                           HeaterStatus.unknown => null,
+                          HeaterStatus.waitingConfiguration => null,
                           null => null,
                         },
                         icon: Icon(MdiIcons.arrowUpDropCircleOutline),
@@ -128,6 +131,7 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                           HeaterStatus.autotunePid => null,
                           HeaterStatus.error => null,
                           HeaterStatus.unknown => null,
+                          HeaterStatus.waitingConfiguration => null,
                           null => null,
                         },
                         icon: Icon(MdiIcons.arrowDownDropCircleOutline),
@@ -287,6 +291,97 @@ class _ManualControlContentState extends State<_ManualControlContent> {
 
     _powerTargetReaction.call();
     super.dispose();
+  }
+}
+
+class _WaitingConfigurationStatusContent extends StatelessWidget {
+  const _WaitingConfigurationStatusContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    return Column(
+      children: [
+        Spacer(),
+        Row(children: [Spacer(), Icon(MdiIcons.helpRhombus, size: 54), Spacer()]),
+        Text(
+          "Laukiama, kol bus sukonfigūruotas virintuvo valdiklis. Tai turėtų užtrukti kelias sekundes.",
+          style: textTheme.bodyLarge,
+          textAlign: TextAlign.center,
+        ),
+        Expanded(
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 4.0),
+              child: Text("Konfigūruojama", style: textTheme.labelLarge),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _UnknownStatusContent extends StatelessWidget {
+  const _UnknownStatusContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    return Column(
+      children: [
+        Spacer(),
+        Row(children: [Spacer(), Icon(MdiIcons.helpRhombus, size: 54), Spacer()]),
+        Text(
+          "Įvyko klaida - virintuvo valdiklio būsena nežinoma, pabandykite perkrauti aplikaciją ir abu valdiklius.",
+          style: textTheme.bodyLarge,
+          textAlign: TextAlign.center,
+        ),
+        Expanded(
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 4.0),
+              child: Text("Statusas nežinomas", style: textTheme.labelLarge),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ErrorStatusContent extends StatelessWidget {
+  const _ErrorStatusContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    return Column(
+      children: [
+        Spacer(),
+        Row(children: [Spacer(), Icon(MdiIcons.alertCircleOutline, size: 54), Spacer()]),
+        Text(
+          "Įvyko klaida virintuvo valdiklyje, pabandykite perkraukite valdiklius.",
+          style: textTheme.bodyLarge,
+          textAlign: TextAlign.center,
+        ),
+        Expanded(
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 4.0),
+              child: Text("Įvyko klaida", style: textTheme.labelLarge),
+            ),
+          ),
+        ),
+      ],
+    );
+    ;
   }
 }
 
@@ -466,6 +561,7 @@ class _HeaterModeSelect extends StatelessWidget {
     HeaterStatus.error => MdiIcons.kettleAlertOutline,
     HeaterStatus.unknown => MdiIcons.helpCircleOutline,
     HeaterStatus.autotunePid => MdiIcons.progressWrench,
+    HeaterStatus.waitingConfiguration => MdiIcons.lanConnect,
     null => MdiIcons.dotsHorizontal,
   };
 

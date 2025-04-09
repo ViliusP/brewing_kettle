@@ -63,6 +63,7 @@ class HeaterControllerState extends WsInboundMessagePayload {
 }
 
 enum HeaterStatus {
+  waitingConfiguration("waiting_config"),
   idle("idle"),
   heatingManual("heating_manual"),
   heatingPid("heating_pid"),
