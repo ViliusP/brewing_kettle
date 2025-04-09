@@ -25,6 +25,7 @@ void app_main(void)
     // =========================================================
 
     // ================ Temperature Sensor ===================================
+    // TODO: Check if the DS18B20 is connected and send a error message if not.
     ds18b20_device_handle_t ds18b20_handle = initialize_temperature_sensor();
     ds18b20_set_resolution(ds18b20_handle, DS18B20_RESOLUTION_12B);
     // =======================================================================
@@ -33,7 +34,6 @@ void app_main(void)
     rx_task_callback_t uart_message_handler = init_uart_message_handler(&app_state);
     initialize_uart(uart_config, UART_TX_PIN, UART_RX_PIN);
     start_uart_task(uart_message_handler);
-    uart_send_state(app_state);
     // ==========================================================
 
     // ================ PID ===================================
@@ -45,11 +45,11 @@ void app_main(void)
         .setpoint = 95.0f,
         .output = 0.0f,
     };
-    // 1. Kp=2.12, Ki=1.15, Kd=0.98
-    // 2. Kp=3.86, Ki=2.80, Kd=1.33
-    // 3. Kp=34.43, Ki=25.22, Kd=11.75
-    // 4. Kp=24.45, Ki=0.67, Kd=222.46
-    pid_init(&pid, 3.86f, 2.80f, 1.33f, tuner.setpoint, 0.1f, 0.0f, 100.0f);
+    // 1. Kp=25.0f, Ki=20.0f, Kd=0.0f | 2.5 celsius overshoot (up)
+    // 2. Kp=25.0f, Ki=15.0f, Kd=0.5f | 2.2 celsuis overshoot (up)
+    // 3. Kp=22.5f, Ki=15.0f, Kd=0.5f | 2.2 celsuis overshoot (up)
+    // 4. Kp=22.5f, Ki=15.0f, Kd=0.0f | 2.2 celsuis overshoot (up)
+    pid_init(&pid, 15.0f, 30.0f, 0.0f, tuner.setpoint, 1.0f, 0.0f, 100.0f);
 
     while (1)
     {
@@ -82,14 +82,18 @@ void app_main(void)
             }
             ESP_LOGI(TAG, "| manual | current_temp: %.2f, target_temp: %.2f, power: %.2f%%, duty %lu", app_state.current_temp, app_state.target_temp, app_state.power, get_ssr_duty());
         }
-
         if (app_state.status == HEATER_STATUS_HEATING_PID)
         {
-            pid_update_setpoint(&pid, app_state.target_temp);
-            float pid_power = pid_update(&pid, app_state.current_temp);
-            app_state.power = pid_power;
-            esp_err_t err = set_ssr_duty(pid_power);
+            if(app_state.target_temp > 0.0f)
+            {
+                pid_update_setpoint(&pid, app_state.target_temp);
+                float pid_power = pid_update(&pid, app_state.current_temp);
+                app_state.power = pid_power;
+                current_ssr_power = pid_power;
+                esp_err_t err = set_ssr_duty(pid_power);    
+            }
             ESP_LOGI(TAG, "| pid | current_temp: %.2f, target_temp: %.2f, power: %.2f%%, duty: %lu", app_state.current_temp, app_state.target_temp, app_state.power, get_ssr_duty());
+
         }
 
         if (app_state.status == HEATER_STATUS_IDLE || app_state.status == HEATER_STATUS_ERROR || app_state.status == HEATER_STATUS_UNKNOWN)
@@ -110,7 +114,7 @@ void app_main(void)
             }
             ESP_LOGI(TAG, "| idle (%d) | current_temp: %.2f, target_temp: %.2f, power: %.2f%%, duty: %lu", app_state.status, app_state.current_temp, app_state.target_temp, app_state.power, get_ssr_duty());
         }
-
+        // EXPERIMENTAL
         if (app_state.status == HEATER_STATUS_AUTOTUNE_PID)
         {
             if (!auto_tune_in_progress)

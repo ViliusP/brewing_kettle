@@ -18,6 +18,7 @@ void pid_init(pid_controller_t *pid, float Kp, float Ki, float Kd, float setpoin
     pid->output_min = output_min;
     pid->output_max = output_max;
     pid->sample_time_sec = sample_time_sec;
+    pid->integral_anti_windup=0.1f;
 }
 
 
