@@ -317,11 +317,35 @@ abstract class AppLocalizations {
   /// **'Shows heater data of every {seconds} {seconds, plural, =1{second} other{seconds}} for {hours} {hours, plural, =1{hour} other{hours}}.\nTap on graph points to see concrete values for that time.'**
   String pMainGraphInfoText(int seconds, num hours);
 
-  /// No description provided for @pMainGraphInfoLegend.
+  /// Title for legend line section in graph info.
   ///
   /// In en, this message translates to:
   /// **'Line legends'**
   String get pMainGraphInfoLegend;
+
+  /// Label for increase temperature button
+  ///
+  /// In en, this message translates to:
+  /// **'Increase temperature'**
+  String get heaterControlIncreaseTemperature;
+
+  /// LabTooltipel for decrease temperature button
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease temperature'**
+  String get heaterControlDecreaseTemperature;
+
+  /// Tooltip for increase power button
+  ///
+  /// In en, this message translates to:
+  /// **'Increase power'**
+  String get heaterControlIncreasePower;
+
+  /// Tooltip for decrease power button
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease power'**
+  String get heaterControlDecreasePower;
 
   /// No description provided for @devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///

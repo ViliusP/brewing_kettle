@@ -188,7 +188,25 @@
     }
   },
   "pMainGraphInfoLegend": "Line legends",
-  "@pMainGraphInfoLegend": {},
+  "@pMainGraphInfoLegend": {
+    "description": "Title for legend line section in graph info."
+  },
+  "heaterControlIncreaseTemperature": "Increase temperature",
+  "@heaterControlIncreaseTemperature": {
+    "description": "Label for increase temperature button"
+  },
+  "heaterControlDecreaseTemperature": "Decrease temperature",
+  "@heaterControlDecreaseTemperature": {
+    "description": "LabTooltipel for decrease temperature button"
+  },
+  "heaterControlIncreasePower": "Increase power",
+  "@heaterControlIncreasePower": {
+    "description": "Tooltip for increase power button"
+  },
+  "heaterControlDecreasePower": "Decrease power",
+  "@heaterControlDecreasePower": {
+    "description": "Tooltip for decrease power button"
+  },
   "devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "devicesCommunicationController": "Communication controller",

@@ -158,6 +158,18 @@ class AppLocalizationsLt extends AppLocalizations {
   String get pMainGraphInfoLegend => 'Linijų legenda';
 
   @override
+  String get heaterControlIncreaseTemperature => 'Padininti temperatūrą';
+
+  @override
+  String get heaterControlDecreaseTemperature => 'Sumažinti temperatūrą';
+
+  @override
+  String get heaterControlIncreasePower => 'Padidinti galią';
+
+  @override
+  String get heaterControlDecreasePower => 'Sumažinti galią';
+
+  @override
   String get devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override

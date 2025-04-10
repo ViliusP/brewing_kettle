@@ -44,6 +44,7 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
 
     return Stack(
       children: [
@@ -80,7 +81,6 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                       HeaterStatus.unknown => _UnknownStatusContent(),
                       HeaterStatus.waitingConfiguration => _WaitingConfigurationStatusContent(),
                       null => _UnknownStatusContent(),
-                      // TODO: Handle this case.
                     },
                   );
                 },
@@ -99,15 +99,15 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
+                        tooltip: switch (_heaterControllerStateStore.status) {
+                          HeaterStatus.heatingManual => localizations.heaterControlIncreasePower,
+                          HeaterStatus.heatingPid => localizations.heaterControlIncreaseTemperature,
+                          _ => null,
+                        },
                         onPressed: switch (_heaterControllerStateStore.status) {
-                          HeaterStatus.heatingPid ||
+                          HeaterStatus.heatingPid => _increaseTapNotifier.notify,
                           HeaterStatus.heatingManual => _increaseTapNotifier.notify,
-                          HeaterStatus.autotunePid => null,
-                          HeaterStatus.idle => null,
-                          HeaterStatus.error => null,
-                          HeaterStatus.unknown => null,
-                          HeaterStatus.waitingConfiguration => null,
-                          null => null,
+                          _ => null,
                         },
                         icon: Icon(MdiIcons.arrowUpDropCircleOutline),
                         iconSize: 60,
@@ -134,15 +134,15 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
                         ),
                       ),
                       IconButton(
+                        tooltip: switch (_heaterControllerStateStore.status) {
+                          HeaterStatus.heatingManual => localizations.heaterControlDecreasePower,
+                          HeaterStatus.heatingPid => localizations.heaterControlDecreaseTemperature,
+                          _ => null,
+                        },
                         onPressed: switch (_heaterControllerStateStore.status) {
-                          HeaterStatus.heatingPid ||
+                          HeaterStatus.heatingPid => _decreaseTapNotifier.notify,
                           HeaterStatus.heatingManual => _decreaseTapNotifier.notify,
-                          HeaterStatus.idle => null,
-                          HeaterStatus.autotunePid => null,
-                          HeaterStatus.error => null,
-                          HeaterStatus.unknown => null,
-                          HeaterStatus.waitingConfiguration => null,
-                          null => null,
+                          _ => null,
                         },
                         icon: Icon(MdiIcons.arrowDownDropCircleOutline),
                         iconSize: 60,
