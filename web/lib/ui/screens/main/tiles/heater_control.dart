@@ -44,7 +44,6 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final AppLocalizations localizations = AppLocalizations.of(context)!;
 
     return Stack(
       children: [
@@ -62,28 +61,9 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
         Row(
           children: [
             Expanded(
-              child: Observer(
-                builder: (context) {
-                  return AnimatedSwitcher(
-                    duration: Durations.short4,
-                    child: switch (_heaterControllerStateStore.status) {
-                      HeaterStatus.heatingPid => _PidControlContent(
-                        increaseNotifier: _increaseTapNotifier,
-                        decreaseNotifier: _decreaseTapNotifier,
-                      ),
-                      HeaterStatus.autotunePid => _PidAutotuneContent(),
-                      HeaterStatus.heatingManual => _ManualControlContent(
-                        increaseNotifier: _increaseTapNotifier,
-                        decreaseNotifier: _decreaseTapNotifier,
-                      ),
-                      HeaterStatus.idle => _IdleStatusContent(),
-                      HeaterStatus.error => _ErrorStatusContent(),
-                      HeaterStatus.unknown => _UnknownStatusContent(),
-                      HeaterStatus.waitingConfiguration => _WaitingConfigurationStatusContent(),
-                      null => _UnknownStatusContent(),
-                    },
-                  );
-                },
+              child: _HeaterControlContent(
+                increaseTapNotifier: _increaseTapNotifier,
+                decreaseTapNotifier: _decreaseTapNotifier,
               ),
             ),
             VerticalDivider(
@@ -93,63 +73,9 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: Observer(
-                builder: (context) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        tooltip: switch (_heaterControllerStateStore.status) {
-                          HeaterStatus.heatingManual => localizations.heaterControlIncreasePower,
-                          HeaterStatus.heatingPid => localizations.heaterControlIncreaseTemperature,
-                          _ => null,
-                        },
-                        onPressed: switch (_heaterControllerStateStore.status) {
-                          HeaterStatus.heatingPid => _increaseTapNotifier.notify,
-                          HeaterStatus.heatingManual => _increaseTapNotifier.notify,
-                          _ => null,
-                        },
-                        icon: Icon(MdiIcons.arrowUpDropCircleOutline),
-                        iconSize: 60,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: Observer(
-                          builder: (context) {
-                            return _HeaterModeSelect(
-                              currentStatus: _heaterControllerStateStore.status,
-                              onSelected: (value) => _heaterControllerStateStore.changeMode(value),
-                              enabled: switch (_heaterControllerStateStore.status) {
-                                HeaterStatus.idle => true,
-                                HeaterStatus.heatingPid => true,
-                                HeaterStatus.heatingManual => true,
-                                HeaterStatus.error => true,
-                                HeaterStatus.unknown => true,
-                                HeaterStatus.autotunePid => false,
-                                HeaterStatus.waitingConfiguration => false,
-                                null => false,
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                      IconButton(
-                        tooltip: switch (_heaterControllerStateStore.status) {
-                          HeaterStatus.heatingManual => localizations.heaterControlDecreasePower,
-                          HeaterStatus.heatingPid => localizations.heaterControlDecreaseTemperature,
-                          _ => null,
-                        },
-                        onPressed: switch (_heaterControllerStateStore.status) {
-                          HeaterStatus.heatingPid => _decreaseTapNotifier.notify,
-                          HeaterStatus.heatingManual => _decreaseTapNotifier.notify,
-                          _ => null,
-                        },
-                        icon: Icon(MdiIcons.arrowDownDropCircleOutline),
-                        iconSize: 60,
-                      ),
-                    ],
-                  );
-                },
+              child: _HeaterControls(
+                increaseTapNotifier: _increaseTapNotifier,
+                decreaseTapNotifier: _decreaseTapNotifier,
               ),
             ),
           ],
@@ -163,6 +89,128 @@ class _HeaterControlTileState extends State<HeaterControlTile> {
     _increaseTapNotifier.dispose();
     _decreaseTapNotifier.dispose();
     super.dispose();
+  }
+}
+
+class _HeaterControls extends StatelessWidget {
+  _HeaterControls({
+    required ButtonTapNotifier increaseTapNotifier,
+    required ButtonTapNotifier decreaseTapNotifier,
+  }) : _increaseTapNotifier = increaseTapNotifier,
+       _decreaseTapNotifier = decreaseTapNotifier;
+
+  final ButtonTapNotifier _increaseTapNotifier;
+  final ButtonTapNotifier _decreaseTapNotifier;
+  final HeaterControllerStateStore _heaterControllerStateStore =
+      getIt<HeaterControllerStateStore>();
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
+
+    return Observer(
+      builder: (context) {
+        final controllerStatus = _heaterControllerStateStore.status;
+
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              tooltip: switch (controllerStatus) {
+                HeaterStatus.heatingManual => localizations.heaterControlIncreasePower,
+                HeaterStatus.heatingPid => localizations.heaterControlIncreaseTemperature,
+                _ => null,
+              },
+              onPressed: switch (controllerStatus) {
+                // HeaterStatus.heatingPid when !_heaterControllerStateStore.isModeChanging=> _increaseTapNotifier.notify,
+                // HeaterStatus.heatingManual when !_heaterControllerStateStore.isModeChanging => _increaseTapNotifier.notify,
+                HeaterStatus.heatingPid => _increaseTapNotifier.notify,
+                HeaterStatus.heatingManual => _increaseTapNotifier.notify,
+                _ => null,
+              },
+              icon: Icon(MdiIcons.arrowUpDropCircleOutline),
+              iconSize: 60,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Observer(
+                builder: (context) {
+                  return _HeaterModeSelect(
+                    onSelected: (value) => _heaterControllerStateStore.changeMode(value),
+                    currentStatus: controllerStatus,
+                    enabled: switch (controllerStatus) {
+                      HeaterStatus.idle => true,
+                      HeaterStatus.heatingPid => true,
+                      HeaterStatus.heatingManual => true,
+                      HeaterStatus.error => true,
+                      HeaterStatus.unknown => true,
+                      HeaterStatus.autotunePid => false,
+                      HeaterStatus.waitingConfiguration => false,
+                      null => false,
+                    },
+                  );
+                },
+              ),
+            ),
+            IconButton(
+              tooltip: switch (controllerStatus) {
+                HeaterStatus.heatingManual => localizations.heaterControlDecreasePower,
+                HeaterStatus.heatingPid => localizations.heaterControlDecreaseTemperature,
+                _ => null,
+              },
+              onPressed: switch (controllerStatus) {
+                HeaterStatus.heatingPid => _decreaseTapNotifier.notify,
+                HeaterStatus.heatingManual => _decreaseTapNotifier.notify,
+                _ => null,
+              },
+              icon: Icon(MdiIcons.arrowDownDropCircleOutline),
+              iconSize: 60,
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _HeaterControlContent extends StatelessWidget {
+  _HeaterControlContent({
+    required ButtonTapNotifier increaseTapNotifier,
+    required ButtonTapNotifier decreaseTapNotifier,
+  }) : _increaseTapNotifier = increaseTapNotifier,
+       _decreaseTapNotifier = decreaseTapNotifier;
+
+  final HeaterControllerStateStore _heaterControllerStateStore =
+      getIt<HeaterControllerStateStore>();
+
+  final ButtonTapNotifier _increaseTapNotifier;
+  final ButtonTapNotifier _decreaseTapNotifier;
+
+  @override
+  Widget build(BuildContext context) {
+    return Observer(
+      builder: (context) {
+        return AnimatedSwitcher(
+          duration: Durations.short4,
+          child: switch (_heaterControllerStateStore.status) {
+            HeaterStatus.heatingPid => _PidControlContent(
+              increaseNotifier: _increaseTapNotifier,
+              decreaseNotifier: _decreaseTapNotifier,
+            ),
+            HeaterStatus.autotunePid => _PidAutotuneContent(),
+            HeaterStatus.heatingManual => _ManualControlContent(
+              increaseNotifier: _increaseTapNotifier,
+              decreaseNotifier: _decreaseTapNotifier,
+            ),
+            HeaterStatus.idle => _IdleStatusContent(),
+            HeaterStatus.error => _ErrorStatusContent(),
+            HeaterStatus.unknown => _UnknownStatusContent(),
+            HeaterStatus.waitingConfiguration => _WaitingConfigurationStatusContent(),
+            null => _UnknownStatusContent(),
+          },
+        );
+      },
+    );
   }
 }
 
