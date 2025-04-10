@@ -56,6 +56,7 @@ class SettingsScreen extends StatelessWidget {
             builder: (context, constraints) {
               return Column(
                 children: [
+                  // ---- TITLE ----
                   Row(
                     children: [
                       Spacer(),
@@ -72,12 +73,13 @@ class SettingsScreen extends StatelessWidget {
                             textStyle: TextStyle(fontSize: 16),
                             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                           ),
-                          label: Text("Atsijungti"),
+                          label: Text(localizations.generalLogout),
                           icon: Icon(MdiIcons.logoutVariant),
                         ),
                       ),
                     ],
                   ),
+                  // ---- GENERAL SETTINGS ----
                   _SettingsCard(
                     title: localizations.pSettingsSectionGeneralTitle,
                     child: Column(
@@ -108,10 +110,26 @@ class SettingsScreen extends StatelessWidget {
                           onTap: () => _themeSelectDialogBuilder(context),
                           child: Text(localizations.pSettingsTheme),
                         ),
+                        _SettingsButton(
+                          icon: Icon(MdiIcons.tools),
+                          tooltip: "Enables some debugging tools and features",
+                          trailing: Observer(
+                            builder:
+                                (context) => Checkbox(
+                                  value: true,
+                                  onChanged: (val) {
+                                    print("herllo: $val");
+                                  },
+                                ),
+                          ),
+                          onTap: () => (),
+                          child: Text("Advanced mode (TODO: localize)"),
+                        ),
                       ],
                     ),
                   ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 8)),
+                  // ---- BOTTOM ----
                   _ApplicationInfoSection(),
                 ],
               );
@@ -171,6 +189,7 @@ class _SettingsCard extends StatelessWidget {
 }
 
 /// A button that displays a child widget and an optional [icon] and [trailing] widget.
+///
 /// The button has a rounded rectangle shape and an elevation effect.
 /// The button has an [onTap] callback that is triggered when the button is pressed.
 /// The button also has an overlay color effect when pressed, hovered, or focused.
@@ -189,47 +208,52 @@ class _SettingsButton extends StatelessWidget {
   final Widget child;
   final Widget? icon;
   final Widget? trailing;
+  final String? tooltip;
   final GestureTapCallback? onTap;
 
-  const _SettingsButton({this.onTap, this.trailing, required this.child, this.icon});
+  const _SettingsButton({this.onTap, this.trailing, required this.child, this.icon, this.tooltip});
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final TextTheme textTheme = TextTheme.of(context);
 
-    return Card.outlined(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        overlayColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.pressed)) {
-            return colorScheme.primary.withAlpha(26);
-          }
-          if (states.contains(WidgetState.hovered)) {
-            return colorScheme.primary.withAlpha(20);
-          }
-          if (states.contains(WidgetState.focused)) {
-            return colorScheme.primary.withAlpha(26);
-          }
-          return null;
-        }),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-          child: Row(
-            children: [
-              if (icon != null) icon!,
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: DefaultTextStyle(style: textTheme.bodyLarge ?? TextStyle(), child: child),
-              ),
-              Spacer(),
-              if (trailing != null)
-                DefaultTextStyle(
-                  style: (textTheme.bodyMedium ?? TextStyle()).changeWeight(FontWeight.w700),
-                  child: trailing!,
+    return Tooltip(
+      message: tooltip,
+      richMessage: tooltip == null ? const TextSpan(text: null) : null,
+      child: Card.outlined(
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          overlayColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.pressed)) {
+              return colorScheme.primary.withAlpha(26);
+            }
+            if (states.contains(WidgetState.hovered)) {
+              return colorScheme.primary.withAlpha(20);
+            }
+            if (states.contains(WidgetState.focused)) {
+              return colorScheme.primary.withAlpha(26);
+            }
+            return null;
+          }),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            child: Row(
+              children: [
+                if (icon != null) icon!,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: DefaultTextStyle(style: textTheme.bodyLarge ?? TextStyle(), child: child),
                 ),
-            ],
+                Spacer(),
+                if (trailing != null)
+                  DefaultTextStyle(
+                    style: (textTheme.bodyMedium ?? TextStyle()).changeWeight(FontWeight.w700),
+                    child: trailing!,
+                  ),
+              ],
+            ),
           ),
         ),
       ),
