@@ -69,7 +69,7 @@ class _PidSection extends StatefulWidget {
 class _PidSectionState extends State<_PidSection> {
   final PidStore pidStore = getIt<PidStore>();
 
-  final _formKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
 
   final TextEditingController pidKpController = TextEditingController();
   final TextEditingController pidKiController = TextEditingController();
@@ -89,7 +89,7 @@ class _PidSectionState extends State<_PidSection> {
       pidStore.getConstants();
     }
 
-    // Proportional
+    // ------ Proportional ------
     storeKpReactionDispose = reaction((_) => pidStore.proportional, (val) {
       pidKpController.value = TextEditingValue(text: pidStore.proportional.toString());
     });
@@ -102,7 +102,11 @@ class _PidSectionState extends State<_PidSection> {
       }
     });
 
-    // Integral
+    if (pidStore.proportional != null) {
+      pidKpController.value = TextEditingValue(text: pidStore.proportional.toString());
+    }
+
+    // ------ Integral ------
     storeKiReactionDispose = reaction((_) => pidStore.integral, (val) {
       pidKiController.value = TextEditingValue(text: pidStore.integral.toString());
     });
@@ -115,7 +119,11 @@ class _PidSectionState extends State<_PidSection> {
       }
     });
 
-    // Derivative
+    if (pidStore.integral != null) {
+      pidKiController.value = TextEditingValue(text: pidStore.integral.toString());
+    }
+
+    // ------ Derivative ------
     storeKdReactionDispose = reaction((_) => pidStore.derivative, (val) {
       pidKdController.value = TextEditingValue(text: pidStore.derivative.toString());
     });
@@ -128,31 +136,34 @@ class _PidSectionState extends State<_PidSection> {
       }
     });
 
-    if (pidStore.proportional != null) {
-      pidKpController.value = TextEditingValue(text: pidStore.proportional.toString());
-    }
-    if (pidStore.integral != null) {
-      pidKiController.value = TextEditingValue(text: pidStore.integral.toString());
-    }
     if (pidStore.derivative != null) {
       pidKdController.value = TextEditingValue(text: pidStore.derivative.toString());
     }
+
     super.initState();
   }
 
+  /// Validates the PID constants.
+  /// Returns null if the [value] is valid, otherwise returns an error message.
+  ///
+  /// - If the [value] is null or empty, it returns a required field error message.
+  /// - If the [value] is not a number, it returns a number format error message.
+  /// - If the [value] is negative, it returns a positive number error message.
+  /// - If the [value] is greater than [maxValue], it returns a maximum value error message.
   String? pidConstantsValidator(String? value, double maxValue) {
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return "Field required (TODO localize)";
+      return localizations.formValidationRequired;
     }
     double? maybeNumber = double.tryParse(value);
     if (maybeNumber == null) {
-      return "Field must be number (TODO localize)";
+      return localizations.formValidationMustBeNumber;
     }
     if (maybeNumber < 0) {
-      return "Field must be positive (TODO localize)";
+      return localizations.formValidationMustBePositive;
     }
     if (maybeNumber > maxValue) {
-      return "Field must be less than $maxValue (TODO localize)";
+      return localizations.formValidationMustBeNotGreaterThan(value);
     }
     return null;
   }
@@ -162,7 +173,7 @@ class _PidSectionState extends State<_PidSection> {
     final AppLocalizations localizations = AppLocalizations.of(context)!;
 
     return Form(
-      key: _formKey,
+      key: formKey,
       autovalidateMode: AutovalidateMode.onUnfocus,
       child: Column(
         children: [
@@ -171,8 +182,9 @@ class _PidSectionState extends State<_PidSection> {
             controller: pidKpController,
             validator: (value) => pidConstantsValidator(value, AppConstants.maxProportional),
             decoration: InputDecoration(
-              helperText:
-                  "Value must be lower than ${AppConstants.maxProportional} (TODO localize)",
+              helperText: localizations.devicesFormHelperText(
+                AppConstants.maxProportional.toString(),
+              ),
               border: OutlineInputBorder(),
               suffixIcon: Padding(
                 padding: const EdgeInsets.only(right: 4.0),
@@ -188,6 +200,7 @@ class _PidSectionState extends State<_PidSection> {
                                 textToSet = "";
                               }
                               pidKpController.value = TextEditingValue(text: textToSet);
+                              formKey.currentState?.validate();
                             },
                             icon: Icon(MdiIcons.redoVariant),
                             iconSize: 18,
@@ -204,7 +217,7 @@ class _PidSectionState extends State<_PidSection> {
             controller: pidKiController,
             validator: (value) => pidConstantsValidator(value, AppConstants.maxIntegral),
             decoration: InputDecoration(
-              helperText: "Value must be lower than ${AppConstants.maxIntegral} (TODO localize)",
+              helperText: localizations.devicesFormHelperText(AppConstants.maxIntegral.toString()),
               border: OutlineInputBorder(),
               suffixIcon: Padding(
                 padding: const EdgeInsets.only(right: 4.0),
@@ -220,6 +233,7 @@ class _PidSectionState extends State<_PidSection> {
                                 textToSet = "";
                               }
                               pidKiController.value = TextEditingValue(text: textToSet);
+                              formKey.currentState?.validate();
                             },
                             icon: Icon(MdiIcons.redoVariant),
                             iconSize: 18,
@@ -236,7 +250,9 @@ class _PidSectionState extends State<_PidSection> {
             controller: pidKdController,
             validator: (value) => pidConstantsValidator(value, AppConstants.maxDerivative),
             decoration: InputDecoration(
-              helperText: "Value must be lower than ${AppConstants.maxDerivative} (TODO localize)",
+              helperText: localizations.devicesFormHelperText(
+                AppConstants.maxDerivative.toString(),
+              ),
               border: OutlineInputBorder(),
               suffixIcon: Padding(
                 padding: const EdgeInsets.only(right: 4.0),
@@ -252,6 +268,7 @@ class _PidSectionState extends State<_PidSection> {
                                 textToSet = "";
                               }
                               pidKdController.value = TextEditingValue(text: textToSet);
+                              formKey.currentState?.validate();
                             },
                             icon: Icon(MdiIcons.redoVariant),
                             iconSize: 18,
@@ -270,7 +287,7 @@ class _PidSectionState extends State<_PidSection> {
                     pidStore.isConstantsChanging
                         ? null
                         : () {
-                          if (_formKey.currentState?.validate() == true) {
+                          if (formKey.currentState?.validate() == true) {
                             pidStore.changeConstants(
                               proportional: double.parse(pidKpController.text),
                               integral: double.parse(pidKiController.text),
