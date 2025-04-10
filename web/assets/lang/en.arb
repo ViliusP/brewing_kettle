@@ -46,6 +46,66 @@
   "@generalChange": {
     "description": "General label for change action, for example used in buttons."
   },
+  "generalLogout": "Logout",
+  "@generalLogout": {
+    "description": "General label for logout action, for example used in buttons."
+  },
+  "formValidationRequired": "This field is required",
+  "@formValidationRequired": {
+    "description": "Validation error message when field is required"
+  },
+  "formValidationMustBePositive": "This field must be positive",
+  "@formValidationMustBePositive": {
+    "description": "Validation error message when field must be positive."
+  },
+  "formValidationMustBeNumber": "This field must be a number",
+  "@formValidationMustBeNumber": {
+    "description": "Validation error message when field must be a number."
+  },
+  "formValidationMustBeGreaterThan": "This field must be greater than {value}",
+  "@formValidationMustBeGreaterThan": {
+    "description": "Validation error message when field must be greater than {value}.",
+    "placeholders": {
+      "value": {
+        "type": "String",
+        "description": "Value to compare with.",
+        "example": "0"
+      }
+    }
+  },
+  "formValidationMustBeNotGreaterThan": "This field must be not greater than {value}",
+  "@formValidationMustBeNotGreaterThan": {
+    "description": "Validation error message when field must be not greater than {value}.",
+    "placeholders": {
+      "value": {
+        "type": "String",
+        "description": "Value to compare with.",
+        "example": "0"
+      }
+    }
+  },
+  "formValidationMustBeLessThan": "This field must be less than {value}",
+  "@formValidationMustBeLessThan": {
+    "description": "Validation error message when field must be less than {value}.",
+    "placeholders": {
+      "value": {
+        "type": "String",
+        "description": "Value to compare with.",
+        "example": "0"
+      }
+    }
+  },
+  "formValidationMustBeNotLessThan": "This field must be not less than {value}",
+  "@formValidationMustBeNotLessThan": {
+    "description": "Validation error message when field must be not less than {value}.",
+    "placeholders": {
+      "value": {
+        "type": "String",
+        "description": "Value to compare with.",
+        "example": "0"
+      }
+    }
+  },
   "exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "exceptionUnknown": "Unknown error occurred.",
@@ -178,6 +238,17 @@
   "devicesPidDerivativeGain": "Derivative gain",
   "@devicesPidDerivativeGain": {
     "description": "Label for derivative gain in PID form"
+  },
+  "devicesFormHelperText": "Maximum value is {value}",
+  "@devicesFormHelperText": {
+    "description": "Helper text for form field, shows maximum value",
+    "placeholders": {
+      "value": {
+        "type": "String",
+        "description": "Maximum value for form field",
+        "example": "100"
+      }
+    }
   },
   "settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},

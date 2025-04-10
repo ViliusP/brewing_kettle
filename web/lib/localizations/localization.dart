@@ -167,6 +167,54 @@ abstract class AppLocalizations {
   /// **'Change'**
   String get generalChange;
 
+  /// General label for logout action, for example used in buttons.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get generalLogout;
+
+  /// Validation error message when field is required
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required'**
+  String get formValidationRequired;
+
+  /// Validation error message when field must be positive.
+  ///
+  /// In en, this message translates to:
+  /// **'This field must be positive'**
+  String get formValidationMustBePositive;
+
+  /// Validation error message when field must be a number.
+  ///
+  /// In en, this message translates to:
+  /// **'This field must be a number'**
+  String get formValidationMustBeNumber;
+
+  /// Validation error message when field must be greater than {value}.
+  ///
+  /// In en, this message translates to:
+  /// **'This field must be greater than {value}'**
+  String formValidationMustBeGreaterThan(String value);
+
+  /// Validation error message when field must be not greater than {value}.
+  ///
+  /// In en, this message translates to:
+  /// **'This field must be not greater than {value}'**
+  String formValidationMustBeNotGreaterThan(String value);
+
+  /// Validation error message when field must be less than {value}.
+  ///
+  /// In en, this message translates to:
+  /// **'This field must be less than {value}'**
+  String formValidationMustBeLessThan(String value);
+
+  /// Validation error message when field must be not less than {value}.
+  ///
+  /// In en, this message translates to:
+  /// **'This field must be not less than {value}'**
+  String formValidationMustBeNotLessThan(String value);
+
   /// No description provided for @exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///
   /// In en, this message translates to:
@@ -352,6 +400,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Derivative gain'**
   String get devicesPidDerivativeGain;
+
+  /// Helper text for form field, shows maximum value
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum value is {value}'**
+  String devicesFormHelperText(String value);
 
   /// No description provided for @settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///

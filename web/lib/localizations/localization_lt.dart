@@ -45,6 +45,38 @@ class AppLocalizationsLt extends AppLocalizations {
   String get generalChange => 'Pakeisti';
 
   @override
+  String get generalLogout => 'Atsijungti';
+
+  @override
+  String get formValidationRequired => 'Šis laukelis privalomas';
+
+  @override
+  String get formValidationMustBePositive => 'Šiame laukelyje turi būti teigiamas skaičius';
+
+  @override
+  String get formValidationMustBeNumber => 'Šiame laukelyje turi būti skaičius';
+
+  @override
+  String formValidationMustBeGreaterThan(String value) {
+    return 'Reikšmė turi būti didesnė nei $value';
+  }
+
+  @override
+  String formValidationMustBeNotGreaterThan(String value) {
+    return 'Reikšmė turi būti ne didesnė nei $value';
+  }
+
+  @override
+  String formValidationMustBeLessThan(String value) {
+    return 'Reikšmė turi būti mažesnė nei $value';
+  }
+
+  @override
+  String formValidationMustBeNotLessThan(String value) {
+    return 'Reikšmė turi būti ne mažesnė nei $value';
+  }
+
+  @override
   String get exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
@@ -163,6 +195,11 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get devicesPidDerivativeGain => 'Diferencijuojančios grandies laiko konstanta';
+
+  @override
+  String devicesFormHelperText(String value) {
+    return 'Maksimali galima reikšmė $value';
+  }
 
   @override
   String get settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';

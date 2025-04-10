@@ -45,6 +45,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalChange => 'Change';
 
   @override
+  String get generalLogout => 'Logout';
+
+  @override
+  String get formValidationRequired => 'This field is required';
+
+  @override
+  String get formValidationMustBePositive => 'This field must be positive';
+
+  @override
+  String get formValidationMustBeNumber => 'This field must be a number';
+
+  @override
+  String formValidationMustBeGreaterThan(String value) {
+    return 'This field must be greater than $value';
+  }
+
+  @override
+  String formValidationMustBeNotGreaterThan(String value) {
+    return 'This field must be not greater than $value';
+  }
+
+  @override
+  String formValidationMustBeLessThan(String value) {
+    return 'This field must be less than $value';
+  }
+
+  @override
+  String formValidationMustBeNotLessThan(String value) {
+    return 'This field must be not less than $value';
+  }
+
+  @override
   String get exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
@@ -163,6 +195,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get devicesPidDerivativeGain => 'Derivative gain';
+
+  @override
+  String devicesFormHelperText(String value) {
+    return 'Maximum value is $value';
+  }
 
   @override
   String get settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
