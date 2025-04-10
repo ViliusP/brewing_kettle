@@ -168,10 +168,21 @@ class _MessagesLogPreview extends StatelessWidget {
   }
 }
 
-class _ControllerScreen extends StatelessWidget {
+class _ControllerScreen extends StatefulWidget {
+  const _ControllerScreen();
+
+  @override
+  State<_ControllerScreen> createState() => _ControllerScreenState();
+}
+
+class _ControllerScreenState extends State<_ControllerScreen> {
   final DeviceSnapshotStore _deviceSnapshotStore = getIt<DeviceSnapshotStore>();
 
-  _ControllerScreen();
+  @override
+  void initState() {
+    _deviceSnapshotStore.request();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -181,9 +192,11 @@ class _ControllerScreen extends StatelessWidget {
           constraints: BoxConstraints(minWidth: 128, minHeight: 64),
           child: Observer(
             builder: (context) {
+              Widget child;
               if (_deviceSnapshotStore.snapshot != null) {
                 Uint8List imageBuffer = base64Decode(_deviceSnapshotStore.snapshot!.buffer!);
-                return GrayscaleImage(
+                child = GrayscaleImage(
+                  key: ValueKey("image"),
                   buffer: imageBuffer.rgb888ToRgba8888(
                     _deviceSnapshotStore.snapshot!.width!,
                     _deviceSnapshotStore.snapshot!.height!,
@@ -193,11 +206,17 @@ class _ControllerScreen extends StatelessWidget {
                   // Number of rows
                   height: _deviceSnapshotStore.snapshot!.height!,
                 );
+              } else {
+                child = DecoratedBox(
+                  key: ValueKey("placeholder"),
+                  decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+                );
               }
-              return Container(
+
+              return SizedBox(
                 width: 128,
                 height: 64,
-                decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+                child: AnimatedSwitcher(duration: Durations.short2, child: child),
               );
             },
           ),

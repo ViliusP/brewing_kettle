@@ -25,7 +25,10 @@ class GrayscaleImage extends StatelessWidget {
         } else if (snapshot.hasError) {
           return Text("Error: ${snapshot.error}");
         } else if (snapshot.hasData) {
-          return CustomPaint(painter: ImagePainter(snapshot.data!));
+          return CustomPaint(
+            size: Size(width.toDouble(), height.toDouble()),
+            painter: ImagePainter(snapshot.data!),
+          );
         } else {
           return Text("Unknown error");
         }
