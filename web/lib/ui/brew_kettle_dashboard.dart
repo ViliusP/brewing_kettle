@@ -4,20 +4,34 @@ import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/locale/locale_store.dart';
 import 'package:brew_kettle_dashboard/stores/theme/theme_store.dart';
+import 'package:brew_kettle_dashboard/ui/common/application_info/application_info.dart';
 import 'package:brew_kettle_dashboard/ui/routing.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
-class BrewKettleDashboard extends StatelessWidget {
-  // This widget is the root of your application.
-  // Create your store as a final variable in a base Widget. This works better
-  // with Hot Reload than creating it directly in the `build` function.
+class BrewKettleDashboard extends StatefulWidget {
+  const BrewKettleDashboard({super.key});
 
+  @override
+  State<BrewKettleDashboard> createState() => _BrewKettleDashboardState();
+}
+
+class _BrewKettleDashboardState extends State<BrewKettleDashboard> {
   final LocaleStore _localeStore = getIt<LocaleStore>();
   final ThemeStore _themeStore = getIt<ThemeStore>();
 
-  BrewKettleDashboard({super.key});
+  PackageInfo? packageInfo;
+
+  @override
+  void initState() {
+    PackageInfo.fromPlatform().then((value) {
+      packageInfo = value;
+      if (mounted) setState(() {});
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +42,21 @@ class BrewKettleDashboard extends StatelessWidget {
         return MaterialApp.router(
           actions: WidgetsApp.defaultActions,
           scrollBehavior: AppScrollBehavior(),
+          builder: (context, child) {
+            if (packageInfo == null) {
+              return child!;
+            }
+
+            return ApplicationInfo(
+              appName: packageInfo!.appName,
+              version: packageInfo!.version,
+              buildNumber: packageInfo!.buildNumber,
+              packageName: packageInfo!.packageName,
+              installTime: packageInfo?.installTime,
+              updateTime: packageInfo?.updateTime,
+              child: child!,
+            );
+          },
           routerConfig: AppRouter.value,
           debugShowCheckedModeBanner: false,
           title: AppConstants.appName,

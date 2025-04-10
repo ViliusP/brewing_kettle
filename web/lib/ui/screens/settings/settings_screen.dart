@@ -4,6 +4,7 @@ import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/locale/locale_store.dart';
 import 'package:brew_kettle_dashboard/stores/theme/theme_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
+import 'package:brew_kettle_dashboard/ui/common/application_info/application_info.dart';
 import 'package:brew_kettle_dashboard/ui/common/flags/country_flag.dart';
 import 'package:brew_kettle_dashboard/ui/screens/settings/language_select_dialog.dart';
 import 'package:brew_kettle_dashboard/ui/screens/settings/theme_select_dialog.dart';
@@ -77,11 +78,11 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SettingsCard(
+                  _SettingsCard(
                     title: localizations.pSettingsSectionGeneralTitle,
                     child: Column(
                       children: [
-                        SettingsButton(
+                        _SettingsButton(
                           icon: Icon(MdiIcons.earth),
                           trailing: SizedBox(
                             height: 20,
@@ -97,7 +98,7 @@ class SettingsScreen extends StatelessWidget {
                           onTap: () => _languageSelectDialogBuidlder(context),
                           child: Text(localizations.pSettingsLanguage),
                         ),
-                        SettingsButton(
+                        _SettingsButton(
                           icon: Icon(MdiIcons.palette),
                           trailing: Observer(
                             builder:
@@ -110,6 +111,8 @@ class SettingsScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+                  Padding(padding: EdgeInsets.symmetric(vertical: 8)),
+                  _ApplicationInfoSection(),
                 ],
               );
             },
@@ -120,12 +123,26 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
-class SettingsCard extends StatelessWidget {
+/// A card that contains a [title] and a [child] widget.
+/// The card has a rounded rectangle shape and an elevation effect.
+/// The title is displayed at the top of the card and the child widget is displayed below it.
+/// Example usage:
+/// ```dart
+/// _SettingsCard(
+///   title: 'Settings',
+///   child: Column(
+///     children: [
+///       Text('Setting 1'),
+///       Text('Setting 2'),
+///     ],
+///   ),
+/// )
+class _SettingsCard extends StatelessWidget {
   final Widget child;
 
   final String title;
 
-  const SettingsCard({super.key, required this.title, required this.child});
+  const _SettingsCard({required this.title, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -153,13 +170,28 @@ class SettingsCard extends StatelessWidget {
   }
 }
 
-class SettingsButton extends StatelessWidget {
+/// A button that displays a child widget and an optional [icon] and [trailing] widget.
+/// The button has a rounded rectangle shape and an elevation effect.
+/// The button has an [onTap] callback that is triggered when the button is pressed.
+/// The button also has an overlay color effect when pressed, hovered, or focused.
+/// Example usage:
+/// ```dart
+/// _SettingsButton(
+///   child: Text('Settings'),
+///   icon: Icon(Icons.settings),
+///   trailing: Icon(Icons.arrow_forward),
+///   onTap: () {
+///     // Do something when the button is pressed
+///   },
+/// )
+/// ```
+class _SettingsButton extends StatelessWidget {
   final Widget child;
   final Widget? icon;
   final Widget? trailing;
   final GestureTapCallback? onTap;
 
-  const SettingsButton({super.key, this.onTap, this.trailing, required this.child, this.icon});
+  const _SettingsButton({this.onTap, this.trailing, required this.child, this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -202,5 +234,24 @@ class SettingsButton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _ApplicationInfoSection extends StatelessWidget {
+  const _ApplicationInfoSection();
+
+  @override
+  Widget build(BuildContext context) {
+    TextTheme textTheme = TextTheme.of(context);
+    TextStyle? textStyle = textTheme.labelMedium;
+
+    ApplicationInfo? appInfo = ApplicationInfo.maybeOf(context);
+    String packageName = appInfo?.packageName ?? '';
+    String version = appInfo?.version ?? '';
+    if (appInfo?.buildNumber != null) {
+      version += '(${appInfo?.buildNumber})';
+    }
+
+    return Column(children: [Text(packageName, style: textStyle), Text(version, style: textStyle)]);
   }
 }
