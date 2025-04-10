@@ -43,7 +43,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
                             elevation: 4,
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
-                              child: CommnuicatorControllerInfoCard(),
+                              child: CommunicatorControllerInfoCard(),
                             ),
                           ),
                         ),
