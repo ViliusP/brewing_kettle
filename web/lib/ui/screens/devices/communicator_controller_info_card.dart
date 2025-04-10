@@ -15,13 +15,19 @@ import 'package:flutter_json_view/flutter_json_view.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-class CommnuicatorControllerInfoCard extends StatelessWidget {
-  CommnuicatorControllerInfoCard({super.key});
+class CommunicatorControllerInfoCard extends StatefulWidget {
+  const CommunicatorControllerInfoCard({super.key});
 
+  @override
+  State<CommunicatorControllerInfoCard> createState() => _CommunicatorControllerInfoCardState();
+}
+
+class _CommunicatorControllerInfoCardState extends State<CommunicatorControllerInfoCard> {
   final SystemInfoStore _systemInfoStore = getIt<SystemInfoStore>();
+
   final DeviceSnapshotStore _deviceSnapshotStore = getIt<DeviceSnapshotStore>();
 
-  final FocusNode _focusNode1 = FocusNode();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +43,7 @@ class CommnuicatorControllerInfoCard extends StatelessWidget {
       children: [
         Text(localizations.devicesCommunicationController, style: textTheme.titleLarge),
         SelectableRegion(
-          focusNode: _focusNode1,
+          focusNode: _focusNode,
           selectionControls: materialTextSelectionControls,
           child: Column(
             children: [
@@ -90,6 +96,12 @@ class CommnuicatorControllerInfoCard extends StatelessWidget {
         _MessagesLogPreview(),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
   }
 }
 
