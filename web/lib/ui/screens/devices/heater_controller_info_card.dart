@@ -5,7 +5,6 @@ import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/device_info/system_info_store.dart';
 import 'package:brew_kettle_dashboard/stores/pid/pid_store.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
@@ -129,17 +128,15 @@ class _PidSectionState extends State<_PidSection> {
       }
     });
 
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (pidStore.proportional != null) {
-        pidKpController.value = TextEditingValue(text: pidStore.proportional.toString());
-      }
-      if (pidStore.integral != null) {
-        pidKiController.value = TextEditingValue(text: pidStore.integral.toString());
-      }
-      if (pidStore.derivative != null) {
-        pidKdController.value = TextEditingValue(text: pidStore.derivative.toString());
-      }
-    });
+    if (pidStore.proportional != null) {
+      pidKpController.value = TextEditingValue(text: pidStore.proportional.toString());
+    }
+    if (pidStore.integral != null) {
+      pidKiController.value = TextEditingValue(text: pidStore.integral.toString());
+    }
+    if (pidStore.derivative != null) {
+      pidKdController.value = TextEditingValue(text: pidStore.derivative.toString());
+    }
     super.initState();
   }
 
