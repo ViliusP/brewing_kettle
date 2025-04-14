@@ -24,43 +24,38 @@ class _DevicesScreenState extends State<DevicesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      child: Center(
-        child: SingleChildScrollView(
-          primary: true,
+    return Center(
+      child: SingleChildScrollView(
+        primary: true,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 1060),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Card(
-                            elevation: 4,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
-                              child: CommunicatorControllerInfoCard(),
-                            ),
-                          ),
-                        ),
-                        Padding(padding: EdgeInsets.symmetric(horizontal: 8)),
-                        Expanded(
-                          child: Card(
-                            elevation: 4,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
-                              child: HeaterControllerInfoCard(),
-                            ),
-                          ),
-                        ),
-                      ],
+            child: SizedBox(
+              width: 1060,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Card(
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
+                        child: CommunicatorControllerInfoCard(),
+                      ),
                     ),
-                  );
-                },
+                  ),
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 8)),
+                  Expanded(
+                    child: Card(
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
+                        child: HeaterControllerInfoCard(),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
