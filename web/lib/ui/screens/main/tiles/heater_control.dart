@@ -6,7 +6,6 @@ import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
 import 'package:brew_kettle_dashboard/ui/common/idle_circles/idle_circles.dart';
 import 'package:brew_kettle_dashboard/ui/common/slider_container/slider_container.dart';
-import 'package:brew_kettle_dashboard/utils/textstyle_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -312,7 +311,7 @@ class _ManualControlContentState extends State<_ManualControlContent> {
                       text,
                       style: Theme.of(
                         context,
-                      ).textTheme.displayMedium?.changeWeight(FontWeight.w800),
+                      ).textTheme.displayMedium?.copyWith(fontWeight: FontWeight.w800),
                     ),
                   );
                 },
@@ -540,7 +539,7 @@ class _PidControlContentState extends State<_PidControlContent> {
                       text,
                       style: Theme.of(
                         context,
-                      ).textTheme.displayMedium?.changeWeight(FontWeight.w800),
+                      ).textTheme.displayMedium?.copyWith(fontWeight: FontWeight.w800),
                     ),
                   );
                 },

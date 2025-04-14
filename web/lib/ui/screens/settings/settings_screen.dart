@@ -9,7 +9,6 @@ import 'package:brew_kettle_dashboard/ui/common/application_info/application_inf
 import 'package:brew_kettle_dashboard/ui/common/flags/country_flag.dart';
 import 'package:brew_kettle_dashboard/ui/screens/settings/language_select_dialog.dart';
 import 'package:brew_kettle_dashboard/ui/screens/settings/theme_select_dialog.dart';
-import 'package:brew_kettle_dashboard/utils/textstyle_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -269,7 +268,9 @@ class _SettingsButton extends StatelessWidget {
                 Spacer(),
                 if (trailing != null)
                   DefaultTextStyle(
-                    style: (textTheme.bodyMedium ?? TextStyle()).changeWeight(FontWeight.w700),
+                    style: (textTheme.bodyMedium ?? TextStyle()).copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                     child: trailing!,
                   ),
               ],

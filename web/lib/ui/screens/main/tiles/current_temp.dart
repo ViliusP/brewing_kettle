@@ -1,7 +1,6 @@
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
-import 'package:brew_kettle_dashboard/utils/textstyle_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -37,7 +36,9 @@ class _CurrentTempTileState extends State<CurrentTempTile> {
 
                   return Text(
                     text,
-                    style: Theme.of(context).textTheme.displayMedium?.changeWeight(FontWeight.w800),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.displayMedium?.copyWith(fontWeight: FontWeight.w800),
                   );
                 },
               ),

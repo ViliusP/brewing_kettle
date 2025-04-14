@@ -30,7 +30,7 @@ abstract class _ThemeStore with Store {
   @action
   void changeTheme(AppTheme value) {
     _theme = value;
-    _repository.sharedPreferences.setTheme(value.preferenceValue);
+    _repository.sharedPreferences.setTheme(value.key);
   }
 
   // ======================
