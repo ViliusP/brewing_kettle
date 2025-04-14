@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:brew_kettle_dashboard/core/data/models/api/device_configuration.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
+import 'package:brew_kettle_dashboard/stores/app_configuration/app_configuration_store.dart';
 import 'package:brew_kettle_dashboard/stores/device_info/system_info_store.dart';
 import 'package:brew_kettle_dashboard/stores/device_snapshot/device_snapshot_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
@@ -24,6 +25,7 @@ class CommunicatorControllerInfoCard extends StatefulWidget {
 
 class _CommunicatorControllerInfoCardState extends State<CommunicatorControllerInfoCard> {
   final SystemInfoStore _systemInfoStore = getIt<SystemInfoStore>();
+  final AppConfigurationStore _appConfigurationStore = getIt<AppConfigurationStore>();
 
   final DeviceSnapshotStore _deviceSnapshotStore = getIt<DeviceSnapshotStore>();
 
@@ -88,12 +90,14 @@ class _CommunicatorControllerInfoCardState extends State<CommunicatorControllerI
         Padding(padding: EdgeInsets.symmetric(vertical: 4)),
         _ControllerScreen(),
         Padding(padding: EdgeInsets.symmetric(vertical: 4)),
-        Divider(),
-        Padding(padding: EdgeInsets.symmetric(vertical: 4)),
-        Text(localizations.devicesCommunicationLog, style: textTheme.titleLarge),
-        Padding(padding: EdgeInsets.symmetric(vertical: 4)),
 
-        _MessagesLogPreview(),
+        if (_appConfigurationStore.isAdvancedMode) ...[
+          Divider(),
+          Padding(padding: EdgeInsets.symmetric(vertical: 4)),
+          Text(localizations.devicesCommunicationLog, style: textTheme.titleLarge),
+          Padding(padding: EdgeInsets.symmetric(vertical: 4)),
+          _MessagesLogPreviewSection(),
+        ],
       ],
     );
   }
@@ -105,8 +109,8 @@ class _CommunicatorControllerInfoCardState extends State<CommunicatorControllerI
   }
 }
 
-class _MessagesLogPreview extends StatelessWidget {
-  _MessagesLogPreview();
+class _MessagesLogPreviewSection extends StatelessWidget {
+  _MessagesLogPreviewSection();
 
   final WebSocketConnectionStore _wsConnectionStore = getIt<WebSocketConnectionStore>();
 

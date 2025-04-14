@@ -30,5 +30,14 @@ class SharedPreferenceHelper {
     return _sharedPreference.setString(PreferenceKey.locale.key, value);
   }
 
+  // ===============
+  // Advanced Mode:
+  // ===============
+  bool? get advancedMode {
+    return _sharedPreference.getBool(PreferenceKey.advancedMode.key);
+  }
+
+  Future setAdvancedMode(bool value) {
+    return _sharedPreference.setBool(PreferenceKey.advancedMode.key, value);
   }
 }

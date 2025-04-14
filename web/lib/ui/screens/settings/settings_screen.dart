@@ -1,6 +1,7 @@
 import 'package:brew_kettle_dashboard/constants/theme.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
+import 'package:brew_kettle_dashboard/stores/app_configuration/app_configuration_store.dart';
 import 'package:brew_kettle_dashboard/stores/locale/locale_store.dart';
 import 'package:brew_kettle_dashboard/stores/theme/theme_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
@@ -14,11 +15,74 @@ import 'package:flutter_material_design_icons/flutter_material_design_icons.dart
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 class SettingsScreen extends StatelessWidget {
-  final LocaleStore localeStore = getIt<LocaleStore>();
-  final ThemeStore themeStore = getIt<ThemeStore>();
-  final WebSocketConnectionStore wsConnectionStore = getIt<WebSocketConnectionStore>();
+  final WebSocketConnectionStore _wsConnectionStore = getIt<WebSocketConnectionStore>();
 
   SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+    return Center(
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+        constraints: BoxConstraints(maxWidth: 816),
+        child: SingleChildScrollView(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Column(
+                children: [
+                  // ---- TITLE ----
+                  Row(
+                    children: [
+                      Spacer(),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: OutlinedButton.icon(
+                          onPressed: _wsConnectionStore.close,
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: colorScheme.secondary,
+                            iconColor: colorScheme.secondary,
+                            iconSize: 22,
+                            textStyle: TextStyle(fontSize: 16),
+                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                          ),
+                          label: Text(localizations.generalLogout),
+                          icon: Icon(MdiIcons.logoutVariant),
+                        ),
+                      ),
+                    ],
+                  ),
+                  _GeneralSection(),
+                  // ---- GENERAL SETTINGS ----
+                  Padding(padding: EdgeInsets.symmetric(vertical: 8)),
+                  // ---- BOTTOM ----
+                  _ApplicationInfoSection(),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A section that contains general settings options.
+/// The section includes options for changing the language, theme, and advanced mode.
+/// The section is displayed as a card with a title and a list of settings buttons.
+///
+/// Example usage:
+/// ```dart
+/// _SettingsSection()
+/// ```
+class _GeneralSection extends StatelessWidget {
+  _GeneralSection();
+
+  final LocaleStore _localeStore = getIt<LocaleStore>();
+  final ThemeStore _themeStore = getIt<ThemeStore>();
+  final AppConfigurationStore _appConfigurationStore = getIt<AppConfigurationStore>();
 
   Future<void> _languageSelectDialogBuidlder(BuildContext context) async {
     LocaleStore localeStore = getIt<LocaleStore>();
@@ -45,97 +109,53 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations localizations = AppLocalizations.of(context)!;
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    return Center(
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-        constraints: BoxConstraints(maxWidth: 816),
-        child: SingleChildScrollView(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return Column(
-                children: [
-                  // ---- TITLE ----
-                  Row(
-                    children: [
-                      Spacer(),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 16),
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            wsConnectionStore.close();
-                          },
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: colorScheme.secondary,
-                            iconColor: colorScheme.secondary,
-                            iconSize: 22,
-                            textStyle: TextStyle(fontSize: 16),
-                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                          ),
-                          label: Text(localizations.generalLogout),
-                          icon: Icon(MdiIcons.logoutVariant),
-                        ),
-                      ),
-                    ],
-                  ),
-                  // ---- GENERAL SETTINGS ----
-                  _SettingsCard(
-                    title: localizations.pSettingsSectionGeneralTitle,
-                    child: Column(
-                      children: [
-                        _SettingsButton(
-                          icon: Icon(MdiIcons.earth),
-                          trailing: SizedBox(
-                            height: 20,
-                            child: Observer(
-                              builder:
-                                  (context) => CountryFlag(
-                                    code: CountryCode.fromLanguageCode(
-                                      localeStore.locale.languageCode,
-                                    ),
-                                  ),
-                            ),
-                          ),
-                          onTap: () => _languageSelectDialogBuidlder(context),
-                          child: Text(localizations.pSettingsLanguage),
-                        ),
-                        _SettingsButton(
-                          icon: Icon(MdiIcons.palette),
-                          trailing: Observer(
-                            builder:
-                                (context) =>
-                                    Text(localizations.pSettingsThemeNames(themeStore.theme.name)),
-                          ),
-                          onTap: () => _themeSelectDialogBuilder(context),
-                          child: Text(localizations.pSettingsTheme),
-                        ),
-                        _SettingsButton(
-                          icon: Icon(MdiIcons.tools),
-                          tooltip: "Enables some debugging tools and features",
-                          trailing: Observer(
-                            builder:
-                                (context) => Checkbox(
-                                  value: true,
-                                  onChanged: (val) {
-                                    print("herllo: $val");
-                                  },
-                                ),
-                          ),
-                          onTap: () => (),
-                          child: Text("Advanced mode (TODO: localize)"),
-                        ),
-                      ],
+    return _SettingsCard(
+      title: localizations.pSettingsSectionGeneralTitle,
+      child: Column(
+        children: [
+          _SettingsButton(
+            icon: Icon(MdiIcons.earth),
+            trailing: SizedBox(
+              height: 20,
+              child: Observer(
+                builder:
+                    (context) => CountryFlag(
+                      code: CountryCode.fromLanguageCode(_localeStore.locale.languageCode),
                     ),
-                  ),
-                  Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-                  // ---- BOTTOM ----
-                  _ApplicationInfoSection(),
-                ],
-              );
-            },
+              ),
+            ),
+            onTap: () => _languageSelectDialogBuidlder(context),
+            child: Text(localizations.pSettingsLanguage),
           ),
-        ),
+          _SettingsButton(
+            icon: Icon(MdiIcons.palette),
+            trailing: Observer(
+              builder: (context) => Text(localizations.pSettingsThemeNames(_themeStore.theme.name)),
+            ),
+            onTap: () => _themeSelectDialogBuilder(context),
+            child: Text(localizations.pSettingsTheme),
+          ),
+          _SettingsButton(
+            icon: Icon(MdiIcons.tools),
+            tooltip: "Turns on some debugging features",
+            trailing: Observer(
+              builder:
+                  (context) => Checkbox(
+                    value: _appConfigurationStore.isAdvancedMode,
+                    onChanged: (value) {
+                      if (value != null) {
+                        _appConfigurationStore.setAdvancedMode(value);
+                      }
+                    },
+                  ),
+            ),
+            onTap: () {
+              _appConfigurationStore.setAdvancedMode(!_appConfigurationStore.isAdvancedMode);
+            },
+            child: Text("Advanced mode (TODO: localize)"),
+          ),
+        ],
       ),
     );
   }

@@ -9,6 +9,7 @@ import 'package:brew_kettle_dashboard/core/data/repository/system_info_repositor
 import 'package:brew_kettle_dashboard/core/data/repository/websocket_connection_repository.dart';
 import 'package:brew_kettle_dashboard/core/data/storages/sharedpref/preferences.dart';
 import 'package:brew_kettle_dashboard/core/data/storages/sharedpref/shared_preference_helper.dart';
+import 'package:brew_kettle_dashboard/stores/app_configuration/app_configuration_store.dart';
 import 'package:brew_kettle_dashboard/stores/device_info/system_info_store.dart';
 import 'package:brew_kettle_dashboard/stores/device_snapshot/device_snapshot_store.dart';
 import 'package:brew_kettle_dashboard/stores/exception/exception_store.dart';
@@ -68,5 +69,6 @@ class StoreModule {
     getIt.registerSingleton<NetworkScannerStore>(NetworkScannerStore());
     getIt.registerSingleton<LocaleStore>(LocaleStore(repository));
     getIt.registerSingleton<ThemeStore>(ThemeStore(repository));
+    getIt.registerSingleton<AppConfigurationStore>(AppConfigurationStore(repository));
   }
 }
