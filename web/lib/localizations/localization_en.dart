@@ -224,6 +224,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get sliderContainerDragTooltip => 'Drag to change value';
+
+  @override
   String get devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override

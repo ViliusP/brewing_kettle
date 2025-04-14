@@ -407,6 +407,12 @@ abstract class AppLocalizations {
   /// **'Heating mode - {mode, select, idle {idle} heating_manual {manual} heating_pid {PID} autotune_pid {autotune} null {none} other {unknown}}'**
   String heaterControlSelectButtonTooltip(String mode);
 
+  /// Tooltip for slider container when dragging
+  ///
+  /// In en, this message translates to:
+  /// **'Drag to change value'**
+  String get sliderContainerDragTooltip;
+
   /// No description provided for @devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///
   /// In en, this message translates to:

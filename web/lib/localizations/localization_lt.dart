@@ -224,6 +224,9 @@ class AppLocalizationsLt extends AppLocalizations {
   }
 
   @override
+  String get sliderContainerDragTooltip => 'Tempkite, kad pakeistumėte vertę';
+
+  @override
   String get devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override

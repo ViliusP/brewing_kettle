@@ -261,6 +261,10 @@
       }
     }
   },
+  "sliderContainerDragTooltip": "Drag to change value",
+  "@sliderContainerDragTooltip": {
+    "description": "Tooltip for slider container when dragging"
+  },
   "devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "devicesCommunicationController": "Communication controller",

@@ -83,6 +83,7 @@
       }
     }
   },
+  "sliderContainerDragTooltip": "Tempkite, kad pakeistumėte vertę",
   "devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "devicesCommunicationController": "Komunikacijos valdiklis",
