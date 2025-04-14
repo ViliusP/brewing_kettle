@@ -114,22 +114,6 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
     });
   }
 
-  late final _$_requestedModeAtom = Atom(
-      name: '_HeaterControllerStateStore._requestedMode', context: context);
-
-  @override
-  HeaterMode? get _requestedMode {
-    _$_requestedModeAtom.reportRead();
-    return super._requestedMode;
-  }
-
-  @override
-  set _requestedMode(HeaterMode? value) {
-    _$_requestedModeAtom.reportWrite(value, super._requestedMode, () {
-      super._requestedMode = value;
-    });
-  }
-
   late final _$_requestedTemperatureAtom = Atom(
       name: '_HeaterControllerStateStore._requestedTemperature',
       context: context);

@@ -19,26 +19,11 @@ class HeaterControlTile extends StatefulWidget {
 }
 
 class _HeaterControlTileState extends State<HeaterControlTile> {
-  static const double _defaultPower = 0;
-  static const double _powerChangeStep = 5;
-
   final HeaterControllerStateStore _heaterControllerStateStore =
       getIt<HeaterControllerStateStore>();
 
   final ButtonTapNotifier _increaseTapNotifier = ButtonTapNotifier();
   final ButtonTapNotifier _decreaseTapNotifier = ButtonTapNotifier();
-
-  void increaseHeatingManual() {
-    double currentPower = _heaterControllerStateStore.requestedPower ?? _defaultPower;
-
-    _heaterControllerStateStore.changePower(currentPower + _powerChangeStep);
-  }
-
-  void decreaseHeatingManual() {
-    double currentPower = _heaterControllerStateStore.requestedPower ?? _defaultPower;
-
-    _heaterControllerStateStore.changePower(currentPower - _powerChangeStep);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +95,7 @@ class _HeaterControls extends StatelessWidget {
     return Observer(
       builder: (context) {
         final controllerStatus = _heaterControllerStateStore.status;
-
+        final loading = _heaterControllerStateStore.isModeChanging;
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -121,10 +106,8 @@ class _HeaterControls extends StatelessWidget {
                 _ => null,
               },
               onPressed: switch (controllerStatus) {
-                // HeaterStatus.heatingPid when !_heaterControllerStateStore.isModeChanging=> _increaseTapNotifier.notify,
-                // HeaterStatus.heatingManual when !_heaterControllerStateStore.isModeChanging => _increaseTapNotifier.notify,
-                HeaterStatus.heatingPid => _increaseTapNotifier.notify,
-                HeaterStatus.heatingManual => _increaseTapNotifier.notify,
+                HeaterStatus.heatingPid when !loading => _increaseTapNotifier.notify,
+                HeaterStatus.heatingManual when !loading => _increaseTapNotifier.notify,
                 _ => null,
               },
               icon: Icon(MdiIcons.arrowUpDropCircleOutline),
@@ -135,6 +118,7 @@ class _HeaterControls extends StatelessWidget {
               onSelected: (value) => _heaterControllerStateStore.changeMode(value),
               currentStatus: controllerStatus,
               enabled: switch (controllerStatus) {
+                _ when loading => false,
                 HeaterStatus.idle => true,
                 HeaterStatus.heatingPid => true,
                 HeaterStatus.heatingManual => true,
@@ -153,8 +137,8 @@ class _HeaterControls extends StatelessWidget {
                 _ => null,
               },
               onPressed: switch (controllerStatus) {
-                HeaterStatus.heatingPid => _decreaseTapNotifier.notify,
-                HeaterStatus.heatingManual => _decreaseTapNotifier.notify,
+                HeaterStatus.heatingPid when !loading => _decreaseTapNotifier.notify,
+                HeaterStatus.heatingManual when !loading => _decreaseTapNotifier.notify,
                 _ => null,
               },
               icon: Icon(MdiIcons.arrowDownDropCircleOutline),

@@ -57,9 +57,6 @@ abstract class _HeaterControllerStateStore with Store {
   // -----------------------
   // STATUS STATE
   // -----------------------
-  @observable
-  HeaterMode? _requestedMode;
-
   @computed
   HeaterStatus? get status => _state?.status;
 
@@ -126,8 +123,10 @@ abstract class _HeaterControllerStateStore with Store {
 
       return;
     }
+    if (value.toHeaterStatus() == status) {
+      return;
+    }
     _isModeChanging = true;
-    _requestedMode = value;
     var message = WsMessageComposer.requestStateChangeMessage(
       OutboundMessageType.heaterModeSet,
       value.jsonValue,
@@ -141,11 +140,11 @@ abstract class _HeaterControllerStateStore with Store {
     if (message.payload is HeaterControllerState &&
         message.type == InboundMessageType.heaterControllerState) {
       var heaterState = (message.payload as HeaterControllerState);
-      _state = heaterState;
-      _isModeChanging = false;
-      if (heaterState.status == _requestedMode?.toHeaterStatus()) {
-        _requestedMode = null;
+      if (heaterState.status != _state?.status) {
+        _isModeChanging = false;
       }
+      _state = heaterState;
+
       _stateHistory.add(
         TimeSeriesEntry<HeaterControllerState>(
           DateTime.fromMillisecondsSinceEpoch(heaterState.timestamp * 1000),
