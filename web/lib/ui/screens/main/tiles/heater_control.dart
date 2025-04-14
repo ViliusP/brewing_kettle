@@ -131,27 +131,22 @@ class _HeaterControls extends StatelessWidget {
               icon: Icon(MdiIcons.arrowUpDropCircleOutline),
               iconSize: 60,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: Observer(
-                builder: (context) {
-                  return _HeaterModeSelect(
-                    onSelected: (value) => _heaterControllerStateStore.changeMode(value),
-                    currentStatus: controllerStatus,
-                    enabled: switch (controllerStatus) {
-                      HeaterStatus.idle => true,
-                      HeaterStatus.heatingPid => true,
-                      HeaterStatus.heatingManual => true,
-                      HeaterStatus.error => true,
-                      HeaterStatus.unknown => true,
-                      HeaterStatus.autotunePid => false,
-                      HeaterStatus.waitingConfiguration => false,
-                      null => false,
-                    },
-                  );
-                },
-              ),
+            Padding(padding: const EdgeInsets.symmetric(vertical: 2.0)),
+            _HeaterModeSelect(
+              onSelected: (value) => _heaterControllerStateStore.changeMode(value),
+              currentStatus: controllerStatus,
+              enabled: switch (controllerStatus) {
+                HeaterStatus.idle => true,
+                HeaterStatus.heatingPid => true,
+                HeaterStatus.heatingManual => true,
+                HeaterStatus.error => true,
+                HeaterStatus.unknown => true,
+                HeaterStatus.autotunePid => false,
+                HeaterStatus.waitingConfiguration => false,
+                null => false,
+              },
             ),
+            Padding(padding: const EdgeInsets.symmetric(vertical: 2.0)),
             IconButton(
               tooltip: switch (controllerStatus) {
                 HeaterStatus.heatingManual => localizations.heaterControlDecreasePower,
