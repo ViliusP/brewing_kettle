@@ -311,6 +311,14 @@
       }
     }
   },
+  "settingsAdvancedMode": "Advanced mode",
+  "@settingsAdvancedMode": {
+    "description": "Setting name for advanced mode"
+  },
+  "settingsAdvancedModeTooltip": "Turns on some debugging features",
+  "@settingsAdvancedModeTooltip": {
+    "description": "Tooltip for advanced mode setting button"
+  },
   "layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "layoutItemHome": "Home",

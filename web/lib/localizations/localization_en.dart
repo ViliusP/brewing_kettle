@@ -266,6 +266,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get settingsAdvancedMode => 'Advanced mode';
+
+  @override
+  String get settingsAdvancedModeTooltip => 'Turns on some debugging features';
+
+  @override
   String get layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override

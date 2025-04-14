@@ -485,6 +485,18 @@ abstract class AppLocalizations {
   /// **'{theme, select, light {Light} lightMediumContrast {Light - medium contrast} lightHighContrast {Light - high contrast} dark {Dark} darkMediumContrast {Dark - medium contrast} darkHighContrast {Dark - high contrast} other {unknown}}'**
   String settingsThemeNames(String theme);
 
+  /// Setting name for advanced mode
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced mode'**
+  String get settingsAdvancedMode;
+
+  /// Tooltip for advanced mode setting button
+  ///
+  /// In en, this message translates to:
+  /// **'Turns on some debugging features'**
+  String get settingsAdvancedModeTooltip;
+
   /// No description provided for @layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///
   /// In en, this message translates to:

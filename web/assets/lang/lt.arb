@@ -93,6 +93,8 @@
       }
     }
   },
+  "settingsAdvancedMode": "Išplėstinė režimas",
+  "settingsAdvancedModeTooltip": "Įjungus bus pasiekiamas funkcionalumas, skirtas programos derinimui ir testavimui.",
   "layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "layoutItemHome": "Pagrindinis",

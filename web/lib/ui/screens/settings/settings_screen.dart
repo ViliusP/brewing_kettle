@@ -138,7 +138,7 @@ class _GeneralSection extends StatelessWidget {
           ),
           _SettingsButton(
             icon: Icon(MdiIcons.tools),
-            tooltip: "Turns on some debugging features",
+            tooltip: localizations.settingsAdvancedModeTooltip,
             trailing: Observer(
               builder:
                   (context) => Checkbox(
@@ -153,7 +153,7 @@ class _GeneralSection extends StatelessWidget {
             onTap: () {
               _appConfigurationStore.setAdvancedMode(!_appConfigurationStore.isAdvancedMode);
             },
-            child: Text("Advanced mode (TODO: localize)"),
+            child: Text(localizations.settingsAdvancedMode),
           ),
         ],
       ),

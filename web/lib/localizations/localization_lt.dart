@@ -266,6 +266,12 @@ class AppLocalizationsLt extends AppLocalizations {
   }
 
   @override
+  String get settingsAdvancedMode => 'Išplėstinė režimas';
+
+  @override
+  String get settingsAdvancedModeTooltip => 'Įjungus bus pasiekiamas funkcionalumas, skirtas programos derinimui ir testavimui.';
+
+  @override
   String get layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
