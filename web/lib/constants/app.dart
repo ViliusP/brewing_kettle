@@ -1,4 +1,5 @@
 import 'package:brew_kettle_dashboard/constants/theme.dart';
+import 'package:flutter/rendering.dart';
 
 /// This file contains the general constants used in the app.
 class AppConstants {
@@ -16,6 +17,15 @@ class AppConstants {
 class AppDefaults {
   AppDefaults._();
 
+  /// Default value for the font family.
   static const AppFontFamily font = AppFontFamily.nunitoSans;
+
+  /// Default value for theme.
   static const AppTheme theme = AppTheme.light;
+
+  /// Default value for language.
+  static const Locale locale = Locale('en');
+
+  /// Default value for advanced mode.
+  static const bool isAdvancedMode = false;
 }

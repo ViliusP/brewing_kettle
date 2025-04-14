@@ -1,3 +1,4 @@
+import 'package:brew_kettle_dashboard/constants/app.dart';
 import 'package:brew_kettle_dashboard/core/data/repository/repository.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:flutter/rendering.dart';
@@ -19,7 +20,7 @@ abstract class _LocaleStore with Store {
   // Store variables:
   // ===================
   @observable
-  Locale _locale = AppLocalizations.supportedLocales.first;
+  Locale _locale = AppDefaults.locale;
 
   @computed
   Locale get locale => _locale;
