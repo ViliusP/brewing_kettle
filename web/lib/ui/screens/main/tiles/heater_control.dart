@@ -260,7 +260,7 @@ class _ManualControlContentState extends State<_ManualControlContent> {
 
   @override
   Widget build(BuildContext context) {
-    AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+    AppLocalizations localizations = AppLocalizations.of(context)!;
 
     return SliderContainer(
       direction: AxisDirection.up,
@@ -309,7 +309,7 @@ class _ManualControlContentState extends State<_ManualControlContent> {
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 4.0),
-                child: Text(appLocalizations.generalPower, style: TextTheme.of(context).labelLarge),
+                child: Text(localizations.generalPower, style: TextTheme.of(context).labelLarge),
               ),
             ),
           ),

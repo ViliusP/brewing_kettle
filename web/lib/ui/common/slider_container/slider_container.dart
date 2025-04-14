@@ -1,5 +1,23 @@
 import 'package:flutter/material.dart';
 
+/// A customizable and interactive slider widget for Flutter.
+///
+/// The `SliderContainer` is a stateful widget that allows users to adjust
+/// a value by dragging or tapping within a container. It supports different
+/// directions (up, down, left, right) and provides visual feedback.
+///
+/// Features:
+/// - Supports drag and tap gestures to adjust the value.
+/// - Directional layout: up, down, left, or right.
+/// - Value is mapped as a percentage of a given range.
+/// - Step-based value adjustment.
+/// - Optional color fade effect based on value percentage.
+/// - Hover effect for better user interaction feedback.
+/// - Easily integrated into layouts, resizable and positionable.
+/// - Customizable appearance via `SliderContainerDecorations`.
+///
+/// Use this widget when you need a slider that can fit a flexible UI layout
+/// and offer enhanced interaction and styling options.
 class SliderContainer extends StatefulWidget {
   final Widget child;
   final AxisDirection direction;
@@ -28,12 +46,15 @@ class _SliderContainerState extends State<SliderContainer> {
   bool _dragging = false;
   bool _hovered = false;
 
+  /// Handles gesture input (tap or drag) and updates the slider value
+  /// based on the touch position and slider orientation.
   void onGesture(Offset position, BoxConstraints boxConstraints) {
     double dy = position.dy;
     double dx = position.dx;
     double maxHeight = boxConstraints.maxHeight;
     double maxWidth = boxConstraints.maxWidth;
 
+    // Convert touch position to percentage based on direction
     double percent = switch (widget.direction) {
       AxisDirection.up => (maxHeight - dy) / maxHeight,
       AxisDirection.down => dy / maxHeight,
@@ -41,6 +62,7 @@ class _SliderContainerState extends State<SliderContainer> {
       AxisDirection.left => (maxWidth - dx) / maxWidth,
     };
 
+    // Calculate and clamp the new value using step size
     var newValue = (widget.range.end - widget.range.start) * percent;
     newValue = (newValue / widget.step).ceil() * widget.step;
     newValue = newValue.clamp(widget.range.start, widget.range.end);
@@ -64,8 +86,8 @@ class _SliderContainerState extends State<SliderContainer> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return MouseRegion(
-          onEnter: (e) => setState(() => _hovered = true),
-          onExit: (e) => setState(() => _hovered = false),
+          onEnter: (_) => setState(() => _hovered = true),
+          onExit: (_) => setState(() => _hovered = false),
           cursor: switch (_dragging) {
             true => SystemMouseCursors.grabbing,
             false => SystemMouseCursors.grab,
@@ -76,7 +98,7 @@ class _SliderContainerState extends State<SliderContainer> {
               if (!_dragging) setState(() => _dragging = true);
               onGesture(details.localPosition, constraints);
             },
-            onTapUp: (details) => setState(() => _dragging = false),
+            onTapUp: (_) => setState(() => _dragging = false),
             onTapCancel: () => setState(() => _dragging = false),
             onVerticalDragUpdate: (details) {
               if (!_dragging) setState(() => _dragging = true);
@@ -86,7 +108,7 @@ class _SliderContainerState extends State<SliderContainer> {
               if (!_dragging) setState(() => _dragging = true);
               onGesture(details.localPosition, constraints);
             },
-            onVerticalDragEnd: (details) => setState(() => _dragging = false),
+            onVerticalDragEnd: (_) => setState(() => _dragging = false),
             onVerticalDragCancel: () => setState(() => _dragging = false),
             child: Stack(
               children: [
@@ -132,6 +154,9 @@ class _SliderContainerState extends State<SliderContainer> {
   }
 }
 
+/// Visual customization options for [SliderContainer].
+///
+/// Currently supports enabling/disabling a color fade effect based on value.
 class SliderContainerDecorations {
   const SliderContainerDecorations({this.withColorFade = true});
 
