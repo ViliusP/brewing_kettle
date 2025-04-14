@@ -8,11 +8,12 @@ import 'package:brew_kettle_dashboard/stores/device_info/system_info_store.dart'
 import 'package:brew_kettle_dashboard/stores/device_snapshot/device_snapshot_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:brew_kettle_dashboard/ui/screens/devices/greyscale_image.dart';
+import 'package:brew_kettle_dashboard/ui/screens/devices/message_logs_preview.dart';
 import 'package:brew_kettle_dashboard/ui/screens/devices/message_logs_viewer.dart';
+import 'package:brew_kettle_dashboard/utils/list_extensions.dart';
 import 'package:brew_kettle_dashboard/utils/pixels.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_json_view/flutter_json_view.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -123,15 +124,9 @@ class _MessagesLogPreviewSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = TextTheme.of(context);
+    // final TextTheme textTheme = TextTheme.of(context);
     final ColorScheme colorScheme = ColorScheme.of(context);
     final AppLocalizations localizations = AppLocalizations.of(context)!;
-
-    TextStyle defaultTextStyle =
-        textTheme.bodySmall ??
-        TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: colorScheme.onSurface);
-
-    double iconSize = (defaultTextStyle.fontSize?.toInt() ?? 17) + 3;
 
     return Card.outlined(
       clipBehavior: Clip.hardEdge,
@@ -141,21 +136,8 @@ class _MessagesLogPreviewSection extends StatelessWidget {
             width: double.maxFinite,
             child: Observer(
               builder: (context) {
-                return JsonView.string(
-                  _wsConnectionStore.logs,
-                  theme: JsonViewTheme(
-                    viewType: JsonViewType.base,
-                    openIcon: Icon(MdiIcons.plus, size: iconSize),
-                    closeIcon: Icon(MdiIcons.close, size: iconSize),
-                    separator: Text(": ", style: defaultTextStyle),
-                    backgroundColor: colorScheme.surface,
-                    defaultTextStyle: defaultTextStyle,
-                    keyStyle: TextStyle(color: colorScheme.primary),
-                    boolStyle: TextStyle(color: colorScheme.inverseSurface),
-                    intStyle: TextStyle(color: colorScheme.inverseSurface),
-                    stringStyle: TextStyle(color: colorScheme.inverseSurface),
-                    doubleStyle: TextStyle(color: colorScheme.inverseSurface),
-                  ),
+                return MessageLogsPreview(
+                  messages: _wsConnectionStore.messages.takeLast(10).toList(),
                 );
               },
             ),
@@ -170,6 +152,7 @@ class _MessagesLogPreviewSection extends StatelessWidget {
                     return SizedBox.shrink();
                   }
                   return IconButton.outlined(
+                    style: IconButton.styleFrom(backgroundColor: colorScheme.secondaryContainer),
                     onPressed: () => _dialogBuilder(context),
                     icon: Icon(MdiIcons.scriptTextOutline),
                     tooltip: localizations.devicesShowMoreLogTooltip,
