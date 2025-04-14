@@ -15,7 +15,7 @@ class SharedPreferenceHelper {
     return _sharedPreference.getString(PreferenceKey.theme.key);
   }
 
-  Future changeTheme(String value) {
+  Future setTheme(String value) {
     return _sharedPreference.setString(PreferenceKey.theme.key, value);
   }
 
@@ -23,10 +23,12 @@ class SharedPreferenceHelper {
   // Language:
   // ===============
   String? get locale {
-    return _sharedPreference.getString(PreferenceKey.currentLocale.key);
+    return _sharedPreference.getString(PreferenceKey.locale.key);
   }
 
-  Future changeLocale(String value) {
-    return _sharedPreference.setString(PreferenceKey.currentLocale.key, value);
+  Future setLocale(String value) {
+    return _sharedPreference.setString(PreferenceKey.locale.key, value);
+  }
+
   }
 }

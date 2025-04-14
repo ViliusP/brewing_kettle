@@ -1,6 +1,7 @@
 enum PreferenceKey {
   theme("theme"),
-  currentLocale("currentLocale");
+  locale("locale"),
+  advancedMode("advanced_mode");
 
   const PreferenceKey(this.key);
 

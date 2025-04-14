@@ -30,7 +30,7 @@ abstract class _LocaleStore with Store {
   @action
   void changeLanguage(Locale locale) {
     _locale = locale;
-    _repository.sharedPreferences.changeLocale(locale.languageCode);
+    _repository.sharedPreferences.setLocale(locale.languageCode);
   }
 
   // ======================
