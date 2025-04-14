@@ -71,22 +71,22 @@
   "devicesFormHelperText": "Maksimali galima reikšmė {value}",
   "settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
-  "pSettingsTitle": "Nustatymai",
-  "pSettingsSectionGeneralTitle": "Bendri",
-  "pSettingsLanguage": "Kalba",
-  "cLanguageSelectDialogTitle": "Pasirinkite kalbą",
-  "pSettingsInputLanguage": "{locale, select, lt {Lietuvių} en {Anglų} lv {Latvių} other {nežinoma}}",
-  "@pSettingsInputLanguage": {
+  "settingsTitle": "Nustatymai",
+  "settingsSectionGeneralTitle": "Bendri",
+  "settingsLanguage": "Kalba",
+  "languageSelectDialogTitle": "Pasirinkite kalbą",
+  "settingsInputLanguage": "{locale, select, lt {Lietuvių} en {Anglų} lv {Latvių} other {nežinoma}}",
+  "@settingsInputLanguage": {
     "placeholders": {
       "locale": {
         "type": "String"
       }
     }
   },
-  "pSettingsTheme": "Tema",
-  "cThemeSelectDialogTitle": "Pasirinkite temą",
-  "pSettingsThemeNames": "{theme, select, light {Šviesi} lightMediumContrast {Šviesi - vidutinio kontrasto} lightHighContrast {Šviesi - didelio kontrasto} dark {Tamsi} darkMediumContrast {Tamsi - vidutinio kontrasto} darkHighContrast {Tamsi - didelio kontrasto} other {nežinoma tema}}",
-  "@pSettingsThemeNames": {
+  "settingsTheme": "Tema",
+  "themeSelectDialogTitle": "Pasirinkite temą",
+  "settingsThemeNames": "{theme, select, light {Šviesi} lightMediumContrast {Šviesi - vidutinio kontrasto} lightHighContrast {Šviesi - didelio kontrasto} dark {Tamsi} darkMediumContrast {Tamsi - vidutinio kontrasto} darkHighContrast {Tamsi - didelio kontrasto} other {nežinoma tema}}",
+  "@settingsThemeNames": {
     "placeholders": {
       "theme": {
         "type": "String"

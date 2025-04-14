@@ -111,7 +111,7 @@ class _GeneralSection extends StatelessWidget {
     final AppLocalizations localizations = AppLocalizations.of(context)!;
 
     return _SettingsCard(
-      title: localizations.pSettingsSectionGeneralTitle,
+      title: localizations.settingsSectionGeneralTitle,
       child: Column(
         children: [
           _SettingsButton(
@@ -126,15 +126,15 @@ class _GeneralSection extends StatelessWidget {
               ),
             ),
             onTap: () => _languageSelectDialogBuidlder(context),
-            child: Text(localizations.pSettingsLanguage),
+            child: Text(localizations.settingsLanguage),
           ),
           _SettingsButton(
             icon: Icon(MdiIcons.palette),
             trailing: Observer(
-              builder: (context) => Text(localizations.pSettingsThemeNames(_themeStore.theme.name)),
+              builder: (context) => Text(localizations.settingsThemeNames(_themeStore.theme.name)),
             ),
             onTap: () => _themeSelectDialogBuilder(context),
-            child: Text(localizations.pSettingsTheme),
+            child: Text(localizations.settingsTheme),
           ),
           _SettingsButton(
             icon: Icon(MdiIcons.tools),

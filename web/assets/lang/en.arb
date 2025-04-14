@@ -270,40 +270,40 @@
   },
   "settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
-  "pSettingsTitle": "Settings",
-  "@pSettingsTitle": {
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
     "description": "Title for settings page, show at top of the page"
   },
-  "pSettingsSectionGeneralTitle": "General",
-  "@pSettingsSectionGeneralTitle": {
+  "settingsSectionGeneralTitle": "General",
+  "@settingsSectionGeneralTitle": {
     "description": "Title for general section at settings page"
   },
-  "pSettingsLanguage": "Language",
-  "@pSettingsLanguage": {
+  "settingsLanguage": "Language",
+  "@settingsLanguage": {
     "description": "Setting name for language"
   },
-  "cLanguageSelectDialogTitle": "Select language",
-  "@cLanguageSelectDialogTitle": {
+  "languageSelectDialogTitle": "Select language",
+  "@languageSelectDialogTitle": {
     "description": "Title for language select dialog, showed at top of component"
   },
-  "pSettingsInputLanguage": "{locale, select, lt {Lithuanian} en {English} lv {Latvian} other {unknown}}",
-  "@pSettingsInputLanguage": {
+  "settingsInputLanguage": "{locale, select, lt {Lithuanian} en {English} lv {Latvian} other {unknown}}",
+  "@settingsInputLanguage": {
     "placeholders": {
       "locale": {
         "type": "String"
       }
     }
   },
-  "pSettingsTheme": "Theme",
-  "@pSettingsTheme": {
+  "settingsTheme": "Theme",
+  "@settingsTheme": {
     "description": "Setting name for the current theme change"
   },
-  "cThemeSelectDialogTitle": "Select theme",
-  "@cThemeSelectDialogTitle": {
+  "themeSelectDialogTitle": "Select theme",
+  "@themeSelectDialogTitle": {
     "description": "Title for theme select dialog, showed at top of component"
   },
-  "pSettingsThemeNames": "{theme, select, light {Light} lightMediumContrast {Light - medium contrast} lightHighContrast {Light - high contrast} dark {Dark} darkMediumContrast {Dark - medium contrast} darkHighContrast {Dark - high contrast} other {unknown}}",
-  "@pSettingsThemeNames": {
+  "settingsThemeNames": "{theme, select, light {Light} lightMediumContrast {Light - medium contrast} lightHighContrast {Light - high contrast} dark {Dark} darkMediumContrast {Dark - medium contrast} darkHighContrast {Dark - high contrast} other {unknown}}",
+  "@settingsThemeNames": {
     "description": "Names for all available themes in application",
     "placeholders": {
       "theme": {

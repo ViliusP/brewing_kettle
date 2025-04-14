@@ -441,49 +441,49 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Settings'**
-  String get pSettingsTitle;
+  String get settingsTitle;
 
   /// Title for general section at settings page
   ///
   /// In en, this message translates to:
   /// **'General'**
-  String get pSettingsSectionGeneralTitle;
+  String get settingsSectionGeneralTitle;
 
   /// Setting name for language
   ///
   /// In en, this message translates to:
   /// **'Language'**
-  String get pSettingsLanguage;
+  String get settingsLanguage;
 
   /// Title for language select dialog, showed at top of component
   ///
   /// In en, this message translates to:
   /// **'Select language'**
-  String get cLanguageSelectDialogTitle;
+  String get languageSelectDialogTitle;
 
-  /// No description provided for @pSettingsInputLanguage.
+  /// No description provided for @settingsInputLanguage.
   ///
   /// In en, this message translates to:
   /// **'{locale, select, lt {Lithuanian} en {English} lv {Latvian} other {unknown}}'**
-  String pSettingsInputLanguage(String locale);
+  String settingsInputLanguage(String locale);
 
   /// Setting name for the current theme change
   ///
   /// In en, this message translates to:
   /// **'Theme'**
-  String get pSettingsTheme;
+  String get settingsTheme;
 
   /// Title for theme select dialog, showed at top of component
   ///
   /// In en, this message translates to:
   /// **'Select theme'**
-  String get cThemeSelectDialogTitle;
+  String get themeSelectDialogTitle;
 
   /// Names for all available themes in application
   ///
   /// In en, this message translates to:
   /// **'{theme, select, light {Light} lightMediumContrast {Light - medium contrast} lightHighContrast {Light - high contrast} dark {Dark} darkMediumContrast {Dark - medium contrast} darkHighContrast {Dark - high contrast} other {unknown}}'**
-  String pSettingsThemeNames(String theme);
+  String settingsThemeNames(String theme);
 
   /// No description provided for @layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///

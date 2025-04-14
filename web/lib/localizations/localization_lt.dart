@@ -217,19 +217,19 @@ class AppLocalizationsLt extends AppLocalizations {
   String get settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
-  String get pSettingsTitle => 'Nustatymai';
+  String get settingsTitle => 'Nustatymai';
 
   @override
-  String get pSettingsSectionGeneralTitle => 'Bendri';
+  String get settingsSectionGeneralTitle => 'Bendri';
 
   @override
-  String get pSettingsLanguage => 'Kalba';
+  String get settingsLanguage => 'Kalba';
 
   @override
-  String get cLanguageSelectDialogTitle => 'Pasirinkite kalbą';
+  String get languageSelectDialogTitle => 'Pasirinkite kalbą';
 
   @override
-  String pSettingsInputLanguage(String locale) {
+  String settingsInputLanguage(String locale) {
     String _temp0 = intl.Intl.selectLogic(
       locale,
       {
@@ -243,13 +243,13 @@ class AppLocalizationsLt extends AppLocalizations {
   }
 
   @override
-  String get pSettingsTheme => 'Tema';
+  String get settingsTheme => 'Tema';
 
   @override
-  String get cThemeSelectDialogTitle => 'Pasirinkite temą';
+  String get themeSelectDialogTitle => 'Pasirinkite temą';
 
   @override
-  String pSettingsThemeNames(String theme) {
+  String settingsThemeNames(String theme) {
     String _temp0 = intl.Intl.selectLogic(
       theme,
       {

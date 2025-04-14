@@ -12,7 +12,7 @@ class ThemeSelectDialog extends StatelessWidget {
     final localizations = AppLocalizations.of(context)!;
 
     return AlertDialog(
-      title: Text(localizations.cThemeSelectDialogTitle),
+      title: Text(localizations.themeSelectDialogTitle),
       content: SizedBox(
         width: 260,
         child: ListView.builder(
@@ -25,7 +25,7 @@ class ThemeSelectDialog extends StatelessWidget {
             return ListTile(
               selected: currentTheme == appTheme,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-              title: Text(localizations.pSettingsThemeNames(appTheme.name)),
+              title: Text(localizations.settingsThemeNames(appTheme.name)),
               onTap: () => Navigator.of(context).pop(appTheme),
             );
           },

@@ -12,7 +12,7 @@ class LanguageSelectDialog extends StatelessWidget {
     final localizations = AppLocalizations.of(context)!;
 
     return AlertDialog(
-      title: Text(localizations.cLanguageSelectDialogTitle),
+      title: Text(localizations.languageSelectDialogTitle),
       content: SizedBox(
         width: 260,
         child: ListView.builder(
@@ -31,7 +31,7 @@ class LanguageSelectDialog extends StatelessWidget {
               selected: currentLocale == locale,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
               leading: SizedBox(width: 30, child: CountryFlag(code: code)),
-              title: Text(localizations.pSettingsInputLanguage(locale.languageCode)),
+              title: Text(localizations.settingsInputLanguage(locale.languageCode)),
               onTap: () => Navigator.of(context).pop(locale),
             );
           },
