@@ -47,13 +47,42 @@
   "exceptionHttpUnknown": "Įvyko netikėta tinklo problema. Tai gali būti interneto ryšio arba įrenginio serverio sutrikimai.",
   "mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
-  "pMainGraphInfoTitle": "Temperatūros ir galios grafikas",
-  "pMainGraphInfoText": "Grafike rodomi kaitintuvo duomenys {hours} {hours, plural, =1{valandos} other{valandų}}, kas {seconds} {seconds, plural, =1{sekundę} other{sekundžių}}.\nSpausdami ant grafiko taškų, pamatysite detalesnius to laiko duomenis.",
-  "pMainGraphInfoLegend": "Linijų legenda",
+  "mainGraphInfoTitle": "Temperatūros ir galios grafikas",
+  "mainGraphInfoText": "Grafike rodomi kaitintuvo duomenys {hours} {hours, plural, =1{valandos} other{valandų}}, kas {seconds} {seconds, plural, =1{sekundę} other{sekundžių}}.\nSpausdami ant grafiko taškų, pamatysite detalesnius to laiko duomenis.",
+  "mainGraphInfoLegend": "Linijų legenda",
   "heaterControlIncreaseTemperature": "Padininti temperatūrą",
   "heaterControlDecreaseTemperature": "Sumažinti temperatūrą",
   "heaterControlIncreasePower": "Padidinti galią",
   "heaterControlDecreasePower": "Sumažinti galią",
+  "heaterControlCardLabelIdle": "Ramybės būsena",
+  "heaterControlCardLabelAutotune": "Automatinis PID derinimas",
+  "heaterControlCardLabelError": "Įvyko klaida",
+  "heaterControlCardMessageError": "Įvyko klaida virintuvo valdiklyje, pabandykite perkraukite valdiklius.",
+  "heaterControlCardLabelStatusUnknown": "Statusas nežinomas",
+  "heaterControlCardMessageStatusUnknown": "Įvyko klaida - virintuvo valdiklio būsena nežinoma, pabandykite perkrauti aplikaciją ir abu valdiklius.",
+  "heaterControlCardLabelConfiguring": "Konfigūruojama...",
+  "heaterControlCardMessageConfiguring": "Laukiama, kol bus sukonfigūruotas virintuvo valdiklis. Tai turėtų užtrukti kelias sekundes.",
+  "heaterControlSelectButtonLabel": "{mode, select, idle {Ramybės būsena} heating_manual {Galia} heating_pid {Temperatūra} other {Nežinoma}}",
+  "@heaterControlSelectButtonLabel": {
+    "description": "Label for heater control select button",
+    "placeholders": {
+      "mode": {
+        "type": "String",
+        "description": "Current mode of the heater control",
+        "example": "idle"
+      }
+    }
+  },
+  "heaterControlSelectButtonTooltip": "Kaitinimo būdas - {mode, select, idle {ramybės būsena} heating_manual {pastovi galia} heating_pid {PID} autotune_pid {automatinis derinimas} null {nėra} other {nežinoma}}",
+  "@heaterControlSelectButtonTooltip": {
+    "placeholders": {
+      "mode": {
+        "type": "String",
+        "description": "Current mode of the heater control",
+        "example": "idle"
+      }
+    }
+  },
   "devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "devicesCommunicationController": "Komunikacijos valdiklis",

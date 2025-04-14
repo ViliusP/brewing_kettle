@@ -347,7 +347,7 @@ class _ManualControlContentState extends State<_ManualControlContent> {
 }
 
 class _WaitingConfigurationStatusContent extends StatelessWidget {
-  const _WaitingConfigurationStatusContent({super.key});
+  const _WaitingConfigurationStatusContent();
 
   @override
   Widget build(BuildContext context) {
@@ -359,7 +359,7 @@ class _WaitingConfigurationStatusContent extends StatelessWidget {
         Row(children: [Spacer(), Icon(MdiIcons.lanPending, size: 54), Spacer()]),
         Padding(padding: EdgeInsets.symmetric(vertical: 4)),
         Text(
-          "Laukiama, kol bus sukonfigūruotas virintuvo valdiklis. Tai turėtų užtrukti kelias sekundes.",
+          localizations.heaterControlCardMessageConfiguring,
           style: textTheme.bodyLarge,
           textAlign: TextAlign.center,
         ),
@@ -368,7 +368,10 @@ class _WaitingConfigurationStatusContent extends StatelessWidget {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: const EdgeInsets.only(bottom: 4.0),
-              child: Text("Konfigūruojama", style: textTheme.labelLarge),
+              child: Text(
+                localizations.heaterControlCardLabelConfiguring,
+                style: textTheme.labelLarge,
+              ),
             ),
           ),
         ),
@@ -378,7 +381,7 @@ class _WaitingConfigurationStatusContent extends StatelessWidget {
 }
 
 class _UnknownStatusContent extends StatelessWidget {
-  const _UnknownStatusContent({super.key});
+  const _UnknownStatusContent();
 
   @override
   Widget build(BuildContext context) {
@@ -390,7 +393,7 @@ class _UnknownStatusContent extends StatelessWidget {
         Row(children: [Spacer(), Icon(MdiIcons.helpRhombus, size: 54), Spacer()]),
         Padding(padding: EdgeInsets.symmetric(vertical: 4)),
         Text(
-          "Įvyko klaida - virintuvo valdiklio būsena nežinoma, pabandykite perkrauti aplikaciją ir abu valdiklius.",
+          localizations.heaterControlCardMessageStatusUnknown,
           style: textTheme.bodyLarge,
           textAlign: TextAlign.center,
         ),
@@ -399,7 +402,10 @@ class _UnknownStatusContent extends StatelessWidget {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: const EdgeInsets.only(bottom: 4.0),
-              child: Text("Statusas nežinomas", style: textTheme.labelLarge),
+              child: Text(
+                localizations.heaterControlCardLabelStatusUnknown,
+                style: textTheme.labelLarge,
+              ),
             ),
           ),
         ),
@@ -409,7 +415,7 @@ class _UnknownStatusContent extends StatelessWidget {
 }
 
 class _ErrorStatusContent extends StatelessWidget {
-  const _ErrorStatusContent({super.key});
+  const _ErrorStatusContent();
 
   @override
   Widget build(BuildContext context) {
@@ -421,7 +427,7 @@ class _ErrorStatusContent extends StatelessWidget {
         Row(children: [Spacer(), Icon(MdiIcons.alertCircleOutline, size: 54), Spacer()]),
         Padding(padding: EdgeInsets.symmetric(vertical: 4)),
         Text(
-          "Įvyko klaida virintuvo valdiklyje, pabandykite perkraukite valdiklius.",
+          localizations.heaterControlCardMessageError,
           style: textTheme.bodyLarge,
           textAlign: TextAlign.center,
         ),
@@ -430,13 +436,12 @@ class _ErrorStatusContent extends StatelessWidget {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: const EdgeInsets.only(bottom: 4.0),
-              child: Text("Įvyko klaida", style: textTheme.labelLarge),
+              child: Text(localizations.heaterControlCardLabelError, style: textTheme.labelLarge),
             ),
           ),
         ),
       ],
     );
-    ;
   }
 }
 
@@ -582,7 +587,9 @@ class _PidAutotuneContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Autotuning..."));
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
+
+    return Center(child: Text(localizations.heaterControlCardLabelAutotune));
   }
 }
 
@@ -591,12 +598,17 @@ class _IdleStatusContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
+
     return Column(
       children: [
         Expanded(child: AnimatedIdleCircles()),
         Padding(
           padding: const EdgeInsets.only(bottom: 4.0),
-          child: Text("Ramybės būsena", style: TextTheme.of(context).labelLarge),
+          child: Text(
+            localizations.heaterControlCardLabelIdle,
+            style: TextTheme.of(context).labelLarge,
+          ),
         ),
       ],
     );
@@ -623,6 +635,8 @@ class _HeaterModeSelect extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations localizations = AppLocalizations.of(context)!;
+
     HeaterMode? initialValue;
     if (currentStatus != null) {
       initialValue = HeaterMode.fromHeaterStatus(currentStatus!);
@@ -631,7 +645,7 @@ class _HeaterModeSelect extends StatelessWidget {
     return PopupMenuButton<HeaterMode>(
       iconSize: 28,
       padding: EdgeInsets.all(8),
-      tooltip: "Kaitinimo būdas ${initialValue?.jsonValue}",
+      tooltip: localizations.heaterControlSelectButtonTooltip(initialValue?.jsonValue ?? "null"),
       icon: Icon(statusToIcon(currentStatus)),
       initialValue: initialValue,
       onSelected: onSelected,
@@ -646,7 +660,7 @@ class _HeaterModeSelect extends StatelessWidget {
                         children: [
                           Icon(statusToIcon(v.toHeaterStatus())),
                           Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                          Text(v.jsonValue),
+                          Text(localizations.heaterControlSelectButtonLabel(v.jsonValue)),
                         ],
                       ),
                     ),

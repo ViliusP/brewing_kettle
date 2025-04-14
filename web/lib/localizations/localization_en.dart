@@ -124,10 +124,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
-  String get pMainGraphInfoTitle => 'Temparature and power graph';
+  String get mainGraphInfoTitle => 'Temparature and power graph';
 
   @override
-  String pMainGraphInfoText(int seconds, num hours) {
+  String mainGraphInfoText(int seconds, num hours) {
     final intl.NumberFormat secondsNumberFormat = intl.NumberFormat.decimalPatternDigits(
       locale: localeName,
       
@@ -155,7 +155,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get pMainGraphInfoLegend => 'Line legends';
+  String get mainGraphInfoLegend => 'Line legends';
 
   @override
   String get heaterControlIncreaseTemperature => 'Increase temperature';
@@ -168,6 +168,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get heaterControlDecreasePower => 'Decrease power';
+
+  @override
+  String get heaterControlCardLabelIdle => 'Idle';
+
+  @override
+  String get heaterControlCardLabelAutotune => 'Autotuning...';
+
+  @override
+  String get heaterControlCardLabelError => 'Error occurred';
+
+  @override
+  String get heaterControlCardMessageError => 'An error has occurred in the heater controller, try rebooting both controllers';
+
+  @override
+  String get heaterControlCardLabelStatusUnknown => 'Unknown status';
+
+  @override
+  String get heaterControlCardMessageStatusUnknown => 'An error occurred - the status of the boiler controller is unknown, try reloading the application and both controllers.';
+
+  @override
+  String get heaterControlCardLabelConfiguring => 'Configuring...';
+
+  @override
+  String get heaterControlCardMessageConfiguring => 'Waiting for the heater controller to be configured. This should take a few seconds.';
+
+  @override
+  String heaterControlSelectButtonLabel(String mode) {
+    String _temp0 = intl.Intl.selectLogic(
+      mode,
+      {
+        'idle': 'Idle',
+        'heating_manual': 'Power',
+        'heating_pid': 'Temperature',
+        'other': 'Unknown',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String heaterControlSelectButtonTooltip(String mode) {
+    String _temp0 = intl.Intl.selectLogic(
+      mode,
+      {
+        'idle': 'idle',
+        'heating_manual': 'manual',
+        'heating_pid': 'PID',
+        'autotune_pid': 'autotune',
+        'null': 'none',
+        'other': 'unknown',
+      },
+    );
+    return 'Heating mode - $_temp0';
+  }
 
   @override
   String get devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';

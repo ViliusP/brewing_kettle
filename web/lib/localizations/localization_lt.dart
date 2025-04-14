@@ -124,10 +124,10 @@ class AppLocalizationsLt extends AppLocalizations {
   String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
-  String get pMainGraphInfoTitle => 'Temperatūros ir galios grafikas';
+  String get mainGraphInfoTitle => 'Temperatūros ir galios grafikas';
 
   @override
-  String pMainGraphInfoText(int seconds, num hours) {
+  String mainGraphInfoText(int seconds, num hours) {
     final intl.NumberFormat secondsNumberFormat = intl.NumberFormat.decimalPatternDigits(
       locale: localeName,
       
@@ -155,7 +155,7 @@ class AppLocalizationsLt extends AppLocalizations {
   }
 
   @override
-  String get pMainGraphInfoLegend => 'Linijų legenda';
+  String get mainGraphInfoLegend => 'Linijų legenda';
 
   @override
   String get heaterControlIncreaseTemperature => 'Padininti temperatūrą';
@@ -168,6 +168,60 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get heaterControlDecreasePower => 'Sumažinti galią';
+
+  @override
+  String get heaterControlCardLabelIdle => 'Ramybės būsena';
+
+  @override
+  String get heaterControlCardLabelAutotune => 'Automatinis PID derinimas';
+
+  @override
+  String get heaterControlCardLabelError => 'Įvyko klaida';
+
+  @override
+  String get heaterControlCardMessageError => 'Įvyko klaida virintuvo valdiklyje, pabandykite perkraukite valdiklius.';
+
+  @override
+  String get heaterControlCardLabelStatusUnknown => 'Statusas nežinomas';
+
+  @override
+  String get heaterControlCardMessageStatusUnknown => 'Įvyko klaida - virintuvo valdiklio būsena nežinoma, pabandykite perkrauti aplikaciją ir abu valdiklius.';
+
+  @override
+  String get heaterControlCardLabelConfiguring => 'Konfigūruojama...';
+
+  @override
+  String get heaterControlCardMessageConfiguring => 'Laukiama, kol bus sukonfigūruotas virintuvo valdiklis. Tai turėtų užtrukti kelias sekundes.';
+
+  @override
+  String heaterControlSelectButtonLabel(String mode) {
+    String _temp0 = intl.Intl.selectLogic(
+      mode,
+      {
+        'idle': 'Ramybės būsena',
+        'heating_manual': 'Galia',
+        'heating_pid': 'Temperatūra',
+        'other': 'Nežinoma',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String heaterControlSelectButtonTooltip(String mode) {
+    String _temp0 = intl.Intl.selectLogic(
+      mode,
+      {
+        'idle': 'ramybės būsena',
+        'heating_manual': 'pastovi galia',
+        'heating_pid': 'PID',
+        'autotune_pid': 'automatinis derinimas',
+        'null': 'nėra',
+        'other': 'nežinoma',
+      },
+    );
+    return 'Kaitinimo būdas - $_temp0';
+  }
 
   @override
   String get devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';

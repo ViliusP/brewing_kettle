@@ -17,15 +17,15 @@ class HistoryGraphInfo extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(localizations.pMainGraphInfoTitle, style: textTheme.headlineLarge),
+        Text(localizations.mainGraphInfoTitle, style: textTheme.headlineLarge),
         Padding(padding: EdgeInsets.symmetric(vertical: 2)),
         Text(
-          localizations.pMainGraphInfoText(dataInterval.inSeconds, dataRange.inHours),
+          localizations.mainGraphInfoText(dataInterval.inSeconds, dataRange.inHours),
           style: textTheme.bodyLarge,
           textAlign: TextAlign.center,
         ),
         Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-        Text(localizations.pMainGraphInfoLegend, style: textTheme.headlineMedium),
+        Text(localizations.mainGraphInfoLegend, style: textTheme.headlineMedium),
         Padding(padding: EdgeInsets.symmetric(vertical: 2)),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,

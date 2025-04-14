@@ -162,17 +162,17 @@
   "exceptionHttpConnectionError": "Failed to connect to device's server. Please check your internet connection.",
   "@exceptionHttpConnectionError": {
     "description": "Exception message when connection error happened."
-  }, 
+  },
   "exceptionHttpUnknown": "Unexpected network error occurred. There may be a problem with your internet connection or device's server.",
   "@exceptionHttpUnknown": {
     "description": "Exception message when unexpected error happened."
   },
   "mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
-  "pMainGraphInfoTitle": "Temparature and power graph",
-  "@pMainGraphInfoTitle": {},
-  "pMainGraphInfoText": "Shows heater data of every {seconds} {seconds, plural, =1{second} other{seconds}} for {hours} {hours, plural, =1{hour} other{hours}}.\nTap on graph points to see concrete values for that time.",
-  "@pMainGraphInfoText": {
+  "mainGraphInfoTitle": "Temparature and power graph",
+  "@mainGraphInfoTitle": {},
+  "mainGraphInfoText": "Shows heater data of every {seconds} {seconds, plural, =1{second} other{seconds}} for {hours} {hours, plural, =1{hour} other{hours}}.\nTap on graph points to see concrete values for that time.",
+  "@mainGraphInfoText": {
     "description": "Information text displayed on the main graph screen.",
     "placeholders": {
       "seconds": {
@@ -187,8 +187,8 @@
       }
     }
   },
-  "pMainGraphInfoLegend": "Line legends",
-  "@pMainGraphInfoLegend": {
+  "mainGraphInfoLegend": "Line legends",
+  "@mainGraphInfoLegend": {
     "description": "Title for legend line section in graph info."
   },
   "heaterControlIncreaseTemperature": "Increase temperature",
@@ -206,6 +206,60 @@
   "heaterControlDecreasePower": "Decrease power",
   "@heaterControlDecreasePower": {
     "description": "Tooltip for decrease power button"
+  },
+  "heaterControlCardLabelIdle": "Idle",
+  "@heaterControlCardLabelIdle": {
+    "description": "Label for heater control card when heater is idle"
+  },
+  "heaterControlCardLabelAutotune": "Autotuning...",
+  "@heaterControlCardLabelAutotune": {
+    "description": "Label for heater control card when heater is autotuning"
+  },
+  "heaterControlCardLabelError": "Error occurred",
+  "@heaterControlCardLabelError": {
+    "description": "Label for heater control card when error occurred"
+  },
+  "heaterControlCardMessageError": "An error has occurred in the heater controller, try rebooting both controllers",
+  "@heaterControlCardMessageError": {
+    "description": "Message for heater control card when error occurred"
+  },
+  "heaterControlCardLabelStatusUnknown": "Unknown status",
+  "@heaterControlCardLabelStatusUnknown": {
+    "description": "Label for heater control card when status is unknown"
+  },
+  "heaterControlCardMessageStatusUnknown": "An error occurred - the status of the boiler controller is unknown, try reloading the application and both controllers.",
+  "@heaterControlCardMessageStatusUnknown": {
+    "description": "Message for heater control card when status is unknown"
+  },
+  "heaterControlCardLabelConfiguring": "Configuring...",
+  "@heaterControlCardLabelConfiguring": {
+    "description": "Label for heater control card when configuring"
+  },
+  "heaterControlCardMessageConfiguring": "Waiting for the heater controller to be configured. This should take a few seconds.",
+  "@heaterControlCardMessageConfiguring": {
+    "description": "Message for heater control card when configuring"
+  },
+  "heaterControlSelectButtonLabel": "{mode, select, idle {Idle} heating_manual {Power} heating_pid {Temperature} other {Unknown}}",
+  "@heaterControlSelectButtonLabel": {
+    "description": "Label for heater control select button",
+    "placeholders": {
+      "mode": {
+        "type": "String",
+        "description": "Current mode of the heater control",
+        "example": "idle"
+      }
+    }
+  },
+  "heaterControlSelectButtonTooltip": "Heating mode - {mode, select, idle {idle} heating_manual {manual} heating_pid {PID} autotune_pid {autotune} null {none} other {unknown}}",
+  "@heaterControlSelectButtonTooltip": {
+    "description": "Tooltip for heater control select button",
+    "placeholders": {
+      "mode": {
+        "type": "String",
+        "description": "Current mode of the heater control",
+        "example": "idle"
+      }
+    }
   },
   "devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},

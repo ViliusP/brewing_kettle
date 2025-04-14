@@ -305,23 +305,23 @@ abstract class AppLocalizations {
   /// **'----------------------------------------------------'**
   String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII;
 
-  /// No description provided for @pMainGraphInfoTitle.
+  /// No description provided for @mainGraphInfoTitle.
   ///
   /// In en, this message translates to:
   /// **'Temparature and power graph'**
-  String get pMainGraphInfoTitle;
+  String get mainGraphInfoTitle;
 
   /// Information text displayed on the main graph screen.
   ///
   /// In en, this message translates to:
   /// **'Shows heater data of every {seconds} {seconds, plural, =1{second} other{seconds}} for {hours} {hours, plural, =1{hour} other{hours}}.\nTap on graph points to see concrete values for that time.'**
-  String pMainGraphInfoText(int seconds, num hours);
+  String mainGraphInfoText(int seconds, num hours);
 
   /// Title for legend line section in graph info.
   ///
   /// In en, this message translates to:
   /// **'Line legends'**
-  String get pMainGraphInfoLegend;
+  String get mainGraphInfoLegend;
 
   /// Label for increase temperature button
   ///
@@ -346,6 +346,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Decrease power'**
   String get heaterControlDecreasePower;
+
+  /// Label for heater control card when heater is idle
+  ///
+  /// In en, this message translates to:
+  /// **'Idle'**
+  String get heaterControlCardLabelIdle;
+
+  /// Label for heater control card when heater is autotuning
+  ///
+  /// In en, this message translates to:
+  /// **'Autotuning...'**
+  String get heaterControlCardLabelAutotune;
+
+  /// Label for heater control card when error occurred
+  ///
+  /// In en, this message translates to:
+  /// **'Error occurred'**
+  String get heaterControlCardLabelError;
+
+  /// Message for heater control card when error occurred
+  ///
+  /// In en, this message translates to:
+  /// **'An error has occurred in the heater controller, try rebooting both controllers'**
+  String get heaterControlCardMessageError;
+
+  /// Label for heater control card when status is unknown
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown status'**
+  String get heaterControlCardLabelStatusUnknown;
+
+  /// Message for heater control card when status is unknown
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred - the status of the boiler controller is unknown, try reloading the application and both controllers.'**
+  String get heaterControlCardMessageStatusUnknown;
+
+  /// Label for heater control card when configuring
+  ///
+  /// In en, this message translates to:
+  /// **'Configuring...'**
+  String get heaterControlCardLabelConfiguring;
+
+  /// Message for heater control card when configuring
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the heater controller to be configured. This should take a few seconds.'**
+  String get heaterControlCardMessageConfiguring;
+
+  /// Label for heater control select button
+  ///
+  /// In en, this message translates to:
+  /// **'{mode, select, idle {Idle} heating_manual {Power} heating_pid {Temperature} other {Unknown}}'**
+  String heaterControlSelectButtonLabel(String mode);
+
+  /// Tooltip for heater control select button
+  ///
+  /// In en, this message translates to:
+  /// **'Heating mode - {mode, select, idle {idle} heating_manual {manual} heating_pid {PID} autotune_pid {autotune} null {none} other {unknown}}'**
+  String heaterControlSelectButtonTooltip(String mode);
 
   /// No description provided for @devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///
