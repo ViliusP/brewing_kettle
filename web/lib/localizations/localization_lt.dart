@@ -48,6 +48,9 @@ class AppLocalizationsLt extends AppLocalizations {
   String get generalLogout => 'Atsijungti';
 
   @override
+  String get generalExit => 'Išeiti';
+
+  @override
   String get formValidationRequired => 'Šis laukelis privalomas';
 
   @override

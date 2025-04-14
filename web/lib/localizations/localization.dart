@@ -173,6 +173,12 @@ abstract class AppLocalizations {
   /// **'Logout'**
   String get generalLogout;
 
+  /// General label for exit action, for example used in buttons.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get generalExit;
+
   /// Validation error message when field is required
   ///
   /// In en, this message translates to:

@@ -50,6 +50,10 @@
   "@generalLogout": {
     "description": "General label for logout action, for example used in buttons."
   },
+  "generalExit": "Exit",
+  "@generalExit": {
+    "description": "General label for exit action, for example used in buttons."
+  },
   "formValidationRequired": "This field is required",
   "@formValidationRequired": {
     "description": "Validation error message when field is required"

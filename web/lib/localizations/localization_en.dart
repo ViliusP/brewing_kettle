@@ -48,6 +48,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalLogout => 'Logout';
 
   @override
+  String get generalExit => 'Exit';
+
+  @override
   String get formValidationRequired => 'This field is required';
 
   @override

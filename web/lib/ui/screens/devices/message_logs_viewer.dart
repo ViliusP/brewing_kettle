@@ -35,12 +35,13 @@ class _MessageLogsViewerState extends State<MessageLogsViewer> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 4),
-            child: ElevatedButton(
+            padding: EdgeInsets.all(8),
+            child: IconButton.outlined(
+              tooltip: localizations.generalExit,
               onPressed: () {
                 if (context.canPop()) Navigator.pop(context);
               },
-              child: Text("back"),
+              icon: Icon(MdiIcons.windowClose),
             ),
           ),
           Padding(

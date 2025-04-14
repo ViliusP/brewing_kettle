@@ -14,6 +14,7 @@
   "generalSave": "Išsaugoti",
   "generalChange": "Pakeisti",
   "generalLogout": "Atsijungti",
+  "generalExit": "Išeiti",
   "formValidationRequired": "Šis laukelis privalomas",
   "formValidationMustBeNumber": "Šiame laukelyje turi būti skaičius",
   "formValidationMustBePositive": "Šiame laukelyje turi būti teigiamas skaičius",
