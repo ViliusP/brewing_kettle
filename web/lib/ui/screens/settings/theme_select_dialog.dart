@@ -20,8 +20,7 @@ class ThemeSelectDialog extends StatelessWidget {
           primary: false,
           itemCount: AppTheme.values.length,
           itemBuilder: (BuildContext context, int index) {
-            AppTheme appTheme = AppTheme.values[index];
-            print(appTheme.name);
+            final AppTheme appTheme = AppTheme.values[index];
             return ListTile(
               selected: currentTheme == appTheme,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
