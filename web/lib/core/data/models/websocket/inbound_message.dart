@@ -136,6 +136,19 @@ class WsInboundMessageJson extends WsInboundMessageSimple {
       MapEntry("data", _json),
     ]);
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is WsInboundMessageJson &&
+        data == other.data &&
+        sender == other.sender &&
+        time == other.time &&
+        _json == other._json;
+  }
+
+  @override
+  int get hashCode => Object.hash(data, sender, time);
 }
 
 sealed class WsInboundMessagePayload {
