@@ -36,11 +36,11 @@ mixin _$LocaleStore on _LocaleStore, Store {
       ActionController(name: '_LocaleStore', context: context);
 
   @override
-  void changeLanguage(Locale locale) {
+  void changeLocale(Locale value) {
     final _$actionInfo = _$_LocaleStoreActionController.startAction(
-        name: '_LocaleStore.changeLanguage');
+        name: '_LocaleStore.changeLocale');
     try {
-      return super.changeLanguage(locale);
+      return super.changeLocale(value);
     } finally {
       _$_LocaleStoreActionController.endAction(_$actionInfo);
     }

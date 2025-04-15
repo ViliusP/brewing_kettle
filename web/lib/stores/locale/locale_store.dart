@@ -1,4 +1,3 @@
-import 'package:brew_kettle_dashboard/constants/app.dart';
 import 'package:brew_kettle_dashboard/core/data/repository/repository.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:flutter/rendering.dart';
@@ -20,7 +19,7 @@ abstract class _LocaleStore with Store {
   // Store variables:
   // ===================
   @observable
-  Locale _locale = AppDefaults.locale;
+  Locale _locale = AppLocalizations.supportedLocales.first;
 
   @computed
   Locale get locale => _locale;
@@ -29,16 +28,17 @@ abstract class _LocaleStore with Store {
   // Actions:
   // ==============
   @action
-  void changeLanguage(Locale locale) {
-    _locale = locale;
+  void changeLocale(Locale value) {
+    _locale = value;
     _repository.sharedPreferences.setLocale(locale.languageCode);
   }
 
   // ======================
   // General:
   // ======================
-  void _init() async {
-    String prefLocale = _repository.sharedPreferences.locale ?? "en";
+  void _init() {
+    String? prefLocale = _repository.sharedPreferences.locale;
+
     _locale = switch (prefLocale) {
       "en" => Locale("en"),
       "lt" => Locale("lt"),

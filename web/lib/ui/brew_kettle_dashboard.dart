@@ -37,6 +37,7 @@ class _BrewKettleDashboardState extends State<BrewKettleDashboard> {
   Widget build(BuildContext context) {
     TextTheme textTheme = MaterialTheme.createTextTheme(context, AppDefaults.font);
     MaterialTheme materialTheme = MaterialTheme(textTheme);
+
     return Observer(
       builder: (context) {
         return MaterialApp.router(

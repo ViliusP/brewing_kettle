@@ -91,7 +91,7 @@ class _GeneralSection extends StatelessWidget {
       builder: (BuildContext context) => LanguageSelectDialog(currentLocale: localeStore.locale),
     );
 
-    if (returnedValue != null) localeStore.changeLanguage(returnedValue);
+    if (returnedValue != null) localeStore.changeLocale(returnedValue);
   }
 
   Future<void> _themeSelectDialogBuilder(BuildContext context) async {
