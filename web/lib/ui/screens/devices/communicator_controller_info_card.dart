@@ -118,7 +118,7 @@ class _MessagesLogPreviewSection extends StatelessWidget {
   Future<void> _dialogBuilder(BuildContext context) => showDialog<void>(
     context: context,
     builder: (BuildContext context) {
-      return Dialog.fullscreen(child: MessageLogsViewer(data: _wsConnectionStore.logs));
+      return Dialog.fullscreen(child: MessageLogsViewer(messages: _wsConnectionStore.messages));
     },
   );
 

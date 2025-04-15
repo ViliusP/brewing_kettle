@@ -76,14 +76,14 @@ dependencies:
   # A grammar of data visualization and Flutter charting library.
   graphic: ^2.5.0
 
-  # Displaying json models in a Flutter widget with customization.
-  flutter_json_view: ^1.1.0
-  
   # Toastification is a Flutter package that allows you to easily show toast and notification messages in your application.
   toastification: ^3.0.0
 
   # Flutter plugin for querying information about the application package, such as CFBundleVersion on iOS or versionCode on Android.
   package_info_plus: ^8.3.0
+
+  # A dynamic parser framework to build efficient grammars and parsers quickly.
+  petitparser: ^6.1.0
 
 dev_dependencies:
   flutter_test:
