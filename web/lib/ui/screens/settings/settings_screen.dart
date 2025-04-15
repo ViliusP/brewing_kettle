@@ -97,12 +97,12 @@ class _GeneralSection extends StatelessWidget {
   Future<void> _themeSelectDialogBuilder(BuildContext context) async {
     ThemeStore themeStore = getIt<ThemeStore>();
 
-    AppTheme? returnedValue = await showDialog<AppTheme>(
+    AppThemeMode? returnedValue = await showDialog<AppThemeMode>(
       context: context,
-      builder: (BuildContext context) => ThemeSelectDialog(currentTheme: themeStore.theme),
+      builder: (BuildContext context) => ThemeSelectDialog(currentThemeMode: themeStore.themeMode),
     );
 
-    if (returnedValue != null) themeStore.changeTheme(returnedValue);
+    if (returnedValue != null) themeStore.changeThemeMode(returnedValue);
   }
 
   @override

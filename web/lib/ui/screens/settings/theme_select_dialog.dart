@@ -3,9 +3,9 @@ import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:flutter/material.dart';
 
 class ThemeSelectDialog extends StatelessWidget {
-  final AppTheme? currentTheme;
+  final AppThemeMode? currentThemeMode;
 
-  const ThemeSelectDialog({super.key, this.currentTheme});
+  const ThemeSelectDialog({super.key, this.currentThemeMode});
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +18,14 @@ class ThemeSelectDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children:
-              AppTheme.values
+              AppThemeMode.values
                   .map(
-                    (theme) => RadioListTile<AppTheme>(
+                    (theme) => RadioListTile<AppThemeMode>(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
                       title: Text(localizations.settingsThemeNames(theme.name)),
                       value: theme,
-                      groupValue: currentTheme,
-                      onChanged: (AppTheme? value) => Navigator.of(context).pop(value),
+                      groupValue: currentThemeMode,
+                      onChanged: (AppThemeMode? value) => Navigator.of(context).pop(value),
                     ),
                   )
                   .toList(),

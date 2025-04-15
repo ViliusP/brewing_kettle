@@ -22,6 +22,7 @@ class AppDefaults {
 
   /// Default value for theme.
   static const AppTheme theme = AppTheme.light;
+  static const AppThemeMode themeMode = AppThemeMode.system;
 
   /// Default value for language.
   static const Locale locale = Locale('en');

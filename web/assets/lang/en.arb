@@ -364,7 +364,7 @@
   "@themeSelectDialogTitle": {
     "description": "Title for theme select dialog, showed at top of component"
   },
-  "settingsThemeNames": "{theme, select, light {Light} lightMediumContrast {Light - medium contrast} lightHighContrast {Light - high contrast} dark {Dark} darkMediumContrast {Dark - medium contrast} darkHighContrast {Dark - high contrast} other {unknown}}",
+  "settingsThemeNames": "{theme, select, light {Light} lightMediumContrast {Light - medium contrast} lightHighContrast {Light - high contrast} dark {Dark} darkMediumContrast {Dark - medium contrast} darkHighContrast {Dark - high contrast} system {Same as device's} other {unknown}}",
   "@settingsThemeNames": {
     "description": "Names for all available themes in application",
     "placeholders": {

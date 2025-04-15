@@ -116,7 +116,7 @@
   },
   "settingsTheme": "Tema",
   "themeSelectDialogTitle": "Pasirinkite temą",
-  "settingsThemeNames": "{theme, select, light {Šviesi} lightMediumContrast {Šviesi - vidutinio kontrasto} lightHighContrast {Šviesi - didelio kontrasto} dark {Tamsi} darkMediumContrast {Tamsi - vidutinio kontrasto} darkHighContrast {Tamsi - didelio kontrasto} other {nežinoma tema}}",
+  "settingsThemeNames": "{theme, select, light {Šviesi} lightMediumContrast {Šviesi - vidutinio kontrasto} lightHighContrast {Šviesi - didelio kontrasto} dark {Tamsi} darkMediumContrast {Tamsi - vidutinio kontrasto} darkHighContrast {Tamsi - didelio kontrasto} system {Pagal įrenginio temą} other {Nežinoma tema}}",
   "@settingsThemeNames": {
     "placeholders": {
       "theme": {

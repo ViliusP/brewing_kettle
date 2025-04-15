@@ -319,7 +319,8 @@ class AppLocalizationsLt extends AppLocalizations {
         'dark': 'Tamsi',
         'darkMediumContrast': 'Tamsi - vidutinio kontrasto',
         'darkHighContrast': 'Tamsi - didelio kontrasto',
-        'other': 'nežinoma tema',
+        'system': 'Pagal įrenginio temą',
+        'other': 'Nežinoma tema',
       },
     );
     return '$_temp0';

@@ -319,6 +319,7 @@ class AppLocalizationsEn extends AppLocalizations {
         'dark': 'Dark',
         'darkMediumContrast': 'Dark - medium contrast',
         'darkHighContrast': 'Dark - high contrast',
+        'system': 'Same as device\'s',
         'other': 'unknown',
       },
     );

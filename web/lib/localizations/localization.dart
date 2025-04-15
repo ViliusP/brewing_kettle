@@ -554,7 +554,7 @@ abstract class AppLocalizations {
   /// Names for all available themes in application
   ///
   /// In en, this message translates to:
-  /// **'{theme, select, light {Light} lightMediumContrast {Light - medium contrast} lightHighContrast {Light - high contrast} dark {Dark} darkMediumContrast {Dark - medium contrast} darkHighContrast {Dark - high contrast} other {unknown}}'**
+  /// **'{theme, select, light {Light} lightMediumContrast {Light - medium contrast} lightHighContrast {Light - high contrast} dark {Dark} darkMediumContrast {Dark - medium contrast} darkHighContrast {Dark - high contrast} system {Same as device\'s} other {unknown}}'**
   String settingsThemeNames(String theme);
 
   /// Setting name for advanced mode
