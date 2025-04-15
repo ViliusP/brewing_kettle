@@ -1,3 +1,4 @@
+import 'package:brew_kettle_dashboard/constants/theme.dart';
 import 'package:brew_kettle_dashboard/ui/common/code_view/json/definition.dart';
 import 'package:brew_kettle_dashboard/ui/common/code_view/json_highlighting_theme.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,10 @@ class _CodeViewerState extends State<CodeViewer> {
     if (results is List<JsonToken>) {
       return SelectableText.rich(
         TextSpan(
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: theme.lineHeight),
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            height: theme.lineHeight,
+            fontFamily: AppFontFamily.firaMono.name,
+          ),
           children: _highlightedText(results, theme),
         ),
       );

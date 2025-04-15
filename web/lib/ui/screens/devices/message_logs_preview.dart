@@ -1,3 +1,4 @@
+import 'package:brew_kettle_dashboard/constants/theme.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -27,7 +28,10 @@ class MessageLogsPreview extends StatelessWidget {
                         text: "${DateFormat("HH:mm:ss").format(e.time)}:\n",
                         style: TextStyle(fontWeight: FontWeight.w700),
                       ),
-                      TextSpan(text: "${e.data.replaceAll("\n", " ").substring(0, 150)}..."),
+                      TextSpan(
+                        text: "${e.data.replaceAll("\n", " ").substring(0, 150)}...",
+                        style: TextStyle(fontFamily: AppFontFamily.firaMono.name),
+                      ),
                     ],
                   ),
                 ),

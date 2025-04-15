@@ -1,3 +1,4 @@
+import 'package:brew_kettle_dashboard/constants/theme.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/ui/common/code_view/code_view.dart';
@@ -125,7 +126,10 @@ class _MessagesLogList extends StatelessWidget {
 
             return ExpansionTile(
               title: Text(DateFormat("HH:mm:ss").format(e.time)),
-              subtitle: Text("${e.data.replaceAll("\n", " ").substring(0, 60)}..."),
+              subtitle: Text(
+                "${e.data.replaceAll("\n", " ").substring(0, 60)}...",
+                style: TextStyle(fontFamily: AppFontFamily.firaMono.name),
+              ),
               trailing: Icon(MdiIcons.unfoldMoreHorizontal),
               shape: shape,
               collapsedShape: collapsedShape,
