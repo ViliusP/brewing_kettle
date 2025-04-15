@@ -15,19 +15,20 @@ class ThemeSelectDialog extends StatelessWidget {
       title: Text(localizations.themeSelectDialogTitle),
       content: SizedBox(
         width: 260,
-        child: ListView.builder(
-          shrinkWrap: true,
-          primary: false,
-          itemCount: AppTheme.values.length,
-          itemBuilder: (BuildContext context, int index) {
-            final AppTheme appTheme = AppTheme.values[index];
-            return ListTile(
-              selected: currentTheme == appTheme,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-              title: Text(localizations.settingsThemeNames(appTheme.name)),
-              onTap: () => Navigator.of(context).pop(appTheme),
-            );
-          },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children:
+              AppTheme.values
+                  .map(
+                    (theme) => RadioListTile<AppTheme>(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                      title: Text(localizations.settingsThemeNames(theme.name)),
+                      value: theme,
+                      groupValue: currentTheme,
+                      onChanged: (AppTheme? value) => Navigator.of(context).pop(value),
+                    ),
+                  )
+                  .toList(),
         ),
       ),
     );

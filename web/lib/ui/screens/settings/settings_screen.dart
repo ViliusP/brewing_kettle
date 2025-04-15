@@ -140,12 +140,10 @@ class _GeneralSection extends StatelessWidget {
             tooltip: localizations.settingsAdvancedModeTooltip,
             trailing: Observer(
               builder:
-                  (context) => Checkbox(
+                  (context) => Switch(
                     value: _appConfigurationStore.isAdvancedMode,
                     onChanged: (value) {
-                      if (value != null) {
-                        _appConfigurationStore.setAdvancedMode(value);
-                      }
+                      _appConfigurationStore.setAdvancedMode(value);
                     },
                   ),
             ),
@@ -259,11 +257,15 @@ class _SettingsButton extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (icon != null) icon!,
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: DefaultTextStyle(style: textTheme.bodyLarge ?? TextStyle(), child: child),
+                  padding: const EdgeInsets.only(left: 6, right: 6, top: 2.5),
+                  child: DefaultTextStyle(
+                    style: (textTheme.bodyLarge ?? TextStyle()).copyWith(fontSize: 18),
+                    child: child,
+                  ),
                 ),
                 Spacer(),
                 if (trailing != null)
