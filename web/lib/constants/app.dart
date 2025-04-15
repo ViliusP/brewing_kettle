@@ -6,7 +6,6 @@ class AppConstants {
   AppConstants._();
 
   static const String appName = "Brew Kettle Dashboard";
-  static const String font = "Roboto";
 
   // System-specific maximum values (adjust based on your requirements)
   static const double maxProportional = 100.0;
@@ -19,6 +18,7 @@ class AppDefaults {
 
   /// Default value for the font family.
   static const AppFontFamily font = AppFontFamily.nunitoSans;
+  static const AppFontFamily monospaceFont = AppFontFamily.firaMono;
 
   /// Default value for theme.
   static const AppTheme theme = AppTheme.light;

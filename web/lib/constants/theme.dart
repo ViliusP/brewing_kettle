@@ -1,7 +1,8 @@
 import "package:flutter/material.dart";
 
 enum AppFontFamily {
-  nunitoSans("Nunito Sans");
+  nunitoSans("Nunito Sans"),
+  firaMono("Fira Mono");
 
   const AppFontFamily(this.name);
 

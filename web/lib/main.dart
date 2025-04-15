@@ -9,8 +9,8 @@ import 'package:flutter/widgets.dart';
 
 Future<void> main() async {
   LicenseRegistry.addLicense(() async* {
-    final license = await rootBundle.loadString('assets/fonts/OFL.txt');
-    yield LicenseEntryWithLineBreaks(['google_fonts'], license);
+    final nunitoSansLicence = await rootBundle.loadString('assets/fonts/NunitoSans/OFL.txt');
+    yield LicenseEntryWithLineBreaks(['google_fonts'], nunitoSansLicence);
   });
 
   WidgetsFlutterBinding.ensureInitialized();
