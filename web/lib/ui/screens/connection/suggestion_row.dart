@@ -1,3 +1,4 @@
+import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 
@@ -140,6 +141,8 @@ class ScanDevicesChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
+
     return ActionChip(
       onPressed: onPressed,
       avatar: AnimatedSwitcher(
@@ -153,7 +156,7 @@ class ScanDevicesChip extends StatelessWidget {
           false => Icon(MdiIcons.refresh, key: ValueKey(false)),
         },
       ),
-      label: const Text('Scan'),
+      label: Text(localizations.scanButtonLabel),
     );
   }
 }

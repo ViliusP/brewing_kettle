@@ -46,6 +46,20 @@
   "exceptionHttpCancel": "Užklausa buvo atšaukta. Ši klaida neturėjo nutikti. Apie tai praneškite programinės įrangos kurėjams.",
   "exceptionHttpConnectionError": "Nepavyko prisijungti prie įrenginio serverio. Patikrinkite tinklo ryšį.",
   "exceptionHttpUnknown": "Įvyko netikėta tinklo problema. Tai gali būti interneto ryšio arba įrenginio serverio sutrikimai.",
+  "connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "connectButtonLabel": "Prisijungti",
+  "scanButtonLabel": "Ieškoti",
+  "deviceIpAddressFormLabel": "Įrenginio IP adresas",
+  "deviceIpAddressFormHelper": "Pavyzdžiui: \"{address}\"",
+  "@deviceIpAddressFormHelper": {
+    "placeholders": {
+      "address": {
+        "type": "String",
+        "example": "ws://0.0.0.0"
+      }
+    }
+  },
   "mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "mainGraphInfoTitle": "Temperatūros ir galios grafikas",

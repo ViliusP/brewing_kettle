@@ -419,6 +419,36 @@ abstract class AppLocalizations {
   /// **'Drag to change value'**
   String get sliderContainerDragTooltip;
 
+  /// No description provided for @connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
+  ///
+  /// In en, this message translates to:
+  /// **'----------------------------------------------------'**
+  String get connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII;
+
+  /// Label for connect button in connection screen
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get connectButtonLabel;
+
+  /// Label for scan button in connection screen
+  ///
+  /// In en, this message translates to:
+  /// **'Scan'**
+  String get scanButtonLabel;
+
+  /// Label for scan button in connection screen
+  ///
+  /// In en, this message translates to:
+  /// **'Device IP address'**
+  String get deviceIpAddressFormLabel;
+
+  /// Helper text for device IP address form field
+  ///
+  /// In en, this message translates to:
+  /// **'For example: \"{address}\"'**
+  String deviceIpAddressFormHelper(String address);
+
   /// No description provided for @devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///
   /// In en, this message translates to:

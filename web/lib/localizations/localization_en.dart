@@ -230,6 +230,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sliderContainerDragTooltip => 'Drag to change value';
 
   @override
+  String get connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+
+  @override
+  String get connectButtonLabel => 'Connect';
+
+  @override
+  String get scanButtonLabel => 'Scan';
+
+  @override
+  String get deviceIpAddressFormLabel => 'Device IP address';
+
+  @override
+  String deviceIpAddressFormHelper(String address) {
+    return 'For example: \"$address\"';
+  }
+
+  @override
   String get devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override

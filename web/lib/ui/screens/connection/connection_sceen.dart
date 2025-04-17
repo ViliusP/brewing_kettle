@@ -1,4 +1,5 @@
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
+import 'package:brew_kettle_dashboard/localizations/localization.dart';
 
 import 'package:brew_kettle_dashboard/stores/network_scanner/network_scanner_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
@@ -18,6 +19,8 @@ class ConnectionScreen extends StatefulWidget {
 }
 
 class _ConnectionScreenState extends State<ConnectionScreen> {
+  static const String exampleIP = "ws://0.0.0.0:80";
+
   // ------- STORES -------
   final NetworkScannerStore _networkScannerStore = getIt<NetworkScannerStore>();
   final WebSocketConnectionStore _wsConnectionStore = getIt<WebSocketConnectionStore>();
@@ -72,6 +75,8 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
@@ -129,8 +134,8 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
               decoration: InputDecoration(
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
                 labelStyle: TextStyle(fontSize: 20),
-                labelText: "Device IP address",
-                helperText: "For example: \"ws://0.0.0.0:80/ws\"",
+                labelText: localizations.deviceIpAddressFormLabel,
+                helperText: localizations.deviceIpAddressFormHelper(exampleIP),
                 filled: true,
                 helperStyle: TextStyle(fontSize: 14),
                 prefixIcon: Padding(
@@ -146,15 +151,11 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
               },
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 4)),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                shape: const StadiumBorder(),
-                minimumSize: Size(360, 60),
-                elevation: 2,
-              ),
+            FilledButton.tonalIcon(
+              style: FilledButton.styleFrom(minimumSize: Size(360, 60)),
               onPressed: () => tryConnect(),
               icon: Icon(MdiIcons.connection, size: 20),
-              label: const Text('Connect', style: TextStyle(fontSize: 20)),
+              label: Text(localizations.connectButtonLabel, style: TextStyle(fontSize: 20)),
             ),
           ],
         ),

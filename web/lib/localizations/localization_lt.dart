@@ -230,6 +230,23 @@ class AppLocalizationsLt extends AppLocalizations {
   String get sliderContainerDragTooltip => 'Tempkite, kad pakeistumėte vertę';
 
   @override
+  String get connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+
+  @override
+  String get connectButtonLabel => 'Prisijungti';
+
+  @override
+  String get scanButtonLabel => 'Ieškoti';
+
+  @override
+  String get deviceIpAddressFormLabel => 'Įrenginio IP adresas';
+
+  @override
+  String deviceIpAddressFormHelper(String address) {
+    return 'Pavyzdžiui: \"$address\"';
+  }
+
+  @override
   String get devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override

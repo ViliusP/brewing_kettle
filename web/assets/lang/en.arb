@@ -269,6 +269,31 @@
   "@sliderContainerDragTooltip": {
     "description": "Tooltip for slider container when dragging"
   },
+  "connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "connectButtonLabel": "Connect",
+  "@connectButtonLabel": {
+    "description": "Label for connect button in connection screen"
+  },
+  "scanButtonLabel": "Scan",
+  "@scanButtonLabel": {
+    "description": "Label for scan button in connection screen"
+  },
+  "deviceIpAddressFormLabel": "Device IP address",
+  "@deviceIpAddressFormLabel": {
+    "description": "Label for scan button in connection screen"
+  },
+  "deviceIpAddressFormHelper": "For example: \"{address}\"",
+  "@deviceIpAddressFormHelper": {
+    "description": "Helper text for device IP address form field",
+    "placeholders": {
+      "address": {
+        "type": "String",
+        "description": "Example IP address",
+        "example": "ws://0.0.0.0"
+      }
+    }
+  },
   "devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "devicesCommunicationController": "Communication controller",
