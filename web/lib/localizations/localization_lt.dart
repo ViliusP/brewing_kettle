@@ -247,6 +247,9 @@ class AppLocalizationsLt extends AppLocalizations {
   }
 
   @override
+  String get deviceIpFormValidationRequired => 'Įveskite IP adresą';
+
+  @override
   String get devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override

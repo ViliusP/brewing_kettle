@@ -294,6 +294,10 @@
       }
     }
   },
+  "deviceIpFormValidationRequired": "Please provide device IP",
+  "@deviceIpFormValidationRequired": {
+    "description": "Validation error message when device IP field is empty"
+  },
   "devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "devicesCommunicationController": "Communication controller",

@@ -449,6 +449,12 @@ abstract class AppLocalizations {
   /// **'For example: \"{address}\"'**
   String deviceIpAddressFormHelper(String address);
 
+  /// Validation error message when device IP field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide device IP'**
+  String get deviceIpFormValidationRequired;
+
   /// No description provided for @devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///
   /// In en, this message translates to:

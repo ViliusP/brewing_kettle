@@ -60,6 +60,7 @@
       }
     }
   },
+  "deviceIpFormValidationRequired": "Įveskite IP adresą",
   "mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "mainGraphInfoTitle": "Temperatūros ir galios grafikas",

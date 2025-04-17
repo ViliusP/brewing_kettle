@@ -26,6 +26,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
   final WebSocketConnectionStore _wsConnectionStore = getIt<WebSocketConnectionStore>();
 
   final TextEditingController _ipFormController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
 
   List<bool> _selectedChips = [];
 
@@ -60,6 +61,10 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
   }
 
   void tryConnect() {
+    if (formKey.currentState?.validate() != true) {
+      return;
+    }
+
     final address = "ws://${_ipFormController.text}/ws";
     if (address.isEmpty) {
       return;
@@ -126,28 +131,31 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
                 ),
               ),
             if (!kIsWeb) Padding(padding: EdgeInsets.symmetric(vertical: 12)),
-            TextFormField(
-              controller: _ipFormController,
-              style: TextStyle(fontSize: 24),
-              keyboardType: TextInputType.url,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
-                labelStyle: TextStyle(fontSize: 20),
-                labelText: localizations.deviceIpAddressFormLabel,
-                helperText: localizations.deviceIpAddressFormHelper(exampleIP),
-                filled: true,
-                helperStyle: TextStyle(fontSize: 14),
-                prefixIcon: Padding(
-                  padding: EdgeInsets.only(left: 16, right: 8),
-                  child: Icon(MdiIcons.ipOutline, size: 28),
+            Form(
+              key: formKey,
+              child: TextFormField(
+                controller: _ipFormController,
+                style: TextStyle(fontSize: 24),
+                keyboardType: TextInputType.url,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+                  labelStyle: TextStyle(fontSize: 20),
+                  labelText: localizations.deviceIpAddressFormLabel,
+                  helperText: localizations.deviceIpAddressFormHelper(exampleIP),
+                  filled: true,
+                  helperStyle: TextStyle(fontSize: 14),
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.only(left: 16, right: 8),
+                    child: Icon(MdiIcons.ipOutline, size: 28),
+                  ),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return localizations.deviceIpFormValidationRequired;
+                  }
+                  return null;
+                },
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 4)),
             FilledButton.tonalIcon(
