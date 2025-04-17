@@ -19,7 +19,7 @@ class ConnectionScreen extends StatefulWidget {
 }
 
 class _ConnectionScreenState extends State<ConnectionScreen> {
-  static const String exampleIP = "ws://0.0.0.0:80";
+  static const String exampleIP = "0.0.0.0:80";
 
   // ------- STORES -------
   final NetworkScannerStore _networkScannerStore = getIt<NetworkScannerStore>();
@@ -51,7 +51,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
     List<bool> newChipsState = [];
 
     for (var record in records) {
-      String address = "ws://${record.hostname}:${record.port}/ws";
+      String address = "${record.hostname}:${record.port}";
       newChipsState.add(address == _ipFormController.text);
     }
     if (!listEquals(_selectedChips, newChipsState)) {
@@ -60,7 +60,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
   }
 
   void tryConnect() {
-    final address = _ipFormController.text;
+    final address = "ws://${_ipFormController.text}/ws";
     if (address.isEmpty) {
       return;
     }
@@ -104,8 +104,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
                         var record = _networkScannerStore.records[i];
                         var port = record.port;
 
-                        String addressToShow = "${record.hostname}:$port";
-                        String address = "ws://$addressToShow/ws";
+                        String address = "${record.hostname}:$port";
 
                         String tooltip = "${record.internetAddress.address}:$port";
 
@@ -119,7 +118,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
                           },
                           selected: _selectedChips[i],
                           tooltip: tooltip,
-                          text: addressToShow,
+                          text: address,
                         );
                       }),
                     );
