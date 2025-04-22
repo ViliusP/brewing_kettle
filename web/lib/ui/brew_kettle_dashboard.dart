@@ -41,11 +41,14 @@ class _BrewKettleDashboardState extends State<BrewKettleDashboard> {
     return Observer(
       builder: (context) {
         return MaterialApp.router(
+          routerConfig: AppRouter.value,
           actions: WidgetsApp.defaultActions,
           scrollBehavior: AppScrollBehavior(),
           builder: (context, child) {
+            final Widget materialChild = Material(child: child!);
+
             if (packageInfo == null) {
-              return child!;
+              return materialChild;
             }
 
             return ApplicationInfo(
@@ -55,10 +58,9 @@ class _BrewKettleDashboardState extends State<BrewKettleDashboard> {
               packageName: packageInfo!.packageName,
               installTime: packageInfo?.installTime,
               updateTime: packageInfo?.updateTime,
-              child: child!,
+              child: materialChild,
             );
           },
-          routerConfig: AppRouter.value,
           debugShowCheckedModeBanner: false,
           title: AppConstants.appName,
           theme: materialTheme.theme(_themeStore.theme.colorScheme),
