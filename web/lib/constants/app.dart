@@ -1,5 +1,6 @@
 import 'package:brew_kettle_dashboard/constants/theme.dart';
-import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 
 /// This file contains the general constants used in the app.
 class AppConstants {
@@ -11,6 +12,8 @@ class AppConstants {
   static const double maxProportional = 100.0;
   static const double maxIntegral = 50.0;
   static const double maxDerivative = 50.0;
+
+  static const IconData backIcon = MdiIcons.arrowLeft;
 }
 
 class AppDefaults {

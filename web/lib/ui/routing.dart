@@ -4,6 +4,7 @@ import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_conn
 import 'package:brew_kettle_dashboard/ui/layout/default_layout.dart';
 import 'package:brew_kettle_dashboard/ui/screens/connection/connection_sceen.dart';
 import 'package:brew_kettle_dashboard/ui/screens/devices/devices_screen.dart';
+import 'package:brew_kettle_dashboard/ui/screens/information/information_screen.dart';
 import 'package:brew_kettle_dashboard/ui/screens/main/main_screen.dart';
 import 'package:brew_kettle_dashboard/ui/screens/settings/settings_screen.dart';
 import 'package:brew_kettle_dashboard/ui/screens/test/test_screen.dart';
@@ -21,6 +22,7 @@ enum AppRoute {
   connection("/connection"),
   settings("/settings"),
   devices("/devices"),
+  information("/information"),
   test("/test");
 
   const AppRoute(this.path);
@@ -47,6 +49,16 @@ class AppRouter {
       initialLocation: AppRoute.connection.path,
       debugLogDiagnostics: true,
       routes: [
+        GoRoute(
+          path: AppRoute.information.path,
+          name: AppRoute.information.name,
+          builder: (context, state) => InformationScreen(),
+        ),
+        GoRoute(
+          path: AppRoute.connection.path,
+          name: AppRoute.connection.name,
+          builder: (context, state) => ConnectionScreen(),
+        ),
         ShellRoute(
           redirect: (context, state) {
             final wsConnectionStore = getIt<WebSocketConnectionStore>();
@@ -65,14 +77,9 @@ class AppRouter {
           },
           navigatorKey: _defaultLayoutNavigatorKey,
           builder: (BuildContext context, GoRouterState state, Widget child) {
-            return DefaultLayout(body: child);
+            return DefaultLayout(child);
           },
           routes: <RouteBase>[
-            GoRoute(
-              path: AppRoute.connection.path,
-              name: AppRoute.connection.name,
-              builder: (context, state) => const ConnectionScreen(),
-            ),
             GoRoute(
               path: AppRoute.main.path,
               name: AppRoute.main.name,

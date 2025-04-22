@@ -20,17 +20,18 @@ enum AppThemeMode {
 }
 
 enum AppTheme {
-  light("light", MaterialTheme.lightScheme),
+  light("light", MaterialTheme.lightScheme, true),
   // lightMediumContrast("light_medium_contrast"),
   // lightHighContrast("light_high_contrast"),
-  dark("dark", MaterialTheme.darkScheme);
+  dark("dark", MaterialTheme.darkScheme, false);
   // darkMediumContrast("dark_medium_contrast"),
   // darkHighContrast("dark_high_contrast");
 
-  const AppTheme(this.key, this.colorScheme);
+  const AppTheme(this.key, this.colorScheme, this.isLight);
 
   final String key;
   final ColorScheme colorScheme;
+  final bool isLight;
 }
 
 class MaterialTheme {

@@ -13,9 +13,10 @@ import 'package:go_router/go_router.dart';
 import 'package:mobx/mobx.dart';
 
 class DefaultLayout extends StatefulWidget {
-  final Widget body;
+  ///
+  final Widget child;
 
-  const DefaultLayout({super.key, required this.body});
+  const DefaultLayout(this.child, {super.key});
 
   @override
   State<DefaultLayout> createState() => _DefaultLayoutState();
@@ -55,6 +56,7 @@ class _DefaultLayoutState extends State<DefaultLayout> {
       AppRoute.settings => 2,
       AppRoute.test => 3,
       AppRoute.connection => null,
+      AppRoute.information => null,
     };
   }
 
@@ -132,52 +134,50 @@ class _DefaultLayoutState extends State<DefaultLayout> {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      body: Row(
-        children: <Widget>[
-          AnimatedSwitcher(
-            switchInCurve: Curves.easeIn,
-            switchOutCurve: Curves.easeOut,
-            duration: const Duration(milliseconds: 150),
-            transitionBuilder: (child, animation) {
-              return SizeTransition(
-                axis: Axis.horizontal,
-                axisAlignment: -1,
-                sizeFactor: animation,
-                child: FadeTransition(opacity: animation, child: child),
-              );
-            },
-            child:
-                _navigationRailVisible
-                    ? NavigationRail(
-                      selectedIndex: _selectedIndex,
-                      groupAlignment: 0,
-                      onDestinationSelected: onDestinatationSelected,
-                      labelType: NavigationRailLabelType.all,
-                      destinations: <NavigationRailDestination>[
-                        NavigationRailDestination(
-                          icon: Icon(MdiIcons.viewDashboardOutline),
-                          selectedIcon: Icon(MdiIcons.viewDashboard),
-                          label: Text(localizations.layoutItemHome),
-                        ),
-                        NavigationRailDestination(
-                          icon: Icon(MdiIcons.cpu32Bit),
-                          selectedIcon: Icon(MdiIcons.cpu32Bit),
-                          label: Text(localizations.layoutItemDevices),
-                        ),
-                        NavigationRailDestination(
-                          icon: Icon(MdiIcons.cogOutline),
-                          selectedIcon: Icon(MdiIcons.cog),
-                          label: Text(localizations.layoutItemSettings),
-                        ),
-                      ],
-                    )
-                    : null,
-          ),
-          const VerticalDivider(thickness: 1, width: 1),
-          Expanded(child: widget.body),
-        ],
-      ),
+    return Row(
+      children: <Widget>[
+        AnimatedSwitcher(
+          switchInCurve: Curves.easeIn,
+          switchOutCurve: Curves.easeOut,
+          duration: const Duration(milliseconds: 150),
+          transitionBuilder: (child, animation) {
+            return SizeTransition(
+              axis: Axis.horizontal,
+              axisAlignment: -1,
+              sizeFactor: animation,
+              child: FadeTransition(opacity: animation, child: child),
+            );
+          },
+          child:
+              _navigationRailVisible
+                  ? NavigationRail(
+                    selectedIndex: _selectedIndex,
+                    groupAlignment: 0,
+                    onDestinationSelected: onDestinatationSelected,
+                    labelType: NavigationRailLabelType.all,
+                    destinations: <NavigationRailDestination>[
+                      NavigationRailDestination(
+                        icon: Icon(MdiIcons.viewDashboardOutline),
+                        selectedIcon: Icon(MdiIcons.viewDashboard),
+                        label: Text(localizations.layoutItemHome),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(MdiIcons.cpu32Bit),
+                        selectedIcon: Icon(MdiIcons.cpu32Bit),
+                        label: Text(localizations.layoutItemDevices),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(MdiIcons.cogOutline),
+                        selectedIcon: Icon(MdiIcons.cog),
+                        label: Text(localizations.layoutItemSettings),
+                      ),
+                    ],
+                  )
+                  : null,
+        ),
+        const VerticalDivider(thickness: 1, width: 1),
+        Expanded(child: widget.child),
+      ],
     );
   }
 
