@@ -51,6 +51,9 @@ class AppLocalizationsLt extends AppLocalizations {
   String get generalExit => 'Išeiti';
 
   @override
+  String get generalGoBack => 'Grįžti atgal';
+
+  @override
   String get formValidationRequired => 'Šis laukelis privalomas';
 
   @override
@@ -363,4 +366,10 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get layoutItemSettings => 'Nustatymai';
+
+  @override
+  String get errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+
+  @override
+  String get notFoundText => 'Puslapis nerastas';
 }

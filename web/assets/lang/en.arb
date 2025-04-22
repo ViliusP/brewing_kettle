@@ -54,6 +54,10 @@
   "@generalExit": {
     "description": "General label for exit action, for example used in buttons."
   },
+  "generalGoBack": "Go Back",
+  "@generalGoBack": {
+    "description": "General label going back to previous screen, for example used in buttons."
+  },
   "formValidationRequired": "This field is required",
   "@formValidationRequired": {
     "description": "Validation error message when field is required"
@@ -423,5 +427,11 @@
   "layoutItemSettings": "Settings",
   "@layoutItemSettings": {
     "description": "Title for settings item in navigation bar"
+  },
+  "errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "notFoundText": "Not found",
+  "@notFoundText": {
+    "description": "Text for not found screen"
   }
 }

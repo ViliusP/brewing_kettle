@@ -179,6 +179,12 @@ abstract class AppLocalizations {
   /// **'Exit'**
   String get generalExit;
 
+  /// General label going back to previous screen, for example used in buttons.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Back'**
+  String get generalGoBack;
+
   /// Validation error message when field is required
   ///
   /// In en, this message translates to:
@@ -628,6 +634,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings'**
   String get layoutItemSettings;
+
+  /// No description provided for @errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
+  ///
+  /// In en, this message translates to:
+  /// **'----------------------------------------------------'**
+  String get errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII;
+
+  /// Text for not found screen
+  ///
+  /// In en, this message translates to:
+  /// **'Not found'**
+  String get notFoundText;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

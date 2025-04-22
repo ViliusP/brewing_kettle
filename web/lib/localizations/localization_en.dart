@@ -51,6 +51,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalExit => 'Exit';
 
   @override
+  String get generalGoBack => 'Go Back';
+
+  @override
   String get formValidationRequired => 'This field is required';
 
   @override
@@ -363,4 +366,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get layoutItemSettings => 'Settings';
+
+  @override
+  String get errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+
+  @override
+  String get notFoundText => 'Not found';
 }

@@ -15,6 +15,7 @@
   "generalChange": "Pakeisti",
   "generalLogout": "Atsijungti",
   "generalExit": "Išeiti",
+  "generalGoBack": "Grįžti atgal",
   "formValidationRequired": "Šis laukelis privalomas",
   "formValidationMustBeNumber": "Šiame laukelyje turi būti skaičius",
   "formValidationMustBePositive": "Šiame laukelyje turi būti teigiamas skaičius",
@@ -145,5 +146,8 @@
   "@layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "layoutItemHome": "Pagrindinis",
   "layoutItemDevices": "Įrenginiai",
-  "layoutItemSettings": "Nustatymai"
+  "layoutItemSettings": "Nustatymai",
+  "errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "notFoundText": "Puslapis nerastas"
 }
