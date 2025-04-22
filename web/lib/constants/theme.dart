@@ -35,9 +35,9 @@ enum AppTheme {
 }
 
 class MaterialTheme {
-  final TextTheme textTheme;
+  final String fontFamily;
 
-  const MaterialTheme(this.textTheme);
+  const MaterialTheme(this.fontFamily);
 
   static const ColorScheme lightScheme = ColorScheme(
     brightness: Brightness.light,
@@ -294,7 +294,7 @@ class MaterialTheme {
 
   ThemeData get darkMediumContrast => theme(darkMediumContrastScheme);
 
-  static const ColorScheme darkHighContrastScheme = const ColorScheme(
+  static const ColorScheme darkHighContrastScheme = ColorScheme(
     brightness: Brightness.dark,
     primary: Color(0xfffffaf7),
     surfaceTint: Color(0xffe8c26c),
@@ -349,17 +349,11 @@ class MaterialTheme {
     useMaterial3: true,
     brightness: colorScheme.brightness,
     colorScheme: colorScheme,
-    textTheme: textTheme.apply(
-      bodyColor: colorScheme.onSurface,
-      displayColor: colorScheme.onSurface,
-    ),
+    fontFamily: fontFamily,
+    typography: Typography.material2021(),
     scaffoldBackgroundColor: colorScheme.background,
     canvasColor: colorScheme.surface,
   );
-
-  static TextTheme createTextTheme(BuildContext context, AppFontFamily font) {
-    return Theme.of(context).textTheme.apply(fontFamily: font.name);
-  }
 
   List<ExtendedColor> get extendedColors => [];
 }

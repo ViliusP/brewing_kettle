@@ -35,8 +35,7 @@ class _BrewKettleDashboardState extends State<BrewKettleDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = MaterialTheme.createTextTheme(context, AppDefaults.font);
-    MaterialTheme materialTheme = MaterialTheme(textTheme);
+    MaterialTheme materialTheme = MaterialTheme(AppDefaults.font.name);
 
     return Observer(
       builder: (context) {
