@@ -55,7 +55,7 @@ class AppRouter {
       debugLogDiagnostics: true,
 
       errorBuilder: (context, state) {
-        return NotFound404Screen(error: state.error);
+        return NotFound404Screen();
       },
 
       routes: [
