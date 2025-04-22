@@ -31,7 +31,7 @@ class _ConnectedLayoutState extends State<ConnectedLayout> {
       AppRoute.main => 0,
       AppRoute.devices => 1,
       AppRoute.settings => 2,
-      AppRoute.test => 3,
+      AppRoute.test => null,
       AppRoute.connection => null,
       AppRoute.information => null,
     };
