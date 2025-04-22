@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 /// A class that defines the colors used in the starry background.
@@ -82,8 +83,8 @@ class StarryBackground extends StatefulWidget {
       count: 25,
       sizeInterval: (min: 2, max: 10),
       blinkingInterval: (min: Duration(seconds: 3), max: Duration(seconds: 6)),
-      minOpacityInterval: (min: 0.05, max: 0.35),
-      maxOpacityInterval: (min: 0.9, max: 1),
+      minOpacityInterval: (min: 0.05, max: 0.25),
+      maxOpacityInterval: (min: 0.65, max: 0.95),
     ),
   });
 
@@ -148,6 +149,9 @@ class __StarryContainerState extends State<_StarryContainer> {
   late Random random = Random(widget.generationOptions.seed ?? 80085);
 
   List<_GeneratedStarData> stars = [];
+  Map<int, double> starScaling = {};
+  static const ({double max, double min}) _hoverIncreaseRadiusInterval = (max: 25, min: 200);
+  static const ({double max, double min}) _scaleInterval = (max: 3, min: 1);
 
   @override
   void didChangeDependencies() {
@@ -209,20 +213,58 @@ class __StarryContainerState extends State<_StarryContainer> {
     );
   }
 
+  double calculateRadius(double distance) {
+    // Clamp the distance to our defined input range
+    final clampedDistance = distance.clamp(
+      _hoverIncreaseRadiusInterval.max,
+      _hoverIncreaseRadiusInterval.min,
+    );
+
+    // Calculate interpolation parameter t [0, 1]
+    final t =
+        (clampedDistance - _hoverIncreaseRadiusInterval.max) /
+        (_hoverIncreaseRadiusInterval.min - _hoverIncreaseRadiusInterval.max);
+
+    // Perform linear interpolation between 2.5 and 1.0
+    return _scaleInterval.max + (_scaleInterval.min - _scaleInterval.max) * t;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children:
-          stars.map((starData) {
-            return Align(
-              alignment: starData.alignment,
-              child: _AnimatedStar(
-                decoration: starData.decoration,
-                blinkingCurve: widget.blinkingCurve,
-                blinkDuration: starData.blinkDuration,
-              ),
-            );
-          }).toList(),
+    return MouseRegion(
+      hitTestBehavior: HitTestBehavior.translucent,
+      onHover: (event) {
+        Map<int, double> starScaling = {};
+        Size containerSize = MediaQuery.of(context).size;
+
+        for (var (index, star) in stars.indexed) {
+          Offset starOffset = star.alignment.alongSize(containerSize);
+
+          double distance = (event.localPosition - starOffset).distance;
+          if (distance < _hoverIncreaseRadiusInterval.min) {
+            starScaling[index] = calculateRadius(distance);
+          }
+        }
+        if (starScaling != this.starScaling) {
+          setState(() {
+            this.starScaling = starScaling;
+          });
+        }
+      },
+      child: Stack(
+        children:
+            stars.mapIndexed((index, starData) {
+              return Align(
+                alignment: starData.alignment,
+                child: _AnimatedStar(
+                  decoration: starData.decoration,
+                  blinkingCurve: widget.blinkingCurve,
+                  blinkDuration: starData.blinkDuration,
+                  scale: starScaling[index] ?? 1,
+                ),
+              );
+            }).toList(),
+      ),
     );
   }
 }
@@ -230,10 +272,11 @@ class __StarryContainerState extends State<_StarryContainer> {
 class _AnimatedStar extends StatefulWidget {
   final Curve blinkingCurve;
   final Duration blinkDuration;
-
+  final double scale;
   final _StarDecoration decoration;
 
   const _AnimatedStar({
+    this.scale = 1,
     required this.decoration,
     required this.blinkingCurve,
     required this.blinkDuration,
@@ -274,10 +317,15 @@ class _AnimatedStarState extends State<_AnimatedStar> with SingleTickerProviderS
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: widget.decoration.size,
-      height: widget.decoration.size,
-      decoration: BoxDecoration(shape: BoxShape.circle, color: colorTween.value),
+    return AnimatedScale(
+      scale: widget.scale,
+      curve: Curves.linear,
+      duration: Durations.medium2,
+      child: Container(
+        width: widget.decoration.size,
+        height: widget.decoration.size,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: colorTween.value),
+      ),
     );
   }
 
