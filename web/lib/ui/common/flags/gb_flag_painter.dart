@@ -1,10 +1,12 @@
-import 'package:brew_kettle_dashboard/utils/painting_utilities.dart';
+import 'package:brew_kettle_dashboard/utils/painting/line.dart';
+import 'package:brew_kettle_dashboard/utils/painting/rect_symmetry.dart';
 import 'package:flutter/rendering.dart';
 
 class GbFlagPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Rect canvasRect = Rect.fromLTWH(0, 0, size.width, size.height);
+    canvas.clipRect(canvasRect, doAntiAlias: false);
 
     // -----------------------------------
     // ---------- Blue squares -----------
