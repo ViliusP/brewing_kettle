@@ -73,6 +73,9 @@ dependencies:
   # Provides a collection of Flutter grids layouts (staggered, masonry, quilted, woven, etc.).
   flutter_staggered_grid_view: ^0.7.0
 
+  # Does a fade and size transition between widgets of different heights. Also used to show/hide a widget.
+  animated_size_and_fade: ^5.1.1
+
   # A grammar of data visualization and Flutter charting library.
   graphic: ^2.5.0
 
