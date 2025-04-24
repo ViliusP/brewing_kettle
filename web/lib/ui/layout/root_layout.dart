@@ -74,14 +74,8 @@ class _RootLayoutState extends State<RootLayout> {
         children: [
           widget.child,
           Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: 400,
-                child: FakeBrowserAddressBar(router: GoRouter.of(context)),
-              ),
-            ),
+            alignment: Alignment.topLeft,
+            child: FakeBrowserAddressBar(router: GoRouter.of(context)),
           ),
         ],
       );
