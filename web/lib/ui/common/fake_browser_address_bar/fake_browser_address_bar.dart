@@ -40,8 +40,7 @@ class _FakeBrowserAddressBarState extends State<FakeBrowserAddressBar> {
         width: 300,
         child: TextFormField(
           controller: controller,
-          decoration: InputDecoration(border: OutlineInputBorder()),
-
+          decoration: InputDecoration(border: OutlineInputBorder(), label: const Text("URL")),
           onFieldSubmitted: (value) => widget.router.push(value),
         ),
       ),

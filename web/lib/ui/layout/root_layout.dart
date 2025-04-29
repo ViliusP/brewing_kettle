@@ -5,6 +5,7 @@ import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/exception/exception_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:brew_kettle_dashboard/ui/common/fake_browser_address_bar/fake_browser_address_bar.dart';
+import 'package:brew_kettle_dashboard/ui/common/floating_draggable/floating_draggable.dart';
 import 'package:brew_kettle_dashboard/ui/common/snackbar/snackbar.dart';
 import 'package:brew_kettle_dashboard/ui/routing.dart';
 import 'package:flutter/foundation.dart';
@@ -73,9 +74,29 @@ class _RootLayoutState extends State<RootLayout> {
       return Stack(
         children: [
           widget.child,
-          Align(
-            alignment: Alignment.topLeft,
-            child: FakeBrowserAddressBar(router: GoRouter.of(context)),
+          FloatingDraggable(
+            builder: (BuildContext context, bool draggable) {
+              final ColorScheme colorScheme = ColorScheme.of(context);
+              final BoxDecoration boxDecoration = switch (draggable) {
+                true => BoxDecoration(
+                  border: Border.all(color: colorScheme.errorContainer, width: 2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                false => BoxDecoration(borderRadius: BorderRadius.circular(0)),
+              };
+
+              return AnimatedScale(
+                scale: draggable ? 1.05 : 1,
+                duration: Durations.short2,
+                curve: Curves.easeInOut,
+                child: AnimatedContainer(
+                  duration: Durations.medium2,
+                  curve: Curves.easeInOut,
+                  decoration: boxDecoration,
+                  child: FakeBrowserAddressBar(router: GoRouter.of(context)),
+                ),
+              );
+            },
           ),
         ],
       );
