@@ -149,5 +149,20 @@
   "layoutItemSettings": "Nustatymai",
   "errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
-  "notFoundText": "Puslapis nerastas"
+  "notFoundText": "Puslapis nerastas",
+  "infoScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@infoScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "infoScreenTitle": "Informacija",
+  "aboutTitle": "Apie",
+  "faqTitle": "Dažniausiai užduodami klausimai",
+  "faqQuestion1": "Klausimas 1",
+  "faqAnswer1": "Atsakymas 1",
+  "faqQuestion2": "Klausimas 2",
+  "faqAnswer2": "Atsakymas 2",
+  "faqQuestion3": "Klausimas 3",
+  "faqAnswer3": "Atsakymas 3",
+  "faqQuestion4": "Klausimas 4",
+  "faqAnswer4": "Atsakymas 4",
+  "faqQuestion5": "Klausimas 5",
+  "faqAnswer5": "Atsakymas 5"
 }

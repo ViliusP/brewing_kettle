@@ -433,5 +433,59 @@
   "notFoundText": "Not found",
   "@notFoundText": {
     "description": "Text for not found screen"
+  },
+  "infoScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@infoScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "infoScreenTitle": "Information",
+  "@infoScreenTitle": {
+    "description": "Title for info screen"
+  },
+  "aboutTitle": "About",
+  "@aboutTitle": {
+    "description": "Title for about section in info screen"
+  },
+  "faqTitle": "Frequently asked questions",
+  "@faqTitle": {
+    "description": "Title for faq section in info screen"
+  },
+  "faqQuestion1": "Question 1",
+  "@faqQuestion1": {
+    "description": "Question 1 text in info screen"
+  },
+  "faqAnswer1": "Answer 1",
+  "@faqAnswer1": {
+    "description": "Answer 1 text in info screen"
+  },
+  "faqQuestion2": "Question 2",
+  "@faqQuestion2": {
+    "description": "Question 2 text in info screen"
+  },
+  "faqAnswer2": "Answer 2",
+  "@faqAnswer2": {
+    "description": "Answer 2 text in info screen"
+  },
+  "faqQuestion3": "Question 3",
+  "@faqQuestion3": {
+    "description": "Question 3 text in info screen"
+  },
+  "faqAnswer3": "Answer 3",
+  "@faqAnswer3": {
+    "description": "Answer 3 text in info screen"
+  },
+  "faqQuestion4": "Question 4",
+  "@faqQuestion4": {
+    "description": "Question 4 text in info screen"
+  },
+  "faqAnswer4": "Answer 4",
+  "@faqAnswer4": {
+    "description": "Answer 4 text in info screen"
+  },
+  "faqQuestion5": "Question 5",
+  "@faqQuestion5": {
+    "description": "Question 5 text in info screen"
+  },
+  "faqAnswer5": "Answer 5",
+  "@faqAnswer5": {
+    "description": "Answer 5 text in info screen"
   }
 }
