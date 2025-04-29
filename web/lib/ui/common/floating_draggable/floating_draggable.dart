@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -94,6 +95,9 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
   bool checkWidgetSize = true;
   Size widgetSize = Size.zero;
 
+  static const defaultDraggingCursor = SystemMouseCursors.grabbing;
+  static const defaultCursor = SystemMouseCursors.grab;
+
   /// Checks if the child widget is within the screen bounds.
   ///
   /// Returns true if the child widget is fully within the screen bounds,
@@ -114,12 +118,13 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
   /// to the nearest valid position.
   /// If the widget is already within the screen bounds, no action is taken.
   void moveChildToBounds() {
+    dragging = false;
     if (isChildInBounds()) {
+      setState(() {});
       return;
     }
     final Size windowSize = MediaQuery.of(context).size;
     setState(() {
-      dragging = false;
       if (top < 0 && widget.bounded) {
         top = 0;
       }
@@ -146,30 +151,33 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
       widgetSize = (context.findRenderObject() as RenderBox).size;
       checkWidgetSize = false;
     }
-
     return AnimatedPositioned(
       top: top,
       left: left,
       duration: Durations.short1,
       curve: Curves.linearToEaseOut,
-      child: GestureDetector(
-        onLongPressStart: (details) {
-          setState(() {
-            dragging = true;
-          });
-          pointerOffset = details.localPosition;
-        },
-        onLongPressEnd: (_) {
-          moveChildToBounds();
-        },
-        onLongPressMoveUpdate: (details) {
-          setState(() {
-            Offset offset = details.globalPosition - pointerOffset;
-            top = offset.dy;
-            left = offset.dx;
-          });
-        },
-        child: widget.builder(context, dragging),
+      child: MouseRegion(
+        cursor: dragging ? defaultDraggingCursor : defaultCursor,
+        child: GestureDetector(
+          dragStartBehavior: DragStartBehavior.down,
+          onLongPressStart: (details) {
+            setState(() {
+              dragging = true;
+            });
+            pointerOffset = details.localPosition;
+          },
+          onLongPressEnd: (_) {
+            moveChildToBounds();
+          },
+          onLongPressMoveUpdate: (details) {
+            setState(() {
+              Offset offset = details.globalPosition - pointerOffset;
+              top = offset.dy;
+              left = offset.dx;
+            });
+          },
+          child: IgnorePointer(ignoring: dragging, child: widget.builder(context, dragging)),
+        ),
       ),
     );
   }
