@@ -90,6 +90,7 @@ class _RootLayoutState extends State<RootLayout> {
                 duration: Durations.short2,
                 curve: Curves.easeInOut,
                 child: AnimatedContainer(
+                  padding: const EdgeInsets.all(8),
                   duration: Durations.medium2,
                   curve: Curves.easeInOut,
                   decoration: boxDecoration,

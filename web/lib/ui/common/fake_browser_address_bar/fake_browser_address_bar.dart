@@ -34,15 +34,12 @@ class _FakeBrowserAddressBarState extends State<FakeBrowserAddressBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8.0, top: 8.0),
-      child: SizedBox(
-        width: 300,
-        child: TextFormField(
-          controller: controller,
-          decoration: InputDecoration(border: OutlineInputBorder(), label: const Text("URL")),
-          onFieldSubmitted: (value) => widget.router.push(value),
-        ),
+    return SizedBox(
+      width: 300,
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(border: OutlineInputBorder(), label: const Text("URL")),
+        onFieldSubmitted: (value) => widget.router.push(value),
       ),
     );
   }
