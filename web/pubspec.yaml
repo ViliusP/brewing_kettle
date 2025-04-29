@@ -85,6 +85,9 @@ dependencies:
   # A dynamic parser framework to build efficient grammars and parsers quickly.
   petitparser: ^6.1.0
 
+  # Flutter plugin for launching a URL. Supports web, phone, SMS, and email schemes.
+  url_launcher: ^6.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
