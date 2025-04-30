@@ -2,6 +2,15 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
+enum DragEventType { start, move, end }
+
+class DragEventDetails {
+  final DragEventType type;
+  final Offset offset;
+
+  const DragEventDetails({required this.type, required this.offset});
+}
+
 /// A builder function that creates a widget for the draggable item.
 /// The function receives the current context and a boolean indicating
 /// whether the widget is currently being dragged.
@@ -53,11 +62,21 @@ class FloatingDraggable extends StatefulWidget {
   /// boolean indicating whether the widget is currently being dragged.
   final DraggableBuilder builder;
 
+  /// A callback function that is called when a drag event occurs.
+  ///
+  /// The [onDragEvent] function receives a [DragEventDetails] object
+  /// containing information about the drag event.
+  /// The type property indicates whether the event is a start, move, or end event.
+  /// The offset property contains the current position of the drag event.
+  /// This callback can be used to perform custom actions based on the drag event.
+  final ValueChanged<DragEventDetails>? onDragEvent;
+
   const FloatingDraggable({
     super.key,
     required this.builder,
     this.bounded = true,
     this.adjustOnResize = true,
+    this.onDragEvent,
   });
 
   @override
@@ -90,6 +109,8 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
 
   double top = 0;
   double left = 0;
+  Offset get position => Offset(top, left);
+
   bool dragging = false;
   Offset pointerOffset = Offset.zero;
   bool checkWidgetSize = true;
@@ -145,6 +166,28 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
     });
   }
 
+  void onLongPressStart(LongPressStartDetails details) {
+    setState(() {
+      dragging = true;
+    });
+    pointerOffset = details.localPosition;
+    widget.onDragEvent?.call(DragEventDetails(type: DragEventType.start, offset: position));
+  }
+
+  void onLongPressEnd(LongPressEndDetails details) {
+    moveChildToBounds();
+    widget.onDragEvent?.call(DragEventDetails(type: DragEventType.end, offset: position));
+  }
+
+  void onLongPressMoveUpdate(LongPressMoveUpdateDetails details) {
+    setState(() {
+      Offset offset = details.globalPosition - pointerOffset;
+      top = offset.dy;
+      left = offset.dx;
+    });
+    widget.onDragEvent?.call(DragEventDetails(type: DragEventType.move, offset: position));
+  }
+
   @override
   Widget build(BuildContext context) {
     if (checkWidgetSize) {
@@ -160,22 +203,9 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
         cursor: dragging ? defaultDraggingCursor : defaultCursor,
         child: GestureDetector(
           dragStartBehavior: DragStartBehavior.down,
-          onLongPressStart: (details) {
-            setState(() {
-              dragging = true;
-            });
-            pointerOffset = details.localPosition;
-          },
-          onLongPressEnd: (_) {
-            moveChildToBounds();
-          },
-          onLongPressMoveUpdate: (details) {
-            setState(() {
-              Offset offset = details.globalPosition - pointerOffset;
-              top = offset.dy;
-              left = offset.dx;
-            });
-          },
+          onLongPressStart: onLongPressStart,
+          onLongPressEnd: onLongPressEnd,
+          onLongPressMoveUpdate: onLongPressMoveUpdate,
           child: IgnorePointer(ignoring: dragging, child: widget.builder(context, dragging)),
         ),
       ),
