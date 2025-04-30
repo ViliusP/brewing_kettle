@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
-enum DragEventType { start, move, end }
+enum DragEventType { start, move, end, windowResize }
 
 class DragEventDetails {
   final DragEventType type;
@@ -71,12 +71,20 @@ class FloatingDraggable extends StatefulWidget {
   /// This callback can be used to perform custom actions based on the drag event.
   final ValueChanged<DragEventDetails>? onDragEvent;
 
+  /// The initial position of the widget.
+  ///
+  /// It can be used to set the initial position of the widget
+  /// when it is first created.
+  /// The default value is Offset.zero.
+  final Offset initialPosition;
+
   const FloatingDraggable({
     super.key,
     required this.builder,
     this.bounded = true,
     this.adjustOnResize = true,
     this.onDragEvent,
+    this.initialPosition = Offset.zero,
   });
 
   @override
@@ -87,6 +95,14 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
   @override
   void initState() {
     super.initState();
+    top = widget.initialPosition.dy;
+    left = widget.initialPosition.dx;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setWidgetSize();
+      moveChildToBounds();
+      setState(() {});
+    });
+
     windowManager.addListener(this);
   }
 
@@ -103,13 +119,16 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
     WindowManager.instance.getSize().then((size) {
       if (widget.adjustOnResize && widget.bounded && !isChildInBounds()) {
         moveChildToBounds();
+        widget.onDragEvent?.call(
+          DragEventDetails(type: DragEventType.windowResize, offset: position),
+        );
       }
     });
   }
 
   double top = 0;
   double left = 0;
-  Offset get position => Offset(top, left);
+  Offset get position => Offset(left, top);
 
   bool dragging = false;
   Offset pointerOffset = Offset.zero;
@@ -139,47 +158,50 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
   /// to the nearest valid position.
   /// If the widget is already within the screen bounds, no action is taken.
   void moveChildToBounds() {
-    dragging = false;
     if (isChildInBounds()) {
-      setState(() {});
       return;
     }
     final Size windowSize = MediaQuery.of(context).size;
-    setState(() {
-      if (top < 0 && widget.bounded) {
-        top = 0;
-      }
+    if (top < 0 && widget.bounded) {
+      top = 0;
+    }
 
-      double bottomSide = top + widgetSize.height;
-      if (bottomSide > windowSize.height && widget.bounded) {
-        top = windowSize.height - widgetSize.height;
-      }
+    double bottomSide = top + widgetSize.height;
+    if (bottomSide > windowSize.height && widget.bounded) {
+      top = windowSize.height - widgetSize.height;
+    }
 
-      double rightSide = left + widgetSize.width;
-      if (rightSide > windowSize.width && widget.bounded) {
-        left = windowSize.width - widgetSize.width;
-      }
+    double rightSide = left + widgetSize.width;
+    if (rightSide > windowSize.width && widget.bounded) {
+      left = windowSize.width - widgetSize.width;
+    }
 
-      if (left < 0 && widget.bounded) {
-        left = 0;
-      }
-    });
+    if (left < 0 && widget.bounded) {
+      left = 0;
+    }
   }
 
   void onLongPressStart(LongPressStartDetails details) {
+    setWidgetSize();
     setState(() {
       dragging = true;
+      pointerOffset = details.localPosition;
     });
-    pointerOffset = details.localPosition;
     widget.onDragEvent?.call(DragEventDetails(type: DragEventType.start, offset: position));
   }
 
   void onLongPressEnd(LongPressEndDetails details) {
-    moveChildToBounds();
+    setWidgetSize();
+    setState(() {
+      dragging = false;
+      moveChildToBounds();
+    });
+
     widget.onDragEvent?.call(DragEventDetails(type: DragEventType.end, offset: position));
   }
 
   void onLongPressMoveUpdate(LongPressMoveUpdateDetails details) {
+    setWidgetSize();
     setState(() {
       Offset offset = details.globalPosition - pointerOffset;
       top = offset.dy;
@@ -188,12 +210,18 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
     widget.onDragEvent?.call(DragEventDetails(type: DragEventType.move, offset: position));
   }
 
+  void setWidgetSize() {
+    if (checkWidgetSize) {
+      final RenderBox? widgetBox = context.findRenderObject() as RenderBox?;
+      if (widgetBox != null) {
+        widgetSize = widgetBox.size;
+        checkWidgetSize = false;
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (checkWidgetSize) {
-      widgetSize = (context.findRenderObject() as RenderBox).size;
-      checkWidgetSize = false;
-    }
     return AnimatedPositioned(
       top: top,
       left: left,

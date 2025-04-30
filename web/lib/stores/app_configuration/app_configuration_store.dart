@@ -1,5 +1,6 @@
 import 'package:brew_kettle_dashboard/constants/app.dart';
 import 'package:brew_kettle_dashboard/core/data/repository/repository.dart';
+import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
 
 part 'app_configuration_store.g.dart';
@@ -23,6 +24,10 @@ abstract class _AppConfigurationStore with Store {
   @computed
   bool get isAdvancedMode => _isAdvancedMode;
 
+  Offset _fakeBrowserAddressBarPosition = Offset.zero;
+
+  Offset get fakeBrowserAddressBarPosition => _fakeBrowserAddressBarPosition;
+
   // ==============
   // Actions:
   // ==============
@@ -32,11 +37,16 @@ abstract class _AppConfigurationStore with Store {
     _repository.sharedPreferences.setAdvancedMode(value);
   }
 
+  void setFakeUrlBarPosition(Offset value) {
+    _repository.sharedPreferences.setFakeBrowserAddressBarPosition(value);
+  }
+
   // ======================
   // General:
   // ======================
   void _init() async {
     bool? prefsAdvancedMode = _repository.sharedPreferences.advancedMode;
+    _fakeBrowserAddressBarPosition = _repository.sharedPreferences.fakeBrowserAddressBarPosition;
     if (prefsAdvancedMode != null) {
       _isAdvancedMode = prefsAdvancedMode;
     }
