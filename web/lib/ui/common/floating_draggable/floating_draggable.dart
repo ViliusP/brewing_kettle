@@ -108,10 +108,31 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
 
   @override
   void didUpdateWidget(covariant FloatingDraggable oldWidget) {
+    super.didUpdateWidget(oldWidget); // Call super first
     if (oldWidget.builder != widget.builder) {
-      checkWidgetSize = true;
+      // Schedule size check for after the build completes
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          // Check if still mounted
+          setWidgetSize();
+          // Optionally re-check bounds if size changed
+          if (widget.bounded) {
+            moveChildToBounds();
+          }
+          setState(() {}); // Trigger rebuild if bounds changed
+        }
+      });
     }
-    super.didUpdateWidget(oldWidget);
+    // Check if bounding changed, may need to move immediately
+    if (oldWidget.bounded != widget.bounded && widget.bounded) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setWidgetSize(); // Ensure size is known
+          moveChildToBounds();
+          setState(() {});
+        }
+      });
+    }
   }
 
   @override
@@ -134,11 +155,17 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
 
   bool dragging = false;
   Offset pointerOffset = Offset.zero;
-  bool checkWidgetSize = true;
   Size widgetSize = Size.zero;
 
   static const defaultDraggingCursor = SystemMouseCursors.grabbing;
   static const defaultCursor = SystemMouseCursors.grab;
+
+  void setWidgetSize() {
+    final RenderBox? widgetBox = context.findRenderObject() as RenderBox?;
+    if (widgetBox != null) {
+      widgetSize = widgetBox.size;
+    }
+  }
 
   /// Checks if the child widget is within the screen bounds.
   ///
@@ -169,7 +196,6 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
   }
 
   void onLongPressStart(LongPressStartDetails details) {
-    setWidgetSize();
     setState(() {
       dragging = true;
       pointerOffset = details.localPosition;
@@ -178,7 +204,6 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
   }
 
   void onLongPressEnd(LongPressEndDetails details) {
-    setWidgetSize();
     setState(() {
       dragging = false;
       moveChildToBounds();
@@ -188,23 +213,12 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
   }
 
   void onLongPressMoveUpdate(LongPressMoveUpdateDetails details) {
-    setWidgetSize();
     setState(() {
       Offset offset = details.globalPosition - pointerOffset;
       top = offset.dy;
       left = offset.dx;
     });
     widget.onDragEvent?.call(DragEventDetails(type: DragEventType.move, offset: position));
-  }
-
-  void setWidgetSize() {
-    if (checkWidgetSize) {
-      final RenderBox? widgetBox = context.findRenderObject() as RenderBox?;
-      if (widgetBox != null) {
-        widgetSize = widgetBox.size;
-        checkWidgetSize = false;
-      }
-    }
   }
 
   @override
