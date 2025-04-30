@@ -15,7 +15,7 @@
   "generalChange": "Pakeisti",
   "generalLogout": "Atsijungti",
   "generalExit": "Išeiti",
-  "generalGoBack": "Grįžti atgal",
+  "generalGoBack": "Grįžti Atgal",
   "formValidationRequired": "Šis laukelis privalomas",
   "formValidationMustBeNumber": "Šiame laukelyje turi būti skaičius",
   "formValidationMustBePositive": "Šiame laukelyje turi būti teigiamas skaičius",

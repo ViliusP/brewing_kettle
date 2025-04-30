@@ -51,7 +51,7 @@ class AppLocalizationsLt extends AppLocalizations {
   String get generalExit => 'Išeiti';
 
   @override
-  String get generalGoBack => 'Grįžti atgal';
+  String get generalGoBack => 'Grįžti Atgal';
 
   @override
   String get formValidationRequired => 'Šis laukelis privalomas';
