@@ -116,14 +116,16 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
 
   @override
   void onWindowResize() {
-    WindowManager.instance.getSize().then((size) {
-      if (widget.adjustOnResize && widget.bounded && !isChildInBounds()) {
-        moveChildToBounds();
-        widget.onDragEvent?.call(
-          DragEventDetails(type: DragEventType.windowResize, offset: position),
-        );
-      }
-    });
+    if (!widget.adjustOnResize || !widget.bounded) return;
+    if (!mounted) return;
+
+    if (!isChildInBounds()) {
+      moveChildToBounds();
+      widget.onDragEvent?.call(
+        DragEventDetails(type: DragEventType.windowResize, offset: position),
+      );
+      setState(() {});
+    }
   }
 
   double top = 0;
@@ -162,23 +164,8 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
       return;
     }
     final Size windowSize = MediaQuery.of(context).size;
-    if (top < 0 && widget.bounded) {
-      top = 0;
-    }
-
-    double bottomSide = top + widgetSize.height;
-    if (bottomSide > windowSize.height && widget.bounded) {
-      top = windowSize.height - widgetSize.height;
-    }
-
-    double rightSide = left + widgetSize.width;
-    if (rightSide > windowSize.width && widget.bounded) {
-      left = windowSize.width - widgetSize.width;
-    }
-
-    if (left < 0 && widget.bounded) {
-      left = 0;
-    }
+    top = top.clamp(0.0, windowSize.height - widgetSize.height);
+    left = left.clamp(0.0, windowSize.width - widgetSize.width);
   }
 
   void onLongPressStart(LongPressStartDetails details) {
