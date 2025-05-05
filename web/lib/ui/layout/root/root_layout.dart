@@ -84,30 +84,45 @@ class _RootLayoutState extends State<RootLayout> {
     }
   }
 
-  Widget fakeUrlBarBuilder(BuildContext context, bool draggable) {
+  Widget Function(BuildContext, bool) fakeUrlBarBuilder(bool show) {
     final ColorScheme colorScheme = ColorScheme.of(context);
-    final BoxDecoration boxDecoration = switch (draggable) {
-      true => BoxDecoration(
-        border: Border.all(color: colorScheme.errorContainer, width: 2),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      false => BoxDecoration(borderRadius: BorderRadius.circular(0)),
-    };
 
-    return AnimatedScale(
-      scale: draggable ? 1.05 : 1,
-      duration: Durations.short2,
-      curve: Curves.easeInOut,
-      alignment: Alignment.center,
-      child: AnimatedContainer(
-        padding: const EdgeInsets.all(8),
-        duration: Durations.medium2,
+    return (BuildContext context, bool draggable) {
+      final BoxDecoration boxDecoration = switch (draggable) {
+        true => BoxDecoration(
+          border: Border.all(color: colorScheme.errorContainer, width: 2),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        false => BoxDecoration(borderRadius: BorderRadius.circular(0)),
+      };
+
+      double scale = draggable ? 1.05 : 1;
+      final double opacity = show ? 1 : 0;
+
+      if (!show) {
+        scale = 0;
+      }
+
+      return AnimatedOpacity(
+        opacity: opacity,
+        duration: Durations.short2,
         curve: Curves.easeInOut,
-        alignment: Alignment.center,
-        decoration: boxDecoration,
-        child: FakeBrowserAddressBar(router: GoRouter.of(context)),
-      ),
-    );
+        child: AnimatedScale(
+          scale: scale,
+          duration: Durations.short2,
+          curve: Curves.easeInOut,
+          alignment: Alignment.center,
+          child: AnimatedContainer(
+            padding: const EdgeInsets.all(8),
+            duration: Durations.medium2,
+            curve: Curves.easeInOut,
+            alignment: Alignment.center,
+            decoration: boxDecoration,
+            child: FakeBrowserAddressBar(router: GoRouter.of(context)),
+          ),
+        ),
+      );
+    };
   }
 
   Widget Function(BuildContext, bool) debugFabBuilder(bool show) {
@@ -202,10 +217,14 @@ class _RootLayoutState extends State<RootLayout> {
       return Stack(
         children: [
           widget.child,
-          FloatingDraggable(
-            builder: fakeUrlBarBuilder,
-            onDragEvent: onUrlBarDragEvent,
-            initialPosition: appConfigurationStore.fakeBrowserAddressBarPosition,
+          Observer(
+            builder: (context) {
+              return FloatingDraggable(
+                builder: fakeUrlBarBuilder(appConfigurationStore.fakeBrowserBarEnabled),
+                onDragEvent: onUrlBarDragEvent,
+                initialPosition: appConfigurationStore.fakeBrowserAddressBarPosition,
+              );
+            },
           ),
           Observer(
             builder: (context) {
