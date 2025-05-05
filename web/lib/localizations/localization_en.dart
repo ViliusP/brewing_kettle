@@ -372,4 +372,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notFoundText => 'Not found';
+
+  @override
+  String get infoScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+
+  @override
+  String get infoScreenTitle => 'Information';
+
+  @override
+  String get aboutTitle => 'About';
+
+  @override
+  String get faqTitle => 'Frequently asked questions';
+
+  @override
+  String get faqQuestion1 => 'Question 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit';
+
+  @override
+  String get faqAnswer1 => 'Answer 1: Aliquam eget sagittis nisl, id congue ipsum';
+
+  @override
+  String get faqQuestion2 => 'Question 2: Etiam faucibus velit ut tellus dapibus, vel lobortis elit consectetur';
+
+  @override
+  String get faqAnswer2 => 'Answer 2: Nulla leo velit, euismod eget dapibus sit amet, aliquet vitae turpis';
+
+  @override
+  String get faqQuestion3 => 'Question 3: Suspendisse hendrerit, orci in maximus congue, metus mi tristique orci';
+
+  @override
+  String get faqAnswer3 => 'Answer 3: id venenatis ante libero nec felis';
+
+  @override
+  String get faqQuestion4 => 'Question 4: Aliquam ultricies massa ut porta tempor';
+
+  @override
+  String get faqAnswer4 => 'Answer 4: Etiam suscipit diam vel urna interdum placerat';
+
+  @override
+  String get faqQuestion5 => 'Question 5: Nullam id tempor nibh.';
+
+  @override
+  String get faqAnswer5 => 'Answer 5: Cras mollis odio fermentum magna efficitur';
 }

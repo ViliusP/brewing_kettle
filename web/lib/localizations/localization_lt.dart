@@ -372,4 +372,46 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get notFoundText => 'Puslapis nerastas';
+
+  @override
+  String get infoScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+
+  @override
+  String get infoScreenTitle => 'Informacija';
+
+  @override
+  String get aboutTitle => 'Apie';
+
+  @override
+  String get faqTitle => 'Dažniausiai užduodami klausimai';
+
+  @override
+  String get faqQuestion1 => 'Klausimas 1: Aliquam eget sagittis nisl, id congue ipsum';
+
+  @override
+  String get faqAnswer1 => 'Atsakymas 1: Etiam faucibus velit ut tellus dapibus, vel lobortis elit consectetur';
+
+  @override
+  String get faqQuestion2 => 'Klausimas 2: Nulla leo velit, euismod eget dapibus sit amet, aliquet vitae turpis';
+
+  @override
+  String get faqAnswer2 => 'Atsakymas 2: Suspendisse hendrerit';
+
+  @override
+  String get faqQuestion3 => 'Klausimas 3: orci in maximus congue, metus mi tristique orci';
+
+  @override
+  String get faqAnswer3 => 'Atsakymas 3: id venenatis ante libero nec felis';
+
+  @override
+  String get faqQuestion4 => 'Klausimas 4: Aliquam ultricies massa ut porta tempor';
+
+  @override
+  String get faqAnswer4 => 'Atsakymas 4: Etiam suscipit diam vel urna interdum placerat';
+
+  @override
+  String get faqQuestion5 => 'Klausimas 5: Nullam id tempor nibh';
+
+  @override
+  String get faqAnswer5 => 'Atsakymas 5: Cras mollis odio fermentum magna efficitur';
 }

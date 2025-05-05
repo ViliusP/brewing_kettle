@@ -646,6 +646,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not found'**
   String get notFoundText;
+
+  /// No description provided for @infoScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
+  ///
+  /// In en, this message translates to:
+  /// **'----------------------------------------------------'**
+  String get infoScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII;
+
+  /// Title for info screen
+  ///
+  /// In en, this message translates to:
+  /// **'Information'**
+  String get infoScreenTitle;
+
+  /// Title for about section in info screen
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get aboutTitle;
+
+  /// Title for faq section in info screen
+  ///
+  /// In en, this message translates to:
+  /// **'Frequently asked questions'**
+  String get faqTitle;
+
+  /// Question 1 text in info screen
+  ///
+  /// In en, this message translates to:
+  /// **'Question 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit'**
+  String get faqQuestion1;
+
+  /// Answer 1 text in info screen
+  ///
+  /// In en, this message translates to:
+  /// **'Answer 1: Aliquam eget sagittis nisl, id congue ipsum'**
+  String get faqAnswer1;
+
+  /// Question 2 text in info screen
+  ///
+  /// In en, this message translates to:
+  /// **'Question 2: Etiam faucibus velit ut tellus dapibus, vel lobortis elit consectetur'**
+  String get faqQuestion2;
+
+  /// Answer 2 text in info screen
+  ///
+  /// In en, this message translates to:
+  /// **'Answer 2: Nulla leo velit, euismod eget dapibus sit amet, aliquet vitae turpis'**
+  String get faqAnswer2;
+
+  /// Question 3 text in info screen
+  ///
+  /// In en, this message translates to:
+  /// **'Question 3: Suspendisse hendrerit, orci in maximus congue, metus mi tristique orci'**
+  String get faqQuestion3;
+
+  /// Answer 3 text in info screen
+  ///
+  /// In en, this message translates to:
+  /// **'Answer 3: id venenatis ante libero nec felis'**
+  String get faqAnswer3;
+
+  /// Question 4 text in info screen
+  ///
+  /// In en, this message translates to:
+  /// **'Question 4: Aliquam ultricies massa ut porta tempor'**
+  String get faqQuestion4;
+
+  /// Answer 4 text in info screen
+  ///
+  /// In en, this message translates to:
+  /// **'Answer 4: Etiam suscipit diam vel urna interdum placerat'**
+  String get faqAnswer4;
+
+  /// Question 5 text in info screen
+  ///
+  /// In en, this message translates to:
+  /// **'Question 5: Nullam id tempor nibh.'**
+  String get faqQuestion5;
+
+  /// Answer 5 text in info screen
+  ///
+  /// In en, this message translates to:
+  /// **'Answer 5: Cras mollis odio fermentum magna efficitur'**
+  String get faqAnswer5;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -4,11 +4,13 @@ import 'package:flutter_material_design_icons/flutter_material_design_icons.dart
 
 /// This file contains the general constants used in the app.
 class AppConstants {
-  AppConstants._();
+  const AppConstants._();
 
-  static const String appName = "Brew Kettle Dashboard";
+  static const String appName = "Virtinis Dashboard";
+  static const String homepageUrl = "https://github.com/viliusp/virtinis_brewkettle";
+  static const String repositoryUrl = "https://github.com/viliusp/virtinis_brewkettle";
 
-  // System-specific maximum values (adjust based on your requirements)
+  // System-specific maximum PID values
   static const double maxProportional = 100.0;
   static const double maxIntegral = 50.0;
   static const double maxDerivative = 50.0;
