@@ -24,9 +24,26 @@ abstract class _AppConfigurationStore with Store {
   @computed
   bool get isAdvancedMode => _isAdvancedMode;
 
+  // ------- Fake Browser URL bar -------
+  @observable
+  bool _fakeBrowserBarEnabled = true;
+
+  @computed
+  bool get fakeBrowserBarEnabled => _fakeBrowserBarEnabled;
+
   Offset _fakeBrowserAddressBarPosition = Offset.zero;
 
   Offset get fakeBrowserAddressBarPosition => _fakeBrowserAddressBarPosition;
+
+  // ------- Metrics Box -------
+  bool get metricsBoxEnabled => _globalPointerPositionMetricEnabled && isAdvancedMode;
+
+  // +++++++ Global Pointer Position +++++++
+  @observable
+  bool _globalPointerPositionMetricEnabled = true;
+
+  @computed
+  bool get globalPointerPositionMetricEnabled => _globalPointerPositionMetricEnabled;
 
   // ==============
   // Actions:
@@ -39,6 +56,16 @@ abstract class _AppConfigurationStore with Store {
 
   void setFakeUrlBarPosition(Offset value) {
     _repository.sharedPreferences.setFakeBrowserAddressBarPosition(value);
+  }
+
+  @action
+  void setFakeBrowserBar(bool value) {
+    _fakeBrowserBarEnabled = value;
+  }
+
+  @action
+  void setGlobalPointerPositionMetric(bool value) {
+    _globalPointerPositionMetricEnabled = value;
   }
 
   // ======================

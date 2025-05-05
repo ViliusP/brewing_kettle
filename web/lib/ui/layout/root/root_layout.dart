@@ -3,11 +3,15 @@ import 'package:brew_kettle_dashboard/core/data/models/websocket/connection_stat
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/app_configuration/app_configuration_store.dart';
+import 'package:brew_kettle_dashboard/stores/app_debugging/app_debugging_store.dart';
 import 'package:brew_kettle_dashboard/stores/exception/exception_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
+import 'package:brew_kettle_dashboard/ui/common/drawer_menu.dart';
 import 'package:brew_kettle_dashboard/ui/common/fake_browser_address_bar/fake_browser_address_bar.dart';
 import 'package:brew_kettle_dashboard/ui/common/floating_draggable/floating_draggable.dart';
 import 'package:brew_kettle_dashboard/ui/common/snackbar/snackbar.dart';
+import 'package:brew_kettle_dashboard/ui/layout/root/debug_menu.dart';
+import 'package:brew_kettle_dashboard/ui/layout/root/metrics_box.dart';
 import 'package:brew_kettle_dashboard/ui/routing.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +32,8 @@ class RootLayout extends StatefulWidget {
 class _RootLayoutState extends State<RootLayout> {
   final WebSocketConnectionStore wsConnectionStore = getIt<WebSocketConnectionStore>();
   final AppConfigurationStore appConfigurationStore = getIt<AppConfigurationStore>();
+  final AppDebuggingStore appDebuggingStore = getIt<AppDebuggingStore>();
+
   final ExceptionStore exceptionStore = getIt<ExceptionStore>();
 
   ReactionDisposer? onErrorReaction;
@@ -144,6 +150,46 @@ class _RootLayoutState extends State<RootLayout> {
     };
   }
 
+  Widget Function(BuildContext, bool) metricsBoxBuilder(bool show) {
+    final ColorScheme colorScheme = ColorScheme.of(context);
+
+    return (BuildContext context, bool draggable) {
+      final BoxDecoration boxDecoration = switch (draggable) {
+        true => BoxDecoration(
+          border: Border.all(color: colorScheme.errorContainer, width: 2),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        false => BoxDecoration(borderRadius: BorderRadius.circular(0)),
+      };
+
+      double scale = draggable ? 1.025 : 1;
+      final double opacity = show ? 1 : 0;
+
+      if (!show) {
+        scale = 0;
+      }
+
+      return AnimatedOpacity(
+        opacity: opacity,
+        duration: Durations.short2,
+        curve: Curves.easeInOut,
+        child: AnimatedScale(
+          scale: scale,
+          duration: Durations.short2,
+          curve: Curves.easeInOut,
+          child: AnimatedContainer(
+            padding: const EdgeInsets.all(8),
+            duration: Durations.medium2,
+            transformAlignment: Alignment.center,
+            curve: Curves.easeInOut,
+            decoration: boxDecoration,
+            child: MetricsBox(),
+          ),
+        ),
+      );
+    };
+  }
+
   void onExceptionOccured(AppException? exception) {
     if (exception == null) return;
     AppLocalizations localizations = AppLocalizations.of(context)!;
@@ -169,6 +215,29 @@ class _RootLayoutState extends State<RootLayout> {
               );
             },
           ),
+          Observer(
+            builder: (context) {
+              return FloatingDraggable(
+                builder: metricsBoxBuilder(appConfigurationStore.metricsBoxEnabled),
+                initialPosition: Offset.zero,
+              );
+            },
+          ),
+          Observer(
+            builder: (context) {
+              if (appConfigurationStore.globalPointerPositionMetricEnabled) {
+                return Positioned.fill(
+                  child: MouseRegion(
+                    hitTestBehavior: HitTestBehavior.translucent,
+                    onHover: (event) {
+                      appDebuggingStore.setPointerPosition(event.position);
+                    },
+                  ),
+                );
+              }
+              return SizedBox.shrink();
+            },
+          ),
         ],
       );
     }
@@ -192,7 +261,13 @@ class _DebugFab extends StatelessWidget {
 
     return IconButton.outlined(
       onPressed: () {
-        print("hello");
+        DrawerMenu.show(
+          context: context,
+          drawerOptions: DrawerRouteOptions(barrier: DrawerRouteBarrierOptions(enable: true)),
+          builder: (context) {
+            return DebugMenu();
+          },
+        );
       },
       style: IconButton.styleFrom(
         backgroundColor: colorScheme.surfaceContainerHighest,
