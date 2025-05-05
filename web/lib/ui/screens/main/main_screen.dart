@@ -1,7 +1,7 @@
 import 'package:brew_kettle_dashboard/ui/screens/main/tiles/current_temp.dart';
 import 'package:brew_kettle_dashboard/ui/screens/main/tiles/grid_tile.dart';
 import 'package:brew_kettle_dashboard/ui/screens/main/tiles/heater_control.dart';
-import 'package:brew_kettle_dashboard/ui/screens/main/tiles/temperature_history.dart';
+import 'package:brew_kettle_dashboard/ui/screens/main/tiles/heater_data_graph.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
@@ -41,7 +41,7 @@ class MainScreen extends StatelessWidget {
                         StaggeredGridTile.count(
                           crossAxisCellCount: 5,
                           mainAxisCellCount: 3,
-                          child: DashboardTile(outlined: true, child: TemperatureHistoryTile()),
+                          child: DashboardTile(outlined: true, child: HeaterDataGraph()),
                         ),
                       ],
                     ),

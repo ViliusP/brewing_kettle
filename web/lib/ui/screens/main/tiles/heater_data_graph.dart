@@ -11,14 +11,14 @@ import 'package:flutter_material_design_icons/flutter_material_design_icons.dart
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:graphic/graphic.dart';
 
-class TemperatureHistoryTile extends StatefulWidget {
-  const TemperatureHistoryTile({super.key});
+class HeaterDataGraph extends StatefulWidget {
+  const HeaterDataGraph({super.key});
 
   @override
-  State<TemperatureHistoryTile> createState() => _TemperatureHistoryTileState();
+  State<HeaterDataGraph> createState() => _HeaterDataGraphState();
 }
 
-class _TemperatureHistoryTileState extends State<TemperatureHistoryTile> {
+class _HeaterDataGraphState extends State<HeaterDataGraph> {
   static const _entriesLimit = 100;
 
   final HeaterControllerStateStore _temperatureStore = getIt<HeaterControllerStateStore>();
@@ -35,8 +35,10 @@ class _TemperatureHistoryTileState extends State<TemperatureHistoryTile> {
           padding: const EdgeInsets.only(left: 8.0, right: 16.0, top: 16.0, bottom: 8.0),
           child: Observer(
             builder: (context) {
-              var tempHistory = _temperatureStore.stateHistory.takeLast(_entriesLimit);
-              return TemperatureHistoryChart(data: tempHistory);
+              List<TimeSeriesViewEntry> temperatureHistory = _temperatureStore.stateHistory
+                  .takeLast(_entriesLimit);
+              if (temperatureHistory.length < 2) return _HeaterDataChart(data: []);
+              return _HeaterDataChart(data: temperatureHistory);
             },
           ),
         ),
@@ -85,10 +87,10 @@ class _TemperatureHistoryTileState extends State<TemperatureHistoryTile> {
   }
 }
 
-class TemperatureHistoryChart extends StatelessWidget {
+class _HeaterDataChart extends StatelessWidget {
   final List<TimeSeriesViewEntry> data;
 
-  const TemperatureHistoryChart({super.key, required this.data});
+  const _HeaterDataChart({required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -100,10 +102,10 @@ class TemperatureHistoryChart extends StatelessWidget {
         data
             .map(
               (e) => {
-                'date': e.date,
-                'temperature': e.value?['current_temperature'] ?? 0,
-                'target_temperature': e.value?['target_temperature'] ?? 0,
-                'power': e.value?['power'] ?? 0,
+                _ControllerStateFields.date: e.date,
+                _ControllerStateFields.currentTemperature: e.value?['current_temperature'] ?? 0,
+                _ControllerStateFields.targetTemperature: e.value?['target_temperature'] ?? 0,
+                _ControllerStateFields.power: e.value?['power'] ?? 0,
               },
             )
             .toList();
@@ -112,10 +114,10 @@ class TemperatureHistoryChart extends StatelessWidget {
     // provided data is empty.
     if (data.isEmpty) {
       convertedData.add({
-        'date': DateTime.now(),
-        'temperature': 0,
-        'target_temperature': 0,
-        'power': 0,
+        _ControllerStateFields.date: DateTime.now(),
+        _ControllerStateFields.currentTemperature: 0,
+        _ControllerStateFields.targetTemperature: 0,
+        _ControllerStateFields.power: 0,
       });
     }
 
@@ -128,8 +130,8 @@ class TemperatureHistoryChart extends StatelessWidget {
         rebuild: data.length == 2 ? true : false,
         data: convertedData,
         variables: {
-          'date': Variable(
-            accessor: (Map map) => map['date'] as DateTime,
+          _ControllerStateFields.date: Variable(
+            accessor: (Map map) => map[_ControllerStateFields.date] as DateTime,
             scale: TimeScale(
               min: data.isEmpty ? DateTime.now().subtract(Duration(hours: 1)) : null,
               max: data.isEmpty ? DateTime.now() : null,
@@ -144,8 +146,8 @@ class TemperatureHistoryChart extends StatelessWidget {
               },
             ),
           ),
-          'temperature': Variable(
-            accessor: (Map map) => map['temperature'] as num,
+          _ControllerStateFields.currentTemperature: Variable(
+            accessor: (Map map) => map[_ControllerStateFields.currentTemperature] as num,
             scale: LinearScale(
               min: 0,
               max: 105,
@@ -153,30 +155,34 @@ class TemperatureHistoryChart extends StatelessWidget {
               formatter: (v) => v.toStringAsFixed(1),
             ),
           ),
-          'target_temperature': Variable(
-            accessor: (Map map) => map['target_temperature'] as num,
+          _ControllerStateFields.targetTemperature: Variable(
+            accessor: (Map map) => map[_ControllerStateFields.targetTemperature] as num,
             scale: LinearScale(min: 0, max: 105, formatter: (v) => v.toStringAsFixed(1)),
           ),
-          'power': Variable(
-            accessor: (Map map) => map['power'] as num,
+          _ControllerStateFields.power: Variable(
+            accessor: (Map map) => map[_ControllerStateFields.power] as num,
             scale: LinearScale(min: 0, max: 100, formatter: (v) => v.toStringAsFixed(1)),
           ),
         },
         marks: [
           LineMark(
-            position: Varset('date') * Varset('temperature'),
+            position:
+                Varset(_ControllerStateFields.date) *
+                Varset(_ControllerStateFields.currentTemperature),
             shape: ShapeEncode(value: BasicLineShape(smooth: true)),
             size: SizeEncode(value: 3),
             color: ColorEncode(value: colorScheme.outline),
           ),
           LineMark(
-            position: Varset('date') * Varset('target_temperature'),
+            position:
+                Varset(_ControllerStateFields.date) *
+                Varset(_ControllerStateFields.targetTemperature),
             size: SizeEncode(value: 2),
             color: ColorEncode(value: colorScheme.error.withAlpha(96)),
             shape: ShapeEncode(value: BasicLineShape(dash: [24, 2])),
           ),
           LineMark(
-            position: Varset('date') * Varset('power'),
+            position: Varset(_ControllerStateFields.date) * Varset(_ControllerStateFields.power),
             shape: ShapeEncode(value: BasicLineShape(dash: [12, 2])),
             size: SizeEncode(value: 2),
             color: ColorEncode(value: colorScheme.inversePrimary),
@@ -244,7 +250,7 @@ class TemperatureHistoryChart extends StatelessWidget {
             double padding = 6;
 
             String repr = "";
-            var maybeDate = values?[ControllerStateFields.date];
+            var maybeDate = values?[_ControllerStateFields.date];
             if (maybeDate != null && maybeDate is DateTime) {
               repr += "${localizations.generalDate}: ";
               repr += [
@@ -254,19 +260,19 @@ class TemperatureHistoryChart extends StatelessWidget {
               ].map((v) => v.toString().padLeft(2, "0")).join(":");
             }
 
-            var targetTemperature = values?[ControllerStateFields.targetTemperature];
+            var targetTemperature = values?[_ControllerStateFields.targetTemperature];
             if (targetTemperature != null && targetTemperature is num) {
               repr += "\n${localizations.generalTargetTemperature}: ";
               repr += "${targetTemperature.toStringAsFixed(0)}°C";
             }
 
-            var maybeTemperature = values?[ControllerStateFields.currentTemperature];
+            var maybeTemperature = values?[_ControllerStateFields.currentTemperature];
             if (maybeTemperature != null && maybeTemperature is num) {
               repr += "\n${localizations.generalTemperature}: ";
               repr += "${maybeTemperature.toStringAsFixed(0)}°C";
             }
 
-            var maybePower = values?[ControllerStateFields.power];
+            var maybePower = values?[_ControllerStateFields.power];
             if (maybePower != null && maybePower is num) {
               repr += "\n${localizations.generalPower}: ";
               repr += "${maybePower.toStringAsFixed(0)}%";
@@ -365,7 +371,7 @@ class TemperatureHistoryChart extends StatelessWidget {
   }
 }
 
-class ControllerStateFields {
+class _ControllerStateFields {
   static const currentTemperature = "temperature";
   static const targetTemperature = "target_temperature";
   static const power = "power";
