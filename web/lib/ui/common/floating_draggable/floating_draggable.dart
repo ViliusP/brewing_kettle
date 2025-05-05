@@ -1,6 +1,9 @@
+import 'package:brew_kettle_dashboard/ui/common/floating_draggable/middle_mouse_pan_gesture.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
+
+enum DragMethod { primaryLongPress, middleMouseButtonPress }
 
 enum DragEventType { start, move, end, windowResize }
 
@@ -14,9 +17,9 @@ class DragEventDetails {
 /// A builder function that creates a widget for the draggable item.
 /// The function receives the current context and a boolean indicating
 /// whether the widget is currently being dragged.
-/// The [bounded] parameter is true when the widget is being dragged,
+/// The [dragging] parameter is true when the widget is being dragged,
 /// and false when it is not.
-typedef DraggableBuilder = Widget Function(BuildContext context, bool bounded);
+typedef DraggableBuilder = Widget Function(BuildContext context, bool dragging);
 
 /// A widget that can be dragged around the screen.
 /// It can be [bounded] to the screen bounds or allowed to move freely.
@@ -78,6 +81,15 @@ class FloatingDraggable extends StatefulWidget {
   /// The default value is Offset.zero.
   final Offset initialPosition;
 
+  /// The method used to initiate dragging.
+  ///
+  /// This determines how the user interacts with the widget to start dragging.
+  /// For example, [DragMethod.primaryLongPress] allows dragging by long-pressing
+  /// with the primary mouse button, while [DragMethod.middleMouseButtonPress]
+  /// allows dragging by pressing the middle mouse button.
+  /// Default is [DragMethod.middleMouseButtonPress].
+  final DragMethod method;
+
   const FloatingDraggable({
     super.key,
     required this.builder,
@@ -85,6 +97,7 @@ class FloatingDraggable extends StatefulWidget {
     this.adjustOnResize = true,
     this.onDragEvent,
     this.initialPosition = Offset.zero,
+    this.method = DragMethod.middleMouseButtonPress,
   });
 
   @override
@@ -203,15 +216,15 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
     left = left.clamp(0.0, windowSize.width - widgetSize.width);
   }
 
-  void onLongPressStart(LongPressStartDetails details) {
+  void onStartAction(Offset localPosition) {
     setState(() {
       dragging = true;
-      pointerOffset = details.localPosition;
+      pointerOffset = localPosition;
     });
     widget.onDragEvent?.call(DragEventDetails(type: DragEventType.start, offset: position));
   }
 
-  void onLongPressEnd(LongPressEndDetails details) {
+  void onEndAction() {
     setState(() {
       dragging = false;
       moveChildToBounds();
@@ -220,13 +233,45 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
     widget.onDragEvent?.call(DragEventDetails(type: DragEventType.end, offset: position));
   }
 
-  void onLongPressMoveUpdate(LongPressMoveUpdateDetails details) {
+  void onUpdateAction(Offset globalPosition) {
     setState(() {
-      Offset offset = details.globalPosition - pointerOffset;
+      Offset offset = globalPosition - pointerOffset;
       top = offset.dy;
       left = offset.dx;
     });
     widget.onDragEvent?.call(DragEventDetails(type: DragEventType.move, offset: position));
+  }
+
+  Widget dragGestureDetector({required Widget child}) {
+    return switch (widget.method) {
+      DragMethod.primaryLongPress => GestureDetector(
+        dragStartBehavior: DragStartBehavior.down,
+        onLongPressStart: (details) => onStartAction(details.localPosition),
+        onLongPressEnd: (_) => onEndAction(),
+        onLongPressMoveUpdate: (details) => onUpdateAction(details.globalPosition),
+        child: child,
+      ),
+      DragMethod.middleMouseButtonPress => RawGestureDetector(
+        gestures: {
+          MiddleMousePanGestureRecognizer:
+              GestureRecognizerFactoryWithHandlers<MiddleMousePanGestureRecognizer>(
+                () => MiddleMousePanGestureRecognizer(),
+                (instance) {
+                  instance.onStart = (DragStartDetails details) {
+                    onStartAction(details.localPosition);
+                  };
+                  instance.onEnd = (_) {
+                    onEndAction();
+                  };
+                  instance.onUpdate = (DragUpdateDetails details) {
+                    onUpdateAction(details.globalPosition);
+                  };
+                },
+              ),
+        },
+        child: child,
+      ),
+    };
   }
 
   @override
@@ -238,20 +283,16 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
           setState(() {});
         });
 
-        return true;
+        return false;
       },
       child: AnimatedPositioned(
         top: top,
         left: left,
-        duration: Durations.short1,
+        duration: Durations.short2,
         curve: Curves.linearToEaseOut,
         child: MouseRegion(
           cursor: dragging ? defaultDraggingCursor : defaultCursor,
-          child: GestureDetector(
-            dragStartBehavior: DragStartBehavior.down,
-            onLongPressStart: onLongPressStart,
-            onLongPressEnd: onLongPressEnd,
-            onLongPressMoveUpdate: onLongPressMoveUpdate,
+          child: dragGestureDetector(
             child: IgnorePointer(
               ignoring: dragging,
               child: SizeChangedLayoutNotifier(child: widget.builder(context, dragging)),
