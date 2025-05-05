@@ -1,0 +1,196 @@
+name: brew_kettle_dashboard
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 0.0.1+1
+
+environment:
+  sdk: ^3.7.0
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_localizations:
+    sdk: flutter
+
+  # Collections and utilities functions and classes related to collections.
+  collection: ^1.19.0
+
+  # MobX is a library for reactively managing the state of your applications. Use the power of observables, actions, and reactions to supercharge your Dart and Flutter apps.
+  mobx: ^2.5.0
+
+  # Flutter integration for MobX. It provides a set of Observer widgets that automatically rebuild when the tracked observables change.
+  flutter_mobx: ^2.3.0
+
+  # A powerful HTTP networking package, supports Interceptors, Aborting and canceling a request, Custom adapters, Transformers, etc. 
+  dio: ^5.7.0
+
+  # StreamChannel wrappers for WebSockets. Provides a cross-platform WebSocketChannel API, a cross-platform implementation of that API that communicates over an underlying StreamChannel.
+  web_socket_channel: ^3.0.0
+
+  # Simple direct Service Locator that allows to decouple the interface from a concrete implementation and to access the concrete implementation from everywhere in your App"
+  get_it: ^8.0.0
+
+  # Flutter plugin for reading and writing simple key-value pairs. Wraps NSUserDefaults on iOS and SharedPreferences on Android.
+  shared_preferences: ^2.5.0
+
+  # Contains code to deal with internationalized/localized messages, date and number formatting and parsing, bi-directional text, and other internationalization issues.
+  intl: ^0.19.0
+
+  # Dart package for performing mDNS queries (e.g. Bonjour, Avahi).
+  multicast_dns: ^0.3.3
+
+  # RFC4122 (v1, v4, v5, v6, v7, v8) UUID Generator and Parser for Dart.
+  uuid: ^4.5.0
+
+  # A declarative router for Flutter based on Navigation 2 supporting deep linking, data-driven routes and more.
+  go_router: ^15.1.0
+
+  # This package provides over 7000+ material icons from the Material Design Icons (MDI) project.
+  flutter_material_design_icons: ^1.1.7447
+  
+  # Provides a collection of Flutter grids layouts (staggered, masonry, quilted, woven, etc.).
+  flutter_staggered_grid_view: ^0.7.0
+
+  # A grammar of data visualization and Flutter charting library.
+  graphic: ^2.5.0
+
+  # Toastification is a Flutter package that allows you to easily show toast and notification messages in your application.
+  toastification: ^3.0.0
+
+  # Flutter plugin for querying information about the application package, such as CFBundleVersion on iOS or versionCode on Android.
+  package_info_plus: ^8.3.0
+
+  # A dynamic parser framework to build efficient grammars and parsers quickly.
+  petitparser: ^6.1.0
+
+  # Flutter plugin for launching a URL. Supports web, phone, SMS, and email schemes.
+  url_launcher: ^6.3.0
+
+  # This plugin allows Flutter desktop apps to resizing and repositioning the window.
+  window_manager: ^0.4.3
+
+  # Fancy pre-built animations that can easily be integrated into any Flutter application.
+  animations: ^2.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^5.0.0
+
+  # Code generator for MobX that adds support for annotating your code with @observable, @computed, @action and also creating Store classes.
+  mobx_codegen: ^2.7.0
+
+  # A build system for Dart code generation and modular compilation.
+  build_runner: ^2.4.0
+
+  # This package provides a library that performs static analysis of Dart code.
+  analyzer: ^6.11.0
+
+
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+  generate: true
+  
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: false
+
+  
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/fonts/
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/to/resolution-aware-images
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/to/asset-from-package
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  fonts:
+    - family: "Nunito Sans"
+      fonts:
+        - asset: assets/fonts/NunitoSans/NunitoSans-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/NunitoSans/NunitoSans-Light.ttf
+          weight: 300
+        - asset: assets/fonts/NunitoSans/NunitoSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/NunitoSans/NunitoSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/NunitoSans/NunitoSans-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/NunitoSans/NunitoSans-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/NunitoSans/NunitoSans-Black.ttf
+          weight: 900
+        - asset: assets/fonts/NunitoSans/NunitoSans-ExtraLightItalic.ttf
+          weight: 200
+          style: italic
+        - asset: assets/fonts/NunitoSans/NunitoSans-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/NunitoSans/NunitoSans-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/NunitoSans/NunitoSans-SemiBoldItalic.ttf
+          weight: 600
+          style: italic
+        - asset: assets/fonts/NunitoSans/NunitoSans-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/NunitoSans/NunitoSans-ExtraBoldItalic.ttf
+          weight: 800
+          style: italic
+        - asset: assets/fonts/NunitoSans/NunitoSans-BlackItalic.ttf
+          weight: 900
+          style: italic
+
+    - family: "Fira Mono"
+      fonts:
+        - asset: assets/fonts/FiraMono/FiraMono-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/FiraMono/FiraMono-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/FiraMono/FiraMono-Bold.ttf
+          weight: 700
+  
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/to/font-from-package

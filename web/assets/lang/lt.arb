@@ -1,0 +1,168 @@
+{
+  "@@locale": "lt",
+  "generalIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@generalIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "generalDate": "Data",
+  "generalTemperature": "Temperatūra",
+  "generalTargetTemperature": "Tikslo temperatūra",
+  "generalPower": "Galia",
+  "generalError": "Klaida",
+  "generalInfo": "Informacija",
+  "generalSuccess": "Įvykdyta",
+  "generalWarning": "Įspėjimas",
+  "generalVersion": "Versija",
+  "generalSave": "Išsaugoti",
+  "generalChange": "Pakeisti",
+  "generalLogout": "Atsijungti",
+  "generalExit": "Išeiti",
+  "generalGoBack": "Grįžti Atgal",
+  "formValidationRequired": "Šis laukelis privalomas",
+  "formValidationMustBeNumber": "Šiame laukelyje turi būti skaičius",
+  "formValidationMustBePositive": "Šiame laukelyje turi būti teigiamas skaičius",
+  "formValidationMustBeGreaterThan": "Reikšmė turi būti didesnė nei {value}",
+  "formValidationMustBeNotGreaterThan": "Reikšmė turi būti ne didesnė nei {value}",
+  "formValidationMustBeLessThan": "Reikšmė turi būti mažesnė nei {value}",
+  "formValidationMustBeNotLessThan": "Reikšmė turi būti ne mažesnė nei {value}",
+  "exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "exceptionUnknown": "Įvyko nežinoma klaida.",
+  "exceptionFailedToConnectToDevice": "Nepavyko prisijungti prie įrenginio.",
+  "exceptionDeviceConnectionTimeout": "Nepavyko prisijungti prie įrenginio. Patikrinkite įrenginį ar pateiktą adresą.",
+  "exceptionAddressLookupFailed": "Nepavyko prisijungti prie įrenginio. Patikrinkite interneto ryšį ar pateiktą įrenginio adresą.",
+  "exceptionConnectionRefused": "Nepavyko prisijungti prie įrenginio. Patikrinkite pateiktą įrenginio adresą.",
+  "exceptionHttpConnectionTimeout": "Laikas užklausai į įrenginio serverį baigėsi. Patikrinkite tinklo ryšį.",
+  "exceptionHttpSendTimeout": "Laikas užklausai į įrenginio serverį baigėsi. Patikrinkite tinklo ryšį.",
+  "exceptionHttpReceiveTimeout": "Laikas užklausai gauti iš įrenginio serverio baigėsi. Patikrinkite tinklo ryšį.",
+  "exceptionHttpBadCertificate": "Užklausa nepavyko. Blogas sertifikatas buvo pateiktas serveriui. Ši klaida neturėjo nutikti. Apie tai praneškite programinės įrangos kurėjams.",
+  "exceptionHttpBadResponse": "Netikėtas atsakas iš įrenginio serverio ({code}). Užklausa nepavyko. Ši klaida neturėjo nutikti. Apie tai praneškite programinės įrangos kurėjams.",
+  "@exceptionHttpBadResponse": {
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "description": "HTTP response code",
+        "example": "400"
+      }
+    }
+  },
+  "exceptionHttpCancel": "Užklausa buvo atšaukta. Ši klaida neturėjo nutikti. Apie tai praneškite programinės įrangos kurėjams.",
+  "exceptionHttpConnectionError": "Nepavyko prisijungti prie įrenginio serverio. Patikrinkite tinklo ryšį.",
+  "exceptionHttpUnknown": "Įvyko netikėta tinklo problema. Tai gali būti interneto ryšio arba įrenginio serverio sutrikimai.",
+  "connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "connectButtonLabel": "Prisijungti",
+  "scanButtonLabel": "Ieškoti",
+  "deviceIpAddressFormLabel": "Įrenginio IP adresas",
+  "deviceIpAddressFormHelper": "Pavyzdžiui: \"{address}\"",
+  "@deviceIpAddressFormHelper": {
+    "placeholders": {
+      "address": {
+        "type": "String",
+        "example": "ws://0.0.0.0"
+      }
+    }
+  },
+  "deviceIpFormValidationRequired": "Įveskite IP adresą",
+  "mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "mainGraphInfoTitle": "Temperatūros ir galios grafikas",
+  "mainGraphInfoText": "Grafike rodomi kaitintuvo duomenys {hours} {hours, plural, =1{valandos} other{valandų}}, kas {seconds} {seconds, plural, =1{sekundę} other{sekundžių}}.\nSpausdami ant grafiko taškų, pamatysite detalesnius to laiko duomenis.",
+  "mainGraphInfoLegend": "Linijų legenda",
+  "heaterControlIncreaseTemperature": "Padininti temperatūrą",
+  "heaterControlDecreaseTemperature": "Sumažinti temperatūrą",
+  "heaterControlIncreasePower": "Padidinti galią",
+  "heaterControlDecreasePower": "Sumažinti galią",
+  "heaterControlCardLabelIdle": "Ramybės būsena",
+  "heaterControlCardLabelAutotune": "Automatinis PID derinimas",
+  "heaterControlCardLabelError": "Įvyko klaida",
+  "heaterControlCardMessageError": "Įvyko klaida virintuvo valdiklyje, pabandykite perkraukite valdiklius.",
+  "heaterControlCardLabelStatusUnknown": "Statusas nežinomas",
+  "heaterControlCardMessageStatusUnknown": "Įvyko klaida - virintuvo valdiklio būsena nežinoma, pabandykite perkrauti aplikaciją ir abu valdiklius.",
+  "heaterControlCardLabelConfiguring": "Konfigūruojama...",
+  "heaterControlCardMessageConfiguring": "Laukiama, kol bus sukonfigūruotas virintuvo valdiklis. Tai turėtų užtrukti kelias sekundes.",
+  "heaterControlSelectButtonLabel": "{mode, select, idle {Ramybės būsena} heating_manual {Galia} heating_pid {Temperatūra} other {Nežinoma}}",
+  "@heaterControlSelectButtonLabel": {
+    "description": "Label for heater control select button",
+    "placeholders": {
+      "mode": {
+        "type": "String",
+        "description": "Current mode of the heater control",
+        "example": "idle"
+      }
+    }
+  },
+  "heaterControlSelectButtonTooltip": "Kaitinimo būdas - {mode, select, idle {ramybės būsena} heating_manual {pastovi galia} heating_pid {PID} autotune_pid {automatinis derinimas} null {nėra} other {nežinoma}}",
+  "@heaterControlSelectButtonTooltip": {
+    "placeholders": {
+      "mode": {
+        "type": "String",
+        "description": "Current mode of the heater control",
+        "example": "idle"
+      }
+    }
+  },
+  "sliderContainerDragTooltip": "Tempkite, kad pakeistumėte vertę",
+  "devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "devicesCommunicationController": "Komunikacijos valdiklis",
+  "devicesSecureVersion": "Saugi versija",
+  "devicesCompileTime": "Kompiliavimo laikas",
+  "devicesScreenshot": "Ekrano vaizdas",
+  "devicesScreenshotRefreshTooltip": "Atnaujinti ekrano vaizdą",
+  "devicesCommunicationLog": "Komunikacijos išrašas",
+  "devicesShowMoreLogTooltip": "Rodyti visas žinutes",
+  "devicesHeaterController": "Virintuvo valdiklis",
+  "devicesPid": "PID reguliatorius",
+  "devicesPidProportionalGain": "Perdavimo koeficientas",
+  "devicesPidIntegralGain": "Integruojančios grandies laiko konstanta",
+  "devicesPidDerivativeGain": "Diferencijuojančios grandies laiko konstanta",
+  "devicesFormHelperText": "Maksimali galima reikšmė {value}",
+  "settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "settingsTitle": "Nustatymai",
+  "settingsSectionGeneralTitle": "Bendri",
+  "settingsLanguage": "Kalba",
+  "languageSelectDialogTitle": "Pasirinkite kalbą",
+  "settingsInputLanguage": "{locale, select, lt {Lietuvių} en {Anglų} lv {Latvių} other {nežinoma}}",
+  "@settingsInputLanguage": {
+    "placeholders": {
+      "locale": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsTheme": "Tema",
+  "themeSelectDialogTitle": "Pasirinkite temą",
+  "settingsThemeNames": "{theme, select, light {Šviesi} lightMediumContrast {Šviesi - vidutinio kontrasto} lightHighContrast {Šviesi - didelio kontrasto} dark {Tamsi} darkMediumContrast {Tamsi - vidutinio kontrasto} darkHighContrast {Tamsi - didelio kontrasto} system {Pagal įrenginio temą} other {Nežinoma tema}}",
+  "@settingsThemeNames": {
+    "placeholders": {
+      "theme": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsAdvancedMode": "Išplėstinė režimas",
+  "settingsAdvancedModeTooltip": "Įjungus bus pasiekiamas funkcionalumas, skirtas programos derinimui ir testavimui.",
+  "layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "layoutItemHome": "Pagrindinis",
+  "layoutItemDevices": "Įrenginiai",
+  "layoutItemSettings": "Nustatymai",
+  "errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "notFoundText": "Puslapis nerastas",
+  "infoScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@infoScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "infoScreenTitle": "Informacija",
+  "aboutTitle": "Apie",
+  "faqTitle": "Dažniausiai užduodami klausimai",
+  "faqQuestion1": "Klausimas 1",
+  "faqAnswer1": "Atsakymas 1",
+  "faqQuestion2": "Klausimas 2",
+  "faqAnswer2": "Atsakymas 2",
+  "faqQuestion3": "Klausimas 3",
+  "faqAnswer3": "Atsakymas 3",
+  "faqQuestion4": "Klausimas 4",
+  "faqAnswer4": "Atsakymas 4",
+  "faqQuestion5": "Klausimas 5",
+  "faqAnswer5": "Atsakymas 5"
+}
