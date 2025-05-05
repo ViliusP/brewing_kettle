@@ -277,7 +277,6 @@ class _DebugFab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = ColorScheme.of(context);
-
     return IconButton.outlined(
       onPressed: () {
         DrawerMenu.show(
@@ -289,21 +288,11 @@ class _DebugFab extends StatelessWidget {
         );
       },
       style: IconButton.styleFrom(
-        backgroundColor: colorScheme.surfaceContainerHighest,
-        iconSize: 42,
-        padding: EdgeInsets.all(12),
-        foregroundColor: colorScheme.onSurfaceVariant,
-      ).copyWith(
-        side: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-          if (states.contains(WidgetState.selected)) {
-            return null;
-          } else {
-            if (states.contains(WidgetState.disabled)) {
-              return BorderSide(color: colorScheme.onSurface.withAlpha(30), width: 1);
-            }
-            return BorderSide(color: colorScheme.outline, width: 2);
-          }
-        }),
+        backgroundColor: colorScheme.surface,
+        iconSize: 36,
+        padding: EdgeInsets.all(14),
+        foregroundColor: colorScheme.inverseSurface,
+        side: BorderSide(width: 1, color: colorScheme.inverseSurface),
       ),
       icon: Icon(MdiIcons.wrenchOutline),
     );

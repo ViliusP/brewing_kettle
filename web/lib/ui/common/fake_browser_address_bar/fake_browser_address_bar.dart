@@ -34,11 +34,19 @@ class _FakeBrowserAddressBarState extends State<FakeBrowserAddressBar> {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = ColorScheme.of(context);
+
     return SizedBox(
       width: 300,
       child: TextFormField(
         controller: controller,
-        decoration: InputDecoration(border: OutlineInputBorder(), label: const Text("URL")),
+        decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(width: 2, color: colorScheme.outline),
+          ),
+          border: OutlineInputBorder(borderSide: BorderSide(width: 1, color: colorScheme.outline)),
+          label: const Text("URL"),
+        ),
         onFieldSubmitted: (value) => widget.router.push(value),
       ),
     );
