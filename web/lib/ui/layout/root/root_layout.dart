@@ -15,6 +15,7 @@ import 'package:brew_kettle_dashboard/ui/layout/root/metrics_box.dart';
 import 'package:brew_kettle_dashboard/ui/routing.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
@@ -214,50 +215,57 @@ class _RootLayoutState extends State<RootLayout> {
   @override
   Widget build(BuildContext context) {
     if (kDebugMode) {
-      return Stack(
-        children: [
-          widget.child,
-          Observer(
-            builder: (context) {
-              return FloatingDraggable(
-                builder: fakeUrlBarBuilder(appConfigurationStore.fakeBrowserBarEnabled),
-                onDragEvent: onUrlBarDragEvent,
-                initialPosition: appConfigurationStore.fakeBrowserAddressBarPosition,
-              );
-            },
-          ),
-          Observer(
-            builder: (context) {
-              return FloatingDraggable(
-                builder: debugFabBuilder(appConfigurationStore.isAdvancedMode),
-                initialPosition: Offset.zero,
-              );
-            },
-          ),
-          Observer(
-            builder: (context) {
-              return FloatingDraggable(
-                builder: metricsBoxBuilder(appConfigurationStore.metricsBoxEnabled),
-                initialPosition: Offset.zero,
-              );
-            },
-          ),
-          Observer(
-            builder: (context) {
-              if (appConfigurationStore.globalPointerPositionMetricEnabled) {
-                return Positioned.fill(
-                  child: MouseRegion(
-                    hitTestBehavior: HitTestBehavior.translucent,
-                    onHover: (event) {
-                      appDebuggingStore.setPointerPosition(event.position);
-                    },
-                  ),
+      return CallbackShortcuts(
+        bindings: <ShortcutActivator, VoidCallback>{
+          const SingleActivator(LogicalKeyboardKey.keyD, control: true): () {
+            appConfigurationStore.toggleAdvancedMode();
+          },
+        },
+        child: Stack(
+          children: [
+            widget.child,
+            Observer(
+              builder: (context) {
+                return FloatingDraggable(
+                  builder: fakeUrlBarBuilder(appConfigurationStore.fakeBrowserBarEnabled),
+                  onDragEvent: onUrlBarDragEvent,
+                  initialPosition: appConfigurationStore.fakeBrowserAddressBarPosition,
                 );
-              }
-              return SizedBox.shrink();
-            },
-          ),
-        ],
+              },
+            ),
+            Observer(
+              builder: (context) {
+                return FloatingDraggable(
+                  builder: debugFabBuilder(appConfigurationStore.isAdvancedMode),
+                  initialPosition: Offset.zero,
+                );
+              },
+            ),
+            Observer(
+              builder: (context) {
+                return FloatingDraggable(
+                  builder: metricsBoxBuilder(appConfigurationStore.metricsBoxEnabled),
+                  initialPosition: Offset.zero,
+                );
+              },
+            ),
+            Observer(
+              builder: (context) {
+                if (appConfigurationStore.globalPointerPositionMetricEnabled) {
+                  return Positioned.fill(
+                    child: MouseRegion(
+                      hitTestBehavior: HitTestBehavior.translucent,
+                      onHover: (event) {
+                        appDebuggingStore.setPointerPosition(event.position);
+                      },
+                    ),
+                  );
+                }
+                return SizedBox.shrink();
+              },
+            ),
+          ],
+        ),
       );
     }
 

@@ -29,7 +29,7 @@ abstract class _AppConfigurationStore with Store {
   bool _fakeBrowserBarEnabled = true;
 
   @computed
-  bool get fakeBrowserBarEnabled => _fakeBrowserBarEnabled;
+  bool get fakeBrowserBarEnabled => _fakeBrowserBarEnabled && isAdvancedMode;
 
   Offset _fakeBrowserAddressBarPosition = Offset.zero;
 
@@ -52,6 +52,12 @@ abstract class _AppConfigurationStore with Store {
   void setAdvancedMode(bool value) {
     _isAdvancedMode = value;
     _repository.sharedPreferences.setAdvancedMode(value);
+  }
+
+  @action
+  void toggleAdvancedMode() {
+    _isAdvancedMode = !_isAdvancedMode;
+    _repository.sharedPreferences.setAdvancedMode(_isAdvancedMode);
   }
 
   void setFakeUrlBarPosition(Offset value) {

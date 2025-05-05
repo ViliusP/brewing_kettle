@@ -19,12 +19,16 @@ class DebugMenu extends StatelessWidget {
         width: 400,
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: Text("Debug Settings", style: textTheme.titleLarge),
+            Padding(padding: const EdgeInsets.symmetric(vertical: 8.0)),
+            Text("Debug Settings", style: textTheme.titleLarge),
+            Text(
+              "Information: you can toggle debug tools using ctrl+D",
+              style: textTheme.bodySmall,
             ),
+            Padding(padding: const EdgeInsets.symmetric(vertical: 8.0)),
             const _DebugSettings(),
             Spacer(),
+
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: FilledButton.tonalIcon(
