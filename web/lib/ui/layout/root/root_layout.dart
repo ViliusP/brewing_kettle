@@ -11,6 +11,8 @@ import 'package:brew_kettle_dashboard/ui/common/snackbar/snackbar.dart';
 import 'package:brew_kettle_dashboard/ui/routing.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobx/mobx.dart';
 
@@ -90,14 +92,56 @@ class _RootLayoutState extends State<RootLayout> {
       scale: draggable ? 1.05 : 1,
       duration: Durations.short2,
       curve: Curves.easeInOut,
+      alignment: Alignment.center,
       child: AnimatedContainer(
         padding: const EdgeInsets.all(8),
         duration: Durations.medium2,
         curve: Curves.easeInOut,
+        alignment: Alignment.center,
         decoration: boxDecoration,
         child: FakeBrowserAddressBar(router: GoRouter.of(context)),
       ),
     );
+  }
+
+  Widget Function(BuildContext, bool) debugFabBuilder(bool show) {
+    final ColorScheme colorScheme = ColorScheme.of(context);
+
+    return (BuildContext context, bool draggable) {
+      final BoxDecoration boxDecoration = switch (draggable) {
+        true => BoxDecoration(
+          border: Border.all(color: colorScheme.errorContainer, width: 2),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        false => BoxDecoration(borderRadius: BorderRadius.circular(0)),
+      };
+
+      double scale = draggable ? 1.25 : 1;
+      final double opacity = show ? 1 : 0;
+
+      if (!show) {
+        scale = 0;
+      }
+
+      return AnimatedOpacity(
+        opacity: opacity,
+        duration: Durations.short2,
+        curve: Curves.easeInOut,
+        child: AnimatedScale(
+          scale: scale,
+          duration: Durations.short2,
+          curve: Curves.easeInOut,
+          child: AnimatedContainer(
+            padding: const EdgeInsets.all(8),
+            duration: Durations.medium2,
+            transformAlignment: Alignment.center,
+            curve: Curves.easeInOut,
+            decoration: boxDecoration,
+            child: _DebugFab(),
+          ),
+        ),
+      );
+    };
   }
 
   void onExceptionOccured(AppException? exception) {
@@ -117,6 +161,14 @@ class _RootLayoutState extends State<RootLayout> {
             onDragEvent: onUrlBarDragEvent,
             initialPosition: appConfigurationStore.fakeBrowserAddressBarPosition,
           ),
+          Observer(
+            builder: (context) {
+              return FloatingDraggable(
+                builder: debugFabBuilder(appConfigurationStore.isAdvancedMode),
+                initialPosition: Offset.zero,
+              );
+            },
+          ),
         ],
       );
     }
@@ -128,5 +180,38 @@ class _RootLayoutState extends State<RootLayout> {
   void dispose() {
     onErrorReaction?.call();
     super.dispose();
+  }
+}
+
+class _DebugFab extends StatelessWidget {
+  const _DebugFab();
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme colorScheme = ColorScheme.of(context);
+
+    return IconButton.outlined(
+      onPressed: () {
+        print("hello");
+      },
+      style: IconButton.styleFrom(
+        backgroundColor: colorScheme.surfaceContainerHighest,
+        iconSize: 42,
+        padding: EdgeInsets.all(12),
+        foregroundColor: colorScheme.onSurfaceVariant,
+      ).copyWith(
+        side: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return null;
+          } else {
+            if (states.contains(WidgetState.disabled)) {
+              return BorderSide(color: colorScheme.onSurface.withAlpha(30), width: 1);
+            }
+            return BorderSide(color: colorScheme.outline, width: 2);
+          }
+        }),
+      ),
+      icon: Icon(MdiIcons.wrenchOutline),
+    );
   }
 }
