@@ -163,7 +163,15 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
   void setWidgetSize() {
     final RenderBox? widgetBox = context.findRenderObject() as RenderBox?;
     if (widgetBox != null) {
-      widgetSize = widgetBox.size;
+      Size newSize = widgetBox.size;
+      Size oldSize = widgetSize;
+      if (newSize != oldSize) {
+        Offset offsetAdjustment = ((newSize - oldSize) as Offset) / 2;
+        pointerOffset = pointerOffset + offsetAdjustment;
+        left = left - offsetAdjustment.dx;
+        top = top - offsetAdjustment.dy;
+        widgetSize = newSize;
+      }
     }
   }
 
@@ -223,19 +231,32 @@ class _FloatingDraggableState extends State<FloatingDraggable> with WindowListen
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedPositioned(
-      top: top,
-      left: left,
-      duration: Durations.short1,
-      curve: Curves.linearToEaseOut,
-      child: MouseRegion(
-        cursor: dragging ? defaultDraggingCursor : defaultCursor,
-        child: GestureDetector(
-          dragStartBehavior: DragStartBehavior.down,
-          onLongPressStart: onLongPressStart,
-          onLongPressEnd: onLongPressEnd,
-          onLongPressMoveUpdate: onLongPressMoveUpdate,
-          child: IgnorePointer(ignoring: dragging, child: widget.builder(context, dragging)),
+    return NotificationListener(
+      onNotification: (SizeChangedLayoutNotification notification) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setWidgetSize();
+          setState(() {});
+        });
+
+        return true;
+      },
+      child: AnimatedPositioned(
+        top: top,
+        left: left,
+        duration: Durations.short1,
+        curve: Curves.linearToEaseOut,
+        child: MouseRegion(
+          cursor: dragging ? defaultDraggingCursor : defaultCursor,
+          child: GestureDetector(
+            dragStartBehavior: DragStartBehavior.down,
+            onLongPressStart: onLongPressStart,
+            onLongPressEnd: onLongPressEnd,
+            onLongPressMoveUpdate: onLongPressMoveUpdate,
+            child: IgnorePointer(
+              ignoring: dragging,
+              child: SizeChangedLayoutNotifier(child: widget.builder(context, dragging)),
+            ),
+          ),
         ),
       ),
     );
