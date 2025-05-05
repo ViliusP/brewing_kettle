@@ -4,6 +4,8 @@ import 'package:brew_kettle_dashboard/core/data/models/timeseries/timeseries.dar
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
+import 'package:brew_kettle_dashboard/ui/common/drawer_menu.dart';
+import 'package:brew_kettle_dashboard/ui/screens/main/tiles/heater_graph_settings_menu.dart';
 import 'package:brew_kettle_dashboard/ui/screens/main/tiles/history_graph_info.dart';
 import 'package:brew_kettle_dashboard/utils/list_extensions.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +29,7 @@ class _HeaterDataGraphState extends State<HeaterDataGraph> {
 
   @override
   Widget build(BuildContext context) {
-    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final ColorScheme colorScheme = ColorScheme.of(context);
 
     return Stack(
       children: [
@@ -60,25 +62,17 @@ class _HeaterDataGraphState extends State<HeaterDataGraph> {
             },
           ),
         ),
+
         Padding(
           padding: const EdgeInsets.all(4.0),
           child: Align(
             alignment: Alignment.topRight,
-            child: Material(
-              type: MaterialType.button,
-              shape: CircleBorder(),
-              clipBehavior: Clip.hardEdge,
-              color: Colors.transparent,
-              child: MouseRegion(
-                cursor: SystemMouseCursors.help,
-                hitTestBehavior: HitTestBehavior.opaque,
-                onEnter: (_) => setState(() => _showInfo = true),
-                onExit: (_) => setState(() => _showInfo = false),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Icon(MdiIcons.informationBoxOutline, size: 32),
-                ),
-              ),
+            child: _HeaterChartControlButtons(
+              onInfoHover: (value) {
+                setState(() {
+                  _showInfo = value;
+                });
+              },
             ),
           ),
         ),
@@ -404,4 +398,42 @@ class _ChartSelections {
     variable: 'date',
     dim: Dim.x,
   );
+}
+
+class _HeaterChartControlButtons extends StatelessWidget {
+  final Function(bool)? onInfoHover;
+
+  const _HeaterChartControlButtons({this.onInfoHover});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          style: ButtonStyle(
+            splashFactory: NoSplash.splashFactory,
+            overlayColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+              if (states.contains(WidgetState.pressed)) {
+                return const Color.fromARGB(0, 0, 0, 0);
+              }
+              return null; // Use the component's default.
+            }),
+          ),
+          onPressed: () {},
+          icon: Icon(MdiIcons.helpCircleOutline, size: 32),
+          mouseCursor: SystemMouseCursors.help,
+          onHover: onInfoHover,
+        ),
+
+        IconButton(
+          onPressed: () {
+            DrawerMenu.show(context: context, builder: (context) => HeaterGraphSettingsMenu());
+          },
+          icon: Icon(MdiIcons.dotsVerticalCircleOutline),
+          iconSize: 32,
+        ),
+      ],
+    );
+  }
 }
