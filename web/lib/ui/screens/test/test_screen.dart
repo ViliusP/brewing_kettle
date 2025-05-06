@@ -2,7 +2,7 @@ import 'package:brew_kettle_dashboard/ui/common/better_range_slider/better_slide
 import 'package:brew_kettle_dashboard/ui/common/better_range_slider/range.dart';
 import 'package:brew_kettle_dashboard/ui/common/interactive_ink_response/widget_interaction_controller.dart';
 import 'package:brew_kettle_dashboard/ui/common/interactive_ink_response/interactive_ink_response.dart';
-import 'package:brew_kettle_dashboard/ui/common/utilities/number_text_to_icons.dart';
+import 'package:brew_kettle_dashboard/utils/number_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 
@@ -420,7 +420,7 @@ class _SliderUnit extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 10.0, right: 16),
               child: Text(
-                numberTextToIcons(number),
+                number.toIconCodePoints(),
                 style: TextTheme.of(context).labelSmall?.copyWith(fontSize: 8),
               ),
             ),
