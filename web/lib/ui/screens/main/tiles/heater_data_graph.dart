@@ -4,7 +4,7 @@ import 'package:brew_kettle_dashboard/core/data/models/timeseries/timeseries.dar
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
-import 'package:brew_kettle_dashboard/ui/common/drawer_menu.dart';
+import 'package:brew_kettle_dashboard/ui/common/drawer_menu/drawer_menu.dart';
 import 'package:brew_kettle_dashboard/ui/screens/main/tiles/heater_graph_settings_menu.dart';
 import 'package:brew_kettle_dashboard/ui/screens/main/tiles/history_graph_info.dart';
 import 'package:brew_kettle_dashboard/utils/list_extensions.dart';
@@ -425,7 +425,6 @@ class _HeaterChartControlButtons extends StatelessWidget {
           mouseCursor: SystemMouseCursors.help,
           onHover: onInfoHover,
         ),
-
         IconButton(
           onPressed: () {
             DrawerMenu.show(context: context, builder: (context) => HeaterGraphSettingsMenu());

@@ -6,7 +6,7 @@ import 'package:brew_kettle_dashboard/stores/app_configuration/app_configuration
 import 'package:brew_kettle_dashboard/stores/app_debugging/app_debugging_store.dart';
 import 'package:brew_kettle_dashboard/stores/exception/exception_store.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
-import 'package:brew_kettle_dashboard/ui/common/drawer_menu.dart';
+import 'package:brew_kettle_dashboard/ui/common/drawer_menu/drawer_menu.dart';
 import 'package:brew_kettle_dashboard/ui/common/fake_browser_address_bar/fake_browser_address_bar.dart';
 import 'package:brew_kettle_dashboard/ui/common/floating_draggable/floating_draggable.dart';
 import 'package:brew_kettle_dashboard/ui/common/snackbar/snackbar.dart';
