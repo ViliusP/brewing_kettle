@@ -1,5 +1,8 @@
+import 'package:brew_kettle_dashboard/ui/common/better_range_slider/better_slider.dart';
+import 'package:brew_kettle_dashboard/ui/common/better_range_slider/range.dart';
 import 'package:brew_kettle_dashboard/ui/common/interactive_ink_response/widget_interaction_controller.dart';
 import 'package:brew_kettle_dashboard/ui/common/interactive_ink_response/interactive_ink_response.dart';
+import 'package:brew_kettle_dashboard/ui/common/utilities/number_text_to_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 
@@ -9,17 +12,23 @@ class TestScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Text Weights')),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _FontTest(),
-            Padding(padding: EdgeInsets.symmetric(vertical: 32)),
-            Divider(),
-            Text("Interactive Ink Response", style: TextTheme.of(context).headlineLarge),
-            Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-            _InteractiveInkResponseTest(),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              _FontTest(),
+              Padding(padding: EdgeInsets.symmetric(vertical: 32)),
+              Divider(),
+              Text("Interactive Ink Response", style: TextTheme.of(context).headlineLarge),
+              Padding(padding: EdgeInsets.symmetric(vertical: 8)),
+              _InteractiveInkResponseTest(),
+              Padding(padding: EdgeInsets.symmetric(vertical: 32)),
+              Divider(),
+              Text("Better Slider", style: TextTheme.of(context).headlineLarge),
+              _BetterSliderPlayground(),
+            ],
+          ),
         ),
       ),
     );
@@ -54,8 +63,9 @@ class _InteractiveInkResponseTestState extends State<_InteractiveInkResponseTest
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          runSpacing: 8,
           spacing: 16,
           children: [
             OutlinedButton(
@@ -302,6 +312,120 @@ class _FontTest extends StatelessWidget {
             fontWeight: FontWeight.w900,
             fontVariations: [FontVariation('wght', 900)],
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class _BetterSliderPlayground extends StatefulWidget {
+  const _BetterSliderPlayground();
+
+  @override
+  State<_BetterSliderPlayground> createState() => __BetterSliderPlaygroundState();
+}
+
+class __BetterSliderPlaygroundState extends State<_BetterSliderPlayground> {
+  double value0 = 50;
+  double value1 = 25.5;
+  double value2 = 2;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _SliderUnit(
+          number: 0,
+          slider: Slider(
+            min: 2,
+            max: 100,
+            value: value0,
+            onChanged: (double value) {
+              setState(() {
+                value0 = value;
+              });
+            },
+          ),
+        ),
+        _SliderUnit(
+          number: 10,
+          slider: BetterSlider(
+            onChanged: (double value) {
+              value1 = value;
+              setState(() {});
+            },
+            limits: NumericalRange(-100, 100),
+            value: value1,
+          ),
+          description: "Enabled, controllable (-100;100)",
+        ),
+        _SliderUnit(
+          number: 1,
+          slider: BetterSlider(onChanged: (_) {}, limits: NumericalRange(2, 100), value: value0),
+          description: "Enabled, synchronious with 0th slider.",
+        ),
+        _SliderUnit(
+          number: 2,
+          slider: BetterSlider(onChanged: (_) {}, limits: NumericalRange(0, 100), value: 50),
+          description: "Enabled, const value in center",
+        ),
+        _SliderUnit(
+          number: 3,
+          slider: BetterSlider(onChanged: (_) {}, value: 0, limits: NumericalRange<double>(0, 100)),
+          description: "Enabled, min const value.",
+        ),
+        _SliderUnit(
+          number: 4,
+          slider: BetterSlider(onChanged: (_) {}, value: 100, limits: NumericalRange(0, 100)),
+          description: "Enabled, max const value.",
+        ),
+        _SliderUnit(
+          number: 5,
+          slider: BetterSlider(onChanged: null, limits: NumericalRange(0, 100), value: 50),
+          description: "Disabled, const value in center",
+        ),
+        _SliderUnit(
+          number: 6,
+          slider: BetterSlider(onChanged: null, value: 0, limits: NumericalRange<double>(0, 100)),
+          description: "Disabled, min const value.",
+        ),
+        _SliderUnit(
+          number: 7,
+          slider: BetterSlider(onChanged: null, value: 100, limits: NumericalRange(0, 100)),
+          description: "Disabled, max const value.",
+        ),
+      ],
+    );
+  }
+}
+
+class _SliderUnit extends StatelessWidget {
+  final Widget slider;
+  final int number;
+  final String description;
+
+  const _SliderUnit({required this.slider, required this.number, this.description = ""});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        if (description.isNotEmpty) ...[
+          Padding(padding: EdgeInsets.symmetric(vertical: 8)),
+          Text(description, style: TextTheme.of(context).labelSmall),
+          Padding(padding: EdgeInsets.symmetric(vertical: 1)),
+        ],
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 16),
+              child: Text(
+                numberTextToIcons(number),
+                style: TextTheme.of(context).labelSmall?.copyWith(fontSize: 8),
+              ),
+            ),
+            Expanded(child: slider),
+          ],
         ),
       ],
     );
