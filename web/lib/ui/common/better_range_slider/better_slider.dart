@@ -426,7 +426,7 @@ class _BetterRangeSliderState extends State<BetterSlider> {
       slider: true,
       child: Row(
         key: sliderKey,
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         children: [
           Expanded(
             flex: activeFlexValue,
@@ -534,7 +534,15 @@ class _SliderHandle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: padding ?? EdgeInsets.zero,
-      child: Material(color: color, shape: shape, child: SizedBox.fromSize(size: size)),
+      child: Material(
+        color: color,
+        shape: shape,
+        child: AnimatedSize(
+          duration: Durations.short2,
+          alignment: Alignment.center,
+          child: SizedBox.fromSize(size: size),
+        ),
+      ),
     );
   }
 }
