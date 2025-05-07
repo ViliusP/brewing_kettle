@@ -93,6 +93,14 @@ dependencies:
 
   # Fancy pre-built animations that can easily be integrated into any Flutter application.
   animations: ^2.0.0
+    
+  #
+  pagination_control:
+    git:
+      url: https://github.com/ViliusP/flutter_packages.git
+      ref: feature/pagination_control
+      path: packages/pagination_control/
+
 
 dev_dependencies:
   flutter_test:

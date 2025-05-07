@@ -538,6 +538,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.0"
+  pagination_control:
+    dependency: "direct main"
+    description:
+      path: "packages/pagination_control"
+      ref: "feature/pagination_control"
+      resolved-ref: af12650515684aabf9dff9f21cf3e111ef76be67
+      url: "https://github.com/ViliusP/flutter_packages.git"
+    source: git
+    version: "0.0.1"
   path:
     dependency: transitive
     description:

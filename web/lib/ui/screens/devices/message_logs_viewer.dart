@@ -2,13 +2,13 @@ import 'package:brew_kettle_dashboard/constants/theme.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/ui/common/code_view/code_view.dart';
-import 'package:brew_kettle_dashboard/ui/common/pagination_control/pagination_control.dart';
 import 'package:brew_kettle_dashboard/ui/screens/devices/one_sided_rounded_shape.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:pagination_control/pagination_control.dart';
 
 class MessageLogsViewer extends StatefulWidget {
   const MessageLogsViewer({super.key, this.messages = const []});
