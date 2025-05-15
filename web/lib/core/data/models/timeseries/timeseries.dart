@@ -191,42 +191,50 @@ class TimeSeriesEntry<T> {
 }
 
 class AggregationInterval {
-  final int value;
-  final TimeUnit unit;
+  static const int _hoursInDay = 24;
+
+  static const int _daysInWeek = 7;
+  static const int _daysInMonth = 30;
+  static const int _daysInYear = 365;
 
   const AggregationInterval._(this.unit, [this.value = 1]) : assert(value > 0);
 
-  factory AggregationInterval.seconds([int value = 1]) =>
-      AggregationInterval._(TimeUnit.seconds, value);
+  const AggregationInterval.seconds([int value = 1]) : this._(TimeUnit.seconds, value);
+  const AggregationInterval.minutes([int value = 1]) : this._(TimeUnit.minute, value);
+  const AggregationInterval.hours([int value = 1]) : this._(TimeUnit.hour, value);
+  const AggregationInterval.days([int value = 1]) : this._(TimeUnit.day, value);
+  const AggregationInterval.weeks([int value = 1]) : this._(TimeUnit.week, value);
+  const AggregationInterval.month([int value = 1]) : this._(TimeUnit.month, value);
+  const AggregationInterval.year([int value = 1]) : this._(TimeUnit.year, value);
 
-  factory AggregationInterval.minutes([int value = 1]) =>
-      AggregationInterval._(TimeUnit.minute, value);
-
-  factory AggregationInterval.hours([int value = 1]) => AggregationInterval._(TimeUnit.hour, value);
-
-  factory AggregationInterval.days([int value = 1]) => AggregationInterval._(TimeUnit.day, value);
-
-  factory AggregationInterval.weeks([int value = 1]) => AggregationInterval._(TimeUnit.week, value);
-
-  factory AggregationInterval.month([int value = 1]) =>
-      AggregationInterval._(TimeUnit.month, value);
-
-  factory AggregationInterval.year([int value = 1]) => AggregationInterval._(TimeUnit.year, value);
+  final int value;
+  final TimeUnit unit;
 
   int get milliseconds => switch (unit) {
+    TimeUnit.milliseconds => value,
     TimeUnit.seconds => value * 1000,
     TimeUnit.minute => value * 1000 * 60,
     TimeUnit.hour => value * 1000 * 60 * 60,
-    TimeUnit.day => value * 1000 * 60 * 60 * 24,
-    TimeUnit.week => value * 1000 * 60 * 60 * 24 * 7,
-    TimeUnit.month => value * 1000 * 60 * 60 * 24 * 30,
-    TimeUnit.year => value * 1000 * 60 * 60 * 24 * 365,
+    TimeUnit.day => value * 1000 * 60 * 60 * _hoursInDay,
+    TimeUnit.week => value * 1000 * 60 * 60 * _hoursInDay * _daysInWeek,
+    TimeUnit.month => value * 1000 * 60 * 60 * _hoursInDay * _daysInMonth,
+    TimeUnit.year => value * 1000 * 60 * 60 * _hoursInDay * _daysInYear,
   };
 
   @override
   String toString() => 'Every $value ${unit.toString().split('.').last}${value > 1 ? 's' : ''}';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is AggregationInterval && value == other.value && unit == other.unit;
+  }
+
+  @override
+  int get hashCode => value.hashCode ^ unit.hashCode;
 }
 
 enum AggregationMethod { mean, median, max, min, sum, first, last }
 
-enum TimeUnit { seconds, minute, hour, day, week, month, year }
+enum TimeUnit { milliseconds, seconds, minute, hour, day, week, month, year }
