@@ -23,6 +23,35 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
           Computed<List<TimeSeriesViewEntry>>(() => super.stateHistory,
               name: '_HeaterControllerStateStore.stateHistory'))
       .value;
+  Computed<AggregationInterval>? _$aggregationIntervalComputed;
+
+  @override
+  AggregationInterval get aggregationInterval =>
+      (_$aggregationIntervalComputed ??= Computed<AggregationInterval>(
+              () => super.aggregationInterval,
+              name: '_HeaterControllerStateStore.aggregationInterval'))
+          .value;
+  Computed<AggregationMethod>? _$defaultAggregationMethodComputed;
+
+  @override
+  AggregationMethod get defaultAggregationMethod =>
+      (_$defaultAggregationMethodComputed ??= Computed<AggregationMethod>(
+              () => super.defaultAggregationMethod,
+              name: '_HeaterControllerStateStore.defaultAggregationMethod'))
+          .value;
+  Computed<UnmodifiableMapView<HeaterControllerStateField, AggregationMethod>>?
+      _$aggregationMethodsByFieldComputed;
+
+  @override
+  UnmodifiableMapView<HeaterControllerStateField, AggregationMethod>
+      get aggregationMethodsByField =>
+          (_$aggregationMethodsByFieldComputed ??= Computed<
+                      UnmodifiableMapView<HeaterControllerStateField,
+                          AggregationMethod>>(
+                  () => super.aggregationMethodsByField,
+                  name:
+                      '_HeaterControllerStateStore.aggregationMethodsByField'))
+              .value;
   Computed<double?>? _$currentTemperatureComputed;
 
   @override
@@ -94,6 +123,42 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
   set _isModeChanging(bool value) {
     _$_isModeChangingAtom.reportWrite(value, super._isModeChanging, () {
       super._isModeChanging = value;
+    });
+  }
+
+  late final _$_aggregationIntervalAtom = Atom(
+      name: '_HeaterControllerStateStore._aggregationInterval',
+      context: context);
+
+  @override
+  AggregationInterval get _aggregationInterval {
+    _$_aggregationIntervalAtom.reportRead();
+    return super._aggregationInterval;
+  }
+
+  @override
+  set _aggregationInterval(AggregationInterval value) {
+    _$_aggregationIntervalAtom.reportWrite(value, super._aggregationInterval,
+        () {
+      super._aggregationInterval = value;
+    });
+  }
+
+  late final _$_defaultAggregationMethodAtom = Atom(
+      name: '_HeaterControllerStateStore._defaultAggregationMethod',
+      context: context);
+
+  @override
+  AggregationMethod get _defaultAggregationMethod {
+    _$_defaultAggregationMethodAtom.reportRead();
+    return super._defaultAggregationMethod;
+  }
+
+  @override
+  set _defaultAggregationMethod(AggregationMethod value) {
+    _$_defaultAggregationMethodAtom
+        .reportWrite(value, super._defaultAggregationMethod, () {
+      super._defaultAggregationMethod = value;
     });
   }
 
@@ -197,10 +262,50 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
   }
 
   @override
+  void setFieldAggregationMethod(
+      HeaterControllerStateField field, AggregationMethod? method) {
+    final _$actionInfo =
+        _$_HeaterControllerStateStoreActionController.startAction(
+            name: '_HeaterControllerStateStore.setFieldAggregationMethod');
+    try {
+      return super.setFieldAggregationMethod(field, method);
+    } finally {
+      _$_HeaterControllerStateStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setDefaultAggregationMethod(AggregationMethod method) {
+    final _$actionInfo =
+        _$_HeaterControllerStateStoreActionController.startAction(
+            name: '_HeaterControllerStateStore.setDefaultAggregationMethod');
+    try {
+      return super.setDefaultAggregationMethod(method);
+    } finally {
+      _$_HeaterControllerStateStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setAggregationInterval(int seconds) {
+    final _$actionInfo =
+        _$_HeaterControllerStateStoreActionController.startAction(
+            name: '_HeaterControllerStateStore.setAggregationInterval');
+    try {
+      return super.setAggregationInterval(seconds);
+    } finally {
+      _$_HeaterControllerStateStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 isModeChanging: ${isModeChanging},
 stateHistory: ${stateHistory},
+aggregationInterval: ${aggregationInterval},
+defaultAggregationMethod: ${defaultAggregationMethod},
+aggregationMethodsByField: ${aggregationMethodsByField},
 currentTemperature: ${currentTemperature},
 status: ${status},
 targetTemperature: ${targetTemperature},

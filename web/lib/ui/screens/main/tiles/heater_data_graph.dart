@@ -400,10 +400,17 @@ class _ChartSelections {
   );
 }
 
-class _HeaterChartControlButtons extends StatelessWidget {
+class _HeaterChartControlButtons extends StatefulWidget {
   final Function(bool)? onInfoHover;
 
   const _HeaterChartControlButtons({this.onInfoHover});
+
+  @override
+  State<_HeaterChartControlButtons> createState() => _HeaterChartControlButtonsState();
+}
+
+class _HeaterChartControlButtonsState extends State<_HeaterChartControlButtons> {
+  bool drawerOpened = false;
 
   @override
   Widget build(BuildContext context) {
@@ -423,11 +430,22 @@ class _HeaterChartControlButtons extends StatelessWidget {
           onPressed: () {},
           icon: Icon(MdiIcons.helpCircleOutline, size: 32),
           mouseCursor: SystemMouseCursors.help,
-          onHover: onInfoHover,
+          onHover: widget.onInfoHover,
         ),
         IconButton(
           onPressed: () {
-            DrawerMenu.show(context: context, builder: (context) => HeaterGraphSettingsMenu());
+            if (drawerOpened) return;
+
+            drawerOpened = true;
+            DrawerMenu.show(
+              context: context,
+              drawerOptions: DrawerRouteOptions(dragToDismiss: true),
+              builder: (context) => HeaterGraphSettingsMenu(),
+            ).then((_) {
+              if (mounted) {
+                drawerOpened = false;
+              }
+            });
           },
           icon: Icon(MdiIcons.dotsVerticalCircleOutline),
           iconSize: 32,

@@ -31,6 +31,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           child: Center(
             child: SizedBox(
+              // TODO: find a place for this magic number.
               width: 1060,
               child: Row(
                 mainAxisSize: MainAxisSize.min,

@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:developer';
 
 import 'package:brew_kettle_dashboard/core/data/models/store/ws_listener.dart';
@@ -42,11 +43,39 @@ abstract class _HeaterControllerStateStore with Store {
         "current_temperature": (v) => v.currentTemperature,
         "target_temperature": (v) => v.targetTemperature,
       }).aggregate(
-        defaultType: AggregationType.mean,
-        interval: AggregationInterval.seconds(15),
-        typesByField: {"power": AggregationType.last, "target_temperature": AggregationType.last},
+        defaultType: defaultAggregationMethod,
+        interval: _aggregationInterval,
+        methodsByField: _aggregationMethodsByField.map((k, v) => MapEntry(k.key, v)),
       );
 
+  // -----------------------
+  // AGGREGATION OPTIONS
+  // -----------------------
+  @observable
+  AggregationInterval _aggregationInterval = AggregationInterval.seconds(15);
+
+  @computed
+  AggregationInterval get aggregationInterval => _aggregationInterval;
+
+  @observable
+  AggregationMethod _defaultAggregationMethod = AggregationMethod.mean;
+
+  @computed
+  AggregationMethod get defaultAggregationMethod => _defaultAggregationMethod;
+
+  final ObservableMap<HeaterControllerStateField, AggregationMethod> _aggregationMethodsByField =
+      ObservableMap.of(const {
+        HeaterControllerStateField.power: AggregationMethod.last,
+        HeaterControllerStateField.targetTemperature: AggregationMethod.last,
+      });
+
+  @computed
+  UnmodifiableMapView<HeaterControllerStateField, AggregationMethod>
+  get aggregationMethodsByField => UnmodifiableMapView(_aggregationMethodsByField);
+
+  // -----------------------
+  // HEATER STATE
+  // -----------------------
   @observable
   // ignore: prefer_final_fields
   ObservableList<TimeSeriesEntry<HeaterControllerState>> _stateHistory = ObservableList.of([]);
@@ -154,5 +183,38 @@ abstract class _HeaterControllerStateStore with Store {
     }
   }
 
+  /// Null means default
+  @action
+  void setFieldAggregationMethod(HeaterControllerStateField field, AggregationMethod? method) {
+    if (method == null && _aggregationMethodsByField.containsKey(field)) {
+      _aggregationMethodsByField.remove(field);
+      return;
+    }
+
+    if (method == null) return;
+
+    _aggregationMethodsByField[field] = method;
+  }
+
+  @action
+  void setDefaultAggregationMethod(AggregationMethod method) {
+    _defaultAggregationMethod = method;
+  }
+
+  @action
+  void setAggregationInterval(int seconds) {
+    _aggregationInterval = AggregationInterval.seconds(seconds);
+  }
+
   void dispose() async {}
+}
+
+enum HeaterControllerStateField {
+  power("power"),
+  currentTemperature("current_temperature"),
+  targetTemperature("target_temperature");
+
+  const HeaterControllerStateField(this.key);
+
+  final String key;
 }

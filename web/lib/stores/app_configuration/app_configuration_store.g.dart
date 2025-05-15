@@ -99,6 +99,17 @@ mixin _$AppConfigurationStore on _AppConfigurationStore, Store {
   }
 
   @override
+  void toggleAdvancedMode() {
+    final _$actionInfo = _$_AppConfigurationStoreActionController.startAction(
+        name: '_AppConfigurationStore.toggleAdvancedMode');
+    try {
+      return super.toggleAdvancedMode();
+    } finally {
+      _$_AppConfigurationStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setFakeBrowserBar(bool value) {
     final _$actionInfo = _$_AppConfigurationStoreActionController.startAction(
         name: '_AppConfigurationStore.setFakeBrowserBar');
