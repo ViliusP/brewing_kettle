@@ -24,9 +24,9 @@ class TimeSeries<T> {
   }
 
   List<TimeSeriesViewEntry> aggregate({
-    required AggregationType defaultType,
+    required AggregationMethod defaultType,
     required AggregationInterval interval,
-    Map<String, AggregationType> typesByField = const {},
+    Map<String, AggregationMethod> methodsByField = const {},
     MissingValueHandler? missingValueHandler,
   }) {
     Map<String, List<TimeSeriesEntry<num>>> aggregatedFields = {};
@@ -35,7 +35,7 @@ class TimeSeries<T> {
       var accesor = accesorEntry.value;
       aggregatedFields[field] = _aggregateCollection(
         data: _data.map((e) => TimeSeriesEntry<num>(e.date, accesor(e.value))).toList(),
-        type: typesByField[field] ?? defaultType,
+        method: methodsByField[field] ?? defaultType,
         interval: interval,
       );
     }
@@ -56,7 +56,7 @@ class TimeSeries<T> {
 
   static List<TimeSeriesEntry<num>> _aggregateCollection({
     required List<TimeSeriesEntry<num>> data,
-    required AggregationType type,
+    required AggregationMethod method,
     required AggregationInterval interval,
     MissingValueHandler? missingValueHandler,
   }) {
@@ -75,14 +75,14 @@ class TimeSeries<T> {
 
     for (final bucket in buckets.keys) {
       final List<num> values = buckets[bucket]!;
-      num? value = switch (type) {
-        AggregationType.median => _median(values),
-        AggregationType.mean => _mean(values),
-        AggregationType.max => _max(values),
-        AggregationType.min => _min(values),
-        AggregationType.sum => _sum(values),
-        AggregationType.first => _first(values),
-        AggregationType.last => _last(values),
+      num? value = switch (method) {
+        AggregationMethod.median => _median(values),
+        AggregationMethod.mean => _mean(values),
+        AggregationMethod.max => _max(values),
+        AggregationMethod.min => _min(values),
+        AggregationMethod.sum => _sum(values),
+        AggregationMethod.first => _first(values),
+        AggregationMethod.last => _last(values),
       };
 
       if (value == null) {
@@ -227,6 +227,6 @@ class AggregationInterval {
   String toString() => 'Every $value ${unit.toString().split('.').last}${value > 1 ? 's' : ''}';
 }
 
-enum AggregationType { mean, median, max, min, sum, first, last }
+enum AggregationMethod { mean, median, max, min, sum, first, last }
 
 enum TimeUnit { seconds, minute, hour, day, week, month, year }
