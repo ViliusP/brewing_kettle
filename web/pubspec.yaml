@@ -101,6 +101,12 @@ dependencies:
       ref: feature/pagination_control
       path: packages/pagination_control/
 
+  animated_idle_shapes:
+    git:
+      url: https://github.com/ViliusP/flutter_packages.git
+      ref: feature/idle_circles
+      path: packages/animated_idle_shapes/
+
 
 dev_dependencies:
   flutter_test:

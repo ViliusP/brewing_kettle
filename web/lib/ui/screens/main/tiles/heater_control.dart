@@ -1,10 +1,10 @@
 import 'dart:async';
 
+import 'package:animated_idle_shapes/animated_idle_shapes.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
-import 'package:brew_kettle_dashboard/ui/common/idle_circles/idle_circles.dart';
 import 'package:brew_kettle_dashboard/ui/common/slider_container/slider_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
@@ -583,10 +583,11 @@ class _IdleStatusContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations localizations = AppLocalizations.of(context)!;
+    final ColorScheme colorScheme = ColorScheme.of(context);
 
     return Column(
       children: [
-        Expanded(child: AnimatedIdleCircles()),
+        Expanded(child: AnimatedIdleCircles(color: colorScheme.secondary, count: 5)),
         Padding(
           padding: const EdgeInsets.only(bottom: 4.0),
           child: Text(
