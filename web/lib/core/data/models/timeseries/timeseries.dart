@@ -15,12 +15,123 @@ class TimeSeries<T> {
     : _data = List<TimeSeriesEntry<T>>.from(entries),
       _accesors = accesors;
 
+  /// The duration of the observation is the difference between the first and last entry date.
+  /// If the data is empty, the duration is zero.
+  /// If the data has only one entry, the duration is zero.
+  /// If the data has more than one entry, the duration is the difference between the first and last entry date.
+  /// Example:
+  /// ```dart
+  /// final timeSeries = TimeSeries.from([
+  ///   TimeSeriesEntry(DateTime(2023, 1, 1), 1),
+  ///   TimeSeriesEntry(DateTime(2023, 1, 2), 2),
+  ///   TimeSeriesEntry(DateTime(2023, 1, 3), 3),
+  ///   TimeSeriesEntry(DateTime(2023, 1, 4), 4),
+  /// ]);
+  /// print(timeSeries.observationDuration); // 3 days
+  /// ```
+  Duration get observationDuration {
+    if (_data.length < 2) {
+      return Duration.zero;
+    }
+    return _data.last.date.difference(_data.first.date);
+  }
+
   void add(TimeSeriesEntry<T> entry) {
     _data.add(entry);
   }
 
   void addAll(List<TimeSeriesEntry<T>> entry) {
     _data.addAll(entry);
+  }
+
+  /// Returns a new [TimeSeries] with the same accesor but with the data filtered by the given duration.
+  ///
+  /// The reference date is the latest(last) entry of the [TimeSeries].
+  ///
+  /// If the duration is negative, an [ArgumentError] is thrown.
+  /// If the duration is zero, the last entry is returned.
+  /// If the data is empty, the original [TimeSeries] is returned.
+  /// If the duration is greater than the data length, the original [TimeSeries] is returned.
+  ///
+  /// Example:
+  /// ```dart
+  /// final timeSeries = TimeSeries.from([
+  ///  TimeSeriesEntry(DateTime(2023, 1, 1), 1),
+  ///  TimeSeriesEntry(DateTime(2023, 1, 2), 2),
+  ///  TimeSeriesEntry(DateTime(2023, 1, 3), 3),
+  ///  TimeSeriesEntry(DateTime(2023, 1, 4), 4),
+  /// ]);
+  ///
+  /// final filtered = timeSeries.takeLastByDuration(Duration(days: 2));
+  /// print(filtered.data); // [TimeSeriesEntry(DateTime(2023, 1, 3), 3), TimeSeriesEntry(DateTime(2023, 1, 4), 4)]
+  ///
+  /// final filtered2 = timeSeries.takeLastByDuration(Duration(days: 0));
+  /// print(filtered2.data); // [TimeSeriesEntry(DateTime(2023, 1, 4), 4)]
+  /// ```
+  TimeSeries<T> takeLastByDuration(Duration duration) {
+    if (duration.isNegative) {
+      throw ArgumentError('Duration cannot be negative');
+    }
+    if (_data.isEmpty) {
+      return this;
+    }
+
+    if (duration == Duration.zero) {
+      return TimeSeries.from([_data.last], _accesors);
+    }
+
+    if (duration > observationDuration) {
+      return this;
+    }
+
+    return TimeSeries.from(
+      _data.where((e) => e.date.isAfter(_data.last.date.subtract(duration))),
+      _accesors,
+    );
+  }
+
+  /// Returns a new TimeSeries with the same accesor but with the data filtered by the given range.
+  ///
+  /// If both [from] and [to] are null, or data is empty, the original TimeSeries is returned.
+  /// If [from] is null, the data is filtered by the [to] date.
+  /// If [to] is null, the data is filtered by the [from] date.
+  /// If both are not null, the data is filtered by the [from] and [to] dates.
+  ///
+  /// The [from] and [to] dates are inclusive.
+  /// If the [from] date is after the [to] date, an [ArgumentError] is thrown.
+  ///
+  /// Example:
+  /// ```dart
+  /// final timeSeries = TimeSeries.from([
+  ///   TimeSeriesEntry(DateTime(2023, 1, 1), 1),
+  ///   TimeSeriesEntry(DateTime(2023, 1, 2), 2),
+  ///   TimeSeriesEntry(DateTime(2023, 1, 3), 3),
+  ///   TimeSeriesEntry(DateTime(2023, 1, 4), 4),
+  ///  ]);
+  ///
+  /// final filtered = timeSeries.takeByRange(DateTime(2023, 1, 2), DateTime(2023, 1, 3));
+  /// print(filtered.data); // [TimeSeriesEntry(DateTime(2023, 1, 2), 2), TimeSeriesEntry(DateTime(2023, 1, 3), 3)]
+  /// ```
+  TimeSeries<T> takeByRange(DateTime? from, DateTime? to) {
+    if ((from == null && to == null) || _data.isEmpty) {
+      return this;
+    }
+
+    if (from != null) {
+      return TimeSeries.from(_data.where((e) => e.date.isAfter(from)), _accesors);
+    }
+    if (to != null) {
+      return TimeSeries.from(_data.where((e) => e.date.isBefore(to)), _accesors);
+    }
+
+    if (from!.isAfter(to!)) {
+      throw ArgumentError('From date cannot be after to date');
+    }
+
+    return TimeSeries.from(
+      _data.where((e) => e.date.isAfter(from) && e.date.isBefore(to)),
+      _accesors,
+    );
   }
 
   List<TimeSeriesViewEntry> aggregate({

@@ -16,6 +16,15 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
       (_$isModeChangingComputed ??= Computed<bool>(() => super.isModeChanging,
               name: '_HeaterControllerStateStore.isModeChanging'))
           .value;
+  Computed<TimeSeries<HeaterControllerState>>? _$_stateTimeSeriesComputed;
+
+  @override
+  TimeSeries<HeaterControllerState> get _stateTimeSeries =>
+      (_$_stateTimeSeriesComputed ??=
+              Computed<TimeSeries<HeaterControllerState>>(
+                  () => super._stateTimeSeries,
+                  name: '_HeaterControllerStateStore._stateTimeSeries'))
+          .value;
   Computed<List<TimeSeriesViewEntry>>? _$stateHistoryComputed;
 
   @override
@@ -23,6 +32,13 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
           Computed<List<TimeSeriesViewEntry>>(() => super.stateHistory,
               name: '_HeaterControllerStateStore.stateHistory'))
       .value;
+  Computed<Duration>? _$dataDurationComputed;
+
+  @override
+  Duration get dataDuration =>
+      (_$dataDurationComputed ??= Computed<Duration>(() => super.dataDuration,
+              name: '_HeaterControllerStateStore.dataDuration'))
+          .value;
   Computed<AggregationInterval>? _$aggregationIntervalComputed;
 
   @override
@@ -126,6 +142,22 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
     });
   }
 
+  late final _$_dataDurationAtom =
+      Atom(name: '_HeaterControllerStateStore._dataDuration', context: context);
+
+  @override
+  Duration get _dataDuration {
+    _$_dataDurationAtom.reportRead();
+    return super._dataDuration;
+  }
+
+  @override
+  set _dataDuration(Duration value) {
+    _$_dataDurationAtom.reportWrite(value, super._dataDuration, () {
+      super._dataDuration = value;
+    });
+  }
+
   late final _$_aggregationIntervalAtom = Atom(
       name: '_HeaterControllerStateStore._aggregationInterval',
       context: context);
@@ -217,34 +249,33 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
       ActionController(name: '_HeaterControllerStateStore', context: context);
 
   @override
-  void changeTargetTemperature(double value) {
-    final _$actionInfo =
-        _$_HeaterControllerStateStoreActionController.startAction(
-            name: '_HeaterControllerStateStore.changeTargetTemperature');
+  void setTargetTemperature(double value) {
+    final _$actionInfo = _$_HeaterControllerStateStoreActionController
+        .startAction(name: '_HeaterControllerStateStore.setTargetTemperature');
     try {
-      return super.changeTargetTemperature(value);
+      return super.setTargetTemperature(value);
     } finally {
       _$_HeaterControllerStateStoreActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  void changePower(double value) {
+  void setPower(double value) {
     final _$actionInfo = _$_HeaterControllerStateStoreActionController
-        .startAction(name: '_HeaterControllerStateStore.changePower');
+        .startAction(name: '_HeaterControllerStateStore.setPower');
     try {
-      return super.changePower(value);
+      return super.setPower(value);
     } finally {
       _$_HeaterControllerStateStoreActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  void changeMode(HeaterMode value) {
+  void setMode(HeaterMode value) {
     final _$actionInfo = _$_HeaterControllerStateStoreActionController
-        .startAction(name: '_HeaterControllerStateStore.changeMode');
+        .startAction(name: '_HeaterControllerStateStore.setMode');
     try {
-      return super.changeMode(value);
+      return super.setMode(value);
     } finally {
       _$_HeaterControllerStateStoreActionController.endAction(_$actionInfo);
     }
@@ -299,10 +330,22 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
   }
 
   @override
+  void setDataInterval(Duration duration) {
+    final _$actionInfo = _$_HeaterControllerStateStoreActionController
+        .startAction(name: '_HeaterControllerStateStore.setDataInterval');
+    try {
+      return super.setDataInterval(duration);
+    } finally {
+      _$_HeaterControllerStateStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 isModeChanging: ${isModeChanging},
 stateHistory: ${stateHistory},
+dataDuration: ${dataDuration},
 aggregationInterval: ${aggregationInterval},
 defaultAggregationMethod: ${defaultAggregationMethod},
 aggregationMethodsByField: ${aggregationMethodsByField},

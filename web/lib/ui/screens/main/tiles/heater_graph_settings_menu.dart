@@ -3,6 +3,7 @@ import 'package:brew_kettle_dashboard/core/data/models/timeseries/timeseries.dar
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
+import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_state_data_values.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
@@ -26,7 +27,7 @@ class HeaterGraphSettingsMenu extends StatelessWidget {
           children: <Widget>[
             Padding(padding: EdgeInsets.symmetric(vertical: 8)),
             Text("Graph controls", style: TextTheme.of(context).displaySmall),
-            Padding(padding: EdgeInsets.symmetric(vertical: 8)),
+            Padding(padding: EdgeInsets.symmetric(vertical: 4)),
             _GraphRangeSelect(),
             Divider(indent: 8, endIndent: 8),
             _AggregationOptions(),
@@ -61,42 +62,60 @@ class _GraphRangeSelect extends StatefulWidget {
 }
 
 class _GraphRangeSelectState extends State<_GraphRangeSelect> {
-  RangeValues _currentRangeValues = const RangeValues(0.0, 1.0);
-  bool switchValue = false;
+  final HeaterControllerStateStore _heaterStateStore = getIt<HeaterControllerStateStore>();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SwitchListTile(
-          value: switchValue,
-          onChanged: (bool? value) {
-            if (value == null) return;
-            setState(() {
-              switchValue = value;
-            });
-          },
-          title: Text("Lock"),
-        ),
-        SliderTheme(
-          data: SliderThemeData(showValueIndicator: ShowValueIndicator.onlyForContinuous),
-          child: RangeSlider(
-            values: _currentRangeValues,
-            labels: RangeLabels(
-              _currentRangeValues.start.toString(),
-              _currentRangeValues.end.toString(),
-            ),
-            min: 0.0,
-            max: 1.0,
-            onChanged: (RangeValues value) {
-              setState(() {
-                _currentRangeValues = value;
-              });
+    final int sliderDivisions =
+        (HeaterStateHistoryValues.maxDataInterval.inMinutes -
+                HeaterStateHistoryValues.minDataInterval.inMinutes)
+            .toInt();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+      child: Column(
+        children: [
+          Text("Data duration span", style: TextTheme.of(context).headlineSmall),
+          Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+
+          Observer(
+            builder: (context) {
+              final Duration currentDuration = _heaterStateStore.dataDuration;
+              final String formattedDuration =
+                  "${currentDuration.inHours}h ${currentDuration.inMinutes.remainder(60)}m";
+
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text("Showing data from the last: $formattedDuration", textAlign: TextAlign.left),
+                  SliderTheme(
+                    data: SliderThemeData(
+                      showValueIndicator: ShowValueIndicator.onlyForContinuous,
+                      year2023: false,
+                    ),
+                    child: Slider(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                      min: HeaterStateHistoryValues.minDataInterval.inMinutes.toDouble(),
+                      max: HeaterStateHistoryValues.maxDataInterval.inMinutes.toDouble(),
+                      divisions: sliderDivisions,
+                      value: _heaterStateStore.dataDuration.inMinutes.toDouble(),
+                      onChanged: (double value) {
+                        _heaterStateStore.setDataInterval(Duration(minutes: value.round()));
+                      },
+                    ),
+                  ),
+                ],
+              );
             },
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

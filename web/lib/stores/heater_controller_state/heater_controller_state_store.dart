@@ -5,6 +5,7 @@ import 'package:brew_kettle_dashboard/core/data/models/store/ws_listener.dart';
 import 'package:brew_kettle_dashboard/core/data/models/timeseries/timeseries.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/outbound_message.dart';
+import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_state_data_values.dart';
 import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_connection_store.dart';
 import 'package:mobx/mobx.dart';
 
@@ -37,12 +38,17 @@ abstract class _HeaterControllerStateStore with Store {
   bool get isModeChanging => _isModeChanging;
 
   @computed
-  List<TimeSeriesViewEntry> get stateHistory =>
+  TimeSeries<HeaterControllerState> get _stateTimeSeries =>
       TimeSeries<HeaterControllerState>.from(_stateHistory, {
         "power": (v) => v.power,
         "current_temperature": (v) => v.currentTemperature,
         "target_temperature": (v) => v.targetTemperature,
-      }).aggregate(
+      });
+
+  @computed
+  List<TimeSeriesViewEntry> get stateHistory => _stateTimeSeries
+      .takeLastByDuration(_dataDuration)
+      .aggregate(
         defaultType: defaultAggregationMethod,
         interval: _aggregationInterval,
         methodsByField: _aggregationMethodsByField.map((k, v) => MapEntry(k.key, v)),
@@ -51,8 +57,21 @@ abstract class _HeaterControllerStateStore with Store {
   // -----------------------
   // AGGREGATION OPTIONS
   // -----------------------
+
+  /// The duration over which data is filtered.
+  /// This interval determines the time span of data to include,
+  /// counted backward from the latest data point.
   @observable
-  AggregationInterval _aggregationInterval = AggregationInterval.seconds(15);
+  Duration _dataDuration = HeaterStateHistoryValues.defaultDataDuration;
+
+  /// The duration over which data is aggregated.
+  /// This interval determines the time span of data to include,
+  /// counted backward from the latest data point.
+  @computed
+  Duration get dataDuration => _dataDuration;
+
+  @observable
+  AggregationInterval _aggregationInterval = HeaterStateHistoryValues.defaultAggregationInterval;
 
   @computed
   AggregationInterval get aggregationInterval => _aggregationInterval;
@@ -117,7 +136,7 @@ abstract class _HeaterControllerStateStore with Store {
   // ACTIONS
   // -----------------------
   @action
-  void changeTargetTemperature(double value) {
+  void setTargetTemperature(double value) {
     if (_webSocketConnectionStore.connectedTo == null) {
       log("Cannot send set target temperature request because there is no online channell");
 
@@ -134,7 +153,7 @@ abstract class _HeaterControllerStateStore with Store {
   }
 
   @action
-  void changePower(double value) {
+  void setPower(double value) {
     if (_webSocketConnectionStore.connectedTo == null) {
       log("Cannot send set power request because there is no online channell");
 
@@ -146,7 +165,7 @@ abstract class _HeaterControllerStateStore with Store {
   }
 
   @action
-  void changeMode(HeaterMode value) {
+  void setMode(HeaterMode value) {
     if (_webSocketConnectionStore.connectedTo == null) {
       log("Cannot send snapshot request because there is no online channell");
 
@@ -204,6 +223,11 @@ abstract class _HeaterControllerStateStore with Store {
   @action
   void setAggregationInterval(int seconds) {
     _aggregationInterval = AggregationInterval.seconds(seconds);
+  }
+
+  @action
+  void setDataInterval(Duration duration) {
+    _dataDuration = duration;
   }
 
   void dispose() async {}

@@ -115,7 +115,7 @@ class _HeaterControls extends StatelessWidget {
             ),
             Padding(padding: const EdgeInsets.symmetric(vertical: 2.0)),
             _HeaterModeSelect(
-              onSelected: (value) => _heaterControllerStateStore.changeMode(value),
+              onSelected: (value) => _heaterControllerStateStore.setMode(value),
               currentStatus: controllerStatus,
               enabled: switch (controllerStatus) {
                 _ when loading => false,
@@ -254,7 +254,7 @@ class _ManualControlContentState extends State<_ManualControlContent> {
     }
 
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      _heaterControllerStateStore.changePower(_targetPower);
+      _heaterControllerStateStore.setPower(_targetPower);
     });
   }
 
@@ -487,7 +487,7 @@ class _PidControlContentState extends State<_PidControlContent> {
     }
 
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      _heaterControllerStateStore.changeTargetTemperature(_targetTemp);
+      _heaterControllerStateStore.setTargetTemperature(_targetTemp);
     });
   }
 

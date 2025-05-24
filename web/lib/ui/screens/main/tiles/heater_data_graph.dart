@@ -7,7 +7,6 @@ import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_cont
 import 'package:brew_kettle_dashboard/ui/common/drawer_menu/drawer_menu.dart';
 import 'package:brew_kettle_dashboard/ui/screens/main/tiles/heater_graph_settings_menu.dart';
 import 'package:brew_kettle_dashboard/ui/screens/main/tiles/history_graph_info.dart';
-import 'package:brew_kettle_dashboard/utils/list_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -21,8 +20,6 @@ class HeaterDataGraph extends StatefulWidget {
 }
 
 class _HeaterDataGraphState extends State<HeaterDataGraph> {
-  static const _entriesLimit = 100;
-
   final HeaterControllerStateStore _temperatureStore = getIt<HeaterControllerStateStore>();
 
   bool _showInfo = false;
@@ -37,8 +34,7 @@ class _HeaterDataGraphState extends State<HeaterDataGraph> {
           padding: const EdgeInsets.only(left: 8.0, right: 16.0, top: 16.0, bottom: 8.0),
           child: Observer(
             builder: (context) {
-              List<TimeSeriesViewEntry> temperatureHistory = _temperatureStore.stateHistory
-                  .takeLast(_entriesLimit);
+              final List<TimeSeriesViewEntry> temperatureHistory = _temperatureStore.stateHistory;
               if (temperatureHistory.length < 2) return _HeaterDataChart(data: []);
               return _HeaterDataChart(data: temperatureHistory);
             },
