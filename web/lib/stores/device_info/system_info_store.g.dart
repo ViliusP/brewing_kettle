@@ -12,9 +12,12 @@ mixin _$SystemInfoStore on _SystemInfoStore, Store {
   Computed<bool>? _$loadingComputed;
 
   @override
-  bool get loading => (_$loadingComputed ??=
-          Computed<bool>(() => super.loading, name: '_SystemInfoStore.loading'))
-      .value;
+  bool get loading =>
+      (_$loadingComputed ??= Computed<bool>(
+            () => super.loading,
+            name: '_SystemInfoStore.loading',
+          ))
+          .value;
 
   late final _$infoAtom = Atom(name: '_SystemInfoStore.info', context: context);
 
@@ -31,8 +34,10 @@ mixin _$SystemInfoStore on _SystemInfoStore, Store {
     });
   }
 
-  late final _$_loadingAtom =
-      Atom(name: '_SystemInfoStore._loading', context: context);
+  late final _$_loadingAtom = Atom(
+    name: '_SystemInfoStore._loading',
+    context: context,
+  );
 
   @override
   bool get _loading {
@@ -47,8 +52,10 @@ mixin _$SystemInfoStore on _SystemInfoStore, Store {
     });
   }
 
-  late final _$requestAsyncAction =
-      AsyncAction('_SystemInfoStore.request', context: context);
+  late final _$requestAsyncAction = AsyncAction(
+    '_SystemInfoStore.request',
+    context: context,
+  );
 
   @override
   Future<dynamic> request() {

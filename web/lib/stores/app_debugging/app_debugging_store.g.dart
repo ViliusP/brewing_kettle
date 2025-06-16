@@ -12,13 +12,17 @@ mixin _$AppDebuggingStore on _AppDebuggingStore, Store {
   Computed<Offset?>? _$pointerPositionComputed;
 
   @override
-  Offset? get pointerPosition => (_$pointerPositionComputed ??=
-          Computed<Offset?>(() => super.pointerPosition,
-              name: '_AppDebuggingStore.pointerPosition'))
-      .value;
+  Offset? get pointerPosition =>
+      (_$pointerPositionComputed ??= Computed<Offset?>(
+            () => super.pointerPosition,
+            name: '_AppDebuggingStore.pointerPosition',
+          ))
+          .value;
 
-  late final _$_pointerPositionAtom =
-      Atom(name: '_AppDebuggingStore._pointerPosition', context: context);
+  late final _$_pointerPositionAtom = Atom(
+    name: '_AppDebuggingStore._pointerPosition',
+    context: context,
+  );
 
   @override
   Offset? get _pointerPosition {
@@ -33,13 +37,16 @@ mixin _$AppDebuggingStore on _AppDebuggingStore, Store {
     });
   }
 
-  late final _$_AppDebuggingStoreActionController =
-      ActionController(name: '_AppDebuggingStore', context: context);
+  late final _$_AppDebuggingStoreActionController = ActionController(
+    name: '_AppDebuggingStore',
+    context: context,
+  );
 
   @override
   void setPointerPosition(Offset value) {
     final _$actionInfo = _$_AppDebuggingStoreActionController.startAction(
-        name: '_AppDebuggingStore.setPointerPosition');
+      name: '_AppDebuggingStore.setPointerPosition',
+    );
     try {
       return super.setPointerPosition(value);
     } finally {

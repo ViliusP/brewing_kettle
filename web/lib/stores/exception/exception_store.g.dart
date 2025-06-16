@@ -9,13 +9,16 @@ part of 'exception_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ExceptionStore on _ExceptionStore, Store {
-  late final _$_ExceptionStoreActionController =
-      ActionController(name: '_ExceptionStore', context: context);
+  late final _$_ExceptionStoreActionController = ActionController(
+    name: '_ExceptionStore',
+    context: context,
+  );
 
   @override
   void push(Exception exception) {
     final _$actionInfo = _$_ExceptionStoreActionController.startAction(
-        name: '_ExceptionStore.push');
+      name: '_ExceptionStore.push',
+    );
     try {
       return super.push(exception);
     } finally {

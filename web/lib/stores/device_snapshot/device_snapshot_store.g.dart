@@ -13,12 +13,16 @@ mixin _$DeviceSnapshotStore on _DeviceSnapshotStore, Store {
 
   @override
   bool get waitingResponse =>
-      (_$waitingResponseComputed ??= Computed<bool>(() => super.waitingResponse,
-              name: '_DeviceSnapshotStore.waitingResponse'))
+      (_$waitingResponseComputed ??= Computed<bool>(
+            () => super.waitingResponse,
+            name: '_DeviceSnapshotStore.waitingResponse',
+          ))
           .value;
 
-  late final _$snapshotAtom =
-      Atom(name: '_DeviceSnapshotStore.snapshot', context: context);
+  late final _$snapshotAtom = Atom(
+    name: '_DeviceSnapshotStore.snapshot',
+    context: context,
+  );
 
   @override
   DeviceSnapshot? get snapshot {
@@ -33,8 +37,10 @@ mixin _$DeviceSnapshotStore on _DeviceSnapshotStore, Store {
     });
   }
 
-  late final _$_waitingResponseAtom =
-      Atom(name: '_DeviceSnapshotStore._waitingResponse', context: context);
+  late final _$_waitingResponseAtom = Atom(
+    name: '_DeviceSnapshotStore._waitingResponse',
+    context: context,
+  );
 
   @override
   bool get _waitingResponse {
@@ -49,13 +55,16 @@ mixin _$DeviceSnapshotStore on _DeviceSnapshotStore, Store {
     });
   }
 
-  late final _$_DeviceSnapshotStoreActionController =
-      ActionController(name: '_DeviceSnapshotStore', context: context);
+  late final _$_DeviceSnapshotStoreActionController = ActionController(
+    name: '_DeviceSnapshotStore',
+    context: context,
+  );
 
   @override
   void request() {
     final _$actionInfo = _$_DeviceSnapshotStoreActionController.startAction(
-        name: '_DeviceSnapshotStore.request');
+      name: '_DeviceSnapshotStore.request',
+    );
     try {
       return super.request();
     } finally {
@@ -66,7 +75,8 @@ mixin _$DeviceSnapshotStore on _DeviceSnapshotStore, Store {
   @override
   void _onData(WsInboundMessage<WsInboundMessagePayload> message) {
     final _$actionInfo = _$_DeviceSnapshotStoreActionController.startAction(
-        name: '_DeviceSnapshotStore._onData');
+      name: '_DeviceSnapshotStore._onData',
+    );
     try {
       return super._onData(message);
     } finally {

@@ -12,36 +12,44 @@ mixin _$AppConfigurationStore on _AppConfigurationStore, Store {
   Computed<TemperatureScale>? _$temperatureScaleComputed;
 
   @override
-  TemperatureScale get temperatureScale => (_$temperatureScaleComputed ??=
-          Computed<TemperatureScale>(() => super.temperatureScale,
-              name: '_AppConfigurationStore.temperatureScale'))
-      .value;
+  TemperatureScale get temperatureScale =>
+      (_$temperatureScaleComputed ??= Computed<TemperatureScale>(
+            () => super.temperatureScale,
+            name: '_AppConfigurationStore.temperatureScale',
+          ))
+          .value;
   Computed<bool>? _$isAdvancedModeComputed;
 
   @override
   bool get isAdvancedMode =>
-      (_$isAdvancedModeComputed ??= Computed<bool>(() => super.isAdvancedMode,
-              name: '_AppConfigurationStore.isAdvancedMode'))
+      (_$isAdvancedModeComputed ??= Computed<bool>(
+            () => super.isAdvancedMode,
+            name: '_AppConfigurationStore.isAdvancedMode',
+          ))
           .value;
   Computed<bool>? _$fakeBrowserBarEnabledComputed;
 
   @override
-  bool get fakeBrowserBarEnabled => (_$fakeBrowserBarEnabledComputed ??=
-          Computed<bool>(() => super.fakeBrowserBarEnabled,
-              name: '_AppConfigurationStore.fakeBrowserBarEnabled'))
-      .value;
+  bool get fakeBrowserBarEnabled =>
+      (_$fakeBrowserBarEnabledComputed ??= Computed<bool>(
+            () => super.fakeBrowserBarEnabled,
+            name: '_AppConfigurationStore.fakeBrowserBarEnabled',
+          ))
+          .value;
   Computed<bool>? _$globalPointerPositionMetricEnabledComputed;
 
   @override
   bool get globalPointerPositionMetricEnabled =>
       (_$globalPointerPositionMetricEnabledComputed ??= Computed<bool>(
-              () => super.globalPointerPositionMetricEnabled,
-              name:
-                  '_AppConfigurationStore.globalPointerPositionMetricEnabled'))
+            () => super.globalPointerPositionMetricEnabled,
+            name: '_AppConfigurationStore.globalPointerPositionMetricEnabled',
+          ))
           .value;
 
-  late final _$_temperatureScaleAtom =
-      Atom(name: '_AppConfigurationStore._temperatureScale', context: context);
+  late final _$_temperatureScaleAtom = Atom(
+    name: '_AppConfigurationStore._temperatureScale',
+    context: context,
+  );
 
   @override
   TemperatureScale get _temperatureScale {
@@ -56,8 +64,10 @@ mixin _$AppConfigurationStore on _AppConfigurationStore, Store {
     });
   }
 
-  late final _$_isAdvancedModeAtom =
-      Atom(name: '_AppConfigurationStore._isAdvancedMode', context: context);
+  late final _$_isAdvancedModeAtom = Atom(
+    name: '_AppConfigurationStore._isAdvancedMode',
+    context: context,
+  );
 
   @override
   bool get _isAdvancedMode {
@@ -73,7 +83,9 @@ mixin _$AppConfigurationStore on _AppConfigurationStore, Store {
   }
 
   late final _$_fakeBrowserBarEnabledAtom = Atom(
-      name: '_AppConfigurationStore._fakeBrowserBarEnabled', context: context);
+    name: '_AppConfigurationStore._fakeBrowserBarEnabled',
+    context: context,
+  );
 
   @override
   bool get _fakeBrowserBarEnabled {
@@ -83,15 +95,19 @@ mixin _$AppConfigurationStore on _AppConfigurationStore, Store {
 
   @override
   set _fakeBrowserBarEnabled(bool value) {
-    _$_fakeBrowserBarEnabledAtom
-        .reportWrite(value, super._fakeBrowserBarEnabled, () {
-      super._fakeBrowserBarEnabled = value;
-    });
+    _$_fakeBrowserBarEnabledAtom.reportWrite(
+      value,
+      super._fakeBrowserBarEnabled,
+      () {
+        super._fakeBrowserBarEnabled = value;
+      },
+    );
   }
 
   late final _$_globalPointerPositionMetricEnabledAtom = Atom(
-      name: '_AppConfigurationStore._globalPointerPositionMetricEnabled',
-      context: context);
+    name: '_AppConfigurationStore._globalPointerPositionMetricEnabled',
+    context: context,
+  );
 
   @override
   bool get _globalPointerPositionMetricEnabled {
@@ -101,19 +117,25 @@ mixin _$AppConfigurationStore on _AppConfigurationStore, Store {
 
   @override
   set _globalPointerPositionMetricEnabled(bool value) {
-    _$_globalPointerPositionMetricEnabledAtom
-        .reportWrite(value, super._globalPointerPositionMetricEnabled, () {
-      super._globalPointerPositionMetricEnabled = value;
-    });
+    _$_globalPointerPositionMetricEnabledAtom.reportWrite(
+      value,
+      super._globalPointerPositionMetricEnabled,
+      () {
+        super._globalPointerPositionMetricEnabled = value;
+      },
+    );
   }
 
-  late final _$_AppConfigurationStoreActionController =
-      ActionController(name: '_AppConfigurationStore', context: context);
+  late final _$_AppConfigurationStoreActionController = ActionController(
+    name: '_AppConfigurationStore',
+    context: context,
+  );
 
   @override
   void setAdvancedMode(bool value) {
     final _$actionInfo = _$_AppConfigurationStoreActionController.startAction(
-        name: '_AppConfigurationStore.setAdvancedMode');
+      name: '_AppConfigurationStore.setAdvancedMode',
+    );
     try {
       return super.setAdvancedMode(value);
     } finally {
@@ -124,7 +146,8 @@ mixin _$AppConfigurationStore on _AppConfigurationStore, Store {
   @override
   void toggleAdvancedMode() {
     final _$actionInfo = _$_AppConfigurationStoreActionController.startAction(
-        name: '_AppConfigurationStore.toggleAdvancedMode');
+      name: '_AppConfigurationStore.toggleAdvancedMode',
+    );
     try {
       return super.toggleAdvancedMode();
     } finally {
@@ -135,7 +158,8 @@ mixin _$AppConfigurationStore on _AppConfigurationStore, Store {
   @override
   void setFakeBrowserBar(bool value) {
     final _$actionInfo = _$_AppConfigurationStoreActionController.startAction(
-        name: '_AppConfigurationStore.setFakeBrowserBar');
+      name: '_AppConfigurationStore.setFakeBrowserBar',
+    );
     try {
       return super.setFakeBrowserBar(value);
     } finally {
@@ -146,7 +170,8 @@ mixin _$AppConfigurationStore on _AppConfigurationStore, Store {
   @override
   void setGlobalPointerPositionMetric(bool value) {
     final _$actionInfo = _$_AppConfigurationStoreActionController.startAction(
-        name: '_AppConfigurationStore.setGlobalPointerPositionMetric');
+      name: '_AppConfigurationStore.setGlobalPointerPositionMetric',
+    );
     try {
       return super.setGlobalPointerPositionMetric(value);
     } finally {
@@ -157,7 +182,8 @@ mixin _$AppConfigurationStore on _AppConfigurationStore, Store {
   @override
   void setTemperatureScale(TemperatureScale scale) {
     final _$actionInfo = _$_AppConfigurationStoreActionController.startAction(
-        name: '_AppConfigurationStore.setTemperatureScale');
+      name: '_AppConfigurationStore.setTemperatureScale',
+    );
     try {
       return super.setTemperatureScale(scale);
     } finally {

@@ -13,113 +13,142 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
 
   @override
   bool get isModeChanging =>
-      (_$isModeChangingComputed ??= Computed<bool>(() => super.isModeChanging,
-              name: '_HeaterControllerStateStore.isModeChanging'))
+      (_$isModeChangingComputed ??= Computed<bool>(
+            () => super.isModeChanging,
+            name: '_HeaterControllerStateStore.isModeChanging',
+          ))
           .value;
   Computed<TimeSeries<HeaterControllerState>>? _$_stateTimeSeriesComputed;
 
   @override
   TimeSeries<HeaterControllerState> get _stateTimeSeries =>
-      (_$_stateTimeSeriesComputed ??=
-              Computed<TimeSeries<HeaterControllerState>>(
-                  () => super._stateTimeSeries,
-                  name: '_HeaterControllerStateStore._stateTimeSeries'))
+      (_$_stateTimeSeriesComputed ??= Computed<TimeSeries<HeaterControllerState>>(
+            () => super._stateTimeSeries,
+            name: '_HeaterControllerStateStore._stateTimeSeries',
+          ))
           .value;
   Computed<List<TimeSeriesViewEntry>>? _$stateHistoryComputed;
 
   @override
-  List<TimeSeriesViewEntry> get stateHistory => (_$stateHistoryComputed ??=
-          Computed<List<TimeSeriesViewEntry>>(() => super.stateHistory,
-              name: '_HeaterControllerStateStore.stateHistory'))
-      .value;
+  List<TimeSeriesViewEntry> get stateHistory =>
+      (_$stateHistoryComputed ??= Computed<List<TimeSeriesViewEntry>>(
+            () => super.stateHistory,
+            name: '_HeaterControllerStateStore.stateHistory',
+          ))
+          .value;
   Computed<HeaterSessionStatistics>? _$sessionStatisticsComputed;
 
   @override
   HeaterSessionStatistics get sessionStatistics =>
       (_$sessionStatisticsComputed ??= Computed<HeaterSessionStatistics>(
-              () => super.sessionStatistics,
-              name: '_HeaterControllerStateStore.sessionStatistics'))
+            () => super.sessionStatistics,
+            name: '_HeaterControllerStateStore.sessionStatistics',
+          ))
+          .value;
+  Computed<bool>? _$toAggregateTimeSeriesComputed;
+
+  @override
+  bool get toAggregateTimeSeries =>
+      (_$toAggregateTimeSeriesComputed ??= Computed<bool>(
+            () => super.toAggregateTimeSeries,
+            name: '_HeaterControllerStateStore.toAggregateTimeSeries',
+          ))
           .value;
   Computed<Duration>? _$dataDurationComputed;
 
   @override
   Duration get dataDuration =>
-      (_$dataDurationComputed ??= Computed<Duration>(() => super.dataDuration,
-              name: '_HeaterControllerStateStore.dataDuration'))
+      (_$dataDurationComputed ??= Computed<Duration>(
+            () => super.dataDuration,
+            name: '_HeaterControllerStateStore.dataDuration',
+          ))
           .value;
   Computed<AggregationInterval>? _$aggregationIntervalComputed;
 
   @override
   AggregationInterval get aggregationInterval =>
       (_$aggregationIntervalComputed ??= Computed<AggregationInterval>(
-              () => super.aggregationInterval,
-              name: '_HeaterControllerStateStore.aggregationInterval'))
+            () => super.aggregationInterval,
+            name: '_HeaterControllerStateStore.aggregationInterval',
+          ))
           .value;
   Computed<AggregationMethod>? _$defaultAggregationMethodComputed;
 
   @override
   AggregationMethod get defaultAggregationMethod =>
       (_$defaultAggregationMethodComputed ??= Computed<AggregationMethod>(
-              () => super.defaultAggregationMethod,
-              name: '_HeaterControllerStateStore.defaultAggregationMethod'))
+            () => super.defaultAggregationMethod,
+            name: '_HeaterControllerStateStore.defaultAggregationMethod',
+          ))
           .value;
   Computed<UnmodifiableMapView<HeaterControllerStateField, AggregationMethod>>?
-      _$aggregationMethodsByFieldComputed;
+  _$aggregationMethodsByFieldComputed;
 
   @override
   UnmodifiableMapView<HeaterControllerStateField, AggregationMethod>
-      get aggregationMethodsByField =>
-          (_$aggregationMethodsByFieldComputed ??= Computed<
-                      UnmodifiableMapView<HeaterControllerStateField,
-                          AggregationMethod>>(
-                  () => super.aggregationMethodsByField,
-                  name:
-                      '_HeaterControllerStateStore.aggregationMethodsByField'))
-              .value;
+  get aggregationMethodsByField =>
+      (_$aggregationMethodsByFieldComputed ??=
+              Computed<UnmodifiableMapView<HeaterControllerStateField, AggregationMethod>>(
+                () => super.aggregationMethodsByField,
+                name: '_HeaterControllerStateStore.aggregationMethodsByField',
+              ))
+          .value;
   Computed<double?>? _$currentTemperatureComputed;
 
   @override
-  double? get currentTemperature => (_$currentTemperatureComputed ??=
-          Computed<double?>(() => super.currentTemperature,
-              name: '_HeaterControllerStateStore.currentTemperature'))
-      .value;
+  double? get currentTemperature =>
+      (_$currentTemperatureComputed ??= Computed<double?>(
+            () => super.currentTemperature,
+            name: '_HeaterControllerStateStore.currentTemperature',
+          ))
+          .value;
   Computed<HeaterStatus?>? _$statusComputed;
 
   @override
   HeaterStatus? get status =>
-      (_$statusComputed ??= Computed<HeaterStatus?>(() => super.status,
-              name: '_HeaterControllerStateStore.status'))
+      (_$statusComputed ??= Computed<HeaterStatus?>(
+            () => super.status,
+            name: '_HeaterControllerStateStore.status',
+          ))
           .value;
   Computed<double?>? _$targetTemperatureComputed;
 
   @override
-  double? get targetTemperature => (_$targetTemperatureComputed ??=
-          Computed<double?>(() => super.targetTemperature,
-              name: '_HeaterControllerStateStore.targetTemperature'))
-      .value;
+  double? get targetTemperature =>
+      (_$targetTemperatureComputed ??= Computed<double?>(
+            () => super.targetTemperature,
+            name: '_HeaterControllerStateStore.targetTemperature',
+          ))
+          .value;
   Computed<double?>? _$requestedTemperatureComputed;
 
   @override
-  double? get requestedTemperature => (_$requestedTemperatureComputed ??=
-          Computed<double?>(() => super.requestedTemperature,
-              name: '_HeaterControllerStateStore.requestedTemperature'))
-      .value;
+  double? get requestedTemperature =>
+      (_$requestedTemperatureComputed ??= Computed<double?>(
+            () => super.requestedTemperature,
+            name: '_HeaterControllerStateStore.requestedTemperature',
+          ))
+          .value;
   Computed<double?>? _$powerComputed;
 
   @override
-  double? get power => (_$powerComputed ??= Computed<double?>(() => super.power,
-          name: '_HeaterControllerStateStore.power'))
-      .value;
+  double? get power =>
+      (_$powerComputed ??= Computed<double?>(
+            () => super.power,
+            name: '_HeaterControllerStateStore.power',
+          ))
+          .value;
   Computed<double?>? _$requestedPowerComputed;
 
   @override
-  double? get requestedPower => (_$requestedPowerComputed ??= Computed<double?>(
-          () => super.requestedPower,
-          name: '_HeaterControllerStateStore.requestedPower'))
-      .value;
+  double? get requestedPower =>
+      (_$requestedPowerComputed ??= Computed<double?>(
+            () => super.requestedPower,
+            name: '_HeaterControllerStateStore.requestedPower',
+          ))
+          .value;
 
-  late final _$_stateAtom =
-      Atom(name: '_HeaterControllerStateStore._state', context: context);
+  late final _$_stateAtom = Atom(name: '_HeaterControllerStateStore._state', context: context);
 
   @override
   HeaterControllerState? get _state {
@@ -135,7 +164,9 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
   }
 
   late final _$_isModeChangingAtom = Atom(
-      name: '_HeaterControllerStateStore._isModeChanging', context: context);
+    name: '_HeaterControllerStateStore._isModeChanging',
+    context: context,
+  );
 
   @override
   bool get _isModeChanging {
@@ -150,8 +181,28 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
     });
   }
 
-  late final _$_dataDurationAtom =
-      Atom(name: '_HeaterControllerStateStore._dataDuration', context: context);
+  late final _$_toAggregateTimeSeriesAtom = Atom(
+    name: '_HeaterControllerStateStore._toAggregateTimeSeries',
+    context: context,
+  );
+
+  @override
+  bool get _toAggregateTimeSeries {
+    _$_toAggregateTimeSeriesAtom.reportRead();
+    return super._toAggregateTimeSeries;
+  }
+
+  @override
+  set _toAggregateTimeSeries(bool value) {
+    _$_toAggregateTimeSeriesAtom.reportWrite(value, super._toAggregateTimeSeries, () {
+      super._toAggregateTimeSeries = value;
+    });
+  }
+
+  late final _$_dataDurationAtom = Atom(
+    name: '_HeaterControllerStateStore._dataDuration',
+    context: context,
+  );
 
   @override
   Duration get _dataDuration {
@@ -167,8 +218,9 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
   }
 
   late final _$_aggregationIntervalAtom = Atom(
-      name: '_HeaterControllerStateStore._aggregationInterval',
-      context: context);
+    name: '_HeaterControllerStateStore._aggregationInterval',
+    context: context,
+  );
 
   @override
   AggregationInterval get _aggregationInterval {
@@ -178,15 +230,15 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
 
   @override
   set _aggregationInterval(AggregationInterval value) {
-    _$_aggregationIntervalAtom.reportWrite(value, super._aggregationInterval,
-        () {
+    _$_aggregationIntervalAtom.reportWrite(value, super._aggregationInterval, () {
       super._aggregationInterval = value;
     });
   }
 
   late final _$_defaultAggregationMethodAtom = Atom(
-      name: '_HeaterControllerStateStore._defaultAggregationMethod',
-      context: context);
+    name: '_HeaterControllerStateStore._defaultAggregationMethod',
+    context: context,
+  );
 
   @override
   AggregationMethod get _defaultAggregationMethod {
@@ -196,14 +248,15 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
 
   @override
   set _defaultAggregationMethod(AggregationMethod value) {
-    _$_defaultAggregationMethodAtom
-        .reportWrite(value, super._defaultAggregationMethod, () {
+    _$_defaultAggregationMethodAtom.reportWrite(value, super._defaultAggregationMethod, () {
       super._defaultAggregationMethod = value;
     });
   }
 
-  late final _$_stateHistoryAtom =
-      Atom(name: '_HeaterControllerStateStore._stateHistory', context: context);
+  late final _$_stateHistoryAtom = Atom(
+    name: '_HeaterControllerStateStore._stateHistory',
+    context: context,
+  );
 
   @override
   ObservableList<TimeSeriesEntry<HeaterControllerState>> get _stateHistory {
@@ -212,16 +265,16 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
   }
 
   @override
-  set _stateHistory(
-      ObservableList<TimeSeriesEntry<HeaterControllerState>> value) {
+  set _stateHistory(ObservableList<TimeSeriesEntry<HeaterControllerState>> value) {
     _$_stateHistoryAtom.reportWrite(value, super._stateHistory, () {
       super._stateHistory = value;
     });
   }
 
   late final _$_requestedTemperatureAtom = Atom(
-      name: '_HeaterControllerStateStore._requestedTemperature',
-      context: context);
+    name: '_HeaterControllerStateStore._requestedTemperature',
+    context: context,
+  );
 
   @override
   double? get _requestedTemperature {
@@ -231,14 +284,15 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
 
   @override
   set _requestedTemperature(double? value) {
-    _$_requestedTemperatureAtom.reportWrite(value, super._requestedTemperature,
-        () {
+    _$_requestedTemperatureAtom.reportWrite(value, super._requestedTemperature, () {
       super._requestedTemperature = value;
     });
   }
 
   late final _$_requestedPowerAtom = Atom(
-      name: '_HeaterControllerStateStore._requestedPower', context: context);
+    name: '_HeaterControllerStateStore._requestedPower',
+    context: context,
+  );
 
   @override
   double? get _requestedPower {
@@ -253,13 +307,16 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
     });
   }
 
-  late final _$_HeaterControllerStateStoreActionController =
-      ActionController(name: '_HeaterControllerStateStore', context: context);
+  late final _$_HeaterControllerStateStoreActionController = ActionController(
+    name: '_HeaterControllerStateStore',
+    context: context,
+  );
 
   @override
   void setTargetTemperature(double value) {
-    final _$actionInfo = _$_HeaterControllerStateStoreActionController
-        .startAction(name: '_HeaterControllerStateStore.setTargetTemperature');
+    final _$actionInfo = _$_HeaterControllerStateStoreActionController.startAction(
+      name: '_HeaterControllerStateStore.setTargetTemperature',
+    );
     try {
       return super.setTargetTemperature(value);
     } finally {
@@ -269,8 +326,9 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
 
   @override
   void setPower(double value) {
-    final _$actionInfo = _$_HeaterControllerStateStoreActionController
-        .startAction(name: '_HeaterControllerStateStore.setPower');
+    final _$actionInfo = _$_HeaterControllerStateStoreActionController.startAction(
+      name: '_HeaterControllerStateStore.setPower',
+    );
     try {
       return super.setPower(value);
     } finally {
@@ -280,8 +338,9 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
 
   @override
   void setMode(HeaterMode value) {
-    final _$actionInfo = _$_HeaterControllerStateStoreActionController
-        .startAction(name: '_HeaterControllerStateStore.setMode');
+    final _$actionInfo = _$_HeaterControllerStateStoreActionController.startAction(
+      name: '_HeaterControllerStateStore.setMode',
+    );
     try {
       return super.setMode(value);
     } finally {
@@ -291,8 +350,9 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
 
   @override
   void _onData(WsInboundMessage<WsInboundMessagePayload> message) {
-    final _$actionInfo = _$_HeaterControllerStateStoreActionController
-        .startAction(name: '_HeaterControllerStateStore._onData');
+    final _$actionInfo = _$_HeaterControllerStateStoreActionController.startAction(
+      name: '_HeaterControllerStateStore._onData',
+    );
     try {
       return super._onData(message);
     } finally {
@@ -301,11 +361,22 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
   }
 
   @override
-  void setFieldAggregationMethod(
-      HeaterControllerStateField field, AggregationMethod? method) {
-    final _$actionInfo =
-        _$_HeaterControllerStateStoreActionController.startAction(
-            name: '_HeaterControllerStateStore.setFieldAggregationMethod');
+  void setToAggregateTimeSeries(bool value) {
+    final _$actionInfo = _$_HeaterControllerStateStoreActionController.startAction(
+      name: '_HeaterControllerStateStore.setToAggregateTimeSeries',
+    );
+    try {
+      return super.setToAggregateTimeSeries(value);
+    } finally {
+      _$_HeaterControllerStateStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setFieldAggregationMethod(HeaterControllerStateField field, AggregationMethod? method) {
+    final _$actionInfo = _$_HeaterControllerStateStoreActionController.startAction(
+      name: '_HeaterControllerStateStore.setFieldAggregationMethod',
+    );
     try {
       return super.setFieldAggregationMethod(field, method);
     } finally {
@@ -315,9 +386,9 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
 
   @override
   void setDefaultAggregationMethod(AggregationMethod method) {
-    final _$actionInfo =
-        _$_HeaterControllerStateStoreActionController.startAction(
-            name: '_HeaterControllerStateStore.setDefaultAggregationMethod');
+    final _$actionInfo = _$_HeaterControllerStateStoreActionController.startAction(
+      name: '_HeaterControllerStateStore.setDefaultAggregationMethod',
+    );
     try {
       return super.setDefaultAggregationMethod(method);
     } finally {
@@ -327,9 +398,9 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
 
   @override
   void setAggregationInterval(int seconds) {
-    final _$actionInfo =
-        _$_HeaterControllerStateStoreActionController.startAction(
-            name: '_HeaterControllerStateStore.setAggregationInterval');
+    final _$actionInfo = _$_HeaterControllerStateStoreActionController.startAction(
+      name: '_HeaterControllerStateStore.setAggregationInterval',
+    );
     try {
       return super.setAggregationInterval(seconds);
     } finally {
@@ -339,8 +410,9 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
 
   @override
   void setDataInterval(Duration duration) {
-    final _$actionInfo = _$_HeaterControllerStateStoreActionController
-        .startAction(name: '_HeaterControllerStateStore.setDataInterval');
+    final _$actionInfo = _$_HeaterControllerStateStoreActionController.startAction(
+      name: '_HeaterControllerStateStore.setDataInterval',
+    );
     try {
       return super.setDataInterval(duration);
     } finally {
@@ -354,6 +426,7 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
 isModeChanging: ${isModeChanging},
 stateHistory: ${stateHistory},
 sessionStatistics: ${sessionStatistics},
+toAggregateTimeSeries: ${toAggregateTimeSeries},
 dataDuration: ${dataDuration},
 aggregationInterval: ${aggregationInterval},
 defaultAggregationMethod: ${defaultAggregationMethod},

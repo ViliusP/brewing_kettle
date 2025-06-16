@@ -13,38 +13,52 @@ mixin _$PidStore on _PidStore, Store {
 
   @override
   double? get proportional =>
-      (_$proportionalComputed ??= Computed<double?>(() => super.proportional,
-              name: '_PidStore.proportional'))
+      (_$proportionalComputed ??= Computed<double?>(
+            () => super.proportional,
+            name: '_PidStore.proportional',
+          ))
           .value;
   Computed<double?>? _$integralComputed;
 
   @override
-  double? get integral => (_$integralComputed ??=
-          Computed<double?>(() => super.integral, name: '_PidStore.integral'))
-      .value;
+  double? get integral =>
+      (_$integralComputed ??= Computed<double?>(
+            () => super.integral,
+            name: '_PidStore.integral',
+          ))
+          .value;
   Computed<double?>? _$derivativeComputed;
 
   @override
   double? get derivative =>
-      (_$derivativeComputed ??= Computed<double?>(() => super.derivative,
-              name: '_PidStore.derivative'))
+      (_$derivativeComputed ??= Computed<double?>(
+            () => super.derivative,
+            name: '_PidStore.derivative',
+          ))
           .value;
   Computed<bool>? _$isConstantsChangingComputed;
 
   @override
-  bool get isConstantsChanging => (_$isConstantsChangingComputed ??=
-          Computed<bool>(() => super.isConstantsChanging,
-              name: '_PidStore.isConstantsChanging'))
-      .value;
+  bool get isConstantsChanging =>
+      (_$isConstantsChangingComputed ??= Computed<bool>(
+            () => super.isConstantsChanging,
+            name: '_PidStore.isConstantsChanging',
+          ))
+          .value;
   Computed<bool>? _$isEmptyComputed;
 
   @override
-  bool get isEmpty => (_$isEmptyComputed ??=
-          Computed<bool>(() => super.isEmpty, name: '_PidStore.isEmpty'))
-      .value;
+  bool get isEmpty =>
+      (_$isEmptyComputed ??= Computed<bool>(
+            () => super.isEmpty,
+            name: '_PidStore.isEmpty',
+          ))
+          .value;
 
-  late final _$_pidConstantsAtom =
-      Atom(name: '_PidStore._pidConstants', context: context);
+  late final _$_pidConstantsAtom = Atom(
+    name: '_PidStore._pidConstants',
+    context: context,
+  );
 
   @override
   PidConstants? get _pidConstants {
@@ -59,8 +73,10 @@ mixin _$PidStore on _PidStore, Store {
     });
   }
 
-  late final _$_isConstantsChangingAtom =
-      Atom(name: '_PidStore._isConstantsChanging', context: context);
+  late final _$_isConstantsChangingAtom = Atom(
+    name: '_PidStore._isConstantsChanging',
+    context: context,
+  );
 
   @override
   bool get _isConstantsChanging {
@@ -70,41 +86,55 @@ mixin _$PidStore on _PidStore, Store {
 
   @override
   set _isConstantsChanging(bool value) {
-    _$_isConstantsChangingAtom.reportWrite(value, super._isConstantsChanging,
-        () {
-      super._isConstantsChanging = value;
-    });
+    _$_isConstantsChangingAtom.reportWrite(
+      value,
+      super._isConstantsChanging,
+      () {
+        super._isConstantsChanging = value;
+      },
+    );
   }
 
-  late final _$getConstantsAsyncAction =
-      AsyncAction('_PidStore.getConstants', context: context);
+  late final _$getConstantsAsyncAction = AsyncAction(
+    '_PidStore.getConstants',
+    context: context,
+  );
 
   @override
   Future<dynamic> getConstants() {
     return _$getConstantsAsyncAction.run(() => super.getConstants());
   }
 
-  late final _$changeConstantsAsyncAction =
-      AsyncAction('_PidStore.changeConstants', context: context);
+  late final _$changeConstantsAsyncAction = AsyncAction(
+    '_PidStore.changeConstants',
+    context: context,
+  );
 
   @override
-  Future<dynamic> changeConstants(
-      {required double proportional,
-      required double integral,
-      required double derivative}) {
-    return _$changeConstantsAsyncAction.run(() => super.changeConstants(
+  Future<dynamic> changeConstants({
+    required double proportional,
+    required double integral,
+    required double derivative,
+  }) {
+    return _$changeConstantsAsyncAction.run(
+      () => super.changeConstants(
         proportional: proportional,
         integral: integral,
-        derivative: derivative));
+        derivative: derivative,
+      ),
+    );
   }
 
-  late final _$_PidStoreActionController =
-      ActionController(name: '_PidStore', context: context);
+  late final _$_PidStoreActionController = ActionController(
+    name: '_PidStore',
+    context: context,
+  );
 
   @override
   void _onData(WsInboundMessage<WsInboundMessagePayload> message) {
-    final _$actionInfo =
-        _$_PidStoreActionController.startAction(name: '_PidStore._onData');
+    final _$actionInfo = _$_PidStoreActionController.startAction(
+      name: '_PidStore._onData',
+    );
     try {
       return super._onData(message);
     } finally {

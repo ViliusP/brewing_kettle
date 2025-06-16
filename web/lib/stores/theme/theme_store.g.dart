@@ -13,18 +13,25 @@ mixin _$ThemeStore on _ThemeStore, Store {
 
   @override
   AppThemeMode get themeMode =>
-      (_$themeModeComputed ??= Computed<AppThemeMode>(() => super.themeMode,
-              name: '_ThemeStore.themeMode'))
+      (_$themeModeComputed ??= Computed<AppThemeMode>(
+            () => super.themeMode,
+            name: '_ThemeStore.themeMode',
+          ))
           .value;
   Computed<AppTheme>? _$themeComputed;
 
   @override
-  AppTheme get theme => (_$themeComputed ??=
-          Computed<AppTheme>(() => super.theme, name: '_ThemeStore.theme'))
-      .value;
+  AppTheme get theme =>
+      (_$themeComputed ??= Computed<AppTheme>(
+            () => super.theme,
+            name: '_ThemeStore.theme',
+          ))
+          .value;
 
-  late final _$_themeModeAtom =
-      Atom(name: '_ThemeStore._themeMode', context: context);
+  late final _$_themeModeAtom = Atom(
+    name: '_ThemeStore._themeMode',
+    context: context,
+  );
 
   @override
   AppThemeMode get _themeMode {
@@ -54,13 +61,16 @@ mixin _$ThemeStore on _ThemeStore, Store {
     });
   }
 
-  late final _$_ThemeStoreActionController =
-      ActionController(name: '_ThemeStore', context: context);
+  late final _$_ThemeStoreActionController = ActionController(
+    name: '_ThemeStore',
+    context: context,
+  );
 
   @override
   void changeThemeMode(AppThemeMode mode) {
     final _$actionInfo = _$_ThemeStoreActionController.startAction(
-        name: '_ThemeStore.changeThemeMode');
+      name: '_ThemeStore.changeThemeMode',
+    );
     try {
       return super.changeThemeMode(mode);
     } finally {
