@@ -1,17 +1,49 @@
 import 'dart:collection';
 
-typedef TimeSeriesAccesor<T> = num Function(T value);
-typedef TimeSeriesAccesors<T> = Map<String, TimeSeriesAccesor<T>>;
+typedef TimeSeriesNumericsAccesor<T> = num Function(T value);
+typedef TimeSeriesNumericAccesors<T> = Map<String, TimeSeriesNumericsAccesor<T>>;
 
+
+// TODO explain _accesors
+
+/// A class representing a time series of data entries.
+/// Each entry consists of a date and a value.
+/// The time series can be aggregated by different methods and intervals.
+/// It can also be filtered by duration or date range.
+///
+/// Example:
+/// ```dart
+/// final timeSeries = TimeSeries.from([
+///  TimeSeriesEntry(DateTime(2023, 1, 1), 1),
+///  TimeSeriesEntry(DateTime(2023, 1, 2), 2),
+///  TimeSeriesEntry(DateTime(2023, 1, 3), 3),
+///  TimeSeriesEntry(DateTime(2023, 1, 4), 4),
+/// ]);
+///
+/// print(timeSeries.observationDuration); // 3 days
+///
+/// final filtered = timeSeries.takeLastByDuration(Duration(days: 2));
+/// print(filtered.data); // [TimeSeriesEntry(DateTime(2023, 1, 3), 3), TimeSeriesEntry(DateTime(2023, 1, 4), 4)]
+///
+/// final aggregated = timeSeries.aggregate(
+///   defaultType: AggregationMethod.mean,
+///   interval: AggregationInterval.days(1),
+///   methodsByField: {
+///     'temperature': AggregationMethod.mean,
+///     'power': AggregationMethod.sum,
+///   },
+/// );
+/// print(aggregated); // [TimeSeriesViewEntry(DateTime(2023, 1, 1), {'temperature': 1, 'power': 1}), ...]
+/// ```
 class TimeSeries<T> {
   UnmodifiableListView<TimeSeriesEntry<T>> get data => UnmodifiableListView(_data);
 
   final List<TimeSeriesEntry<T>> _data;
-  final TimeSeriesAccesors<T> _accesors;
+  final TimeSeriesNumericAccesors<T> _accesors;
 
   TimeSeries() : _data = [], _accesors = {};
 
-  TimeSeries.from(Iterable<TimeSeriesEntry<T>> entries, TimeSeriesAccesors<T> accesors)
+  TimeSeries.from(Iterable<TimeSeriesEntry<T>> entries, TimeSeriesNumericAccesors<T> accesors)
     : _data = List<TimeSeriesEntry<T>>.from(entries),
       _accesors = accesors;
 

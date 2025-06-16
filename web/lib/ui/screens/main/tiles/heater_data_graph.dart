@@ -20,7 +20,7 @@ class HeaterDataGraph extends StatefulWidget {
 }
 
 class _HeaterDataGraphState extends State<HeaterDataGraph> {
-  final HeaterControllerStateStore _temperatureStore = getIt<HeaterControllerStateStore>();
+  final HeaterControllerStateStore _heaterStateStore = getIt<HeaterControllerStateStore>();
 
   bool _showInfo = false;
 
@@ -34,7 +34,7 @@ class _HeaterDataGraphState extends State<HeaterDataGraph> {
           padding: const EdgeInsets.only(left: 8.0, right: 16.0, top: 16.0, bottom: 8.0),
           child: Observer(
             builder: (context) {
-              final List<TimeSeriesViewEntry> temperatureHistory = _temperatureStore.stateHistory;
+              final List<TimeSeriesViewEntry> temperatureHistory = _heaterStateStore.stateHistory;
               if (temperatureHistory.length < 2) return _HeaterDataChart(data: []);
               return _HeaterDataChart(data: temperatureHistory);
             },
@@ -86,7 +86,7 @@ class _HeaterDataChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final TextTheme textTheme = TextTheme.of(context);
-    final localizations = AppLocalizations.of(context)!;
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
 
     var convertedData =
         data
