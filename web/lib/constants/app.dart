@@ -1,4 +1,5 @@
 import 'package:brew_kettle_dashboard/constants/theme.dart';
+import 'package:brew_kettle_dashboard/core/data/models/common/temperature_scale.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 
@@ -34,4 +35,7 @@ class AppDefaults {
 
   /// Default value for advanced mode.
   static const bool isAdvancedMode = false;
+
+  /// Default value for temperature scale.
+  static const TemperatureScale temperatureScale = TemperatureScale.celsius;
 }

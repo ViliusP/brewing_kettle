@@ -425,6 +425,66 @@ abstract class AppLocalizations {
   /// **'Drag to change value'**
   String get sliderContainerDragTooltip;
 
+  /// No description provided for @graphOptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII.
+  ///
+  /// In en, this message translates to:
+  /// **'----------------------------------------------------'**
+  String get graphOptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII;
+
+  /// Title for session statistics section in graph options
+  ///
+  /// In en, this message translates to:
+  /// **'Session statistics'**
+  String get sessionStatisticsTitle;
+
+  /// Label for lowest temperature in session statistics
+  ///
+  /// In en, this message translates to:
+  /// **'Lowest temperature'**
+  String get sessionStatLowestTemperature;
+
+  /// Label for highest temperature in session statistics
+  ///
+  /// In en, this message translates to:
+  /// **'Highest temperature'**
+  String get sessionStatHighestTemperature;
+
+  /// Label for average temperature in session statistics
+  ///
+  /// In en, this message translates to:
+  /// **'Average temperature'**
+  String get sessionStatAverageTemperature;
+
+  /// Label for average (non-idle) power in session statistics
+  ///
+  /// In en, this message translates to:
+  /// **'Average (non-idle) power'**
+  String get sessionStatNonIdleAveragePower;
+
+  /// Label for average power in session statistics
+  ///
+  /// In en, this message translates to:
+  /// **'Average power'**
+  String get sessionStatAveragePower;
+
+  /// Label for idle time in session statistics
+  ///
+  /// In en, this message translates to:
+  /// **'Idle time'**
+  String get sessionStatIdleTime;
+
+  /// Label for active time in session statistics
+  ///
+  /// In en, this message translates to:
+  /// **'Active time'**
+  String get sessionStatActiveTime;
+
+  /// Label for less than a minute in session statistics
+  ///
+  /// In en, this message translates to:
+  /// **'less than a minute'**
+  String get sessionStatLessThanMinute;
+
   /// No description provided for @connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///
   /// In en, this message translates to:

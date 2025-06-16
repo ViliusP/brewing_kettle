@@ -273,6 +273,44 @@
   "@sliderContainerDragTooltip": {
     "description": "Tooltip for slider container when dragging"
   },
+  "graphOptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
+  "@graphOptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
+  "sessionStatisticsTitle": "Session statistics",
+  "@sessionStatisticsTitle": {
+    "description": "Title for session statistics section in graph options"
+  },
+  "sessionStatLowestTemperature": "Lowest temperature",
+  "@sessionStatLowestTemperature": {
+    "description": "Label for lowest temperature in session statistics"
+  },
+  "sessionStatHighestTemperature": "Highest temperature",
+  "@sessionStatHighestTemperature": {
+    "description": "Label for highest temperature in session statistics"
+  },
+  "sessionStatAverageTemperature": "Average temperature",
+  "@sessionStatAverageTemperature": {
+    "description": "Label for average temperature in session statistics"
+  },
+  "sessionStatNonIdleAveragePower": "Average (non-idle) power",
+  "@sessionStatNonIdleAveragePower": {
+    "description": "Label for average (non-idle) power in session statistics"
+  },
+  "sessionStatAveragePower": "Average power",
+  "@sessionStatAveragePower": {
+    "description": "Label for average power in session statistics"
+  },
+  "sessionStatIdleTime": "Idle time",
+  "@sessionStatIdleTime": {
+    "description": "Label for idle time in session statistics"
+  },
+  "sessionStatActiveTime": "Active time",
+  "@sessionStatActiveTime": {
+    "description": "Label for active time in session statistics"
+  },
+  "sessionStatLessThanMinute": "less than a minute",
+  "@sessionStatLessThanMinute": {
+    "description": "Label for less than a minute in session statistics"
+  },
   "connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "connectButtonLabel": "Connect",

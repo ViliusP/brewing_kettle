@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:developer';
 
 import 'package:brew_kettle_dashboard/core/data/models/store/ws_listener.dart';
+import 'package:brew_kettle_dashboard/core/data/models/timeseries/heater_session_statistics.dart';
 import 'package:brew_kettle_dashboard/core/data/models/timeseries/timeseries.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/outbound_message.dart';
@@ -53,6 +54,11 @@ abstract class _HeaterControllerStateStore with Store {
         interval: _aggregationInterval,
         methodsByField: _aggregationMethodsByField.map((k, v) => MapEntry(k.key, v)),
       );
+
+  @computed
+  HeaterSessionStatistics get sessionStatistics {
+    return HeaterSessionStatistics.fromTimeseries(_stateTimeSeries);
+  }
 
   // -----------------------
   // AGGREGATION OPTIONS

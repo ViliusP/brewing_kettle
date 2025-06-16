@@ -1,4 +1,5 @@
 import 'package:brew_kettle_dashboard/constants/app.dart';
+import 'package:brew_kettle_dashboard/core/data/models/common/temperature_scale.dart';
 import 'package:brew_kettle_dashboard/core/data/repository/repository.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
@@ -18,6 +19,14 @@ abstract class _AppConfigurationStore with Store {
   // ===================
   // Store variables:
   // ===================
+  // ------- Temperature Scale -------
+  @observable
+  TemperatureScale _temperatureScale = AppDefaults.temperatureScale;
+
+  @computed
+  TemperatureScale get temperatureScale => _temperatureScale;
+
+  // ------- Advanced Mode -------
   @observable
   bool _isAdvancedMode = AppDefaults.isAdvancedMode;
 
@@ -74,6 +83,14 @@ abstract class _AppConfigurationStore with Store {
     _globalPointerPositionMetricEnabled = value;
   }
 
+  /// Sets the temperature [scale] for the app.
+  /// This will also save the scale to shared preferences.
+  @action
+  void setTemperatureScale(TemperatureScale scale) {
+    _temperatureScale = scale;
+    _repository.sharedPreferences.setTemperatureScale(scale);
+  }
+
   // ======================
   // General:
   // ======================
@@ -82,6 +99,11 @@ abstract class _AppConfigurationStore with Store {
     _fakeBrowserAddressBarPosition = _repository.sharedPreferences.fakeBrowserAddressBarPosition;
     if (prefsAdvancedMode != null) {
       _isAdvancedMode = prefsAdvancedMode;
+    }
+
+    final TemperatureScale? prefsTemperatureScale = _repository.sharedPreferences.temperatureScale;
+    if (prefsTemperatureScale != null) {
+      _temperatureScale = prefsTemperatureScale;
     }
   }
 

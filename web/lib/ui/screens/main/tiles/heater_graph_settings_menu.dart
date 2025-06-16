@@ -1,17 +1,24 @@
 import 'package:brew_kettle_dashboard/constants/app.dart';
+import 'package:brew_kettle_dashboard/core/data/models/common/temperature_scale.dart';
+import 'package:brew_kettle_dashboard/core/data/models/timeseries/heater_session_statistics.dart';
 import 'package:brew_kettle_dashboard/core/data/models/timeseries/timeseries.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
+import 'package:brew_kettle_dashboard/stores/app_configuration/app_configuration_store.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_state_data_values.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 
 class HeaterGraphSettingsMenu extends StatelessWidget {
-  const HeaterGraphSettingsMenu({super.key});
+  final HeaterControllerStateStore _heaterStateStore = getIt<HeaterControllerStateStore>();
+  final AppConfigurationStore _appConfigurationStore = getIt<AppConfigurationStore>();
+
+  HeaterGraphSettingsMenu({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,30 +28,49 @@ class HeaterGraphSettingsMenu extends StatelessWidget {
     return Material(
       elevation: 8.0,
       child: Container(
-        width: 350, // Example width
-        color: Theme.of(context).canvasColor, // Or your desired background
-        child: Column(
-          children: <Widget>[
-            Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-            Text("Graph controls", style: TextTheme.of(context).displaySmall),
-            Padding(padding: EdgeInsets.symmetric(vertical: 4)),
-            _GraphRangeSelect(),
-            Divider(indent: 8, endIndent: 8),
-            _AggregationOptions(),
-            Spacer(),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: FilledButton.tonalIcon(
-                icon: Icon(AppConstants.backIcon),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size.fromHeight(48),
-                  textStyle: textTheme.labelLarge?.copyWith(fontSize: 18),
-                  iconSize: 18,
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                label: Text(localizations.generalGoBack),
+        width: 350,
+        color: Theme.of(context).canvasColor,
+        child: CustomScrollView(
+          primary: false,
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+
+                children: <Widget>[
+                  Padding(padding: EdgeInsets.symmetric(vertical: 8)),
+                  Text("Graph controls", style: TextTheme.of(context).displaySmall),
+                  Padding(padding: EdgeInsets.symmetric(vertical: 4)),
+                  _GraphRangeSelect(),
+                  Divider(indent: 8, endIndent: 8),
+                  _AggregationOptions(),
+                  Divider(indent: 8, endIndent: 8),
+                  Observer(
+                    builder: (context) {
+                      return _GraphStatistics(
+                        stats: _heaterStateStore.sessionStatistics,
+                        temperatureScale: _appConfigurationStore.temperatureScale,
+                      );
+                    },
+                  ),
+                  Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: FilledButton.tonalIcon(
+                      icon: Icon(AppConstants.backIcon),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size.fromHeight(48),
+                        textStyle: textTheme.labelLarge?.copyWith(fontSize: 18),
+                        iconSize: 18,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      label: Text(localizations.generalGoBack),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -333,6 +359,98 @@ class _AggregationMethodDropddownState<T> extends State<_AggregationMethodDropdd
   void dispose() {
     _activatorFocusNode.dispose();
     super.dispose();
+  }
+}
+
+/// Widget that displays the statistics of the heater session
+class _GraphStatistics extends StatelessWidget {
+  final TemperatureScale _temperatureScale;
+  final HeaterSessionStatistics _stats;
+
+  const _GraphStatistics({
+    required HeaterSessionStatistics stats,
+    required TemperatureScale temperatureScale,
+  }) : _stats = stats,
+       _temperatureScale = temperatureScale;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
+
+    final DateFormat sessionDateFormat = DateFormat('MM/dd HH:mm');
+    final String sessionStart = sessionDateFormat.format(_stats.sessionStart);
+    final String sessionEnd = sessionDateFormat.format(_stats.sessionEnd);
+
+    durationFormat(Duration duration) {
+      if (duration == Duration.zero) {
+        return "0m";
+      }
+      if (duration.inMinutes > 0) {
+        return "${duration.inHours}h ${duration.inMinutes.remainder(60)}m";
+      }
+      return localizations.sessionStatLessThanMinute;
+    }
+
+    formattedStatBuilder(String label, String value) {
+      return RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(text: "$label: ", style: TextTheme.of(context).bodyLarge),
+            TextSpan(
+              text: value,
+              style: TextTheme.of(context).bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final String temperatureScaleSymbol = _temperatureScale.symbol;
+    final String averageTemperature = _temperatureScale
+        .fromCelsius(_stats.averageTemperature)
+        .toStringAsFixed(1);
+    final String lowestTemperature = _temperatureScale
+        .fromCelsius(_stats.lowestTemperature)
+        .toStringAsFixed(1);
+    final String highestTemperature = _temperatureScale
+        .fromCelsius(_stats.highestTemperature)
+        .toStringAsFixed(1);
+
+    final String averageNonIdlePower = _stats.averageNonIdlePower.toStringAsFixed(1);
+    final String averagePower = _stats.averagePower.toStringAsFixed(1);
+
+    final String idleDuration = durationFormat(_stats.idleDuration);
+    final String activeDuration = durationFormat(_stats.activeDuration);
+
+    return Column(
+      children: [
+        Text(localizations.sessionStatisticsTitle, style: TextTheme.of(context).headlineSmall),
+        Text("$sessionStart - $sessionEnd", style: TextTheme.of(context).labelLarge),
+        Text("", style: TextTheme.of(context).bodyLarge),
+
+        formattedStatBuilder(
+          localizations.sessionStatLowestTemperature,
+          "$lowestTemperature$temperatureScaleSymbol",
+        ),
+        formattedStatBuilder(
+          localizations.sessionStatHighestTemperature,
+          "$highestTemperature$temperatureScaleSymbol",
+        ),
+        formattedStatBuilder(
+          localizations.sessionStatAverageTemperature,
+          "$averageTemperature$temperatureScaleSymbol",
+        ),
+
+        Text("", style: TextTheme.of(context).bodyLarge),
+
+        formattedStatBuilder(localizations.sessionStatNonIdleAveragePower, "$averageNonIdlePower%"),
+        formattedStatBuilder(localizations.sessionStatAveragePower, "$averagePower%"),
+        Text("", style: TextTheme.of(context).bodyLarge),
+
+        formattedStatBuilder(localizations.sessionStatIdleTime, idleDuration),
+        formattedStatBuilder(localizations.sessionStatActiveTime, activeDuration),
+      ],
+    );
   }
 }
 

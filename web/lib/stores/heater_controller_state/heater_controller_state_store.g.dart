@@ -32,6 +32,14 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
           Computed<List<TimeSeriesViewEntry>>(() => super.stateHistory,
               name: '_HeaterControllerStateStore.stateHistory'))
       .value;
+  Computed<HeaterSessionStatistics>? _$sessionStatisticsComputed;
+
+  @override
+  HeaterSessionStatistics get sessionStatistics =>
+      (_$sessionStatisticsComputed ??= Computed<HeaterSessionStatistics>(
+              () => super.sessionStatistics,
+              name: '_HeaterControllerStateStore.sessionStatistics'))
+          .value;
   Computed<Duration>? _$dataDurationComputed;
 
   @override
@@ -345,6 +353,7 @@ mixin _$HeaterControllerStateStore on _HeaterControllerStateStore, Store {
     return '''
 isModeChanging: ${isModeChanging},
 stateHistory: ${stateHistory},
+sessionStatistics: ${sessionStatistics},
 dataDuration: ${dataDuration},
 aggregationInterval: ${aggregationInterval},
 defaultAggregationMethod: ${defaultAggregationMethod},

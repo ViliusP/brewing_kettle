@@ -3,6 +3,7 @@ import 'dart:collection';
 typedef TimeSeriesNumericsAccesor<T> = num Function(T value);
 typedef TimeSeriesNumericAccesors<T> = Map<String, TimeSeriesNumericsAccesor<T>>;
 
+typedef ValueSelector<T> = bool Function(TimeSeriesEntry<T> entry);
 
 // TODO explain _accesors
 
@@ -285,6 +286,120 @@ class TimeSeries<T> {
   static num? _last(List<num> values) {
     if (values.isEmpty) return null;
     return values.lastOrNull;
+  }
+
+  /// Returns the mean value of the given field in the TimeSeries.
+  /// If the field does not exist, an [ArgumentError] is thrown.
+  /// If the TimeSeries is empty, returns [double.negativeInfinity].
+  /// If [condition] is provided, only the entries that match the condition are considered.
+  /// If [condition] is not provided, all entries are considered.
+  /// Example:
+  /// ```dart
+  /// final timeSeries = TimeSeries.from([
+  ///   TimeSeriesEntry(DateTime(2023, 1, 1), {'temperature': 20}),
+  ///   TimeSeriesEntry(DateTime(2023, 1, 2), {'temperature': 25}),
+  ///   TimeSeriesEntry(DateTime(2023, 1, 3), {'temperature': 22}),
+  ///   TimeSeriesEntry(DateTime(2023, 1, 4), {'temperature': 30}),
+  /// ]);
+  ///
+  /// final meanTemperature = timeSeries.meanByField('temperature');
+  /// print(meanTemperature); // 24.25
+  /// ```
+  num meanByField(String field, [ValueSelector<T>? condition]) {
+    if (!_accesors.containsKey(field)) {
+      throw ArgumentError('Field $field does not exist in the TimeSeries');
+    }
+
+    final accesor = _accesors[field]!;
+    if (condition != null) {
+      return _mean(_data.where((e) => condition(e)).map((e) => accesor(e.value)).toList()) ??
+          double.negativeInfinity;
+    }
+
+    return _mean(_data.map((e) => accesor(e.value)).toList()) ?? double.negativeInfinity;
+  }
+
+  /// Returns the minimum value of the given field in the TimeSeries.
+  /// If the field does not exist, an [ArgumentError] is thrown.
+  /// If the TimeSeries is empty, returns [double.negativeInfinity].
+  /// If [condition] is provided, only the entries that match the condition are considered.
+  /// /// If [condition] is not provided, all entries are considered.
+  /// Example:
+  /// ```dart
+  /// final timeSeries = TimeSeries.from([
+  ///   TimeSeriesEntry(DateTime(2023, 1, 1), {'temperature': 20}),
+  ///   TimeSeriesEntry(DateTime(2023, 1, 2), {'temperature': 25}),
+  ///   TimeSeriesEntry(DateTime(2023, 1, 3), {'temperature': 22}),
+  ///   TimeSeriesEntry(DateTime(2023, 1, 4), {'temperature': 30}),
+  /// ]);
+  ///
+  /// final minTemperature = timeSeries.minByField('temperature');
+  /// print(minTemperature); // 22.5
+  /// ```
+  num minByField(String field, [ValueSelector<T>? condition]) {
+    if (!_accesors.containsKey(field)) {
+      throw ArgumentError('Field $field does not exist in the TimeSeries');
+    }
+    final accesor = _accesors[field]!;
+    if (condition != null) {
+      return _min(_data.where((e) => condition(e)).map((e) => accesor(e.value)).toList()) ??
+          double.negativeInfinity;
+    }
+    return _min(_data.map((e) => accesor(e.value)).toList()) ?? double.negativeInfinity;
+  }
+
+  /// Returns the maximum value of the given field in the TimeSeries.
+  /// If the field does not exist, an [ArgumentError] is thrown.
+  /// If the TimeSeries is empty, returns [double.negativeInfinity].
+  /// If [condition] is provided, only the entries that match the condition are considered.
+  /// If [condition] is not provided, all entries are considered.
+  /// Example:
+  /// ```dart
+  /// final timeSeries = TimeSeries.from([
+  ///   TimeSeriesEntry(DateTime(2023, 1, 1), {'temperature': 20}),
+  ///   TimeSeriesEntry(DateTime(2023, 1, 2), {'temperature': 25}),
+  ///   TimeSeriesEntry(DateTime(2023, 1, 3), {'temperature': 22}),
+  ///   TimeSeriesEntry(DateTime(2023, 1, 4), {'temperature': 30}),
+  /// ]);
+  ///
+  /// final maxTemperature = timeSeries.maxByField('temperature');
+  /// print(maxTemperature); // 30
+  /// ```
+  num maxByField(String field) {
+    if (!_accesors.containsKey(field)) {
+      throw ArgumentError('Field $field does not exist in the TimeSeries');
+    }
+    final accesor = _accesors[field]!;
+    return _max(_data.map((e) => accesor(e.value)).toList()) ?? double.negativeInfinity;
+  }
+
+  /// Returns the total duration covered by all fragments where [condition] is true.
+  /// Handles fragmented (non-contiguous) periods.
+  Duration durationWhere(ValueSelector<T> condition) {
+    if (_data.isEmpty) {
+      return Duration.zero;
+    }
+
+    Duration total = Duration.zero;
+    DateTime? fragmentStart;
+
+    for (final entry in _data) {
+      if (condition(entry)) {
+        fragmentStart ??= entry.date;
+      } else {
+        if (fragmentStart != null) {
+          total += entry.date.difference(fragmentStart);
+          fragmentStart = null;
+        }
+      }
+    }
+
+    // Handle if the last entries matched the condition
+    if (fragmentStart != null) {
+      total += _data.last.date.difference(fragmentStart);
+    }
+
+    return total;
   }
 
   @override

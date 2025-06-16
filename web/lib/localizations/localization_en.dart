@@ -233,6 +233,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sliderContainerDragTooltip => 'Drag to change value';
 
   @override
+  String get graphOptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+
+  @override
+  String get sessionStatisticsTitle => 'Session statistics';
+
+  @override
+  String get sessionStatLowestTemperature => 'Lowest temperature';
+
+  @override
+  String get sessionStatHighestTemperature => 'Highest temperature';
+
+  @override
+  String get sessionStatAverageTemperature => 'Average temperature';
+
+  @override
+  String get sessionStatNonIdleAveragePower => 'Average (non-idle) power';
+
+  @override
+  String get sessionStatAveragePower => 'Average power';
+
+  @override
+  String get sessionStatIdleTime => 'Idle time';
+
+  @override
+  String get sessionStatActiveTime => 'Active time';
+
+  @override
+  String get sessionStatLessThanMinute => 'less than a minute';
+
+  @override
   String get connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override

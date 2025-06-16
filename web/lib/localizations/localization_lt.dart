@@ -233,6 +233,36 @@ class AppLocalizationsLt extends AppLocalizations {
   String get sliderContainerDragTooltip => 'Tempkite, kad pakeistumėte vertę';
 
   @override
+  String get graphOptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+
+  @override
+  String get sessionStatisticsTitle => 'Sesijos statistika';
+
+  @override
+  String get sessionStatLowestTemperature => 'Žemiausia temperatūra';
+
+  @override
+  String get sessionStatHighestTemperature => 'Aukščiausia temperatūra';
+
+  @override
+  String get sessionStatAverageTemperature => 'Vidutinė temperatūra';
+
+  @override
+  String get sessionStatNonIdleAveragePower => 'Vidutinė galia (esant aktyviai veikimui)';
+
+  @override
+  String get sessionStatAveragePower => 'Vidutinė galia';
+
+  @override
+  String get sessionStatIdleTime => 'Ramybės laikas';
+
+  @override
+  String get sessionStatActiveTime => 'Aktyvaus veikimo laikas';
+
+  @override
+  String get sessionStatLessThanMinute => 'mažiau nei minutė';
+
+  @override
   String get connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
 
   @override
