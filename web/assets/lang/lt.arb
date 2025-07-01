@@ -62,6 +62,14 @@
     }
   },
   "deviceIpFormValidationRequired": "Įveskite IP adresą",
+  "temperatureUnit": "{unit, select, celsius {Celsijus} fahrenheit {Farenheitas} kelvin {Kelvinas} other {Unknown}}",
+  "@temperatureUnit": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
   "mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "mainGraphInfoTitle": "Temperatūros ir galios grafikas",
@@ -187,6 +195,8 @@
   "layoutItemHome": "Pagrindinis",
   "layoutItemDevices": "Įrenginiai",
   "layoutItemSettings": "Nustatymai",
+  "temperatureScaleSettingTitle": "Temperatūros skalė",
+  "temperatureScaleDialogTitle": "Pasirinkite temperatūros skalę",
   "errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "notFoundText": "Puslapis nerastas",

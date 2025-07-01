@@ -84,6 +84,17 @@ class AppLocalizationsLt extends AppLocalizations {
   }
 
   @override
+  String temperatureUnit(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'celsius': 'Celsijus',
+      'fahrenheit': 'Farenheitas',
+      'kelvin': 'Kelvinas',
+      'other': 'Unknown',
+    });
+    return '$_temp0';
+  }
+
+  @override
   String get exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
       '----------------------------------------------------';
 
@@ -451,6 +462,12 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get layoutItemSettings => 'Nustatymai';
+
+  @override
+  String get temperatureScaleSettingTitle => 'Temperatūros skalė';
+
+  @override
+  String get temperatureScaleDialogTitle => 'Pasirinkite temperatūros skalę';
 
   @override
   String get errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>

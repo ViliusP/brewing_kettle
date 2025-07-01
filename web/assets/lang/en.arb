@@ -114,6 +114,15 @@
       }
     }
   },
+  "temperatureUnit": "{unit, select, celsius {Celsius} fahrenheit {Fahrenheit} kelvin {Kelvin} other {Unknown}}",
+  "@temperatureUnit": {
+    "description": "Names for all available temperature units in application",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
   "exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "exceptionUnknown": "Unknown error occurred.",
@@ -513,6 +522,14 @@
   "layoutItemSettings": "Settings",
   "@layoutItemSettings": {
     "description": "Title for settings item in navigation bar"
+  },
+  "temperatureScaleSettingTitle": "Temperature scale",
+  "@temperatureScaleSettingTitle": {
+    "description": "Title for temperature scale setting in settings screen"
+  },
+  "temperatureScaleDialogTitle": "Select temperature scale",
+  "@temperatureScaleDialogTitle": {
+    "description": "Title for temperature scale select dialog, showed at top of component"
   },
   "errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},

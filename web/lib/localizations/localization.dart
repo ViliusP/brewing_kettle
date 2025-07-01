@@ -225,6 +225,12 @@ abstract class AppLocalizations {
   /// **'This field must be not less than {value}'**
   String formValidationMustBeNotLessThan(String value);
 
+  /// Names for all available temperature units in application
+  ///
+  /// In en, this message translates to:
+  /// **'{unit, select, celsius {Celsius} fahrenheit {Fahrenheit} kelvin {Kelvin} other {Unknown}}'**
+  String temperatureUnit(String unit);
+
   /// No description provided for @exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///
   /// In en, this message translates to:
@@ -740,6 +746,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings'**
   String get layoutItemSettings;
+
+  /// Title for temperature scale setting in settings screen
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature scale'**
+  String get temperatureScaleSettingTitle;
+
+  /// Title for temperature scale select dialog, showed at top of component
+  ///
+  /// In en, this message translates to:
+  /// **'Select temperature scale'**
+  String get temperatureScaleDialogTitle;
 
   /// No description provided for @errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///

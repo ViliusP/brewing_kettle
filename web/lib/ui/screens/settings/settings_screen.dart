@@ -1,4 +1,5 @@
 import 'package:brew_kettle_dashboard/constants/theme.dart';
+import 'package:brew_kettle_dashboard/core/data/models/common/temperature_scale.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
 import 'package:brew_kettle_dashboard/stores/app_configuration/app_configuration_store.dart';
@@ -8,6 +9,7 @@ import 'package:brew_kettle_dashboard/stores/websocket_connection/websocket_conn
 import 'package:brew_kettle_dashboard/ui/common/application_info/application_info.dart';
 import 'package:brew_kettle_dashboard/ui/common/flags/country_flag.dart';
 import 'package:brew_kettle_dashboard/ui/screens/settings/language_select_dialog.dart';
+import 'package:brew_kettle_dashboard/ui/screens/settings/temperature_scale_select_dialog.dart';
 import 'package:brew_kettle_dashboard/ui/screens/settings/theme_select_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
@@ -105,6 +107,17 @@ class _GeneralSection extends StatelessWidget {
     if (returnedValue != null) themeStore.changeThemeMode(returnedValue);
   }
 
+  Future<void> _temperetureUnitSelectDialogBuilder(BuildContext context) async {
+    TemperatureScale? returnedValue = await showDialog<TemperatureScale>(
+      context: context,
+      builder: (BuildContext context) {
+        return TemperatureScaleSelectDialog(currentScale: _appConfigurationStore.temperatureScale);
+      },
+    );
+
+    if (returnedValue != null) _appConfigurationStore.setTemperatureScale(returnedValue);
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppLocalizations localizations = AppLocalizations.of(context)!;
@@ -135,6 +148,21 @@ class _GeneralSection extends StatelessWidget {
             onTap: () => _themeSelectDialogBuilder(context),
             child: Text(localizations.settingsTheme),
           ),
+          _SettingsButton(
+            icon: Icon(MdiIcons.thermometer),
+            tooltip: localizations.temperatureUnit(_appConfigurationStore.temperatureScale.name),
+            trailing: Observer(
+              builder:
+                  (context) => Icon(switch (_appConfigurationStore.temperatureScale) {
+                    TemperatureScale.celsius => MdiIcons.temperatureCelsius,
+                    TemperatureScale.fahrenheit => MdiIcons.temperatureFahrenheit,
+                    TemperatureScale.kelvin => MdiIcons.temperatureKelvin,
+                  }),
+            ),
+            onTap: () => _temperetureUnitSelectDialogBuilder(context),
+            child: Text(localizations.temperatureScaleSettingTitle),
+          ),
+
           _SettingsButton(
             icon: Icon(MdiIcons.tools),
             tooltip: localizations.settingsAdvancedModeTooltip,

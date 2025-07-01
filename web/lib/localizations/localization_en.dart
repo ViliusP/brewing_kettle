@@ -84,6 +84,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String temperatureUnit(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'celsius': 'Celsius',
+      'fahrenheit': 'Fahrenheit',
+      'kelvin': 'Kelvin',
+      'other': 'Unknown',
+    });
+    return '$_temp0';
+  }
+
+  @override
   String get exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
       '----------------------------------------------------';
 
@@ -444,6 +455,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get layoutItemSettings => 'Settings';
+
+  @override
+  String get temperatureScaleSettingTitle => 'Temperature scale';
+
+  @override
+  String get temperatureScaleDialogTitle => 'Select temperature scale';
 
   @override
   String get errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
