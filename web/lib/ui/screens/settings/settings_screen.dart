@@ -11,6 +11,7 @@ import 'package:brew_kettle_dashboard/ui/common/flags/country_flag.dart';
 import 'package:brew_kettle_dashboard/ui/screens/settings/language_select_dialog.dart';
 import 'package:brew_kettle_dashboard/ui/screens/settings/temperature_scale_select_dialog.dart';
 import 'package:brew_kettle_dashboard/ui/screens/settings/theme_select_dialog.dart';
+import 'package:brew_kettle_dashboard/ui/screens/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -152,12 +153,7 @@ class _GeneralSection extends StatelessWidget {
             icon: Icon(MdiIcons.thermometer),
             tooltip: localizations.temperatureUnit(_appConfigurationStore.temperatureScale.name),
             trailing: Observer(
-              builder:
-                  (context) => Icon(switch (_appConfigurationStore.temperatureScale) {
-                    TemperatureScale.celsius => MdiIcons.temperatureCelsius,
-                    TemperatureScale.fahrenheit => MdiIcons.temperatureFahrenheit,
-                    TemperatureScale.kelvin => MdiIcons.temperatureKelvin,
-                  }),
+              builder: (context) => Icon(_appConfigurationStore.temperatureScale.icon),
             ),
             onTap: () => _temperetureUnitSelectDialogBuilder(context),
             child: Text(localizations.temperatureScaleSettingTitle),

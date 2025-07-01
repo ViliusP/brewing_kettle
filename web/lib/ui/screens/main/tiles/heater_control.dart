@@ -4,8 +4,10 @@ import 'package:animated_idle_shapes/animated_idle_shapes.dart';
 import 'package:brew_kettle_dashboard/core/data/models/websocket/inbound_message.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
+import 'package:brew_kettle_dashboard/stores/app_configuration/app_configuration_store.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
 import 'package:brew_kettle_dashboard/ui/common/slider_container/slider_container.dart';
+import 'package:brew_kettle_dashboard/ui/screens/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -443,6 +445,8 @@ class _PidControlContentState extends State<_PidControlContent> {
   final HeaterControllerStateStore _heaterControllerStateStore =
       getIt<HeaterControllerStateStore>();
 
+  final AppConfigurationStore _appConfigurationStore = getIt<AppConfigurationStore>();
+
   static const double _temperatureChangeStep = 1;
 
   double _targetTemp = 0;
@@ -493,7 +497,7 @@ class _PidControlContentState extends State<_PidControlContent> {
 
   @override
   Widget build(BuildContext context) {
-    AppLocalizations localizations = AppLocalizations.of(context)!;
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
 
     return SliderContainer(
       direction: AxisDirection.up,
@@ -512,13 +516,21 @@ class _PidControlContentState extends State<_PidControlContent> {
                   double? storeTargetTemp = _heaterControllerStateStore.targetTemperature;
                   double? lastRequestedTarget = _heaterControllerStateStore.requestedTemperature;
 
-                  String text = storeTargetTemp?.toStringAsFixed(1) ?? "N/A";
+                  String text = "N/A";
+                  if (storeTargetTemp != null) {
+                    text = _appConfigurationStore.temperatureScale
+                        .fromCelsius(storeTargetTemp)
+                        .toStringAsFixed(1);
+                  }
 
-                  bool showLabel =
+                  final bool showLabel =
                       _targetTemp != lastRequestedTarget ||
                       (lastRequestedTarget != null && lastRequestedTarget != storeTargetTemp);
 
-                  String badgeTexts = _targetTemp.toStringAsFixed(0);
+                  final String badgeTexts = _appConfigurationStore.temperatureScale
+                      .fromCelsius(_targetTemp)
+                      .toStringAsFixed(0);
+
                   return Badge(
                     alignment: Alignment.topLeft,
                     offset: const Offset(-16, 0),
@@ -533,7 +545,7 @@ class _PidControlContentState extends State<_PidControlContent> {
                   );
                 },
               ),
-              Icon(MdiIcons.temperatureCelsius, size: 54),
+              Icon(_appConfigurationStore.temperatureScale.icon, size: 54),
               Spacer(),
             ],
           ),

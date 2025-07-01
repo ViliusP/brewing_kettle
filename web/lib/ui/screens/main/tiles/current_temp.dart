@@ -1,8 +1,9 @@
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
+import 'package:brew_kettle_dashboard/stores/app_configuration/app_configuration_store.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
+import 'package:brew_kettle_dashboard/ui/screens/utilities.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 class CurrentTempTile extends StatefulWidget {
@@ -14,6 +15,7 @@ class CurrentTempTile extends StatefulWidget {
 
 class _CurrentTempTileState extends State<CurrentTempTile> {
   final HeaterControllerStateStore _temperatureStore = getIt<HeaterControllerStateStore>();
+  final AppConfigurationStore _appConfigurationStore = getIt<AppConfigurationStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,7 @@ class _CurrentTempTileState extends State<CurrentTempTile> {
                   double? temperature = _temperatureStore.currentTemperature;
                   String text = "X.X";
                   if (temperature != null) {
+                    temperature = _appConfigurationStore.temperatureScale.fromCelsius(temperature);
                     text = temperature.toStringAsFixed(1);
                   }
 
@@ -42,7 +45,7 @@ class _CurrentTempTileState extends State<CurrentTempTile> {
                   );
                 },
               ),
-              Icon(MdiIcons.temperatureCelsius, size: 54),
+              Icon(_appConfigurationStore.temperatureScale.icon, size: 54),
             ],
           ),
         ),

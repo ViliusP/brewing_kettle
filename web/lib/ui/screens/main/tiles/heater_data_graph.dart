@@ -1,8 +1,10 @@
 import 'dart:ui';
 
+import 'package:brew_kettle_dashboard/core/data/models/common/temperature_scale.dart';
 import 'package:brew_kettle_dashboard/core/data/models/timeseries/timeseries.dart';
 import 'package:brew_kettle_dashboard/core/service_locator.dart';
 import 'package:brew_kettle_dashboard/localizations/localization.dart';
+import 'package:brew_kettle_dashboard/stores/app_configuration/app_configuration_store.dart';
 import 'package:brew_kettle_dashboard/stores/heater_controller_state/heater_controller_state_store.dart';
 import 'package:brew_kettle_dashboard/ui/common/drawer_menu/drawer_menu.dart';
 import 'package:brew_kettle_dashboard/ui/screens/main/heater_graph_settings_menu.dart';
@@ -21,6 +23,7 @@ class HeaterDataGraph extends StatefulWidget {
 
 class _HeaterDataGraphState extends State<HeaterDataGraph> {
   final HeaterControllerStateStore _heaterStateStore = getIt<HeaterControllerStateStore>();
+  final AppConfigurationStore _appConfigurationStore = getIt<AppConfigurationStore>();
 
   bool _showInfo = false;
 
@@ -35,8 +38,12 @@ class _HeaterDataGraphState extends State<HeaterDataGraph> {
           child: Observer(
             builder: (context) {
               final List<TimeSeriesViewEntry> temperatureHistory = _heaterStateStore.stateHistory;
-              if (temperatureHistory.length < 2) return _HeaterDataChart(data: []);
-              return _HeaterDataChart(data: temperatureHistory);
+              final TemperatureScale temperatureScale = _appConfigurationStore.temperatureScale;
+
+              if (temperatureHistory.length < 2) {
+                return _HeaterDataChart(data: [], scale: temperatureScale);
+              }
+              return _HeaterDataChart(data: temperatureHistory, scale: temperatureScale);
             },
           ),
         ),
@@ -77,10 +84,22 @@ class _HeaterDataGraphState extends State<HeaterDataGraph> {
   }
 }
 
+/// Chart that displays heater data over time.
+///
+/// It shows current temperature, target temperature and power usage.
+/// It uses the [TimeSeriesViewEntry] data model to represent the data points.
+///
+/// The chart is interactive and allows the user to hover over data points to see detailed information.
+///
+/// The chart can be customized to display different temperature [scale]s, such as Celsius, Fahrenheit, or Kelvin,
+/// Temperature data must be provided in celsius, and the chart will convert it to the selected scale.
 class _HeaterDataChart extends StatelessWidget {
   final List<TimeSeriesViewEntry> data;
+  final TemperatureScale scale;
 
-  const _HeaterDataChart({required this.data});
+  const _HeaterDataChart({required this.data, required this.scale});
+
+  static const num xAxisMaxCelsius = 105;
 
   @override
   Widget build(BuildContext context) {
@@ -89,16 +108,25 @@ class _HeaterDataChart extends StatelessWidget {
     final AppLocalizations localizations = AppLocalizations.of(context)!;
 
     var convertedData =
-        data
-            .map(
-              (e) => {
-                _ControllerStateFields.date: e.date,
-                _ControllerStateFields.currentTemperature: e.value?['current_temperature'] ?? 0,
-                _ControllerStateFields.targetTemperature: e.value?['target_temperature'] ?? 0,
-                _ControllerStateFields.power: e.value?['power'] ?? 0,
-              },
-            )
-            .toList();
+        data.map((e) {
+          // Convert temperature to the selected scale.
+          num? currentTemperature = e.value?['current_temperature'];
+          if (currentTemperature != null) {
+            currentTemperature = scale.fromCelsius(currentTemperature.toDouble());
+          }
+
+          num? targetTemperature = e.value?['target_temperature'];
+          if (targetTemperature != null) {
+            targetTemperature = scale.fromCelsius(targetTemperature.toDouble());
+          }
+
+          return {
+            _ControllerStateFields.date: e.date,
+            _ControllerStateFields.currentTemperature: currentTemperature ?? 0,
+            _ControllerStateFields.targetTemperature: targetTemperature ?? 0,
+            _ControllerStateFields.power: e.value?['power'] ?? 0,
+          };
+        }).toList();
 
     // Graphics library cannot be used with empty data, so it will be added when
     // provided data is empty.
@@ -140,18 +168,26 @@ class _HeaterDataChart extends StatelessWidget {
             accessor: (Map map) => map[_ControllerStateFields.currentTemperature] as num,
             scale: LinearScale(
               min: 0,
-              max: 105,
+              max: scale.fromCelsius(xAxisMaxCelsius.toDouble()),
               tickCount: 7,
               formatter: (v) => v.toStringAsFixed(1),
             ),
           ),
           _ControllerStateFields.targetTemperature: Variable(
             accessor: (Map map) => map[_ControllerStateFields.targetTemperature] as num,
-            scale: LinearScale(min: 0, max: 105, formatter: (v) => v.toStringAsFixed(1)),
+            scale: LinearScale(
+              min: 0,
+              max: scale.fromCelsius(xAxisMaxCelsius.toDouble()),
+              formatter: (v) => v.toStringAsFixed(1),
+            ),
           ),
           _ControllerStateFields.power: Variable(
             accessor: (Map map) => map[_ControllerStateFields.power] as num,
-            scale: LinearScale(min: 0, max: 100, formatter: (v) => v.toStringAsFixed(1)),
+            scale: LinearScale(
+              min: 0,
+              max: scale.fromCelsius(xAxisMaxCelsius.toDouble()),
+              formatter: (v) => v.toStringAsFixed(1),
+            ),
           ),
         },
         marks: [
@@ -195,13 +231,13 @@ class _HeaterDataChart extends StatelessWidget {
               strokeColor: colorScheme.outline.withAlpha(128),
               strokeCap: StrokeCap.round,
             ),
-            labelMapper: (_, index, ___) {
+            labelMapper: (_, index, _) {
               return switch (index) {
                 0 => null,
                 _ => LabelStyle(textStyle: textTheme.labelMedium, offset: const Offset(-10, 0)),
               };
             },
-            tickLineMapper: (_, index, ___) {
+            tickLineMapper: (_, index, _) {
               return switch (index) {
                 0 => null,
                 _ => TickLine(
@@ -213,7 +249,7 @@ class _HeaterDataChart extends StatelessWidget {
                 ),
               };
             },
-            gridMapper: (_, index, __) {
+            gridMapper: (_, index, _) {
               return switch (index) {
                 0 => null,
                 _ => PaintStyle(
@@ -253,13 +289,13 @@ class _HeaterDataChart extends StatelessWidget {
             var targetTemperature = values?[_ControllerStateFields.targetTemperature];
             if (targetTemperature != null && targetTemperature is num) {
               repr += "\n${localizations.generalTargetTemperature}: ";
-              repr += "${targetTemperature.toStringAsFixed(0)}°C";
+              repr += "${targetTemperature.toStringAsFixed(0)}${scale.symbol}";
             }
 
             var maybeTemperature = values?[_ControllerStateFields.currentTemperature];
             if (maybeTemperature != null && maybeTemperature is num) {
               repr += "\n${localizations.generalTemperature}: ";
-              repr += "${maybeTemperature.toStringAsFixed(0)}°C";
+              repr += "${maybeTemperature.toStringAsFixed(0)}${scale.symbol}";
             }
 
             var maybePower = values?[_ControllerStateFields.power];
@@ -317,7 +353,7 @@ class _HeaterDataChart extends StatelessWidget {
             // Temperature
             (val) {
               if (val is num) {
-                return "${val.toStringAsFixed(2)}°C";
+                return "${val.toStringAsFixed(2)}${scale.symbol}";
               }
               return val.toString();
             },
