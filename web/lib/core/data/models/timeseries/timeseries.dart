@@ -402,6 +402,23 @@ class TimeSeries<T> {
     return total;
   }
 
+  List<TimeSeriesViewEntry> toViewList() {
+    final List<TimeSeriesViewEntry> viewList = [];
+
+    for (var i in List.generate(_data.length, (i) => i)) {
+      Map<String, num> values = {};
+      for (var entry in this._accesors.entries) {
+        var key = entry.key;
+        var value = entry.value;
+        values[key] = value(_data[i].value);
+      }
+
+      viewList.add(TimeSeriesViewEntry(_data[i].date, values));
+    }
+
+    return viewList;
+  }
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -427,7 +444,7 @@ class TimeSeriesViewEntry {
   final DateTime date;
   final Map<String, num>? value;
 
-  TimeSeriesViewEntry(this.date, [this.value]);
+  const TimeSeriesViewEntry(this.date, [this.value]);
 
   @override
   String toString() {

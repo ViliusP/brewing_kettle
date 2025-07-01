@@ -311,6 +311,54 @@
   "@sessionStatLessThanMinute": {
     "description": "Label for less than a minute in session statistics"
   },
+  "dataDurationSpanTitle": "Data duration span",
+  "@dataDurationSpanTitle": {
+    "description": "Title for data duration span in graph options"
+  },
+  "dataDurationSpanInfo": "Showing data for the last: ",
+  "@dataDurationSpanInfo": {
+    "description": "Information text for data duration span in graph options"
+  },
+  "dataAggregationTitle": "Data aggregation",
+  "@dataAggregationTitle": {
+    "description": "Title for data aggregation in graph options"
+  },
+  "dataAggregationInfo": "Data is aggregated by interval of {duration}",
+  "@dataAggregationInfo": {
+    "description": "Information text for data aggregation in graph options",
+    "placeholders": {
+      "duration": {
+        "type": "String",
+        "description": "Duration of data aggregation"
+      }
+    }
+  },
+  "dataAggregationSwitchLabel": "Aggregate data",
+  "@dataAggregationSwitchLabel": {
+    "description": "Label for data aggregation switch in graph options"
+  },
+  "aggregationByPropertyTitle": "Properties aggregation",
+  "@aggregationByPropertyTitle": {
+    "description": "Title for properties aggregation in graph options"
+  },
+  "aggregationField": "{field, select, default {Default} power {Power} current_temperature {Current temperature} target_temperature {Target temperature} other {Unknown}}",
+  "@aggregationField": {
+    "description": "Label for aggregation field selection",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "aggregationType": "{type, select, mean {Mean} median {Median} min {Min} max {Max} sum {Sum} first {First} last {Last} other {Unknown}}",
+  "@aggregationType": {
+    "description": "Label for aggregation type selection",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
   "connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "connectButtonLabel": "Connect",

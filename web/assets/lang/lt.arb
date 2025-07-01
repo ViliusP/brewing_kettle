@@ -112,6 +112,35 @@
   "sessionStatIdleTime": "Ramybės laikas",
   "sessionStatActiveTime": "Aktyvaus veikimo laikas",
   "sessionStatLessThanMinute": "mažiau nei minutė",
+  "dataDurationSpanTitle": "Duomenų apimtis",
+  "dataDurationSpanInfo": "Rodomi duomenys paskutinių",
+  "dataAggregationTitle": "Duomenų sujungimas",
+  "dataAggregationInfo": "Duomenys sujungiami {duration} intervalu",
+  "@dataAggregationInfo": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "dataAggregationSwitchLabel": "Sujungti duomenis",
+  "aggregationByPropertyTitle": "Duomenų laukelių sujungimas",
+  "aggregationField": "{field, select, default {Numatytas} power {Galia} current_temperature {Dabartinė temperatūra} target_temperature {Tikslo temperatūra} other {Nežinoma}}",
+  "@aggregationField": {
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "aggregationType": "{type, select, mean {Vidurkis} median {Mediana} min {Minimali reikšmė} max {Maksimali reikšmė} sum {Suma} first {Pirma reikšmė} last {Paskutinė reikšmė} other {Nežinoma}}",
+  "@aggregationType": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
   "devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": "----------------------------------------------------",
   "@devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII": {},
   "devicesCommunicationController": "Komunikacijos valdiklis",

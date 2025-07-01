@@ -35,42 +35,60 @@ class HeaterGraphSettingsMenu extends StatelessWidget {
           slivers: [
             SliverFillRemaining(
               hasScrollBody: false,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
 
-                children: <Widget>[
-                  Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-                  Text("Graph controls", style: TextTheme.of(context).displaySmall),
-                  Padding(padding: EdgeInsets.symmetric(vertical: 4)),
-                  _GraphRangeSelect(),
-                  Divider(indent: 8, endIndent: 8),
-                  _AggregationOptions(),
-                  Divider(indent: 8, endIndent: 8),
-                  Observer(
-                    builder: (context) {
-                      return _GraphStatistics(
-                        stats: _heaterStateStore.sessionStatistics,
-                        temperatureScale: _appConfigurationStore.temperatureScale,
-                      );
-                    },
-                  ),
-                  Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: FilledButton.tonalIcon(
-                      icon: Icon(AppConstants.backIcon),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size.fromHeight(48),
-                        textStyle: textTheme.labelLarge?.copyWith(fontSize: 18),
-                        iconSize: 18,
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
+                  children: <Widget>[
+                    Padding(padding: EdgeInsets.symmetric(vertical: 8)),
+                    Observer(
+                      builder: (context) {
+                        return _GraphStatistics(
+                          stats: _heaterStateStore.sessionStatistics,
+                          temperatureScale: _appConfigurationStore.temperatureScale,
+                        );
                       },
-                      label: Text(localizations.generalGoBack),
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      child: Divider(indent: 8, endIndent: 8),
+                    ),
+                    Text(
+                      localizations.dataDurationSpanTitle,
+                      style: TextTheme.of(context).headlineSmall,
+                    ),
+                    Padding(padding: EdgeInsets.symmetric(vertical: 4)),
+                    _GraphRangeSelect(),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      child: Divider(indent: 8, endIndent: 8),
+                    ),
+                    Text(
+                      localizations.dataAggregationTitle,
+                      style: TextTheme.of(context).headlineSmall,
+                    ),
+                    Padding(padding: EdgeInsets.symmetric(vertical: 4)),
+                    _AggregationOptions(),
+
+                    Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: FilledButton.tonalIcon(
+                        icon: Icon(AppConstants.backIcon),
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size.fromHeight(48),
+                          textStyle: textTheme.labelLarge?.copyWith(fontSize: 18),
+                          iconSize: 18,
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        label: Text(localizations.generalGoBack),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -97,51 +115,50 @@ class _GraphRangeSelectState extends State<_GraphRangeSelect> {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
+
     final int sliderDivisions =
         (HeaterStateHistoryValues.maxDataInterval.inMinutes -
                 HeaterStateHistoryValues.minDataInterval.inMinutes)
             .toInt();
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
-      child: Column(
-        children: [
-          Text("Data duration span", style: TextTheme.of(context).headlineSmall),
-          Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+    return Column(
+      children: [
+        Observer(
+          builder: (context) {
+            final Duration currentDuration = _heaterStateStore.dataDuration;
+            final String formattedDuration =
+                "${currentDuration.inHours}h ${currentDuration.inMinutes.remainder(60)}m";
 
-          Observer(
-            builder: (context) {
-              final Duration currentDuration = _heaterStateStore.dataDuration;
-              final String formattedDuration =
-                  "${currentDuration.inHours}h ${currentDuration.inMinutes.remainder(60)}m";
-
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text("Showing data from the last: $formattedDuration", textAlign: TextAlign.left),
-                  SliderTheme(
-                    data: SliderThemeData(
-                      showValueIndicator: ShowValueIndicator.onlyForContinuous,
-                      year2023: false,
-                    ),
-                    child: Slider(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                      min: HeaterStateHistoryValues.minDataInterval.inMinutes.toDouble(),
-                      max: HeaterStateHistoryValues.maxDataInterval.inMinutes.toDouble(),
-                      divisions: sliderDivisions,
-                      value: _heaterStateStore.dataDuration.inMinutes.toDouble(),
-                      onChanged: (double value) {
-                        _heaterStateStore.setDataInterval(Duration(minutes: value.round()));
-                      },
-                    ),
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  "${localizations.dataDurationSpanInfo}$formattedDuration",
+                  textAlign: TextAlign.left,
+                ),
+                SliderTheme(
+                  data: SliderThemeData(
+                    showValueIndicator: ShowValueIndicator.onlyForContinuous,
+                    year2023: false,
                   ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
+                  child: Slider(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                    min: HeaterStateHistoryValues.minDataInterval.inMinutes.toDouble(),
+                    max: HeaterStateHistoryValues.maxDataInterval.inMinutes.toDouble(),
+                    divisions: sliderDivisions,
+                    value: _heaterStateStore.dataDuration.inMinutes.toDouble(),
+                    onChanged: (double value) {
+                      _heaterStateStore.setDataInterval(Duration(minutes: value.round()));
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ],
     );
   }
 }
@@ -160,6 +177,8 @@ class _AggregationOptionsState extends State<_AggregationOptions> {
       AggregationMethod.values
           .map((e) => _DropddownEntryData<AggregationMethod>(label: e.name, value: e))
           .toList();
+
+  static const defaultTypeKey = "default";
 
   static final _dropdownEntries = [
     ..._dropdownEntriesForDefault,
@@ -186,92 +205,148 @@ class _AggregationOptionsState extends State<_AggregationOptions> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: Column(
-        spacing: 8,
-        children: [
-          Text("Data aggregation options", style: TextTheme.of(context).headlineSmall),
-          Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Aggregation interval: $sliderValue s.",
-                style: TextTheme.of(context).labelLarge,
-              ),
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
 
-              SliderTheme(
-                data: SliderThemeData(
-                  year2023: false,
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+    return Column(
+      spacing: 8,
+      children: [
+        Observer(
+          builder: (context) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  localizations.dataAggregationInfo("$sliderValue s."),
+                  style: TextTheme.of(context).labelLarge,
                 ),
-                child: Slider(
-                  min: sliderMin,
-                  max: sliderMax,
-                  divisions: sliderDivisions,
-                  label: "$sliderValue s.",
-                  value: sliderValue.toDouble(),
-                  onChangeEnd: (double value) {
-                    _heaterStateStore.setAggregationInterval(sliderValue);
-                  },
-                  onChanged: (double value) {
-                    bool toCeil = sliderValue.toDouble() < value;
-                    setState(() {
-                      sliderValue = toCeil ? value.ceil() : value.floor();
-                    });
-                  },
+                Padding(padding: EdgeInsets.symmetric(vertical: 4)),
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: SliderTheme(
+                        data: SliderThemeData(
+                          year2023: false,
+                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                        ),
+                        child: Slider(
+                          min: sliderMin,
+                          max: sliderMax,
+                          divisions: sliderDivisions,
+                          label: "$sliderValue s.",
+                          value: sliderValue.toDouble(),
+                          onChangeEnd: (double value) {
+                            _heaterStateStore.setAggregationInterval(sliderValue);
+                          },
+                          onChanged:
+                              _heaterStateStore.toAggregateTimeSeries
+                                  ? (double value) {
+                                    bool toCeil = sliderValue.toDouble() < value;
+                                    setState(() {
+                                      sliderValue = toCeil ? value.ceil() : value.floor();
+                                    });
+                                  }
+                                  : null,
+                        ),
+                      ),
+                    ),
+                    Tooltip(
+                      message: localizations.dataAggregationSwitchLabel,
+                      child: Checkbox(
+                        value: _heaterStateStore.toAggregateTimeSeries,
+                        semanticLabel: localizations.dataAggregationSwitchLabel,
+                        onChanged: (bool? value) {
+                          if (value == null) return;
+                          // If the checkbox is unchecked, we reset the aggregation interval
+                          _heaterStateStore.setToAggregateTimeSeries(value);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+              ],
+            );
+          },
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Text(
+            localizations.aggregationByPropertyTitle,
+            style: TextTheme.of(context).titleMedium?.copyWith(fontWeight: FontWeight.w300),
+            textAlign: TextAlign.center,
           ),
-          Observer(
+        ),
+
+        Observer(
+          builder: (context) {
+            return Row(
+              children: [
+                Text(
+                  "${localizations.aggregationField(defaultTypeKey)}: ",
+                  style: TextTheme.of(context).labelLarge?.copyWith(fontWeight: FontWeight.w600),
+                ),
+                Spacer(),
+                _AggregationMethodDropddown<AggregationMethod>(
+                  label: localizations.aggregationType(
+                    _heaterStateStore.defaultAggregationMethod.name,
+                  ),
+                  entries:
+                      _dropdownEntriesForDefault
+                          .map(
+                            (e) => _DropddownEntryData<AggregationMethod>(
+                              label: localizations.aggregationType(e.label),
+                              value: e.value,
+                            ),
+                          )
+                          .toList(),
+                  onSelected:
+                      _heaterStateStore.toAggregateTimeSeries
+                          ? (AggregationMethod value) {
+                            _heaterStateStore.setDefaultAggregationMethod(value);
+                          }
+                          : null,
+                ),
+              ],
+            );
+          },
+        ),
+
+        ...HeaterControllerStateField.values.map((field) {
+          return Observer(
             builder: (context) {
               return Row(
                 children: [
                   Text(
-                    "DEFAULT: ",
+                    "${localizations.aggregationField(field.key)}: ",
                     style: TextTheme.of(context).labelLarge?.copyWith(fontWeight: FontWeight.w600),
                   ),
                   Spacer(),
-                  _AggregationMethodDropddown<AggregationMethod>(
-                    label: _heaterStateStore.defaultAggregationMethod.name,
-                    entries: _dropdownEntriesForDefault,
-                    onSelected: (AggregationMethod value) {
-                      _heaterStateStore.setDefaultAggregationMethod(value);
-                    },
+                  _AggregationMethodDropddown<AggregationMethod?>(
+                    label: localizations.aggregationType(
+                      _heaterStateStore.aggregationMethodsByField[field]?.name ?? defaultTypeKey,
+                    ),
+                    entries:
+                        _dropdownEntries
+                            .map(
+                              (e) => _DropddownEntryData<AggregationMethod?>(
+                                label: localizations.aggregationType(e.label),
+                                value: e.value,
+                              ),
+                            )
+                            .toList(),
+                    onSelected:
+                        _heaterStateStore.toAggregateTimeSeries
+                            ? (AggregationMethod? value) {
+                              _heaterStateStore.setFieldAggregationMethod(field, value);
+                            }
+                            : null,
                   ),
                 ],
               );
             },
-          ),
-
-          ...HeaterControllerStateField.values.map((field) {
-            return Observer(
-              builder: (context) {
-                return Row(
-                  children: [
-                    Text(
-                      "${field.key}: ",
-                      style: TextTheme.of(
-                        context,
-                      ).labelLarge?.copyWith(fontWeight: FontWeight.w600),
-                    ),
-                    Spacer(),
-                    _AggregationMethodDropddown<AggregationMethod?>(
-                      label: _heaterStateStore.aggregationMethodsByField[field]?.name ?? "DEFAULT",
-                      entries: _dropdownEntries,
-                      onSelected: (AggregationMethod? value) {
-                        _heaterStateStore.setFieldAggregationMethod(field, value);
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
-          }),
-        ],
-      ),
+          );
+        }),
+      ],
     );
   }
 
@@ -325,13 +400,16 @@ class _AggregationMethodDropddownState<T> extends State<_AggregationMethodDropdd
           iconColor: ColorScheme.of(context).onSurface,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
         ),
-        onPressed: () {
-          if (controller.isOpen) {
-            controller.close();
-          } else {
-            controller.open();
-          }
-        },
+        onPressed:
+            widget.onSelected != null
+                ? () {
+                  if (controller.isOpen) {
+                    controller.close();
+                  } else {
+                    controller.open();
+                  }
+                }
+                : null,
         icon: AnimatedRotation(
           turns: !controller.isOpen ? 1.0 / 2.0 : 0,
           duration: Durations.medium1,
@@ -393,12 +471,16 @@ class _GraphStatistics extends StatelessWidget {
 
     formattedStatBuilder(String label, String value) {
       return RichText(
+        textAlign: TextAlign.center,
+        softWrap: true,
         text: TextSpan(
           children: [
             TextSpan(text: "$label: ", style: TextTheme.of(context).bodyLarge),
             TextSpan(
               text: value,
-              style: TextTheme.of(context).bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+              style: TextTheme.of(
+                context,
+              ).bodyLarge?.copyWith(fontWeight: FontWeight.w600, overflow: TextOverflow.visible),
             ),
           ],
         ),
@@ -416,8 +498,14 @@ class _GraphStatistics extends StatelessWidget {
         .fromCelsius(_stats.highestTemperature)
         .toStringAsFixed(1);
 
-    final String averageNonIdlePower = _stats.averageNonIdlePower.toStringAsFixed(1);
-    final String averagePower = _stats.averagePower.toStringAsFixed(1);
+    String averageNonIdlePower = _stats.averageNonIdlePower.toStringAsFixed(1);
+    if (_stats.averageNonIdlePower == double.negativeInfinity) {
+      averageNonIdlePower = "0.0";
+    }
+    String averagePower = _stats.averagePower.toStringAsFixed(1);
+    if (_stats.averagePower == double.negativeInfinity) {
+      averagePower = "0.0";
+    }
 
     final String idleDuration = durationFormat(_stats.idleDuration);
     final String activeDuration = durationFormat(_stats.activeDuration);

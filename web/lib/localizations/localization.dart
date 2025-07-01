@@ -82,18 +82,16 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[
-    Locale('en'),
-    Locale('lt')
-  ];
+  static const List<Locale> supportedLocales = <Locale>[Locale('en'), Locale('lt')];
 
   /// No description provided for @generalIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///
@@ -485,6 +483,54 @@ abstract class AppLocalizations {
   /// **'less than a minute'**
   String get sessionStatLessThanMinute;
 
+  /// Title for data duration span in graph options
+  ///
+  /// In en, this message translates to:
+  /// **'Data duration span'**
+  String get dataDurationSpanTitle;
+
+  /// Information text for data duration span in graph options
+  ///
+  /// In en, this message translates to:
+  /// **'Showing data for the last: '**
+  String get dataDurationSpanInfo;
+
+  /// Title for data aggregation in graph options
+  ///
+  /// In en, this message translates to:
+  /// **'Data aggregation'**
+  String get dataAggregationTitle;
+
+  /// Information text for data aggregation in graph options
+  ///
+  /// In en, this message translates to:
+  /// **'Data is aggregated by interval of {duration}'**
+  String dataAggregationInfo(String duration);
+
+  /// Label for data aggregation switch in graph options
+  ///
+  /// In en, this message translates to:
+  /// **'Aggregate data'**
+  String get dataAggregationSwitchLabel;
+
+  /// Title for properties aggregation in graph options
+  ///
+  /// In en, this message translates to:
+  /// **'Properties aggregation'**
+  String get aggregationByPropertyTitle;
+
+  /// Label for aggregation field selection
+  ///
+  /// In en, this message translates to:
+  /// **'{field, select, default {Default} power {Power} current_temperature {Current temperature} target_temperature {Target temperature} other {Unknown}}'**
+  String aggregationField(String field);
+
+  /// Label for aggregation type selection
+  ///
+  /// In en, this message translates to:
+  /// **'{type, select, mean {Mean} median {Median} min {Min} max {Max} sum {Sum} first {First} last {Last} other {Unknown}}'**
+  String aggregationType(String type);
+
   /// No description provided for @connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.
   ///
   /// In en, this message translates to:
@@ -808,18 +854,18 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en': return AppLocalizationsEn();
-    case 'lt': return AppLocalizationsLt();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'lt':
+      return AppLocalizationsLt();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
+    'that was used.',
   );
 }

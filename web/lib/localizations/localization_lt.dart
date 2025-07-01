@@ -9,7 +9,8 @@ class AppLocalizationsLt extends AppLocalizations {
   AppLocalizationsLt([String locale = 'lt']) : super(locale);
 
   @override
-  String get generalIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get generalIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get generalDate => 'Data';
@@ -83,7 +84,8 @@ class AppLocalizationsLt extends AppLocalizations {
   }
 
   @override
-  String get exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get exceptionUnknown => 'Įvyko nežinoma klaida.';
@@ -92,25 +94,32 @@ class AppLocalizationsLt extends AppLocalizations {
   String get exceptionFailedToConnectToDevice => 'Nepavyko prisijungti prie įrenginio.';
 
   @override
-  String get exceptionDeviceConnectionTimeout => 'Nepavyko prisijungti prie įrenginio. Patikrinkite įrenginį ar pateiktą adresą.';
+  String get exceptionDeviceConnectionTimeout =>
+      'Nepavyko prisijungti prie įrenginio. Patikrinkite įrenginį ar pateiktą adresą.';
 
   @override
-  String get exceptionAddressLookupFailed => 'Nepavyko prisijungti prie įrenginio. Patikrinkite interneto ryšį ar pateiktą įrenginio adresą.';
+  String get exceptionAddressLookupFailed =>
+      'Nepavyko prisijungti prie įrenginio. Patikrinkite interneto ryšį ar pateiktą įrenginio adresą.';
 
   @override
-  String get exceptionConnectionRefused => 'Nepavyko prisijungti prie įrenginio. Patikrinkite pateiktą įrenginio adresą.';
+  String get exceptionConnectionRefused =>
+      'Nepavyko prisijungti prie įrenginio. Patikrinkite pateiktą įrenginio adresą.';
 
   @override
-  String get exceptionHttpConnectionTimeout => 'Laikas užklausai į įrenginio serverį baigėsi. Patikrinkite tinklo ryšį.';
+  String get exceptionHttpConnectionTimeout =>
+      'Laikas užklausai į įrenginio serverį baigėsi. Patikrinkite tinklo ryšį.';
 
   @override
-  String get exceptionHttpSendTimeout => 'Laikas užklausai į įrenginio serverį baigėsi. Patikrinkite tinklo ryšį.';
+  String get exceptionHttpSendTimeout =>
+      'Laikas užklausai į įrenginio serverį baigėsi. Patikrinkite tinklo ryšį.';
 
   @override
-  String get exceptionHttpReceiveTimeout => 'Laikas užklausai gauti iš įrenginio serverio baigėsi. Patikrinkite tinklo ryšį.';
+  String get exceptionHttpReceiveTimeout =>
+      'Laikas užklausai gauti iš įrenginio serverio baigėsi. Patikrinkite tinklo ryšį.';
 
   @override
-  String get exceptionHttpBadCertificate => 'Užklausa nepavyko. Blogas sertifikatas buvo pateiktas serveriui. Ši klaida neturėjo nutikti. Apie tai praneškite programinės įrangos kurėjams.';
+  String get exceptionHttpBadCertificate =>
+      'Užklausa nepavyko. Blogas sertifikatas buvo pateiktas serveriui. Ši klaida neturėjo nutikti. Apie tai praneškite programinės įrangos kurėjams.';
 
   @override
   String exceptionHttpBadResponse(String code) {
@@ -118,16 +127,20 @@ class AppLocalizationsLt extends AppLocalizations {
   }
 
   @override
-  String get exceptionHttpCancel => 'Užklausa buvo atšaukta. Ši klaida neturėjo nutikti. Apie tai praneškite programinės įrangos kurėjams.';
+  String get exceptionHttpCancel =>
+      'Užklausa buvo atšaukta. Ši klaida neturėjo nutikti. Apie tai praneškite programinės įrangos kurėjams.';
 
   @override
-  String get exceptionHttpConnectionError => 'Nepavyko prisijungti prie įrenginio serverio. Patikrinkite tinklo ryšį.';
+  String get exceptionHttpConnectionError =>
+      'Nepavyko prisijungti prie įrenginio serverio. Patikrinkite tinklo ryšį.';
 
   @override
-  String get exceptionHttpUnknown => 'Įvyko netikėta tinklo problema. Tai gali būti interneto ryšio arba įrenginio serverio sutrikimai.';
+  String get exceptionHttpUnknown =>
+      'Įvyko netikėta tinklo problema. Tai gali būti interneto ryšio arba įrenginio serverio sutrikimai.';
 
   @override
-  String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get mainGraphInfoTitle => 'Temperatūros ir galios grafikas';
@@ -136,12 +149,10 @@ class AppLocalizationsLt extends AppLocalizations {
   String mainGraphInfoText(int seconds, num hours) {
     final intl.NumberFormat secondsNumberFormat = intl.NumberFormat.decimalPatternDigits(
       locale: localeName,
-      
     );
     final String secondsString = secondsNumberFormat.format(seconds);
     final intl.NumberFormat hoursNumberFormat = intl.NumberFormat.decimalPatternDigits(
       locale: localeName,
-      
     );
     final String hoursString = hoursNumberFormat.format(hours);
 
@@ -185,47 +196,44 @@ class AppLocalizationsLt extends AppLocalizations {
   String get heaterControlCardLabelError => 'Įvyko klaida';
 
   @override
-  String get heaterControlCardMessageError => 'Įvyko klaida virintuvo valdiklyje, pabandykite perkraukite valdiklius.';
+  String get heaterControlCardMessageError =>
+      'Įvyko klaida virintuvo valdiklyje, pabandykite perkraukite valdiklius.';
 
   @override
   String get heaterControlCardLabelStatusUnknown => 'Statusas nežinomas';
 
   @override
-  String get heaterControlCardMessageStatusUnknown => 'Įvyko klaida - virintuvo valdiklio būsena nežinoma, pabandykite perkrauti aplikaciją ir abu valdiklius.';
+  String get heaterControlCardMessageStatusUnknown =>
+      'Įvyko klaida - virintuvo valdiklio būsena nežinoma, pabandykite perkrauti aplikaciją ir abu valdiklius.';
 
   @override
   String get heaterControlCardLabelConfiguring => 'Konfigūruojama...';
 
   @override
-  String get heaterControlCardMessageConfiguring => 'Laukiama, kol bus sukonfigūruotas virintuvo valdiklis. Tai turėtų užtrukti kelias sekundes.';
+  String get heaterControlCardMessageConfiguring =>
+      'Laukiama, kol bus sukonfigūruotas virintuvo valdiklis. Tai turėtų užtrukti kelias sekundes.';
 
   @override
   String heaterControlSelectButtonLabel(String mode) {
-    String _temp0 = intl.Intl.selectLogic(
-      mode,
-      {
-        'idle': 'Ramybės būsena',
-        'heating_manual': 'Galia',
-        'heating_pid': 'Temperatūra',
-        'other': 'Nežinoma',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(mode, {
+      'idle': 'Ramybės būsena',
+      'heating_manual': 'Galia',
+      'heating_pid': 'Temperatūra',
+      'other': 'Nežinoma',
+    });
     return '$_temp0';
   }
 
   @override
   String heaterControlSelectButtonTooltip(String mode) {
-    String _temp0 = intl.Intl.selectLogic(
-      mode,
-      {
-        'idle': 'ramybės būsena',
-        'heating_manual': 'pastovi galia',
-        'heating_pid': 'PID',
-        'autotune_pid': 'automatinis derinimas',
-        'null': 'nėra',
-        'other': 'nežinoma',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(mode, {
+      'idle': 'ramybės būsena',
+      'heating_manual': 'pastovi galia',
+      'heating_pid': 'PID',
+      'autotune_pid': 'automatinis derinimas',
+      'null': 'nėra',
+      'other': 'nežinoma',
+    });
     return 'Kaitinimo būdas - $_temp0';
   }
 
@@ -233,7 +241,8 @@ class AppLocalizationsLt extends AppLocalizations {
   String get sliderContainerDragTooltip => 'Tempkite, kad pakeistumėte vertę';
 
   @override
-  String get graphOptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get graphOptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get sessionStatisticsTitle => 'Sesijos statistika';
@@ -263,7 +272,55 @@ class AppLocalizationsLt extends AppLocalizations {
   String get sessionStatLessThanMinute => 'mažiau nei minutė';
 
   @override
-  String get connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get dataDurationSpanTitle => 'Duomenų apimtis';
+
+  @override
+  String get dataDurationSpanInfo => 'Rodomi duomenys paskutinių';
+
+  @override
+  String get dataAggregationTitle => 'Duomenų sujungimas';
+
+  @override
+  String dataAggregationInfo(String duration) {
+    return 'Duomenys sujungiami $duration intervalu';
+  }
+
+  @override
+  String get dataAggregationSwitchLabel => 'Sujungti duomenis';
+
+  @override
+  String get aggregationByPropertyTitle => 'Duomenų laukelių sujungimas';
+
+  @override
+  String aggregationField(String field) {
+    String _temp0 = intl.Intl.selectLogic(field, {
+      'default': 'Numatytas',
+      'power': 'Galia',
+      'current_temperature': 'Dabartinė temperatūra',
+      'target_temperature': 'Tikslo temperatūra',
+      'other': 'Nežinoma',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String aggregationType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'mean': 'Vidurkis',
+      'median': 'Mediana',
+      'min': 'Minimali reikšmė',
+      'max': 'Maksimali reikšmė',
+      'sum': 'Suma',
+      'first': 'Pirma reikšmė',
+      'last': 'Paskutinė reikšmė',
+      'other': 'Nežinoma',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get connectButtonLabel => 'Prisijungti';
@@ -283,7 +340,8 @@ class AppLocalizationsLt extends AppLocalizations {
   String get deviceIpFormValidationRequired => 'Įveskite IP adresą';
 
   @override
-  String get devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get devicesCommunicationController => 'Komunikacijos valdiklis';
@@ -327,7 +385,8 @@ class AppLocalizationsLt extends AppLocalizations {
   }
 
   @override
-  String get settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get settingsTitle => 'Nustatymai';
@@ -343,15 +402,12 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String settingsInputLanguage(String locale) {
-    String _temp0 = intl.Intl.selectLogic(
-      locale,
-      {
-        'lt': 'Lietuvių',
-        'en': 'Anglų',
-        'lv': 'Latvių',
-        'other': 'nežinoma',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(locale, {
+      'lt': 'Lietuvių',
+      'en': 'Anglų',
+      'lv': 'Latvių',
+      'other': 'nežinoma',
+    });
     return '$_temp0';
   }
 
@@ -363,19 +419,16 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String settingsThemeNames(String theme) {
-    String _temp0 = intl.Intl.selectLogic(
-      theme,
-      {
-        'light': 'Šviesi',
-        'lightMediumContrast': 'Šviesi - vidutinio kontrasto',
-        'lightHighContrast': 'Šviesi - didelio kontrasto',
-        'dark': 'Tamsi',
-        'darkMediumContrast': 'Tamsi - vidutinio kontrasto',
-        'darkHighContrast': 'Tamsi - didelio kontrasto',
-        'system': 'Pagal įrenginio temą',
-        'other': 'Nežinoma tema',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(theme, {
+      'light': 'Šviesi',
+      'lightMediumContrast': 'Šviesi - vidutinio kontrasto',
+      'lightHighContrast': 'Šviesi - didelio kontrasto',
+      'dark': 'Tamsi',
+      'darkMediumContrast': 'Tamsi - vidutinio kontrasto',
+      'darkHighContrast': 'Tamsi - didelio kontrasto',
+      'system': 'Pagal įrenginio temą',
+      'other': 'Nežinoma tema',
+    });
     return '$_temp0';
   }
 
@@ -383,10 +436,12 @@ class AppLocalizationsLt extends AppLocalizations {
   String get settingsAdvancedMode => 'Išplėstinė režimas';
 
   @override
-  String get settingsAdvancedModeTooltip => 'Įjungus bus pasiekiamas funkcionalumas, skirtas programos derinimui ir testavimui.';
+  String get settingsAdvancedModeTooltip =>
+      'Įjungus bus pasiekiamas funkcionalumas, skirtas programos derinimui ir testavimui.';
 
   @override
-  String get layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get layoutItemHome => 'Pagrindinis';
@@ -398,13 +453,15 @@ class AppLocalizationsLt extends AppLocalizations {
   String get layoutItemSettings => 'Nustatymai';
 
   @override
-  String get errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get notFoundText => 'Puslapis nerastas';
 
   @override
-  String get infoScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get infoScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get infoScreenTitle => 'Informacija';
@@ -419,10 +476,12 @@ class AppLocalizationsLt extends AppLocalizations {
   String get faqQuestion1 => 'Klausimas 1: Aliquam eget sagittis nisl, id congue ipsum';
 
   @override
-  String get faqAnswer1 => 'Atsakymas 1: Etiam faucibus velit ut tellus dapibus, vel lobortis elit consectetur';
+  String get faqAnswer1 =>
+      'Atsakymas 1: Etiam faucibus velit ut tellus dapibus, vel lobortis elit consectetur';
 
   @override
-  String get faqQuestion2 => 'Klausimas 2: Nulla leo velit, euismod eget dapibus sit amet, aliquet vitae turpis';
+  String get faqQuestion2 =>
+      'Klausimas 2: Nulla leo velit, euismod eget dapibus sit amet, aliquet vitae turpis';
 
   @override
   String get faqAnswer2 => 'Atsakymas 2: Suspendisse hendrerit';

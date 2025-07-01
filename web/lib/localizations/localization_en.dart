@@ -9,7 +9,8 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get generalIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get generalIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get generalDate => 'Date';
@@ -83,7 +84,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get exceptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get exceptionUnknown => 'Unknown error occurred.';
@@ -92,25 +94,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exceptionFailedToConnectToDevice => 'Failed to connect to device.';
 
   @override
-  String get exceptionDeviceConnectionTimeout => 'Failed to connect to the device. Please check device or provided address';
+  String get exceptionDeviceConnectionTimeout =>
+      'Failed to connect to the device. Please check device or provided address';
 
   @override
-  String get exceptionAddressLookupFailed => 'Failed to connect to device. Bad address provided for kettle device.';
+  String get exceptionAddressLookupFailed =>
+      'Failed to connect to device. Bad address provided for kettle device.';
 
   @override
-  String get exceptionConnectionRefused => 'Failed to connect to device. Device refused connection. Please check your provided address.';
+  String get exceptionConnectionRefused =>
+      'Failed to connect to device. Device refused connection. Please check your provided address.';
 
   @override
-  String get exceptionHttpConnectionTimeout => 'Request to device\'s server timed out. Please check your internet connection.';
+  String get exceptionHttpConnectionTimeout =>
+      'Request to device\'s server timed out. Please check your internet connection.';
 
   @override
-  String get exceptionHttpSendTimeout => 'Request to device\'s server timed out. Please check your internet connection.';
+  String get exceptionHttpSendTimeout =>
+      'Request to device\'s server timed out. Please check your internet connection.';
 
   @override
-  String get exceptionHttpReceiveTimeout => 'Request to device\'s server timed out. Please check your internet connection.';
+  String get exceptionHttpReceiveTimeout =>
+      'Request to device\'s server timed out. Please check your internet connection.';
 
   @override
-  String get exceptionHttpBadCertificate => 'Request failed. Bad certificate provided for device\'s server. This should not happen.';
+  String get exceptionHttpBadCertificate =>
+      'Request failed. Bad certificate provided for device\'s server. This should not happen.';
 
   @override
   String exceptionHttpBadResponse(String code) {
@@ -121,13 +130,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exceptionHttpCancel => 'Request was cancelled. This should not happenn.';
 
   @override
-  String get exceptionHttpConnectionError => 'Failed to connect to device\'s server. Please check your internet connection.';
+  String get exceptionHttpConnectionError =>
+      'Failed to connect to device\'s server. Please check your internet connection.';
 
   @override
-  String get exceptionHttpUnknown => 'Unexpected network error occurred. There may be a problem with your internet connection or device\'s server.';
+  String get exceptionHttpUnknown =>
+      'Unexpected network error occurred. There may be a problem with your internet connection or device\'s server.';
 
   @override
-  String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get mainscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get mainGraphInfoTitle => 'Temparature and power graph';
@@ -136,12 +148,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String mainGraphInfoText(int seconds, num hours) {
     final intl.NumberFormat secondsNumberFormat = intl.NumberFormat.decimalPatternDigits(
       locale: localeName,
-      
     );
     final String secondsString = secondsNumberFormat.format(seconds);
     final intl.NumberFormat hoursNumberFormat = intl.NumberFormat.decimalPatternDigits(
       locale: localeName,
-      
     );
     final String hoursString = hoursNumberFormat.format(hours);
 
@@ -151,12 +161,7 @@ class AppLocalizationsEn extends AppLocalizations {
       other: 'seconds',
       one: 'second',
     );
-    String _temp1 = intl.Intl.pluralLogic(
-      hours,
-      locale: localeName,
-      other: 'hours',
-      one: 'hour',
-    );
+    String _temp1 = intl.Intl.pluralLogic(hours, locale: localeName, other: 'hours', one: 'hour');
     return 'Shows heater data of every $secondsString $_temp0 for $hoursString $_temp1.\nTap on graph points to see concrete values for that time.';
   }
 
@@ -185,47 +190,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String get heaterControlCardLabelError => 'Error occurred';
 
   @override
-  String get heaterControlCardMessageError => 'An error has occurred in the heater controller, try rebooting both controllers';
+  String get heaterControlCardMessageError =>
+      'An error has occurred in the heater controller, try rebooting both controllers';
 
   @override
   String get heaterControlCardLabelStatusUnknown => 'Unknown status';
 
   @override
-  String get heaterControlCardMessageStatusUnknown => 'An error occurred - the status of the boiler controller is unknown, try reloading the application and both controllers.';
+  String get heaterControlCardMessageStatusUnknown =>
+      'An error occurred - the status of the boiler controller is unknown, try reloading the application and both controllers.';
 
   @override
   String get heaterControlCardLabelConfiguring => 'Configuring...';
 
   @override
-  String get heaterControlCardMessageConfiguring => 'Waiting for the heater controller to be configured. This should take a few seconds.';
+  String get heaterControlCardMessageConfiguring =>
+      'Waiting for the heater controller to be configured. This should take a few seconds.';
 
   @override
   String heaterControlSelectButtonLabel(String mode) {
-    String _temp0 = intl.Intl.selectLogic(
-      mode,
-      {
-        'idle': 'Idle',
-        'heating_manual': 'Power',
-        'heating_pid': 'Temperature',
-        'other': 'Unknown',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(mode, {
+      'idle': 'Idle',
+      'heating_manual': 'Power',
+      'heating_pid': 'Temperature',
+      'other': 'Unknown',
+    });
     return '$_temp0';
   }
 
   @override
   String heaterControlSelectButtonTooltip(String mode) {
-    String _temp0 = intl.Intl.selectLogic(
-      mode,
-      {
-        'idle': 'idle',
-        'heating_manual': 'manual',
-        'heating_pid': 'PID',
-        'autotune_pid': 'autotune',
-        'null': 'none',
-        'other': 'unknown',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(mode, {
+      'idle': 'idle',
+      'heating_manual': 'manual',
+      'heating_pid': 'PID',
+      'autotune_pid': 'autotune',
+      'null': 'none',
+      'other': 'unknown',
+    });
     return 'Heating mode - $_temp0';
   }
 
@@ -233,7 +235,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sliderContainerDragTooltip => 'Drag to change value';
 
   @override
-  String get graphOptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get graphOptionsIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get sessionStatisticsTitle => 'Session statistics';
@@ -263,7 +266,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionStatLessThanMinute => 'less than a minute';
 
   @override
-  String get connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get dataDurationSpanTitle => 'Data duration span';
+
+  @override
+  String get dataDurationSpanInfo => 'Showing data for the last: ';
+
+  @override
+  String get dataAggregationTitle => 'Data aggregation';
+
+  @override
+  String dataAggregationInfo(String duration) {
+    return 'Data is aggregated by interval of $duration';
+  }
+
+  @override
+  String get dataAggregationSwitchLabel => 'Aggregate data';
+
+  @override
+  String get aggregationByPropertyTitle => 'Properties aggregation';
+
+  @override
+  String aggregationField(String field) {
+    String _temp0 = intl.Intl.selectLogic(field, {
+      'default': 'Default',
+      'power': 'Power',
+      'current_temperature': 'Current temperature',
+      'target_temperature': 'Target temperature',
+      'other': 'Unknown',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String aggregationType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'mean': 'Mean',
+      'median': 'Median',
+      'min': 'Min',
+      'max': 'Max',
+      'sum': 'Sum',
+      'first': 'First',
+      'last': 'Last',
+      'other': 'Unknown',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get connectButtonLabel => 'Connect';
@@ -283,7 +334,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deviceIpFormValidationRequired => 'Please provide device IP';
 
   @override
-  String get devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get devicesScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get devicesCommunicationController => 'Communication controller';
@@ -327,7 +379,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get settingsscreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get settingsTitle => 'Settings';
@@ -343,15 +396,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String settingsInputLanguage(String locale) {
-    String _temp0 = intl.Intl.selectLogic(
-      locale,
-      {
-        'lt': 'Lithuanian',
-        'en': 'English',
-        'lv': 'Latvian',
-        'other': 'unknown',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(locale, {
+      'lt': 'Lithuanian',
+      'en': 'English',
+      'lv': 'Latvian',
+      'other': 'unknown',
+    });
     return '$_temp0';
   }
 
@@ -363,19 +413,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String settingsThemeNames(String theme) {
-    String _temp0 = intl.Intl.selectLogic(
-      theme,
-      {
-        'light': 'Light',
-        'lightMediumContrast': 'Light - medium contrast',
-        'lightHighContrast': 'Light - high contrast',
-        'dark': 'Dark',
-        'darkMediumContrast': 'Dark - medium contrast',
-        'darkHighContrast': 'Dark - high contrast',
-        'system': 'Same as device\'s',
-        'other': 'unknown',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(theme, {
+      'light': 'Light',
+      'lightMediumContrast': 'Light - medium contrast',
+      'lightHighContrast': 'Light - high contrast',
+      'dark': 'Dark',
+      'darkMediumContrast': 'Dark - medium contrast',
+      'darkHighContrast': 'Dark - high contrast',
+      'system': 'Same as device\'s',
+      'other': 'unknown',
+    });
     return '$_temp0';
   }
 
@@ -386,7 +433,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsAdvancedModeTooltip => 'Turns on some debugging features';
 
   @override
-  String get layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get layoutIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get layoutItemHome => 'Home';
@@ -398,13 +446,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get layoutItemSettings => 'Settings';
 
   @override
-  String get errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get errorScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get notFoundText => 'Not found';
 
   @override
-  String get infoScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII => '----------------------------------------------------';
+  String get infoScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII =>
+      '----------------------------------------------------';
 
   @override
   String get infoScreenTitle => 'Information';
@@ -422,13 +472,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get faqAnswer1 => 'Answer 1: Aliquam eget sagittis nisl, id congue ipsum';
 
   @override
-  String get faqQuestion2 => 'Question 2: Etiam faucibus velit ut tellus dapibus, vel lobortis elit consectetur';
+  String get faqQuestion2 =>
+      'Question 2: Etiam faucibus velit ut tellus dapibus, vel lobortis elit consectetur';
 
   @override
-  String get faqAnswer2 => 'Answer 2: Nulla leo velit, euismod eget dapibus sit amet, aliquet vitae turpis';
+  String get faqAnswer2 =>
+      'Answer 2: Nulla leo velit, euismod eget dapibus sit amet, aliquet vitae turpis';
 
   @override
-  String get faqQuestion3 => 'Question 3: Suspendisse hendrerit, orci in maximus congue, metus mi tristique orci';
+  String get faqQuestion3 =>
+      'Question 3: Suspendisse hendrerit, orci in maximus congue, metus mi tristique orci';
 
   @override
   String get faqAnswer3 => 'Answer 3: id venenatis ante libero nec felis';
