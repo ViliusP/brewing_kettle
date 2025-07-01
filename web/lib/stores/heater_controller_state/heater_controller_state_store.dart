@@ -47,13 +47,18 @@ abstract class _HeaterControllerStateStore with Store {
       });
 
   @computed
-  List<TimeSeriesViewEntry> get stateHistory => _stateTimeSeries
-      .takeLastByDuration(_dataDuration)
-      .aggregate(
-        defaultType: defaultAggregationMethod,
-        interval: _aggregationInterval,
-        methodsByField: _aggregationMethodsByField.map((k, v) => MapEntry(k.key, v)),
-      );
+  List<TimeSeriesViewEntry> get stateHistory {
+    if (_toAggregateTimeSeries) {
+      return _stateTimeSeries
+          .takeLastByDuration(_dataDuration)
+          .aggregate(
+            defaultType: defaultAggregationMethod,
+            interval: _aggregationInterval,
+            methodsByField: _aggregationMethodsByField.map((k, v) => MapEntry(k.key, v)),
+          );
+    }
+    return _stateTimeSeries.takeLastByDuration(_dataDuration).toViewList();
+  }
 
   @computed
   HeaterSessionStatistics get sessionStatistics {
@@ -63,6 +68,21 @@ abstract class _HeaterControllerStateStore with Store {
   // -----------------------
   // AGGREGATION OPTIONS
   // -----------------------
+  /// If true, the time series data will be aggregated based on the selected interval and methods.
+  /// If false, the raw time series data will be used.
+  /// This is useful for displaying a more summarized view of the data.
+  /// The default is true, meaning the data will be aggregated.
+  /// Set this to false to disable aggregation and view the raw time series data.
+  @observable
+  bool _toAggregateTimeSeries = true;
+
+  /// If true, the time series data will be aggregated based on the selected interval and methods.
+  /// If false, the raw time series data will be used.
+  /// This is useful for displaying a more summarized view of the data.
+  /// The default is true, meaning the data will be aggregated.
+  /// Set this to false to disable aggregation and view the raw time series data.
+  @computed
+  bool get toAggregateTimeSeries => _toAggregateTimeSeries;
 
   /// The duration over which data is filtered.
   /// This interval determines the time span of data to include,
@@ -206,6 +226,11 @@ abstract class _HeaterControllerStateStore with Store {
         ),
       );
     }
+  }
+
+  @action
+  void setToAggregateTimeSeries(bool value) {
+    _toAggregateTimeSeries = value;
   }
 
   /// Null means default
