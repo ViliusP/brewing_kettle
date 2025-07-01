@@ -318,6 +318,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'sum': 'Sum',
       'first': 'First',
       'last': 'Last',
+      'default': 'Default',
       'other': 'Unknown',
     });
     return '$_temp0';

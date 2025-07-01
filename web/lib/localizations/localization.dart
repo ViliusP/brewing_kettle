@@ -534,7 +534,7 @@ abstract class AppLocalizations {
   /// Label for aggregation type selection
   ///
   /// In en, this message translates to:
-  /// **'{type, select, mean {Mean} median {Median} min {Min} max {Max} sum {Sum} first {First} last {Last} other {Unknown}}'**
+  /// **'{type, select, mean {Mean} median {Median} min {Min} max {Max} sum {Sum} first {First} last {Last} default {Default} other {Unknown}}'**
   String aggregationType(String type);
 
   /// No description provided for @connectionScreenIIIIIIIIIIIIIIIIIIIIIIIIIIII.

@@ -141,7 +141,7 @@
       }
     }
   },
-  "aggregationType": "{type, select, mean {Vidurkis} median {Mediana} min {Minimali reikšmė} max {Maksimali reikšmė} sum {Suma} first {Pirma reikšmė} last {Paskutinė reikšmė} other {Nežinoma}}",
+  "aggregationType": "{type, select, mean {Vidurkis} median {Mediana} min {Minimali reikšmė} max {Maksimali reikšmė} sum {Suma} first {Pirma reikšmė} last {Paskutinė reikšmė} default {Numatytas} other {Nežinoma}}",
   "@aggregationType": {
     "placeholders": {
       "type": {

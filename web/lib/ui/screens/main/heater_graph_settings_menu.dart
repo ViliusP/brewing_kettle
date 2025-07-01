@@ -182,7 +182,7 @@ class _AggregationOptionsState extends State<_AggregationOptions> {
 
   static final _dropdownEntries = [
     ..._dropdownEntriesForDefault,
-    _DropddownEntryData<AggregationMethod?>(label: "DEFAULT", value: null),
+    _DropddownEntryData<AggregationMethod?>(label: defaultTypeKey, value: null),
   ];
 
   static final double sliderMin = 1.0;
@@ -326,14 +326,12 @@ class _AggregationOptionsState extends State<_AggregationOptions> {
                       _heaterStateStore.aggregationMethodsByField[field]?.name ?? defaultTypeKey,
                     ),
                     entries:
-                        _dropdownEntries
-                            .map(
-                              (e) => _DropddownEntryData<AggregationMethod?>(
-                                label: localizations.aggregationType(e.label),
-                                value: e.value,
-                              ),
-                            )
-                            .toList(),
+                        _dropdownEntries.map((e) {
+                          return _DropddownEntryData<AggregationMethod?>(
+                            label: localizations.aggregationType(e.label),
+                            value: e.value,
+                          );
+                        }).toList(),
                     onSelected:
                         _heaterStateStore.toAggregateTimeSeries
                             ? (AggregationMethod? value) {

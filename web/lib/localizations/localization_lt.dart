@@ -324,6 +324,7 @@ class AppLocalizationsLt extends AppLocalizations {
       'sum': 'Suma',
       'first': 'Pirma reikšmė',
       'last': 'Paskutinė reikšmė',
+      'default': 'Numatytas',
       'other': 'Nežinoma',
     });
     return '$_temp0';
