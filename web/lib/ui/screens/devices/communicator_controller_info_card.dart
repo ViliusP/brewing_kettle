@@ -27,6 +27,7 @@ class CommunicatorControllerInfoCard extends StatefulWidget {
 class _CommunicatorControllerInfoCardState extends State<CommunicatorControllerInfoCard> {
   final SystemInfoStore _systemInfoStore = getIt<SystemInfoStore>();
   final AppConfigurationStore _appConfigurationStore = getIt<AppConfigurationStore>();
+  final WebSocketConnectionStore _wsConnectionStore = getIt<WebSocketConnectionStore>();
 
   final DeviceSnapshotStore _deviceSnapshotStore = getIt<DeviceSnapshotStore>();
 
@@ -51,7 +52,11 @@ class _CommunicatorControllerInfoCardState extends State<CommunicatorControllerI
           child: Column(
             children: [
               Text("${hardware?.chip}", style: textTheme.bodyLarge),
-              Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+              Text(
+                "${_wsConnectionStore.connectedTo}",
+                style: textTheme.bodyLarge?.copyWith(height: 1),
+              ),
+              Padding(padding: EdgeInsets.symmetric(vertical: 4)),
               Text(
                 "${localizations.generalVersion} ${software?.version}",
                 style: textTheme.bodyMedium,

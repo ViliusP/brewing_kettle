@@ -58,7 +58,7 @@ abstract class _NetworkScannerStore with Store {
   /// final List<RecordMDNS> results = await _scan();
   /// ```
   ///
-  /// Retirns a list of [RecordMDNS] objects.
+  /// Returns a list of [RecordMDNS] objects.
   Future<List<RecordMDNS>> _scan() async {
     // Start the client with default options.
     await _client.start();
