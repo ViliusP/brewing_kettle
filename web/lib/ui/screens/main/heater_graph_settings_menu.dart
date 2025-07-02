@@ -135,7 +135,7 @@ class _GraphRangeSelectState extends State<_GraphRangeSelect> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  "${localizations.dataDurationSpanInfo}$formattedDuration",
+                  "${localizations.dataDurationSpanInfo} $formattedDuration",
                   textAlign: TextAlign.left,
                 ),
                 SliderTheme(
