@@ -177,7 +177,7 @@ class __StarryContainerState extends State<_StarryContainer> {
     super.initState();
   }
 
-  _GeneratedStarData generateStar(i) {
+  _GeneratedStarData generateStar(int i) {
     double minOpacity =
         random.nextDouble() *
             (widget.generationOptions.minOpacityInterval.max -

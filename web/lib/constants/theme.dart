@@ -351,7 +351,7 @@ class MaterialTheme {
     colorScheme: colorScheme,
     fontFamily: fontFamily,
     typography: Typography.material2021(),
-    scaffoldBackgroundColor: colorScheme.background,
+    scaffoldBackgroundColor: colorScheme.surface,
     canvasColor: colorScheme.surface,
   );
 

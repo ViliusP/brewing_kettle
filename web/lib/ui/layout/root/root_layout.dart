@@ -53,7 +53,7 @@ class _RootLayoutState extends State<RootLayout> {
       (exception) => onExceptionOccured(exception),
       fireImmediately: false,
     );
-    ;
+
     super.initState();
   }
 

@@ -94,7 +94,7 @@ class AppScrollBehavior extends MaterialScrollBehavior {
       case TargetPlatform.android:
         return StretchingOverscrollIndicator(
           axisDirection: details.direction,
-          clipBehavior: details.clipBehavior ?? Clip.hardEdge,
+          clipBehavior: details.decorationClipBehavior ?? Clip.hardEdge,
           child: child,
         );
 

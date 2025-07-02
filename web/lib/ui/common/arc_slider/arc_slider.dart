@@ -41,7 +41,7 @@ class ArcSlider extends StatefulWidget {
 }
 
 class _ArcSliderState extends State<ArcSlider> with SingleTickerProviderStateMixin {
-  double _sliderValue = 0.0; // Value between 0 and 100
+  final double _sliderValue = 0.0; // Value between 0 and 100
 
   final double startAngle = 3 * pi / 4;
   final double sweepAngle = 3 * pi / 2;

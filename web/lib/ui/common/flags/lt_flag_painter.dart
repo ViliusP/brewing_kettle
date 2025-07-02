@@ -11,7 +11,7 @@ class LtFlagPainter extends CustomPainter {
     path_0.close();
 
     Paint paint0Fill = Paint()..style = PaintingStyle.fill;
-    paint0Fill.color = Color(0xffBE3A34).withOpacity(1.0);
+    paint0Fill.color = Color(0xffBE3A34).withValues(alpha: 1.0);
     canvas.drawPath(path_0, paint0Fill);
 
     Path path1 = Path();
@@ -22,7 +22,7 @@ class LtFlagPainter extends CustomPainter {
     path1.close();
 
     Paint paint1Fill = Paint()..style = PaintingStyle.fill;
-    paint1Fill.color = Color(0xff046A38).withOpacity(1.0);
+    paint1Fill.color = Color(0xff046A38).withValues(alpha: 1.0);
     canvas.drawPath(path1, paint1Fill);
 
     Path path_2 = Path();
@@ -33,7 +33,7 @@ class LtFlagPainter extends CustomPainter {
     path_2.close();
 
     Paint paint2Fill = Paint()..style = PaintingStyle.fill;
-    paint2Fill.color = Color(0xffFFB81C).withOpacity(1.0);
+    paint2Fill.color = Color(0xffFFB81C).withValues(alpha: 1.0);
     canvas.drawPath(path_2, paint2Fill);
   }
 

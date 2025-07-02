@@ -164,19 +164,22 @@ class ArcSliderPainterData implements ArcSliderThemeData {
       trackHeight: 2,
       activeTrackColor: scheme.primary,
       inactiveTrackColor: scheme.surfaceContainerHighest,
-      disabledInactiveTrackColor: scheme.onSurface.withOpacity(0.12),
+      disabledInactiveTrackColor: scheme.onSurface.withValues(alpha: 0.12),
       // secondary track
-      secondaryActiveTrackColor: scheme.primary.withOpacity(0.54),
-      disabledActiveTrackColor: scheme.onSurface.withOpacity(0.38),
-      disabledSecondaryActiveTrackColor: scheme.onSurface.withOpacity(0.12),
+      secondaryActiveTrackColor: scheme.primary.withValues(alpha: 0.54),
+      disabledActiveTrackColor: scheme.onSurface.withValues(alpha: 0.38),
+      disabledSecondaryActiveTrackColor: scheme.onSurface.withValues(alpha: 0.12),
       // tick
-      activeTickMarkColor: scheme.onPrimary.withOpacity(0.38),
-      inactiveTickMarkColor: scheme.onSurfaceVariant.withOpacity(0.38),
-      disabledActiveTickMarkColor: scheme.onSurface.withOpacity(0.38),
-      disabledInactiveTickMarkColor: scheme.onSurface.withOpacity(0.38),
+      activeTickMarkColor: scheme.onPrimary.withValues(alpha: 0.38),
+      inactiveTickMarkColor: scheme.onSurfaceVariant.withValues(alpha: 0.38),
+      disabledActiveTickMarkColor: scheme.onSurface.withValues(alpha: 0.38),
+      disabledInactiveTickMarkColor: scheme.onSurface.withValues(alpha: 0.38),
       // thumb
       thumbColor: scheme.primary,
-      disabledThumbColor: Color.alphaBlend(scheme.onSurface.withOpacity(0.38), scheme.surface),
+      disabledThumbColor: Color.alphaBlend(
+        scheme.onSurface.withValues(alpha: 0.38),
+        scheme.surface,
+      ),
     );
   }
 }
