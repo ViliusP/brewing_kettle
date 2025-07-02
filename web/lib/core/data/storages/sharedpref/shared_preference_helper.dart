@@ -60,9 +60,9 @@ class SharedPreferenceHelper {
     ]);
   }
 
-  // ===============
-  // Theme
-  // ===============
+  // ====================
+  // Temperature scale:
+  // ====================
   /// Gets the temperature scale from shared preferences.
   /// If the value is not set, it will return null.
   /// If the value is set, it will return the corresponding [TemperatureScale] enum value.
